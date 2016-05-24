@@ -1,6 +1,6 @@
 <?php
-use common\modules\multishop\common\entities\Category;
-use common\modules\multishop\common\entities\CategoryTranslation;
+use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\CategoryTranslation;
 use dosamigos\tinymce\TinyMce;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;

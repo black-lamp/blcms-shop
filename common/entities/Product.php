@@ -9,12 +9,10 @@
 namespace bl\cms\shop\common\entities;
 
 /**
- * Article
- *
+ * Product
  * @property integer $id
  * @property integer $category_id
- * @property boolean $show
- * @property string $view
+ * @property string $price
  *
  * @property Category $category
  * @property ProductTranslation[] $translations

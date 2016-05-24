@@ -1,8 +1,8 @@
 <?php
-use common\modules\multishop\common\entities\ParamsTranslation;
-use common\modules\multishop\common\entities\Product;
-use common\modules\multishop\common\entities\ProductTranslation;
-use common\modules\multishop\common\entities\Category;
+use bl\cms\shop\common\entities\ParamsTranslation;
+use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductTranslation;
+use bl\cms\shop\common\entities\Category;
 use bl\multilang\entities\Language;
 use dosamigos\tinymce\TinyMce;
 use yii\helpers\Url;

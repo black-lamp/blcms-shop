@@ -1,5 +1,5 @@
 <?php
-use \common\modules\multishop\common\entities\CategoryTranslation;
+use \common\modules\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
