@@ -6,7 +6,7 @@
  * Time: 10:35
  */
 
-namespace bl\cms\multishop\common\entities;
+namespace bl\cms\shop\common\entities;
 
 /**
  * Article

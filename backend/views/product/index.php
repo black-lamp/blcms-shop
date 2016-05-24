@@ -93,7 +93,7 @@ $this->title = 'Products category list';
                     <? endif; ?>
                 </table>
                 <!-- TODO: languageId -->
-                <a href="<?= Url::to(['/multishop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
+                <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
                    class="btn btn-primary pull-right">
                     <i class="fa fa-user-plus"></i> <?= 'Add' ?>
                 </a>

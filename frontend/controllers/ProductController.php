@@ -1,9 +1,8 @@
 <?php
-namespace common\modules\multishop\frontend\controllers;
+namespace bl\cms\shop\frontend\controllers;
 
-use bl\articles\common\entities\Article;
-use bl\cms\multishop\common\entities\Category;
-use bl\cms\multishop\common\entities\Product;
+use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Product;
 use yii\web\Controller;
 
 /**

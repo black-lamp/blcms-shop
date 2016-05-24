@@ -6,11 +6,11 @@
  * Time: 10:56
  */
 
-namespace bl\cms\multishop\backend\controllers;
+namespace bl\cms\shop\backend\controllers;
 
-use bl\cms\multishop\common\entities\Category;
-use bl\cms\multishop\common\entities\Product;
-use bl\cms\multishop\common\entities\ProductTranslation;
+use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
 use Yii;
 use yii\helpers\Url;

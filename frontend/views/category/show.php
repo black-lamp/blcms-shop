@@ -8,8 +8,8 @@
  */
 
 use bl\multilang\entities\Language;
-use bl\cms\multishop\common\entities\Category;
-use bl\cms\multishop\common\entities\Product;
+use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Product;
 use yii\helpers\Url;
 
 

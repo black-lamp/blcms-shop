@@ -6,7 +6,7 @@
  * Time: 15:21
  */
 
-namespace bl\cms\multishop\common\entities;
+namespace bl\cms\shop\common\entities;
 
 
 use bl\multilang\entities\Language;

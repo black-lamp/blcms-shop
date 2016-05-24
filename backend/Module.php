@@ -6,11 +6,11 @@
  * Time: 11:19
  */
 
-namespace bl\cms\multishop\backend;
+namespace bl\cms\shop\backend;
 
 
 class Module extends \yii\base\Module
 {
-    public $controllerNamespace = 'bl\cms\multishop\backend\controllers';
-    public $defaultRoute = 'multishop';
+    public $controllerNamespace = 'bl\cms\shop\backend\controllers';
+    public $defaultRoute = 'shop';
 }

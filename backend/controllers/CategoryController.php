@@ -5,13 +5,13 @@
  * Date: 20.05.2016
  * Time: 10:57
  */
-namespace bl\cms\multishop\backend\controllers;
+namespace bl\cms\shop\backend\controllers;
 
 use Yii;
 use yii\web\Controller;
 
-use bl\cms\multishop\common\entities\Category;
-use bl\cms\multishop\multishop\common\entities\CategoryTranslation;
+use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
 

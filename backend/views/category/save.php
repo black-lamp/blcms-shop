@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Edit category';
 ?>
 
-<? $addForm = ActiveForm::begin(['action' => Url::to(['/multishop/category/save', 'categoryId' => $item->id, 'languageId' => $selectedLanguage->id]), 'method'=>'post']) ?>
+<? $addForm = ActiveForm::begin(['action' => Url::to(['/shop/category/save', 'categoryId' => $item->id, 'languageId' => $selectedLanguage->id]), 'method'=>'post']) ?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
