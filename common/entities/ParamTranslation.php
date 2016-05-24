@@ -13,7 +13,7 @@ use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
 
-class ParamsTranslation extends ActiveRecord
+class ParamTranslation extends ActiveRecord
 {
     public function behaviors()
     {
@@ -36,7 +36,7 @@ class ParamsTranslation extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'shop_params_translation';
+        return 'shop_param_translation';
     }
 
 

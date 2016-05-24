@@ -10,6 +10,7 @@ namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\ParamsTranslation;
+use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
@@ -37,7 +38,7 @@ class ProductController extends Controller
                 'product_id' => $productId,
                 'language_id' => $languageId
             ])->one();
-            $params_translation = ParamsTranslation::find()->where([
+            $param_translation = ParamTranslation::find()->where([
                 
             ])->all();
             if(empty($products_translation))
@@ -64,7 +65,7 @@ class ProductController extends Controller
         return $this->render('save', [
             'product' => $product,
             'products_translation' => $products_translation,
-            'params_translation' => $params_translation,
+            'param_translation' => $param_translation,
             'category' => Category::find()->with('translations')->all(),
             'selectedLanguage' => Language::findOne($languageId),
             'languages' => Language::findAll(['active' => true])

@@ -119,7 +119,7 @@ $this->title = 'Edit product';
                                     <tbody>
                                         <tr>
                                             <td class="text-center">
-                                                <?php var_dump($params_translation) ?>
+                                                <?php var_dump($param_translation) ?>
                                             </td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
