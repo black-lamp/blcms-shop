@@ -57,7 +57,7 @@ class ProductController extends Controller
                 $products_translation->language_id = $languageId;
                 $products_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::toRoute('/multishop/product'));
+                return $this->redirect(Url::toRoute('/shop/product'));
             }
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
@@ -74,6 +74,6 @@ class ProductController extends Controller
 
     public function actionRemove($id) {
         Product::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to(['/multishop/product']));
+        return $this->redirect(Url::to(['/shop/product']));
     }
 }
