@@ -1,0 +1,28 @@
+{
+  "name": "black-lamp/multishop",
+  "description": "Multilingual extension for the Yii framework",
+  "keywords": ["yii2", "shop"],
+  "type": "yii2-extension",
+  "authors": [
+    {
+      "name": "Albert Gainutdinov",
+      "email": "xalbert.einsteinx@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": ">=2.0.4",
+    "yiisoft/yii2-bootstrap": "*",
+    "2amigos/yii2-tinymce-widget": "*",
+
+    "yii2tech/ar-position": "*",
+
+    "black-lamp/yii2-multi-lang": "1.1.*",
+    "black-lamp/yii2-seo": "0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "bl\\cms\\multishop\\": ""
+    }
+  }
+}
