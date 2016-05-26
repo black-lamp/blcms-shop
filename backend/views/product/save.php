@@ -21,65 +21,6 @@ use yii\widgets\ActiveForm;
 $this->title = 'Edit product';
 ?>
 
-<? if(isset($product)): ?>
-    <? $form = ActiveForm::begin([
-        'method'=>'post',
-        'options' => [
-            'data-pjax' => 0
-        ]
-    ]) ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <?= 'Product' ?>
-                </div>
-                <div class="panel-body">
-                    <? if(count($languages) > 1): ?>
-                        <div class="dropdown">
-                            <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <?= $selectedLanguage->name ?>
-                                <span class="caret"></span>
-                            </button>
-                            <? if(count($languages) > 1): ?>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <? foreach($languages as $language): ?>
-                                        <li>
-                                            <a href="
-                                                <?= Url::to([
-                                                'save',
-                                                'productId' => $product->id,
-                                                'languageId' => $language->id])?>
-                                                ">
-                                                <?= $language->name?>
-                                            </a>
-                                        </li>
-                                    <? endforeach; ?>
-                                </ul>
-                            <? endif; ?>
-                        </div>
-                    <? endif; ?>
-                    <div class="form-group field-validarticleform-category_id required has-success">
-                        <label class="control-label" for="validarticleform-category_id"><?= 'Category' ?></label>
-                        <select id="product-category_id" class="form-control" name="Product[category_id]">
-                            <option value="">-- <?= 'Empty' ?> --</option>
-                            <? if(!empty($category)): ?>
-                                <? foreach($category as $oneCategory): ?>
-                                    <option <?= $product->category_id == $oneCategory->id ? 'selected' : '' ?> value="<?= $oneCategory->id?>">
-                                        <?= $oneCategory->getTranslation($selectedLanguage->id)->title ?>
-                                    </option>
-                                <? endforeach; ?>
-                            <? endif; ?>
-                        </select>
-                        <div class="help-block"></div>
-                    </div>
-                    <?= $form->field($products_translation, 'title', [
-                        'inputOptions' => [
-                            'class' => 'form-control'
-                        ]
-                    ])->label('Title')
-                    ?>
 <? $form = ActiveForm::begin(['method'=>'post']); ?>
 <div class="row">
     <div class="col-md-12">
@@ -243,7 +184,6 @@ $this->title = 'Edit product';
         </div>
     </div>
     <? ActiveForm::end(); ?>
-<? endif; ?>
 
 <? if(!$product->isNewRecord): ?>
     <?= $this->render('/price/add', [
