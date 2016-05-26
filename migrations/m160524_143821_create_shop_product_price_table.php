@@ -25,7 +25,8 @@ class m160524_143821_create_shop_product_price_table extends Migration
             'shop_product_price',
             'product_id',
             'shop_product',
-            'id'
+            'id',
+            'cascade'
         );
 
         $this->addForeignKey(
@@ -48,7 +49,8 @@ class m160524_143821_create_shop_product_price_table extends Migration
             'shop_product_price_translation',
             'price_id',
             'shop_product_price',
-            'id'
+            'id',
+            'cascade'
         );
 
         $this->addForeignKey(
