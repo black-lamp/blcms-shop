@@ -1,6 +1,8 @@
 <?php
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductPrice;
+use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\Category;
 use bl\multilang\entities\Language;
@@ -19,6 +21,65 @@ use yii\widgets\ActiveForm;
 $this->title = 'Edit product';
 ?>
 
+<? if(isset($product)): ?>
+    <? $form = ActiveForm::begin([
+        'method'=>'post',
+        'options' => [
+            'data-pjax' => 0
+        ]
+    ]) ?>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="glyphicon glyphicon-list"></i>
+                    <?= 'Product' ?>
+                </div>
+                <div class="panel-body">
+                    <? if(count($languages) > 1): ?>
+                        <div class="dropdown">
+                            <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <?= $selectedLanguage->name ?>
+                                <span class="caret"></span>
+                            </button>
+                            <? if(count($languages) > 1): ?>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <? foreach($languages as $language): ?>
+                                        <li>
+                                            <a href="
+                                                <?= Url::to([
+                                                'save',
+                                                'productId' => $product->id,
+                                                'languageId' => $language->id])?>
+                                                ">
+                                                <?= $language->name?>
+                                            </a>
+                                        </li>
+                                    <? endforeach; ?>
+                                </ul>
+                            <? endif; ?>
+                        </div>
+                    <? endif; ?>
+                    <div class="form-group field-validarticleform-category_id required has-success">
+                        <label class="control-label" for="validarticleform-category_id"><?= 'Category' ?></label>
+                        <select id="product-category_id" class="form-control" name="Product[category_id]">
+                            <option value="">-- <?= 'Empty' ?> --</option>
+                            <? if(!empty($category)): ?>
+                                <? foreach($category as $oneCategory): ?>
+                                    <option <?= $product->category_id == $oneCategory->id ? 'selected' : '' ?> value="<?= $oneCategory->id?>">
+                                        <?= $oneCategory->getTranslation($selectedLanguage->id)->title ?>
+                                    </option>
+                                <? endforeach; ?>
+                            <? endif; ?>
+                        </select>
+                        <div class="help-block"></div>
+                    </div>
+                    <?= $form->field($products_translation, 'title', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->label('Title')
+                    ?>
 <? $form = ActiveForm::begin(['method'=>'post']); ?>
 <div class="row">
     <div class="col-md-12">
@@ -74,26 +135,26 @@ $this->title = 'Edit product';
                 ?>
 
 
-                <?= $form->field($products_translation, 'description', [
-                    'inputOptions' => [
-                        'class' => 'form-control'
-                    ]
-                ])->widget(TinyMce::className(), [
-                    'options' => ['rows' => 20],
-                    'language' => 'ru',
-                    'clientOptions' => [
-                        'relative_urls' => false,
-                        'plugins' => [
-                            'textcolor colorpicker',
-                            "advlist autolink lists link charmap print preview anchor",
-                            "searchreplace visualblocks code fullscreen",
-                            "insertdatetime media table contextmenu paste",
-                            'image'
-                        ],
-                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-                    ]
-                ])->label('Description')
-                ?>
+                    <?= $form->field($products_translation, 'description', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->widget(TinyMce::className(), [
+                        'options' => ['rows' => 20],
+                        'language' => 'ru',
+                        'clientOptions' => [
+                            'relative_urls' => false,
+                            'plugins' => [
+                                'textcolor colorpicker',
+                                "advlist autolink lists link charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table contextmenu paste",
+                                'image'
+                            ],
+                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                        ]
+                    ])->label('Description')
+                    ?>
 
                 <!-- IMAGE-->
                 <?= $form->field($product, 'imageFile')->fileInput() ?>
@@ -171,100 +232,26 @@ $this->title = 'Edit product';
                                     ])?>"
                                            class="btn btn-primary pull-right">Add param</a>
 
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
+                    <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <? ActiveForm::end(); ?>
+<? endif; ?>
 
-<!--<div class="row">-->
-<!--    <div class="col-md-12">-->
-<!--        <div class="panel panel-default">-->
-<!--            <div class="panel-heading">-->
-<!--                <i class="glyphicon glyphicon-list"></i>-->
-<!--                --><?//= 'Seo Data' ?>
-<!--            </div>-->
-<!--            <div class="panel-body">-->
-<!--                --><?//= $form->field($product_translation, 'seoUrl', [
-//                    'inputOptions' => [
-//                        'class' => 'form-control'
-//                    ]
-//                ])->label('Seo Url')
-//                ?>
-<!---->
-<!--                --><?//= $form->field($product_translation, 'seoTitle', [
-//                    'inputOptions' => [
-//                        'class' => 'form-control'
-//                    ]
-//                ])->label('Seo Title')
-//                ?>
-<!---->
-<!--                --><?//= $form->field($product_translation, 'seoDescription', [
-//                    'inputOptions' => [
-//                        'class' => 'form-control'
-//                    ]
-//                ])->widget(TinyMce::className(), [
-//                    'options' => ['rows' => 10],
-//                    'language' => 'ru',
-//                    'clientOptions' => [
-//                        'plugins' => [
-//                            'textcolor colorpicker',
-//                            "advlist autolink lists link charmap print preview anchor",
-//                            "searchreplace visualblocks code fullscreen",
-//                            "insertdatetime media table contextmenu paste"
-//                        ],
-//                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-//                    ]
-//                ])->label('Seo Description')
-//                ?>
-<!---->
-<!--                --><?//= $form->field($product_translation, 'seoKeywords', [
-//                    'inputOptions' => [
-//                        'class' => 'form-control'
-//                    ]
-//                ])->widget(TinyMce::className(), [
-//                    'options' => ['rows' => 10],
-//                    'language' => 'ru',
-//                    'clientOptions' => [
-//                        'plugins' => [
-//                            'textcolor colorpicker',
-//                            "advlist autolink lists link charmap print preview anchor",
-//                            "searchreplace visualblocks code fullscreen",
-//                            "insertdatetime media table contextmenu paste"
-//                        ],
-//                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-//                    ]
-//                ])->label('Seo Keywords')
-//                ?>
-<!--                <input type="submit" class="btn btn-primary pull-right" value="--><?//= 'Edit' ?><!--">-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!---->
-<!--<div class="row">-->
-<!--    <div class="col-md-12">-->
-<!--        <div class="panel panel-default">-->
-<!--            <div class="panel-heading">-->
-<!--                <i class="glyphicon glyphicon-list"></i>-->
-<!--                --><?//= 'Tech' ?>
-<!--            </div>-->
-<!--            <div class="panel-body">-->
-<!--                --><?//= $form->field($product, 'view', [
-//                    'inputOptions' => [
-//                        'class' => 'form-control'
-//                    ]
-//                ])->label('View Name')
-//                ?>
-<!--                <input type="submit" class="btn btn-primary pull-right" value="--><?//= 'Edit' ?><!--">-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<? ActiveForm::end(); ?>
+<? if(!$product->isNewRecord): ?>
+    <?= $this->render('/price/add', [
+        'priceList' => $product->prices,
+        'priceModel' => new ProductPrice(),
+        'priceTranslationModel' => new ProductPriceTranslation(),
+        'product' => $product,
+        'languages' => $languages,
+        'selectedLanguage' => $selectedLanguage
+    ]) ?>
+<? endif; ?>

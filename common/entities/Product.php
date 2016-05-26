@@ -12,6 +12,7 @@ namespace bl\cms\shop\common\entities;
  * @property string $price
  *
  * @property Category $category
+ * @property ProductPrice[] $prices
  * @property ProductTranslation[] $translations
  * @property ProductTranslation $translation
  */
@@ -73,5 +74,13 @@ class Product extends ActiveRecord
     public function getTranslations()
     {
         return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPrices()
+    {
+        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
     }
 }
