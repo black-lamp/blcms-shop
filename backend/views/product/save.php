@@ -106,7 +106,9 @@ $this->title = 'Edit product';
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <table class="table table-hover">
+                                <?php if ($params) : ?>
+
+                                    <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th class="col-lg-4 text-center">
@@ -166,6 +168,7 @@ $this->title = 'Edit product';
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <? endif; ?>
                                 <a href="<?= Url::to([
                                         'add-param',
                                         'productId' => $product->id,
@@ -180,6 +183,7 @@ $this->title = 'Edit product';
 
                     <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
                 </div>
+
             </div>
         </div>
     </div>

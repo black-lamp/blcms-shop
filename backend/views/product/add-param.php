@@ -63,7 +63,7 @@ $this->title = 'Edit param';
                         <option value="">-- <?= 'Empty' ?> --</option>
                         <? if(!empty($products)): ?>
                             <? foreach($products as $product): ?>
-                                <option <?= $productId == $product->id ? 'selected' : '' ?> value="<?= $product->id?>">
+                                <option <?= $param->product_id == $product->id ? 'selected' : '' ?> value="<?= $product->id?>">
                                     <?= $product->getTranslation($selectedLanguage->id)->title ?>
                                 </option>
                             <? endforeach; ?>

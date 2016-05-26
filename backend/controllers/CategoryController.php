@@ -43,7 +43,7 @@ class CategoryController extends Controller
                 $category_translation->language_id = $languageId;
                 $category_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::toRoute('/multishop/category'));
+                return $this->redirect(Url::toRoute('/shop/category'));
             }
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
@@ -59,7 +59,7 @@ class CategoryController extends Controller
 
     public function actionDelete($id) {
         Category::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to(['/multishop/category']));
+        return $this->redirect(Url::to(['/shop/category']));
     }
 
 
