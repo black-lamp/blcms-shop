@@ -1,9 +1,6 @@
 <?php
 /**
  * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
- * Date: 24.05.2016
- * Time: 16:02
  */
 
 namespace bl\cms\shop\common\entities;
@@ -18,8 +15,8 @@ class Param extends ActiveRecord
         return [
             'translation' => [
                 'class' => TranslationBehavior::className(),
-                'translationClass' => PatamTranslation::className(),
-                'relationColumn' => 'product_id'
+                'translationClass' => ParamTranslation::className(),
+                'relationColumn' => 'param_id'
             ],
         ];
     }
@@ -27,8 +24,7 @@ class Param extends ActiveRecord
     public function rules()
     {
         return [
-            ['category_id', 'number'],
-            ['price', 'string']
+            ['product_id', 'number']
         ];
     }
 
@@ -37,15 +33,7 @@ class Param extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'shop_product';
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCategory()
-    {
-        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+        return 'shop_param';
     }
 
     /**
@@ -53,6 +41,6 @@ class Param extends ActiveRecord
      */
     public function getTranslations()
     {
-        return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);
+        return $this->hasMany(ParamTranslation::className(), ['param_id' => 'id']);
     }
 }

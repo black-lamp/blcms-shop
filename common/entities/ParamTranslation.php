@@ -1,9 +1,6 @@
 <?php
 /**
  * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
- * Date: 24.05.2016
- * Time: 15:21
  */
 
 namespace bl\cms\shop\common\entities;
@@ -37,22 +34,5 @@ class ParamTranslation extends ActiveRecord
     public static function tableName()
     {
         return 'shop_param_translation';
-    }
-
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLanguage()
-    {
-        return $this->hasOne(Language::className(), ['id' => 'language_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParam()
-    {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 }

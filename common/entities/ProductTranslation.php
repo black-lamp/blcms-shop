@@ -1,7 +1,6 @@
 <?php
 /**
  * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
  * Date: 21.05.2016
  * Time: 10:37
  */
@@ -40,11 +39,10 @@ class ProductTranslation extends ActiveRecord
     {
         return [
             [['language_id', 'product_id'], 'number'],
-            [['title', 'description'], 'string'],
-//            // seo data
-//            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
+            [['title', 'description'], 'string']
         ];
     }
+
     /**
      * @inheritdoc
      */

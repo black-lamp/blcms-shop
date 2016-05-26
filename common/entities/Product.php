@@ -1,9 +1,6 @@
 <?php
 /**
  * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
- * Date: 21.05.2016
- * Time: 10:35
  */
 
 namespace bl\cms\shop\common\entities;
@@ -39,8 +36,19 @@ class Product extends ActiveRecord
     {
         return [
             ['category_id', 'number'],
-            ['price', 'string']
+            ['price', 'string'],
+            [['imageFile'], 'file']
         ];
+    }
+
+    public function upload()
+    {
+        if ($this->validate()) {
+            $this->imageFile->saveAs('upload/shop-images/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
