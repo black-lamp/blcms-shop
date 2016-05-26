@@ -8,11 +8,6 @@ use yii\helpers\Url;
 /* @var $languages Language[] */
 
 $this->title = 'Products category list';
-
-?>
-
-<?php
-
 ?>
 
 <div class="row">

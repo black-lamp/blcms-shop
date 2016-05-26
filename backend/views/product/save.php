@@ -1,10 +1,11 @@
 <?php
-use bl\cms\shop\common\entities\ParamsTranslation;
+use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\Category;
 use bl\multilang\entities\Language;
 use dosamigos\tinymce\TinyMce;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
@@ -12,13 +13,13 @@ use yii\widgets\ActiveForm;
 /* @var $selectedLanguage Language */
 /* @var $product Product */
 /* @var $products_translation ProductTranslation */
-/* @var $params_translation ParamsTranslation */
+/* @var $params_translation ParamTranslation*/
 /* @var $categories Category[] */
 
 $this->title = 'Edit product';
 ?>
 
-<? $form = ActiveForm::begin(['method'=>'post']) ?>
+<? $form = ActiveForm::begin(['method'=>'post']); ?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
@@ -94,6 +95,10 @@ $this->title = 'Edit product';
                 ])->label('Description')
                 ?>
 
+                <!-- IMAGE-->
+                <?= $form->field($product, 'imageFile')->fileInput() ?>
+
+
                 <!--PARAMS-->
                 <div class="row">
                     <div class="col-md-12">
@@ -102,31 +107,69 @@ $this->title = 'Edit product';
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="col-lg-4">
+                                            <th class="col-lg-4 text-center">
                                                 Name
                                             </th>
-                                            <th class="col-lg-4">
+                                            <th class="col-lg-5 text-center">
                                                 Value
                                             </th>
-                                            <th class="col-lg-2">
+                                            <th class="col-lg-2 text-center">
                                                 Languages
                                             </th>
-                                            <th class="col-lg-2">
+                                            <th class="col-lg-1 text-center">
                                                 Control
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php foreach ($params as $param) : ?>
                                         <tr>
                                             <td class="text-center">
-                                                <?php var_dump($param_translation) ?>
+                                                <?=$param->translation->name ?>
                                             </td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
+                                            <td class="text-center">
+                                                <?=$param->translation->value ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <? if(count($languages) > 1): ?>
+                                                    <? $translations = ArrayHelper::index($param->translations, 'language_id') ?>
+                                                    <? foreach ($languages as $language): ?>
+                                                        <a href="<?= Url::to([
+                                                            'add-param',
+                                                            'id' => $param->id,
+                                                            'languageId' => $language->id
+                                                        ]) ?>"
+                                                           type="button"
+                                                           class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
+                                                           ?> btn-xs"><?= $language->name ?></a>
+                                                    <? endforeach; ?>
+                                                <? endif; ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="<?= Url::to([
+                                                    'add-param',
+                                                    'id' => $param->translation->param_id,
+                                                    'languageId' => $param->translation->language_id
+                                                ])?>"
+                                                   class="btn btn-primary pull-left">E</a>
+                                                <a href="<?= Url::to([
+                                                    'delete-param',
+                                                    'id' => $param->translation->param_id,
+                                                    'productId' => $param->product_id,
+                                                    'languageId' => $selectedLanguage
+                                                ])?>"
+                                                   class="btn btn-danger pull-right">D</a>
+                                            </td>
                                         </tr>
+                                        <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <a href="<?= Url::to([
+                                        'add-param',
+                                        'productId' => $product->id,
+                                        'languageId' => $product->translation->language_id
+                                    ])?>"
+                                           class="btn btn-primary pull-right">Add param</a>
 
                             </div>
                         </div>

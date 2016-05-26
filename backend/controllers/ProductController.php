@@ -1,7 +1,6 @@
 <?php
 /**
  * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
  * Date: 20.05.2016
  * Time: 10:56
  */
@@ -9,6 +8,7 @@
 namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamsTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
@@ -17,6 +17,7 @@ use bl\multilang\entities\Language;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 class ProductController extends Controller
 {
@@ -38,9 +39,9 @@ class ProductController extends Controller
                 'product_id' => $productId,
                 'language_id' => $languageId
             ])->one();
-            $param_translation = ParamTranslation::find()->where([
-                
-            ])->all();
+            $params = Param::find()->where([
+                'product_id' => $productId
+            ])->with(['translations'])->all();
             if(empty($products_translation))
                 $products_translation = new ProductTranslation();
         } else {
@@ -48,16 +49,23 @@ class ProductController extends Controller
             $products_translation = new ProductTranslation();
         }
         if(Yii::$app->request->isPost) {
+
             $product->load(Yii::$app->request->post());
             $products_translation->load(Yii::$app->request->post());
+
+            $product->imageFile = UploadedFile::getInstance($product, 'imageFile');
             if($product->validate() && $products_translation->validate())
             {
+                if (!empty($product->imageFile)) {
+                    $product->upload();
+                }
+
                 $product->save();
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $languageId;
                 $products_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::toRoute('/multishop/product'));
+                return $this->redirect(Url::toRoute('/shop/product'));
             }
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
@@ -65,7 +73,7 @@ class ProductController extends Controller
         return $this->render('save', [
             'product' => $product,
             'products_translation' => $products_translation,
-            'param_translation' => $param_translation,
+            'params' => $params,
             'category' => Category::find()->with('translations')->all(),
             'selectedLanguage' => Language::findOne($languageId),
             'languages' => Language::findAll(['active' => true])
@@ -74,6 +82,61 @@ class ProductController extends Controller
 
     public function actionRemove($id) {
         Product::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to(['/multishop/product']));
+        return $this->redirect(Url::to(['/shop/product']));
+    }
+    
+    public function actionAddParam($id = null, $languageId = null, $productId = null) {
+        if (!empty($id)) {
+            $param = Param::find()->where([
+                'id' => $id
+            ])->one();
+            $param_translation = ParamTranslation::find()->where([
+                'language_id' => $languageId,
+                'param_id' => $id
+            ])->one();
+            if(empty($param_translation))
+                $param_translation = new ParamTranslation();
+        }
+        else {
+            $param = new Param();
+            $param_translation = new ParamTranslation();
+        }
+
+        if(Yii::$app->request->isPost) {
+            $param->load(Yii::$app->request->post());
+            $param_translation->load(Yii::$app->request->post());
+            if($param->validate() && $param_translation->validate())
+            {
+                $param->save();
+                $param_translation->param_id = $param->id;
+                $param_translation->language_id = $languageId;
+                $param_translation->save();
+                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                return $this->redirect(Url::to([
+                    'save',
+                    'productId' => $param->product_id,
+                    'languageId' => $param_translation->language_id])
+                );
+            }
+            else
+                Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
+        }
+
+        return $this->render('add-param', [
+            'param' => $param,
+            'param_translation' => $param_translation,
+            'languages' => Language::findAll(['active' => true]),
+            'selectedLanguage' => Language::findOne($languageId),
+            'products' => Product::find()->with('translations')->all(),
+            'productId' => $productId
+        ]);
+    }
+
+    public function actionDeleteParam($id, $productId) {
+        Param::deleteAll(['id' => $id]);
+        return $this->redirect(Url::to([
+            'save',
+            'productId' => $productId,
+        ]));
     }
 }
