@@ -69,10 +69,11 @@ class m160524_143821_create_shop_product_price_table extends Migration
     {
         $this->dropForeignKey('shop_product_price:product_id', 'shop_product_price');
         $this->dropForeignKey('shop_product_price:sale_type_id', 'shop_product_price');
-        $this->dropTable('shop_product_price');
 
         $this->dropForeignKey('shop_product_price_translation:price_id', 'shop_product_price_translation');
         $this->dropForeignKey('shop_product_price_translation:language_id', 'shop_product_price_translation');
+
+        $this->dropTable('shop_product_price');
         $this->dropTable('shop_product_price_translation');
     }
 }
