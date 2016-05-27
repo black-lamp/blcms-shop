@@ -12,8 +12,20 @@ use yii\web\Controller;
 class CategoryController extends Controller
 {
     public function actionShow($categoryId = null) {
-        $query = Product::find();
+        /*Getting SEO data*/
+        $category = Category::findOne($categoryId);
+        $this->view->title = $category->translation->seoTitle;
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => html_entity_decode($category->translation->seoDescription)
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => html_entity_decode($category->translation->seoKeywords)
+        ]);
 
+        /*Getting products of category*/
+        $query = Product::find();
         if($categoryId != null) {
             $query->where([
                 'category_id' => $categoryId

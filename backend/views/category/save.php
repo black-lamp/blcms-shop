@@ -88,6 +88,35 @@ $this->title = 'Edit category';
                     ]
                 ])->label('Full description')
                 ?>
+
+                <!-- SEO fields -->
+                <hr>
+                <h2>SEO options</h2>
+                <?= $addForm->field($category_translation, 'seoUrl', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO URL')
+                ?>
+                <?= $addForm->field($category_translation, 'seoTitle', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO title')
+                ?>
+                <?= $addForm->field($category_translation, 'seoDescription', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO description')
+                ?>
+                <?= $addForm->field($category_translation, 'seoKeywords', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO keywords')
+                ?>
+
                 <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
             </div>
         </div>

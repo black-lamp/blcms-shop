@@ -21,7 +21,11 @@ class m160519_114950_create_category_tables extends Migration
             'category_id' => $this->integer()->notNull(),
             'language_id' => $this->integer()->notNull(),
             'title' => $this->string(),
-            'description' => $this->text()
+            'description' => $this->text(),
+            'seoUrl' => $this->text(),
+            'seoTitle' => $this->text(),
+            'seoDescription' => $this->text(),
+            'seoKeywords' => $this->text()
         ]);
         $this->addForeignKey('shop_category_shop_category_translation', 'shop_category_translation', 'category_id', 'shop_category', 'id', 'cascade', 'cascade');
         $this->addForeignKey('category_language', 'shop_category_translation', 'language_id', 'language', 'id', 'cascade', 'cascade');

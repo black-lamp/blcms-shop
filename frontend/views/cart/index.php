@@ -31,7 +31,7 @@ $this->title = 'Кошик';
                 </span>
 
                 <h4>
-                    <a href="<?= Url::toRoute(['shop/product/' . $product['id']]) ?>">
+                    <a href="<?= Url::toRoute(['/shop/product/show?id=' . $product['id']]) ?>">
                         <?= $product['title'] ?>
                     </a>
                 </h4>

@@ -11,9 +11,6 @@ use bl\multilang\entities\Language;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
 use yii\helpers\Url;
-
-
-$this->title = 'Интернет-магазин';
 ?>
 
 <div class="row products">

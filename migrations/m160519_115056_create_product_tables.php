@@ -26,7 +26,11 @@ class m160519_115056_create_product_tables extends Migration
             'description' => $this->text(),
             'full-text' => 'longtext',
             'characteristics' => $this->text(),
-            'dose' => $this->text()
+            'dose' => $this->text(),
+            'seoUrl' => $this->text(),
+            'seoTitle' => $this->text(),
+            'seoDescription' => $this->text(),
+            'seoKeywords' => $this->text()
         ]);
         $this->addForeignKey('product_product_translation', 'shop_product_translation', 'product_id', 'shop_product', 'id', 'cascade', 'cascade');
         $this->addForeignKey('product_language', 'shop_product_translation', 'language_id', 'language', 'id', 'cascade', 'cascade');

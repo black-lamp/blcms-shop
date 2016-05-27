@@ -15,14 +15,28 @@ use yii\web\Controller;
 class ProductController extends Controller
 {
     public function actionIndex() {
+        $products = Product::find()->with(['translations'])->all();
+        $categories = Category::find()->with(['translations'])->all();
         return $this->render('index', [
-            'categories' => Category::find()->with(['translations'])->all(),
-            'products' => Product::find()->with(['translations'])->all(),
+            'categories' => $categories,
+            'products' => $products,
         ]);
     }
 
     public function actionShow($id = null) {
         $product = Product::findOne($id);
+
+        /*Getting SEO data*/
+        $this->view->title = $product->translation->seoTitle;
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => html_entity_decode($product->translation->seoDescription)
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => html_entity_decode($product->translation->seoKeywords)
+        ]);
+
         return $this->render('show', [
             'categories' => Category::find()->with(['translations'])->all(),
             'product' => $product,

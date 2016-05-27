@@ -26,8 +26,7 @@ class CategoryTranslation extends ActiveRecord
         return [
             [['category_id', 'language_id'], 'number'],
             [['title', 'description'], 'string'],
-            // seo data
-//            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
+            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
         ];
     }
     public function attributeLabels()

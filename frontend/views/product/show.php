@@ -9,7 +9,6 @@ use yii\helpers\Url;
  * @var $product Product
  * @var $categories Category
  */
-$this->title = 'Продукт';
 ?>
 
 <div class="row products">

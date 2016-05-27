@@ -75,33 +75,80 @@ $this->title = 'Edit product';
                 ])->label('Title')
                 ?>
 
+                <?= $form->field($products_translation, 'description', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->widget(TinyMce::className(), [
+                    'options' => ['rows' => 20],
+                    'language' => 'ru',
+                    'clientOptions' => [
+                        'relative_urls' => false,
+                        'plugins' => [
+                            'textcolor colorpicker',
+                            "advlist autolink lists link charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table contextmenu paste",
+                            'image'
+                        ],
+                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                    ]
+                ])->label('Description')
+                ?>
 
-                    <?= $form->field($products_translation, 'description', [
-                        'inputOptions' => [
-                            'class' => 'form-control'
-                        ]
-                    ])->widget(TinyMce::className(), [
-                        'options' => ['rows' => 20],
-                        'language' => 'ru',
-                        'clientOptions' => [
-                            'relative_urls' => false,
-                            'plugins' => [
-                                'textcolor colorpicker',
-                                "advlist autolink lists link charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table contextmenu paste",
-                                'image'
-                            ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-                        ]
-                    ])->label('Description')
-                    ?>
+                <!-- Characteristics & doses -->
+                <hr>
+                <h2>Characteristics & doses</h2>
+                <?= $form->field($products_translation, 'characteristics', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('Characteristics')
+                ?>
+                <?= $form->field($products_translation, 'dose', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('Doses')
+                ?>
+
+                <!-- SEO fields -->
+                <hr>
+                <h2>SEO options</h2>
+                <?= $form->field($products_translation, 'seoUrl', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO URL')
+                ?>
+                <?= $form->field($products_translation, 'seoTitle', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO title')
+                ?>
+                <?= $form->field($products_translation, 'seoDescription', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO description')
+                ?>
+                <?= $form->field($products_translation, 'seoKeywords', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label('SEO keywords')
+                ?>
 
                 <!-- IMAGE-->
+                <hr>
+                <h2>Image</h2>
                 <?= $form->field($product, 'imageFile')->fileInput() ?>
 
 
                 <!--PARAMS-->
+                <hr>
+                <h2>Params</h2>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
