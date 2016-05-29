@@ -1,15 +1,23 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- */
 
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 
+/**
+ * Created by xalbert.einsteinx
+ *
+ * @property integer $id
+ * @property integer $category_id
+ * @property integer $language_id
+ * @property string $title
+ * @property string $description
+ *
+ * @property Category $category
+ * @property Language $language
+ */
 class CategoryTranslation extends ActiveRecord
 {
     public function behaviors()
