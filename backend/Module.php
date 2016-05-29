@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by xalbert.einsteinx
- * https://www.einsteinium.pro
- * Date: 20.05.2016
- * Time: 11:19
+ * @author Albert Gainutdinov
  */
 
 namespace bl\cms\shop\backend;

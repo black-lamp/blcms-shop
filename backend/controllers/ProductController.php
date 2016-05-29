@@ -1,12 +1,5 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- * Date: 20.05.2016
- * Time: 10:56
- */
-
 namespace bl\cms\shop\backend\controllers;
-
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamsTranslation;
@@ -21,6 +14,12 @@ use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
+
+/**
+ * @author xalbert.einsteinx
+ * Date: 20.05.2016
+ * Time: 10:56
+ */
 
 class ProductController extends Controller
 {

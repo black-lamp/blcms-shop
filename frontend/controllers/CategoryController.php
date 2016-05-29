@@ -1,6 +1,5 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
-
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
 use yii\db\Query;

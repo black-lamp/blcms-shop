@@ -3,7 +3,7 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  * 
  * @property integer $id
  * @property integer $parent_id

@@ -1,6 +1,5 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
-
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
