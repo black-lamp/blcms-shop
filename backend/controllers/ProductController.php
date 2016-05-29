@@ -14,6 +14,9 @@ use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
+use Imagine\Image\ImageInterface;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -57,7 +60,20 @@ class ProductController extends Controller
             if($product->validate() && $products_translation->validate())
             {
                 if (!empty($product->imageFile)) {
-                    $product->upload();
+                    try {
+                        // save image
+                        $fileName = $this->generateFileName($product->imageFile->baseName);
+                        $imagine = new Imagine();
+                        $imagine->open($product->imageFile->tempName)
+                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))
+                            ->thumbnail(new Box(400, 400), ImageInterface::THUMBNAIL_OUTBOUND)
+                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-thumb.jpg'));
+
+                        $product->image_name = $fileName;
+                    }
+                    catch(\Exception $ex) {
+                        $product->addError('image_file', 'File save failed');
+                    }
                 }
 
                 $product->save();
@@ -78,6 +94,14 @@ class ProductController extends Controller
             'selectedLanguage' => Language::findOne($languageId),
             'languages' => Language::findAll(['active' => true])
         ]);
+    }
+
+    private function generateFileName($baseName) {
+        $fileName = hash('crc32', $baseName . time());
+        if(file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
+            return $this->generateFileName($baseName);
+        }
+        return $fileName;
     }
 
     public function actionRemove($id) {

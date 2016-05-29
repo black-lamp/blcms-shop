@@ -9,7 +9,7 @@ namespace bl\cms\shop\common\entities;
  * Product
  * @property integer $id
  * @property integer $category_id
- * @property string $price
+ * @property string $image_name
  *
  * @property Category $category
  * @property ProductPrice[] $prices
@@ -37,7 +37,6 @@ class Product extends ActiveRecord
     {
         return [
             ['category_id', 'number'],
-            ['price', 'string'],
             [['imageFile'], 'file']
         ];
     }
