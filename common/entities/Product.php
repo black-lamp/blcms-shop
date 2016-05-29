@@ -3,20 +3,20 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
+
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
+ *
  * @property integer $id
  * @property integer $category_id
  * @property integer $product_id
- * @property string $price
+ * @property string $image_name
  *
  * @property Category $category
  * @property ProductPrice[] $prices
  * @property ProductTranslation[] $translations
  * @property ProductTranslation $translation
  */
-
-
 class Product extends ActiveRecord
 {
     public function behaviors()
@@ -79,5 +79,26 @@ class Product extends ActiveRecord
     public function getPrices()
     {
         return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
+    }
+
+    // TODO: remove this method
+    public function getImageSrc($type) {
+        if(!empty($this->image_name)) {
+            return '/images/shop/' . $this->image_name . '-' . $type . '.jpg';
+        }
+
+        return null;
+    }
+
+    public function getThumpImage() {
+        return $this->getImageSrc('thumb');
+    }
+
+    public function getOriginalImage() {
+        return $this->getImageSrc('original');
+    }
+
+    public function getBigImage() {
+        return $this->getImageSrc('big');
     }
 }
