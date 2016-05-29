@@ -1,16 +1,15 @@
 <?php
-/**
- * Created by Albert Gainutdinov
- */
 namespace bl\cms\shop\backend\controllers;
-
 use Yii;
 use yii\web\Controller;
-
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
+
+/**
+ * @author by Albert Gainutdinov
+ */
 
 class CategoryController extends Controller
 {

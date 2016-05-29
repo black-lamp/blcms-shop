@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  */
 
 namespace bl\cms\shop\frontend\controllers;

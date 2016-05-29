@@ -5,8 +5,9 @@ use bl\seo\behaviors\SeoDataBehavior;
 use bl\seo\entities\SeoData;
 use Yii;
 use yii\db\ActiveRecord;
+
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  * 
  * @property integer $id
  * @property integer $article_id

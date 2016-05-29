@@ -1,6 +1,12 @@
 <?php
+use bl\cms\shop\common\entities\Param;
+use bl\cms\shop\common\entities\Product;
+use bl\multilang\entities\Language;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  *
  *@var $param Param
  *@var $languages Language[]
@@ -8,11 +14,6 @@
  *@var $products Product
  *@var $productId Product
  */
-use bl\cms\shop\common\entities\Param;
-use bl\cms\shop\common\entities\Product;
-use bl\multilang\entities\Language;
-use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
 $this->title = 'Edit param';
 

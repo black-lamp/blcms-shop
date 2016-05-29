@@ -4,7 +4,7 @@ use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  * @property integer $id
  * @property integer $category_id
  * @property integer $product_id

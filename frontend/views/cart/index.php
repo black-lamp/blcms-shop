@@ -1,14 +1,13 @@
 <?php
-/**
- * Created by Albert Gainutdinov
- */
-
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Кошик';
+/**
+ * @author Albert Gainutdinov
+ */
 
+$this->title = 'Кошик';
 ?>
 
 <h1 class="pull-left"><?= Yii::t('frontend/shop/cart', 'Корзина'); ?></h1>

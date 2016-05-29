@@ -3,7 +3,7 @@ namespace bl\cms\shop\common\entities;
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
 /**
- * Created by Albert Gainutdinov
+ * @author Albert Gainutdinov
  *
  * @property integer $param_id
  * @property string $name
