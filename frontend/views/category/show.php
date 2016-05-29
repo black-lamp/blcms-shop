@@ -10,6 +10,7 @@
 use bl\multilang\entities\Language;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
+use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 
@@ -30,7 +31,7 @@ use yii\helpers\Url;
                 <div class="col-md-4 text-center product">
                     <a href="<?= Url::to(['product/show', 'id' => $product->id])?>">
                         <div class="img">
-                            <img src="/admin/upload/gallery/154.jpg" alt="" width="">
+                            <?= Html::img($product->thumbImage) ?>
                         </div>
                         <div class="content">
                             <div class="cell">
