@@ -19,6 +19,8 @@ use yii\db\ActiveRecord;
  */
 class Product extends ActiveRecord
 {
+    public $imageFile;
+
     public function behaviors()
     {
         return [
@@ -34,7 +36,6 @@ class Product extends ActiveRecord
     {
         return [
             ['category_id', 'number'],
-            ['price', 'string'],
             [['imageFile'], 'file']
         ];
     }
@@ -81,6 +82,22 @@ class Product extends ActiveRecord
         return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
     }
 
+    /**
+     * @return integer
+     */
+    public function getPrice()
+    {
+        $price = $this->prices[0];
+        if($price->type->title == "money") {
+            return $price->price - $price->sale;
+        }
+        else if($price->type->title == "percent") {
+            return $price->price - ($price->price / 100) * $price->sale;
+        }
+
+        return null;
+    }
+
     // TODO: remove this method
     public function getImageSrc($type) {
         if(!empty($this->image_name)) {
@@ -90,7 +107,7 @@ class Product extends ActiveRecord
         return null;
     }
 
-    public function getThumpImage() {
+    public function getThumbImage() {
         return $this->getImageSrc('thumb');
     }
 
@@ -100,5 +117,13 @@ class Product extends ActiveRecord
 
     public function getBigImage() {
         return $this->getImageSrc('big');
+    }
+
+    public static function generateImageName($baseName) {
+        $fileName = hash('crc32', $baseName . time());
+        if(file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
+            return static::generateImageName($baseName);
+        }
+        return $fileName;
     }
 }
