@@ -1,5 +1,5 @@
 <?php
-use \common\modules\multishop\common\entities\CategoryTranslation;
+use  bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -45,7 +45,7 @@ $this->title = 'Products list';
                                 </td>
                                 <td>
                                     <? if(!empty($product->category)): ?>
-                                        <?= $product->category->translation->description ?>
+                                        <?= $product->translation->description ?>
                                     <? endif; ?>
                                 </td>
 

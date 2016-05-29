@@ -103,11 +103,39 @@ $this->title = 'Edit product';
                     'inputOptions' => [
                         'class' => 'form-control'
                     ]
+                ])->widget(TinyMce::className(), [
+                    'options' => ['rows' => 10],
+                    'language' => 'ru',
+                    'clientOptions' => [
+                        'relative_urls' => false,
+                        'plugins' => [
+                            'textcolor colorpicker',
+                            "advlist autolink lists link charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table contextmenu paste",
+                            'image'
+                        ],
+                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                    ]
                 ])->label('Characteristics')
                 ?>
                 <?= $form->field($products_translation, 'dose', [
                     'inputOptions' => [
                         'class' => 'form-control'
+                    ]
+                ])->widget(TinyMce::className(), [
+                    'options' => ['rows' => 10],
+                    'language' => 'ru',
+                    'clientOptions' => [
+                        'relative_urls' => false,
+                        'plugins' => [
+                            'textcolor colorpicker',
+                            "advlist autolink lists link charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table contextmenu paste",
+                            'image'
+                        ],
+                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
                     ]
                 ])->label('Doses')
                 ?>

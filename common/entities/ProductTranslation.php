@@ -1,28 +1,23 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- * Date: 21.05.2016
- * Time: 10:37
- */
-
 namespace bl\cms\shop\common\entities;
-
-/**
- * ArticleTranslation
- *
- * @property integer $id
- * @property integer $article_id
- * @property integer $language_id
- * @property string $name
- * @property string $text
- * @property string $short_text
- */
-
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use bl\seo\entities\SeoData;
 use Yii;
 use yii\db\ActiveRecord;
+/**
+ * Created by Albert Gainutdinov
+ * 
+ * @property integer $id
+ * @property integer $article_id
+ * @property integer $language_id
+ * @property integer $product_id
+ * @property string $title
+ * @property string $description
+ * @property string $name
+ * @property string $text
+ * @property string $short_text
+ */
 
 class ProductTranslation extends ActiveRecord
 {
@@ -39,7 +34,7 @@ class ProductTranslation extends ActiveRecord
     {
         return [
             [['language_id', 'product_id'], 'number'],
-            [['title', 'description', ], 'string'],
+            [['title', 'description', 'characteristics', 'dose'], 'string'],
             [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
         ];
     }
