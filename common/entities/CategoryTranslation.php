@@ -1,13 +1,10 @@
 <?php
-
 namespace bl\cms\shop\common\entities;
-
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
-
 /**
- * Created by xalbert.einsteinx
+ * Created by Albert Gainutdinov
  *
  * @property integer $id
  * @property integer $category_id
@@ -28,7 +25,6 @@ class CategoryTranslation extends ActiveRecord
             ]
         ];
     }
-
     public function rules()
     {
         return [
@@ -44,17 +40,16 @@ class CategoryTranslation extends ActiveRecord
             'text' => 'Text',
         ];
     }
-    
+
     public static function tableName() {
         return 'shop_category_translation';
     }
-    
+
     public function getCategory() {
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
-    
+
     public function getLanguage() {
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
-
 }

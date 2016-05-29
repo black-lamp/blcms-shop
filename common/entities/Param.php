@@ -1,12 +1,15 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- */
-
 namespace bl\cms\shop\common\entities;
-
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
+/**
+ * Created by Albert Gainutdinov
+ *
+ * @property integer $product_id
+ * @property integer $param_id
+ */
+
+
 
 class Param extends ActiveRecord
 {

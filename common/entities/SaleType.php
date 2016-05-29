@@ -1,7 +1,5 @@
 <?php
-
 namespace bl\cms\shop\common\entities;
-
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -13,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property ProductPrice[] $prices
  */
+
 class SaleType extends ActiveRecord
 {
     /**

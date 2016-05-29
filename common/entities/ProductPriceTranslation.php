@@ -1,11 +1,8 @@
 <?php
-
 namespace bl\cms\shop\common\entities;
-
 use bl\multilang\entities\Language;
 use Yii;
 use yii\db\ActiveRecord;
-
 /**
  * This is the model class for table "shop_product_price_translation".
  *

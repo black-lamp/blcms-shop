@@ -1,24 +1,21 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- */
-
 namespace bl\cms\shop\common\entities;
-
+use bl\multilang\behaviors\TranslationBehavior;
+use Yii;
+use yii\db\ActiveRecord;
 /**
- * Product
+ * Created by Albert Gainutdinov
  * @property integer $id
  * @property integer $category_id
- * @property string $image_name
+ * @property integer $product_id
+ * @property string $price
  *
  * @property Category $category
  * @property ProductPrice[] $prices
  * @property ProductTranslation[] $translations
  * @property ProductTranslation $translation
  */
-use bl\multilang\behaviors\TranslationBehavior;
-use Yii;
-use yii\db\ActiveRecord;
+
 
 class Product extends ActiveRecord
 {
@@ -37,6 +34,7 @@ class Product extends ActiveRecord
     {
         return [
             ['category_id', 'number'],
+            ['price', 'string'],
             [['imageFile'], 'file']
         ];
     }

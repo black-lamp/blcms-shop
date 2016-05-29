@@ -1,14 +1,16 @@
 <?php
-/**
- * Created by xalbert.einsteinx
- */
-
 namespace bl\cms\shop\common\entities;
-
-
-use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
+/**
+ * Created by Albert Gainutdinov
+ *
+ * @property integer $param_id
+ * @property string $name
+ * @property string $value
+ */
+
+
 
 class ParamTranslation extends ActiveRecord
 {
