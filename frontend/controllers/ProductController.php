@@ -13,15 +13,6 @@ use yii\web\Controller;
  */
 class ProductController extends Controller
 {
-    public function actionIndex() {
-        $products = Product::find()->with(['translations'])->all();
-        $categories = Category::find()->with(['translations'])->all();
-        return $this->render('index', [
-            'categories' => $categories,
-            'products' => $products,
-        ]);
-    }
-
     public function actionShow($id = null) {
         $product = Product::findOne($id);
 

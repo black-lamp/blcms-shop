@@ -11,30 +11,35 @@ use yii\web\Controller;
 class CategoryController extends Controller
 {
     public function actionShow($categoryId = null) {
-        /*Getting SEO data*/
-        $category = Category::findOne($categoryId);
-        $this->view->title = $category->translation->seoTitle;
-        $this->view->registerMetaTag([
-            'name' => 'description',
-            'content' => html_entity_decode($category->translation->seoDescription)
-        ]);
-        $this->view->registerMetaTag([
-            'name' => 'keywords',
-            'content' => html_entity_decode($category->translation->seoKeywords)
-        ]);
+        $category = null;
+        $productsQuery = Product::find();
 
-        /*Getting products of category*/
-        $query = Product::find();
-        if($categoryId != null) {
-            $query->where([
+        if(!empty($categoryId)) {
+            $category = Category::findOne($categoryId);
+            if(!empty($category->translation->seoTitle)) {
+                $this->view->title = $category->translation->seoTitle;
+            }
+            else {
+                $this->view->title = $category->translation->title;
+            }
+            $this->view->registerMetaTag([
+                'name' => 'description',
+                'content' => html_entity_decode($category->translation->seoDescription)
+            ]);
+            $this->view->registerMetaTag([
+                'name' => 'keywords',
+                'content' => html_entity_decode($category->translation->seoKeywords)
+            ]);
+
+            $productsQuery->where([
                 'category_id' => $categoryId
             ]);
         }
 
         return $this->render('show', [
             'menuItems' => Category::find()->with(['translations'])->all(),
-            'category' => Category::findOne($categoryId),
-            'products' => $query->all()
+            'category' => $category,
+            'products' => $productsQuery->all()
         ]);
         
     }
