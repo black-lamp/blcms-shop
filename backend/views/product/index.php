@@ -7,7 +7,7 @@ use yii\helpers\Url;
 /* @var $categories CategoryTranslation */
 /* @var $languages Language[] */
 
-$this->title = 'Products category list';
+$this->title = 'Products list';
 ?>
 
 <div class="row">
