@@ -16,8 +16,6 @@ use yii\db\ActiveRecord;
  * @property string $title
  * @property string $description
  * @property string $name
- * @property string $text
- * @property string $short_text
  */
 
 class ProductTranslation extends ActiveRecord
