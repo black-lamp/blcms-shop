@@ -62,11 +62,13 @@ class ProductController extends Controller
                 if (!empty($product->imageFile)) {
                     try {
                         // save image
-                        $fileName = $this->generateFileName($product->imageFile->baseName);
+                        $fileName = Product::generateImageName($product->imageFile->baseName);
                         $imagine = new Imagine();
                         $imagine->open($product->imageFile->tempName)
                             ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))
-                            ->thumbnail(new Box(400, 400), ImageInterface::THUMBNAIL_OUTBOUND)
+                            ->thumbnail(new Box(1500, 1000), ImageInterface::THUMBNAIL_INSET)
+                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-big.jpg'))
+                            ->thumbnail(new Box(400, 400), ImageInterface::THUMBNAIL_INSET)
                             ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-thumb.jpg'));
 
                         $product->image_name = $fileName;
@@ -94,14 +96,6 @@ class ProductController extends Controller
             'selectedLanguage' => Language::findOne($languageId),
             'languages' => Language::findAll(['active' => true])
         ]);
-    }
-
-    private function generateFileName($baseName) {
-        $fileName = hash('crc32', $baseName . time());
-        if(file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
-            return $this->generateFileName($baseName);
-        }
-        return $fileName;
     }
 
     public function actionRemove($id) {
