@@ -33,7 +33,8 @@ class ProductTranslation extends ActiveRecord
     {
         return [
             [['language_id', 'product_id'], 'number'],
-            [['title', 'description', 'full_text', 'characteristics', 'dose'], 'string'],
+            [['title', 'description', 'characteristics', 'dose'], 'string'],
+            [['full_text'], 'string', 'max' => 65536],
             [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
         ];
     }
