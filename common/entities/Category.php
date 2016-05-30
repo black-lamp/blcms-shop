@@ -1,17 +1,22 @@
 <?php
 namespace bl\cms\shop\common\entities;
+
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
+
 /**
  * @author Albert Gainutdinov
  * 
  * @property integer $id
  * @property integer $parent_id
  * @property integer $category_id
+ *
+ * @property Product[] $products
+ * @property Category $parent
+ * @property Category[] $children
+ * @property CategoryTranslation $translation
+ * @property CategoryTranslation[] $translations
  */
-
-
-
 class Category extends ActiveRecord
 {
     public function behaviors()
