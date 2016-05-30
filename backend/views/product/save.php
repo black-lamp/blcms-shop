@@ -75,7 +75,30 @@ $this->title = 'Edit product';
                 ])->label('Title')
                 ?>
 
+                <!-- DESCRIPTION FIELD -->
                 <?= $form->field($products_translation, 'description', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->widget(TinyMce::className(), [
+                    'options' => ['rows' => 10],
+                    'language' => 'ru',
+                    'clientOptions' => [
+                        'relative_urls' => false,
+                        'plugins' => [
+                            'textcolor colorpicker',
+                            "advlist autolink lists link charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table contextmenu paste",
+                            'image'
+                        ],
+                        'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                    ]
+                ])->label('Description')
+                ?>
+
+                <!-- FULL TEXT FIELD -->
+                <?= $form->field($products_translation, 'full_text', [
                     'inputOptions' => [
                         'class' => 'form-control'
                     ]
@@ -93,7 +116,7 @@ $this->title = 'Edit product';
                         ],
                         'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
                     ]
-                ])->label('Description')
+                ])->label('Full text')
                 ?>
 
                 <!-- Characteristics & doses -->
@@ -171,7 +194,7 @@ $this->title = 'Edit product';
                 <!-- IMAGE-->
                 <hr>
                 <h2>Image</h2>
-                <?= $form->field($product, 'imageFile')->fileInput() ?>
+                <?= $form->field($product, 'image_name')->fileInput() ?>
 
 
                 <!--PARAMS-->
