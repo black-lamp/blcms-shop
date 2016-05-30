@@ -1,7 +1,9 @@
 <?php
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
@@ -58,18 +60,23 @@ $this->title = 'Edit param';
                     <div class="form-group field-validarticleform-category_id required has-success">
                         <div class="help-block"></div>
                     </div>
-                    <label for="param-product_id">Product</label>
 
-                    <select id="param-product_id" class="form-control" name="Param[product_id]">
-                        <option value="">-- <?= 'Empty' ?> --</option>
-                        <? if(!empty($products)): ?>
-                            <? foreach($products as $product): ?>
-                                <option <?= $param->product_id == $product->id ? 'selected' : '' ?> value="<?= $product->id?>">
-                                    <?= $product->getTranslation($selectedLanguage->id)->title ?>
-                                </option>
-                            <? endforeach; ?>
-                        <? endif; ?>
-                    </select>
+                    <?= $form->field($param, 'product_id', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->dropDownList(
+                        ['' => '-- no vendor --'] +
+                        ArrayHelper::map(
+                            ProductTranslation::find()
+                            ->where(['language_id' => 1])
+                            ->groupBy('product_id')
+                            ->all(),
+                            'product_id',
+                            'title'
+                        )
+                    )
+                    ?>
 
                     <?= $form->field($param_translation, 'name', [
                         'inputOptions' => [

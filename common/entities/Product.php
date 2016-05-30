@@ -43,16 +43,6 @@ class Product extends ActiveRecord
         ];
     }
 
-    public function upload()
-    {
-        if ($this->validate()) {
-            $this->imageFile->saveAs('upload/shop-images/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /**
      * @inheritdoc
      */

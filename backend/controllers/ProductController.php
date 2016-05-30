@@ -116,6 +116,7 @@ class ProductController extends Controller
         }
         else {
             $param = new Param();
+            $param->product_id = $productId;
             $param_translation = new ParamTranslation();
         }
 
