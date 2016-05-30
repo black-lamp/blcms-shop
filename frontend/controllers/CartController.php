@@ -66,16 +66,16 @@ class CartController extends Controller
                     if($client->save()) {
                         Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/admin',
                             ['addedProducts' => $addedProducts, 'total_sum' => $total_sum, 'client' => $client])
-                            ->setFrom(Yii::$app->params['devEmail'])
-                            ->setTo(Yii::$app->params['devEmail'])
+                            ->setFrom(Yii::$app->params['adminEmail'])
+                            ->setTo(Yii::$app->params['adminEmail'])
                             ->setSubject('Новый заказ Pools Gallery')
                             ->send();
 
                         Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/client',
                             ['addedProducts' => $addedProducts, 'total_sum' => $total_sum])
-                            ->setFrom(Yii::$app->params['devEmail'])
+                            ->setFrom(Yii::$app->params['adminEmail'])
 //                            ->setTo($client->email)
-                            ->setTo(Yii::$app->params['devEmail'])
+                            ->setTo(Yii::$app->params['adminEmail'])
                             ->setSubject('Интернет-магазин Pools Gallery')
                             ->send();
 
