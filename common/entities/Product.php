@@ -82,22 +82,6 @@ class Product extends ActiveRecord
         return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
     }
 
-    /**
-     * @return integer
-     */
-    public function getPrice()
-    {
-        $price = $this->prices[0];
-        if($price->type->title == "money") {
-            return $price->price - $price->sale;
-        }
-        else if($price->type->title == "percent") {
-            return $price->price - ($price->price / 100) * $price->sale;
-        }
-
-        return null;
-    }
-
     // TODO: remove this method
     public function getImageSrc($type) {
         if(!empty($this->image_name)) {

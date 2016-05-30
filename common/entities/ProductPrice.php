@@ -87,4 +87,17 @@ class ProductPrice extends ActiveRecord
     {
         return $this->hasMany(ProductPriceTranslation::className(), ['price_id' => 'id']);
     }
+
+    public function getSalePrice() {
+        if(!empty($this->sale)) {
+            if($this->type->title == "money") {
+                return $this->price - $this->sale;
+            }
+            else if($this->type->title == "percent") {
+                return $this->price - ($this->price / 100) * $this->sale;
+            }
+        }
+
+        return $this->price;
+    }
 }
