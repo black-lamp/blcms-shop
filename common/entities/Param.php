@@ -5,8 +5,12 @@ use yii\db\ActiveRecord;
 /**
  * @author Albert Gainutdinov
  *
+ * @property integer $id
  * @property integer $product_id
- * @property integer $param_id
+ *
+ * @property Product $product
+ * @property ParamTranslation $translation
+ * @property ParamTranslation[] $translations
  */
 
 
@@ -45,5 +49,13 @@ class Param extends ActiveRecord
     public function getTranslations()
     {
         return $this->hasMany(ParamTranslation::className(), ['param_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProduct()
+    {
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 }
