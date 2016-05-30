@@ -48,48 +48,35 @@ class CartController extends Controller
 
         $total_sum = 0;
         if(!empty($addedProducts)) {
+            $productsList = '<ul>';
             foreach ($addedProducts as $key => $addedProduct) {
+                $productsList .= '<li>' . $addedProduct['title'] . '</li>';
                 $total_sum += $addedProduct['price'];
                 $product = Product::find()->where(['id' => $addedProduct['id']])->one();
                 $addedProducts[$key]['title'] = $product->translation->title;
-                $addedProducts[$key]['imageFile'] = $product->imageFile;
+                $addedProducts[$key]['imageFile'] = $product->image_name;
             }
+            $productsList = '<ul>';
         }
-
         $post = Yii::$app->request->post();
         if($post) {
 
             if($client->load($post)) {
                 if($client->validate()) {
                     if($client->save()) {
-
-                        Yii::$app->mailer->compose()
-                            ->setFrom(Yii::$app->params['adminEmail'])
-                            ->setTo(Yii::$app->params['adminEmail'])
+                        Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/admin',
+                            ['addedProducts' => $addedProducts, 'total_sum' => $total_sum, 'client' => $client])
+                            ->setFrom(Yii::$app->params['devEmail'])
+                            ->setTo(Yii::$app->params['devEmail'])
                             ->setSubject('Новый заказ Pools Gallery')
-                            ->setHtmlBody('
-                                <h4>Список товаров:</h4>
-
-                                <p><strong>Кол-во товаров:</strong> '.count($products).'</p>
-                                <p><strong>Общая сумма заказа:</strong> '.$total_sum.' грн.</p>
-
-                                <h4>Данные клиента:</h4>
-                                <p><strong>Имя:</strong> ' . $client->name . '</p>
-                                <p><strong>Email:</strong> ' . $client->email . '</p>
-                                <p><strong>Телефон:</strong> ' . $client->phone . '</p>
-                                ')
                             ->send();
 
-                        Yii::$app->mailer->compose()
-                            ->setFrom(Yii::$app->params['adminEmail'])
-                            ->setTo($client->email)
+                        Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/client',
+                            ['addedProducts' => $addedProducts, 'total_sum' => $total_sum])
+                            ->setFrom(Yii::$app->params['devEmail'])
+//                            ->setTo($client->email)
+                            ->setTo(Yii::$app->params['devEmail'])
                             ->setSubject('Интернет-магазин Pools Gallery')
-                            ->setHtmlBody('
-                                <h4>Ваш заказ принят.</h4>
-                                <p><strong>Кол-во товаров:</strong> '.count($products).'</p>
-                                <p><strong>Общая сумма заказа:</strong> '.$total_sum.' грн.</p>
-                                <p>Наши менеджеры свяжуться с Вами в ближайшее время</p>
-                                ')
                             ->send();
 
                         $session->set('cart', '');
