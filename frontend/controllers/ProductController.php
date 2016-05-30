@@ -35,4 +35,15 @@ class ProductController extends Controller
                 ])->all(),
         ]);
     }
+
+    public function actionXml() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        $headers = Yii::$app->response->headers;
+        $headers->add('Content-Type', 'text/xml; charset=UTF-8');
+
+        return $this->renderPartial('xml', [
+            'categories' => Category::find()->all(),
+            'products' => Product::find()->all()
+        ]);
+    }
 }

@@ -5,6 +5,7 @@ use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Vendor;
 use bl\multilang\entities\Language;
 use dosamigos\tinymce\TinyMce;
 use yii\helpers\ArrayHelper;
@@ -27,6 +28,7 @@ $this->title = 'Edit product';
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
+                <?= 'Product' ?>
                 <?= 'Product' ?>
             </div>
             <div class="panel-body">
@@ -68,6 +70,17 @@ $this->title = 'Edit product';
                     </select>
                     <div class="help-block"></div>
                 </div>
+
+                <?= $form->field($product, 'vendor_id', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->dropDownList(
+                    ['' => '-- no vendor --'] +
+                    ArrayHelper::map(Vendor::find()->all(), 'id', 'title')
+                )
+                ?>
+
                 <?= $form->field($products_translation, 'title', [
                     'inputOptions' => [
                         'class' => 'form-control'

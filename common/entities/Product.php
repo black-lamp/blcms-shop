@@ -10,9 +10,12 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $category_id
  * @property integer $product_id
+ * @property integer $vendor_id
  * @property string $image_name
  *
  * @property Category $category
+ * @property Vendor $vendor
+ * @property Param[] $params
  * @property ProductPrice[] $prices
  * @property ProductTranslation[] $translations
  * @property ProductTranslation $translation
@@ -35,7 +38,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            ['category_id', 'number'],
+            [['category_id', 'vendor_id'], 'number'],
             [['imageFile'], 'file']
         ];
     }
@@ -69,6 +72,14 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getVendor()
+    {
+        return $this->hasOne(Vendor::className(), ['id' => 'vendor_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTranslations()
     {
         return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);
@@ -80,6 +91,14 @@ class Product extends ActiveRecord
     public function getPrices()
     {
         return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParams()
+    {
+        return $this->hasMany(Param::className(), ['product_id' => 'id']);
     }
 
     // TODO: remove this method
