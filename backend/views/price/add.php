@@ -107,7 +107,9 @@ use yii\widgets\Pjax;
                             <tbody>
                             <? foreach($priceList as $price): ?>
                                 <tr>
-                                    <td><?= $price->getTranslation($selectedLanguage->id)->title ?></td>
+                                    <? if(!empty($price->translation)): ?>
+                                        <td><?= $price->translation->title ?></td>
+                                    <? endif; ?>
                                     <td><?= $price->price ?></td>
                                     <td><?= $price->type->title ?></td>
                                     <td><?= $price->sale ?></td>
