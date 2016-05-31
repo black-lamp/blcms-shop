@@ -4,9 +4,8 @@
  */
 
 namespace bl\cms\shop\frontend\controllers;
-
-
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductPrice;
 use common\entities\Clients;
 use Yii;
 use yii\web\Controller;
@@ -51,10 +50,12 @@ class CartController extends Controller
             $productsList = '<ul>';
             foreach ($addedProducts as $key => $addedProduct) {
                 $productsList .= '<li>' . $addedProduct['title'] . '</li>';
-                $total_sum += $addedProduct['price'];
                 $product = Product::find()->where(['id' => $addedProduct['id']])->one();
                 $addedProducts[$key]['title'] = $product->translation->title;
                 $addedProducts[$key]['imageFile'] = $product->image_name;
+                $addedProducts[$key]['price'] = ProductPrice::find()->where(['id' => $addedProduct['id']])->one()->salePrice;
+                $addedProducts[$key]['sale'] = ProductPrice::find()->where(['id' => $addedProduct['id']])->one()->price;
+                $total_sum += $addedProducts[$key]['price'];
             }
             $productsList = '<ul>';
         }
