@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $product_id
  * @property integer $price
+ * @property integer $salePrice
  * @property integer $sale
  * @property integer $sale_type_id
  *
