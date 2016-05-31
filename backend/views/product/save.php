@@ -227,7 +227,7 @@ $this->title = 'Edit product';
                             <div class="col-md-12">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <?php if ($params) : ?>
+                                        <?php if (!empty($product->params)) : ?>
 
                                             <table class="table table-hover">
                                                 <thead>
@@ -247,7 +247,7 @@ $this->title = 'Edit product';
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php foreach ($params as $param) : ?>
+                                                <?php foreach ($product->params as $param) : ?>
                                                     <tr>
                                                         <td class="text-center">
                                                             <?= $param->translation->name ?>

@@ -34,16 +34,12 @@ class ProductController extends Controller
     }
 
     public function actionSave($languageId = null, $productId = null){
-
         if (!empty($productId)) {
             $product = Product::findOne($productId);
             $products_translation = ProductTranslation::find()->where([
                 'product_id' => $productId,
                 'language_id' => $languageId
             ])->one();
-            $params = Param::find()->where([
-                'product_id' => $productId
-            ])->with(['translations'])->all();
             if(empty($products_translation))
                 $products_translation = new ProductTranslation();
         } else {
@@ -90,7 +86,6 @@ class ProductController extends Controller
         return $this->render('save', [
             'product' => $product,
             'products_translation' => $products_translation,
-            'params' => $params,
             'category' => Category::find()->with('translations')->all(),
             'selectedLanguage' => Language::findOne($languageId),
             'languages' => Language::findAll(['active' => true])
