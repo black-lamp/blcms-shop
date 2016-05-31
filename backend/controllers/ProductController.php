@@ -34,6 +34,13 @@ class ProductController extends Controller
     }
 
     public function actionSave($languageId = null, $productId = null){
+        if(!empty($languageId)) {
+            $selectedLanguage = Language::findOne($languageId);
+        }
+        else {
+            $selectedLanguage = Language::getCurrent();
+        }
+
         if (!empty($productId)) {
             $product = Product::findOne($productId);
             $products_translation = ProductTranslation::find()->where([
@@ -45,12 +52,6 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
-            if(!empty($languageId)) {
-                $selectedLanguage = Language::findOne($languageId);
-            }
-            else {
-                $selectedLanguage = Language::getCurrent();
-            }
         }
         if(Yii::$app->request->isPost) {
 
