@@ -68,7 +68,9 @@ $this->title = 'Edit product';
                                         <? foreach ($category as $oneCategory): ?>
                                             <option <?= $product->category_id == $oneCategory->id ? 'selected' : '' ?>
                                                 value="<?= $oneCategory->id ?>">
-                                                <?= $oneCategory->getTranslation($selectedLanguage->id)->title ?>
+                                                <? if(!empty($oneCategory->traslation)): ?>
+                                                    <?= $oneCategory->traslation->title ?>
+                                                <? endif; ?>
                                             </option>
                                         <? endforeach; ?>
                                     <? endif; ?>

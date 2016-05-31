@@ -45,6 +45,12 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
+            if(!empty($languageId)) {
+                $selectedLanguage = Language::findOne($languageId);
+            }
+            else {
+                $selectedLanguage = Language::getCurrent();
+            }
         }
         if(Yii::$app->request->isPost) {
 
@@ -87,7 +93,7 @@ class ProductController extends Controller
             'product' => $product,
             'products_translation' => $products_translation,
             'category' => Category::find()->with('translations')->all(),
-            'selectedLanguage' => Language::findOne($languageId),
+            'selectedLanguage' => $selectedLanguage,
             'languages' => Language::findAll(['active' => true])
         ]);
     }
