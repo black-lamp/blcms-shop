@@ -55,7 +55,10 @@ $this->title = 'Edit category';
                         <? if(!empty($category)): ?>
                             <? foreach($category as $cat): ?>
                                 <option <?= $item->parent_id == $cat->id ? 'selected' : '' ?> value="<?= $item->parent_id?>">
-                                    <?= $cat->getTranslation($selectedLanguage->id)->title ?>
+                                    <? $catTranslation = $cat->getTranslation($selectedLanguage->id) ?>
+                                    <? if(!empty($catTranslation)): ?>
+                                        <?= $catTranslation->title ?>
+                                    <? endif; ?>
                                 </option>
                             <? endforeach; ?>
                         <? endif; ?>
