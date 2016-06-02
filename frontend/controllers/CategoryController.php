@@ -10,12 +10,12 @@ use yii\web\Controller;
  */
 class CategoryController extends Controller
 {
-    public function actionShow($categoryId = null) {
+    public function actionShow($id = null) {
         $category = null;
         $productsQuery = Product::find();
 
-        if(!empty($categoryId)) {
-            $category = Category::findOne($categoryId);
+        if(!empty($id)) {
+            $category = Category::findOne($id);
             if(!empty($category->translation->seoTitle)) {
                 $this->view->title = $category->translation->seoTitle;
             }
@@ -32,7 +32,7 @@ class CategoryController extends Controller
             ]);
 
             $productsQuery->where([
-                'category_id' => $categoryId
+                'category_id' => $id
             ]);
         }
 
