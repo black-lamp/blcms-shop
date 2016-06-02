@@ -1,7 +1,7 @@
 {
   "name": "black-lamp/blcms-shop",
-  "description": "Multilingual extension for the Yii framework",
-  "keywords": ["yii2", "shop"],
+  "description": "Shop module for Black-Lamp CMS",
+  "keywords": ["yii2", "shop", "blcms"],
   "type": "yii2-extension",
   "authors": [
     {
