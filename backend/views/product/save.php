@@ -1,4 +1,5 @@
 <?php
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
@@ -67,7 +68,7 @@ $this->title = 'Edit product';
                                     ]
                                 ])->dropDownList(
                                     ['' => '-- no categories --'] +
-                                    ArrayHelper::map(\bl\cms\shop\common\entities\CategoryTranslation::find()->all(), 'category_id', 'title')
+                                    ArrayHelper::map(CategoryTranslation::find()->all(), 'category_id', 'title')
                                 )->label('Category')
                                 ?>
 
@@ -91,7 +92,7 @@ $this->title = 'Edit product';
                             ])->label('Title')
                             ?>
 
-                            <!-- DESCRIPTION FIELD -->
+                            <!--DESCRIPTION FIELD-->
                             <?= $form->field($products_translation, 'description', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -108,7 +109,7 @@ $this->title = 'Edit product';
                                         "insertdatetime media table contextmenu paste",
                                         'image'
                                     ],
-                                    'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                                    'toolbar' => Yii::$app->params['toolbar'],
                                 ]
                             ])->label('Description')
                             ?>
@@ -139,7 +140,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Full text')
                     ?>
@@ -163,7 +164,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Characteristics')
                     ?>
@@ -183,7 +184,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Doses')
                     ?>
