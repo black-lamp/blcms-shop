@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
+use common\entities\Currency;
 use Yii;
 use yii\db\ActiveRecord;
 /**
@@ -93,13 +94,20 @@ class ProductPrice extends ActiveRecord
     public function getSalePrice() {
         if(!empty($this->sale)) {
             if($this->type->title == "money") {
-                return $this->price - $this->sale;
+                return floor(($this->price - $this->sale) * Currency::currentCurrency());
             }
             else if($this->type->title == "percent") {
-                return $this->price - ($this->price / 100) * $this->sale;
+                return floor(($this->price - ($this->price / 100) * $this->sale) * Currency::currentCurrency()) ;
             }
         }
 
         return $this->price;
+    }
+
+    public function getPrice() {
+        if(!empty($this->price)) {
+
+            return floor($this->price * Currency::currentCurrency());
+        }
     }
 }
