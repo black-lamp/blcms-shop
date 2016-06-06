@@ -61,23 +61,18 @@ $this->title = 'Edit product';
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group field-validarticleform-category_id required has-success">
-                                <label class="control-label" for="validarticleform-category_id"><?= 'Category' ?></label>
-                                <select id="product-category_id" class="form-control" name="Product[category_id]">
-                                    <option value="">-- <?= 'Empty' ?> --</option>
-                                    <? if (!empty($category)): ?>
-                                        <? foreach ($category as $oneCategory): ?>
-                                            <option <?= $product->category_id == $oneCategory->id ? 'selected' : '' ?>
-                                                value="<?= $oneCategory->id ?>">
-                                                <? if(!empty($oneCategory->traslation)): ?>
-                                                    <?= $oneCategory->traslation->title ?>
-                                                <? endif; ?>
-                                            </option>
-                                        <? endforeach; ?>
-                                    <? endif; ?>
-                                </select>
+                                <?= $form->field($product, 'category_id', [
+                                    'inputOptions' => [
+                                        'class' => 'form-control'
+                                    ]
+                                ])->dropDownList(
+                                    ['' => '-- no categories --'] +
+                                    ArrayHelper::map(\bl\cms\shop\common\entities\CategoryTranslation::find()->all(), 'id', 'title')
+                                )->label('Category')
+                                ?>
 
-                                <div class="help-block"></div>
                             </div>
+
 
                             <?= $form->field($product, 'vendor_id', [
                                 'inputOptions' => [
