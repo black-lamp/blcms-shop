@@ -67,7 +67,7 @@ $this->title = 'Edit product';
                                     ]
                                 ])->dropDownList(
                                     ['' => '-- no categories --'] +
-                                    ArrayHelper::map(\bl\cms\shop\common\entities\CategoryTranslation::find()->all(), 'id', 'title')
+                                    ArrayHelper::map(\bl\cms\shop\common\entities\CategoryTranslation::find()->all(), 'category_id', 'title')
                                 )->label('Category')
                                 ?>
 
