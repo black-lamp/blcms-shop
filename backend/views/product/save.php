@@ -140,6 +140,7 @@ $this->title = 'Edit product';
                             <?= $form->field($product, 'imageFile')->fileInput() ?>
 
                             <!--EXPORT-->
+                            <hr>
                             <?= $form->field($product, 'export')
                                 ->checkbox(['class' => 'i-checks','checked ' => ''])
                             ?>

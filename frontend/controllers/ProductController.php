@@ -4,6 +4,7 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductPrice;
 use Yii;
 use yii\web\Controller;
@@ -29,6 +30,10 @@ class ProductController extends Controller
 
         return $this->render('show', [
             'categories' => Category::find()->with(['translations'])->all(),
+            'country' => ProductCountry::find()
+                ->with(['translations'])
+                ->where(['id' => $product->country_id])
+                ->one(),
             'product' => $product,
             'params' => Param::find()->where([
                 'product_id' => $id
