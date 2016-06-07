@@ -28,7 +28,6 @@ class CartController extends Controller
     }
 
     public function actionIndex() {
-
         $cart = new Cart();
         $cart->load(Yii::$app->session->get('cart'));
 

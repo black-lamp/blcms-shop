@@ -1,4 +1,5 @@
 <?php
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
@@ -61,23 +62,18 @@ $this->title = 'Edit product';
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group field-validarticleform-category_id required has-success">
-                                <label class="control-label" for="validarticleform-category_id"><?= 'Category' ?></label>
-                                <select id="product-category_id" class="form-control" name="Product[category_id]">
-                                    <option value="">-- <?= 'Empty' ?> --</option>
-                                    <? if (!empty($category)): ?>
-                                        <? foreach ($category as $oneCategory): ?>
-                                            <option <?= $product->category_id == $oneCategory->id ? 'selected' : '' ?>
-                                                value="<?= $oneCategory->id ?>">
-                                                <? if(!empty($oneCategory->traslation)): ?>
-                                                    <?= $oneCategory->traslation->title ?>
-                                                <? endif; ?>
-                                            </option>
-                                        <? endforeach; ?>
-                                    <? endif; ?>
-                                </select>
+                                <?= $form->field($product, 'category_id', [
+                                    'inputOptions' => [
+                                        'class' => 'form-control'
+                                    ]
+                                ])->dropDownList(
+                                    ['' => '-- no categories --'] +
+                                    ArrayHelper::map(CategoryTranslation::find()->all(), 'category_id', 'title')
+                                )->label('Category')
+                                ?>
 
-                                <div class="help-block"></div>
                             </div>
+
 
                             <?= $form->field($product, 'vendor_id', [
                                 'inputOptions' => [
@@ -96,7 +92,7 @@ $this->title = 'Edit product';
                             ])->label('Title')
                             ?>
 
-                            <!-- DESCRIPTION FIELD -->
+                            <!--DESCRIPTION FIELD-->
                             <?= $form->field($products_translation, 'description', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -113,7 +109,7 @@ $this->title = 'Edit product';
                                         "insertdatetime media table contextmenu paste",
                                         'image'
                                     ],
-                                    'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                                    'toolbar' => Yii::$app->params['toolbar'],
                                 ]
                             ])->label('Description')
                             ?>
@@ -144,7 +140,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Full text')
                     ?>
@@ -168,7 +164,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Characteristics')
                     ?>
@@ -188,7 +184,7 @@ $this->title = 'Edit product';
                                 "insertdatetime media table contextmenu paste",
                                 'image'
                             ],
-                            'toolbar' => "undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                            'toolbar' => Yii::$app->params['toolbar'],
                         ]
                     ])->label('Doses')
                     ?>
