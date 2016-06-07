@@ -130,14 +130,19 @@ $this->title = 'Edit product';
                             ?>
                         </div>
 
-                        <!--IMAGE-->
                         <div class="col-md-3 text-center">
+                            <!--IMAGE-->
                             <h2>Image</h2>
                             <? if(!empty($product->image_name)): ?>
                                 <?= Html::img($product->getThumbImage()) ?>
                             <? endif; ?>
 
                             <?= $form->field($product, 'imageFile')->fileInput() ?>
+
+                            <!--EXPORT-->
+                            <?= $form->field($product, 'export')
+                                ->checkbox(['class' => 'i-checks','checked ' => ''])
+                            ?>
                         </div>
                     </div>
 
