@@ -5,6 +5,7 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\cms\shop\common\entities\ProductTranslation;
+use bl\cms\shop\common\entities\ProductCountryTranslation;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Vendor;
 use bl\multilang\entities\Language;
@@ -62,19 +63,32 @@ $this->title = 'Edit product';
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group field-validarticleform-category_id required has-success">
+
+                                <!--CATEGORIES-->
                                 <?= $form->field($product, 'category_id', [
                                     'inputOptions' => [
                                         'class' => 'form-control'
                                     ]
                                 ])->dropDownList(
                                     ['' => '-- no categories --'] +
-                                    ArrayHelper::map(CategoryTranslation::find()->all(), 'category_id', 'title')
+                                    ArrayHelper::map(CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'category_id', 'title')
                                 )->label('Category')
                                 ?>
 
                             </div>
 
+                            <!--COUNTRY-->
+                            <?= $form->field($product, 'country_id', [
+                                'inputOptions' => [
+                                    'class' => 'form-control'
+                                ]
+                            ])->dropDownList(
+                                ['' => '-- no countries --'] +
+                                ArrayHelper::map(ProductCountryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'country_id', 'title')
+                            )->label('Country')
+                            ?>
 
+                            <!--VENDOR-->
                             <?= $form->field($product, 'vendor_id', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -82,9 +96,10 @@ $this->title = 'Edit product';
                             ])->dropDownList(
                                 ['' => '-- no vendor --'] +
                                 ArrayHelper::map(Vendor::find()->all(), 'id', 'title')
-                            )
+                            )->label('Vendor')
                             ?>
 
+                            <!--TITLE-->
                             <?= $form->field($products_translation, 'title', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -92,7 +107,7 @@ $this->title = 'Edit product';
                             ])->label('Title')
                             ?>
 
-                            <!--DESCRIPTION FIELD-->
+                            <!--DESCRIPTION-->
                             <?= $form->field($products_translation, 'description', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -114,6 +129,8 @@ $this->title = 'Edit product';
                             ])->label('Description')
                             ?>
                         </div>
+
+                        <!--IMAGE-->
                         <div class="col-md-3 text-center">
                             <h2>Image</h2>
                             <? if(!empty($product->image_name)): ?>
@@ -123,6 +140,7 @@ $this->title = 'Edit product';
                             <?= $form->field($product, 'imageFile')->fileInput() ?>
                         </div>
                     </div>
+
                     <!-- FULL TEXT FIELD -->
                     <?= $form->field($products_translation, 'full_text', [
                         'inputOptions' => [
@@ -145,7 +163,7 @@ $this->title = 'Edit product';
                     ])->label('Full text')
                     ?>
 
-                    <!-- Characteristics & doses -->
+                    <!-- CHARACTERISTICS -->
                     <hr>
                     <h2>Characteristics & doses</h2>
                     <?= $form->field($products_translation, 'characteristics', [
@@ -168,6 +186,8 @@ $this->title = 'Edit product';
                         ]
                     ])->label('Characteristics')
                     ?>
+
+                    <!--DOSES-->
                     <?= $form->field($products_translation, 'dose', [
                         'inputOptions' => [
                             'class' => 'form-control'
@@ -189,7 +209,7 @@ $this->title = 'Edit product';
                     ])->label('Doses')
                     ?>
 
-                    <!-- SEO fields -->
+                    <!-- SEO FIELDS -->
                     <hr>
                     <h2>SEO options</h2>
                     <?= $form->field($products_translation, 'seoUrl', [
@@ -294,7 +314,6 @@ $this->title = 'Edit product';
                                             'languageId' => $product->translation->language_id
                                         ]) ?>"
                                            class="btn btn-primary pull-right">Add param</a>
-
                                     </div>
                                 </div>
                             </div>
@@ -303,12 +322,12 @@ $this->title = 'Edit product';
 
                     <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
                 </div>
-
             </div>
         </div>
     </div>
 <? ActiveForm::end(); ?>
 
+<!--PRODUCT PRICES-->
 <? if (!$product->isNewRecord): ?>
     <?= $this->render('/price/add', [
         'priceList' => $product->prices,

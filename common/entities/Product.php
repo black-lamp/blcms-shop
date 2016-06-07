@@ -38,7 +38,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'vendor_id'], 'number'],
+            [['category_id', 'vendor_id', 'country_id'], 'number'],
             [['imageFile'], 'file']
         ];
     }
