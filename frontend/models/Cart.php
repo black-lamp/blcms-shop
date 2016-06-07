@@ -29,7 +29,7 @@ class Cart extends Model
                     $cartItem->count = $count;
 
                     $this->items[] = $cartItem;
-                    $this->sum += $price->salePrice * $count;
+                    $this->sum += $price->currencySalePrice * $count;
                 }
             }
         }

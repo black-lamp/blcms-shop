@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
+use common\entities\Currency;
 use Yii;
 use yii\db\ActiveRecord;
 /**
@@ -45,6 +46,7 @@ class ProductPrice extends ActiveRecord
     public function rules()
     {
         return [
+            [['product_id', 'sale_type_id'], 'required'],
             [['price', 'sale'], 'double'],
             [['product_id', 'sale_type_id'], 'integer'],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
@@ -90,16 +92,28 @@ class ProductPrice extends ActiveRecord
         return $this->hasMany(ProductPriceTranslation::className(), ['price_id' => 'id']);
     }
 
+    public function getCurrencyPrice() {
+        return floor(Currency::currentCurrency() * $this->price);
+    }
+
+    public function getCurrencySalePrice() {
+        return floor(Currency::currentCurrency() * $this->getSalePrice());
+    }
+
     public function getSalePrice() {
+        $price = $this->price;
+
         if(!empty($this->sale)) {
-            if($this->type->title == "money") {
-                return $this->price - $this->sale;
-            }
-            else if($this->type->title == "percent") {
-                return $this->price - ($this->price / 100) * $this->sale;
+            if(!empty($this->type)) {
+                if($this->type->title == "money") {
+                    $price = $this->price - $this->sale;
+                }
+                else if($this->type->title == "percent") {
+                    $price = $this->price - ($this->price / 100) * $this->sale;
+                }
             }
         }
 
-        return $this->price;
+        return $price;
     }
 }

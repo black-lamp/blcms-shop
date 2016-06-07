@@ -29,61 +29,6 @@ class CartController extends Controller
 
     public function actionIndex() {
 
-        /*$this->layout = 'inside';
-
-        $session = Yii::$app->session;
-        $addedProducts = $session->get('cart', []);
-
-        $client = new Clients();
-
-        $total_sum = 0;
-        if(!empty($addedProducts)) {
-            foreach ($addedProducts as $key => $addedProduct) {
-
-                $product = Product::find()->where(['id' => $addedProduct['id']])->one();
-                $addedProducts[$key]['title'] = $product->translation->title;
-                $addedProducts[$key]['imageFile'] = $product->image_name;
-                $addedProducts[$key]['price'] = $addedProduct['price'];
-                $addedProducts[$key]['sale'] = $addedProduct['sale'];
-                $total_sum += $addedProducts[$key]['price'] * $addedProducts[$key]['count'];
-            }
-        }
-        $post = Yii::$app->request->post();
-        if($post) {
-
-            if($client->load($post)) {
-                if($client->validate()) {
-                    if($client->save()) {
-                        Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/admin',
-                            ['addedProducts' => $addedProducts, 'total_sum' => $total_sum, 'client' => $client])
-                            ->setFrom(Yii::$app->params['adminEmail'])
-                            ->setTo(Yii::$app->params['adminEmail'])
-                            ->setSubject('Новый заказ Pools Gallery')
-                            ->send();
-
-                        Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/client',
-                            ['addedProducts' => $addedProducts, 'total_sum' => $total_sum])
-                            ->setFrom(Yii::$app->params['adminEmail'])
-                            ->setTo($client->email)
-                            ->setSubject('Интернет-магазин Pools Gallery')
-                            ->send();
-
-                        $session->set('cart', '');
-                        $session->set('client_id', $client->id);
-
-                        return $this->redirect(['/shop/cart/order-success']);
-                    }
-                }
-            }
-        }
-
-        return $this->render('index', [
-            'products' => $addedProducts,
-            'order' => $client,
-            'totalSum' => $total_sum,
-
-        ]);*/
-
         $cart = new Cart();
         $cart->load(Yii::$app->session->get('cart'));
 
