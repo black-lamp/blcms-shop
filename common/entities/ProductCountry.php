@@ -39,4 +39,9 @@ class ProductCountry extends ActiveRecord
             [['id'], 'integer']
         ];
     }
+
+    public function getTranslations()
+    {
+        return $this->hasMany(ProductCountryTranslation::className(), ['country_id' => 'id']);
+    }
 }
