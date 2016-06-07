@@ -142,7 +142,7 @@ $this->title = 'Edit product';
                             <!--EXPORT-->
                             <hr>
                             <?= $form->field($product, 'export')
-                                ->checkbox(['class' => 'i-checks','checked ' => ''])
+                                ->checkbox(['class' => 'i-checks','checked ' => ($product->export) ? '' : false])
                             ?>
                         </div>
                     </div>
