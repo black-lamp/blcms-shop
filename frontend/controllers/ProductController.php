@@ -48,7 +48,7 @@ class ProductController extends Controller
 
         return $this->renderPartial('xml', [
             'categories' => Category::find()->all(),
-            'products' => Product::find()->all()
+            'products' => Product::findAll(['export' => true])
         ]);
     }
 }
