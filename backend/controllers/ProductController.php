@@ -28,6 +28,7 @@ class ProductController extends Controller
         return $this->render('index', [
             'products' => Product::find()
                 ->with(['category'])
+                ->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])
                 ->all(),
             'languages' => Language::findAll(['active' => true])
         ]);
@@ -158,5 +159,21 @@ class ProductController extends Controller
             'save',
             'productId' => $productId,
         ]));
+    }
+
+    public function actionUp($id) {
+        if(!empty($product = Product::findOne($id))) {
+            $product->movePrev();
+        }
+
+        return $this->actionIndex();
+    }
+
+    public function actionDown($id) {
+        if($product = Product::findOne($id)) {
+            $product->moveNext();
+        }
+
+        return $this->actionIndex();
     }
 }

@@ -3,6 +3,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
+use yii2tech\ar\position\PositionBehavior;
 
 /**
  * @author Albert Gainutdinov
@@ -26,7 +27,12 @@ class Category extends ActiveRecord
                 'class' => TranslationBehavior::className(),
                 'translationClass' => CategoryTranslation::className(),
                 'relationColumn' => 'category_id'
-            ]
+            ],
+            'positionBehavior' => [
+                'class' => PositionBehavior::className(),
+                'positionAttribute' => 'position'
+                
+            ],
         ];
     }
 

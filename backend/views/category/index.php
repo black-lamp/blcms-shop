@@ -3,6 +3,7 @@ use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 /* @var $categories CategoryTranslation */
 /* @var $languages Language[] */
@@ -10,6 +11,10 @@ use yii\helpers\Url;
 $this->title = 'Product category list';
 ?>
 
+<? Pjax::begin([
+    'linkSelector' => '.category-nav',
+    'enablePushState' => false
+]) ?>
 <h1>Categories</h1>
 <div class="row">
     <div class="col-md-12">
@@ -23,6 +28,7 @@ $this->title = 'Product category list';
                     <? if(!empty($categories)): ?>
                         <thead>
                         <tr>
+                            <th><?= 'Position'; ?></th>
                             <th class="col-md-3"><?= 'Name'?></th>
                             <th class="col-md-2"><?= 'Parent name'?></th>
                             <? if(count($languages) > 1): ?>
@@ -36,6 +42,19 @@ $this->title = 'Product category list';
                         <tbody>
                         <? foreach($categories as $category): ?>
                             <tr>
+                                <td>
+                                    <?= $category->position ?>
+                                    <a href="<?= Url::to([
+                                        'up',
+                                        'id' => $category->id
+                                    ]) ?>" class="category-nav glyphicon glyphicon-arrow-up text-primary pull-left">
+                                    </a>
+                                    <a href="<?= Url::to([
+                                        'down',
+                                        'id' => $category->id
+                                    ]) ?>" class="category-nav glyphicon glyphicon-arrow-down text-primary pull-left">
+                                    </a>
+                                </td>
                                 <td>
                                     <?= $category->translation->title ?>
                                 </td>
@@ -97,3 +116,4 @@ $this->title = 'Product category list';
         </div>
     </div>
 </div>
+<? Pjax::end() ?>

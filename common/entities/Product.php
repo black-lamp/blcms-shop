@@ -3,6 +3,7 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
+use yii2tech\ar\position\PositionBehavior;
 
 /**
  * @author Albert Gainutdinov
@@ -32,13 +33,20 @@ class Product extends ActiveRecord
                 'translationClass' => ProductTranslation::className(),
                 'relationColumn' => 'product_id'
             ],
+            'positionBehavior' => [
+                'class' => PositionBehavior::className(),
+                'positionAttribute' => 'position',
+                'groupAttributes' => [
+                    'category_id'
+                ],
+            ],
         ];
     }
 
     public function rules()
     {
         return [
-            [['category_id', 'vendor_id', 'country_id'], 'number'],
+            [['position', 'category_id', 'vendor_id', 'country_id'], 'number'],
             [['imageFile'], 'file'],
             [['export'], 'boolean']
         ];

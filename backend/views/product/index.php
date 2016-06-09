@@ -3,6 +3,7 @@ use  bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 /* @var $categories CategoryTranslation */
 /* @var $languages Language[] */
@@ -10,6 +11,10 @@ use yii\helpers\Url;
 $this->title = 'Products list';
 ?>
 
+<? Pjax::begin([
+    'linkSelector' => '.product-nav',
+    'enablePushState' => false
+]) ?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
@@ -22,8 +27,9 @@ $this->title = 'Products list';
                     <? if (!empty($products)): ?>
                         <thead>
                         <tr>
+                            <th class="col-lg-1"><?='Position'; ?></th>
                             <th class="col-lg-3"><?= 'Title' ?></th>
-                            <th class="col-lg-3"><?= 'Category' ?></th>
+                            <th class="col-lg-2"><?= 'Category' ?></th>
                             <th class="col-lg-3"><?= 'Description' ?></th>
                             <? if(count($languages) > 1): ?>
                                 <th class="col-lg-3"><?= 'Language' ?></th>
@@ -35,6 +41,19 @@ $this->title = 'Products list';
                         <tbody>
                         <? foreach ($products as $product): ?>
                             <tr>
+                                <td class="text-center">
+                                    <?= $product->position ?>
+                                    <a href="<?= Url::to([
+                                        'up',
+                                        'id' => $product->id
+                                    ]) ?>" class="product-nav glyphicon glyphicon-arrow-up text-primary pull-left">
+                                    </a>
+                                    <a href="<?= Url::to([
+                                        'down',
+                                        'id' => $product->id
+                                    ]) ?>" class="product-nav glyphicon glyphicon-arrow-down text-primary pull-left">
+                                    </a>
+                                </td>
                                 <td>
                                     <?= $product->translation->title ?>
                                 </td>
@@ -96,3 +115,4 @@ $this->title = 'Products list';
         </div>
     </div>
 </div>
+<? Pjax::end() ?>

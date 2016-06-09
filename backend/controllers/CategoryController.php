@@ -15,7 +15,10 @@ class CategoryController extends Controller
 {
     public function actionIndex() {
         return $this->render('index', [
-            'categories' => Category::find()->with(['translations'])->all(),
+            'categories' => Category::find()
+                ->with(['translations'])
+                ->orderBy(['position' => SORT_ASC])
+                ->all(),
             'languages' => Language::findAll(['active' => true])
         ]);
     }
@@ -61,5 +64,20 @@ class CategoryController extends Controller
         return $this->redirect(Url::to(['/shop/category']));
     }
 
+    public function actionUp($id) {
+        if($category = Category::findOne($id)) {
+            $category->movePrev();
+        }
+
+        return $this->actionIndex();
+    }
+
+    public function actionDown($id) {
+        if($category = Category::findOne($id)) {
+            $category->moveNext();
+        }
+
+        return $this->actionIndex();
+    }
 
 }

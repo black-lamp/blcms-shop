@@ -37,9 +37,9 @@ class CategoryController extends Controller
         }
 
         return $this->render('show', [
-            'menuItems' => Category::find()->with(['translations'])->all(),
+            'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
             'category' => $category,
-            'products' => $productsQuery->all()
+            'products' => $productsQuery->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])->all()
         ]);
         
     }
