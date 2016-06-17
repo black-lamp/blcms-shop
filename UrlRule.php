@@ -176,6 +176,9 @@ class UrlRule extends Object implements UrlRuleInterface
 
             if($route == $this->productRoute) {
                 $product = Product::findOne($id);
+                if(empty($product)) {
+                    return false;
+                }
                 if($product->getTranslation($language->id) && $product->getTranslation($language->id)->seoUrl) {
                     $pathInfo = $product->getTranslation($language->id)->seoUrl;
                     $parentId = $product->category_id;
