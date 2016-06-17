@@ -8,6 +8,7 @@ use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductPrice;
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -16,6 +17,10 @@ class ProductController extends Controller
 {
     public function actionShow($id = null) {
         $product = Product::findOne($id);
+
+        if(empty($product)) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
 
         /*Getting SEO data*/
         $this->view->title = $product->translation->seoTitle;
