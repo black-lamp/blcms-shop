@@ -40,6 +40,7 @@ class ProductController extends Controller
                 ->where(['id' => $product->country_id])
                 ->one(),
             'product' => $product,
+            'category' => Category::find()->where(['id' => $product->category_id])->one(),
             'params' => Param::find()->where([
                 'product_id' => $id
                 ])->all(),
