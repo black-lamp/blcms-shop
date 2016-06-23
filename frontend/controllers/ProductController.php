@@ -6,6 +6,7 @@ use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductPrice;
+use bl\cms\shop\common\entities\ProductTranslation;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -54,7 +55,19 @@ class ProductController extends Controller
 
         return $this->renderPartial('xml', [
             'categories' => Category::find()->all(),
-            'products' => Product::findAll(['export' => true])
+            'products' => Product::findAll(['export' => true]),
+            'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
+        ]);
+    }
+    public function actionHlxml() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        $headers = Yii::$app->response->headers;
+        $headers->add('Content-Type', 'text/xml; charset=UTF-8');
+
+        return $this->renderPartial('hlxml', [
+            'categories' => Category::find()->all(),
+            'products' => Product::findAll(['export' => true]),
+            'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
         ]);
     }
 }

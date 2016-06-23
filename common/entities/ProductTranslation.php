@@ -4,11 +4,13 @@ use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use bl\seo\entities\SeoData;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * @author Albert Gainutdinov
- * 
+ *
  * @property integer $id
  * @property integer $article_id
  * @property integer $language_id
@@ -25,7 +27,15 @@ class ProductTranslation extends ActiveRecord
         return [
             'seoData' => [
                 'class' => SeoDataBehavior::className()
-            ]
+            ],
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 
@@ -35,7 +45,7 @@ class ProductTranslation extends ActiveRecord
             [['language_id', 'product_id'], 'number'],
             [['title', 'description', 'characteristics', 'dose'], 'string'],
             [['full_text'], 'string', 'max' => 65536],
-            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
+            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
         ];
     }
 
