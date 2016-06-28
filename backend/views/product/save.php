@@ -234,13 +234,13 @@ $this->title = 'Edit product';
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->label('SEO description')
+                    ])->textarea(['rows' => 3])->label('SEO description')
                     ?>
                     <?= $form->field($products_translation, 'seoKeywords', [
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->label('SEO keywords')
+                    ])->textarea(['rows' => 3])->label('SEO keywords')
                     ?>
 
                     <? if (!$product->isNewRecord): ?>

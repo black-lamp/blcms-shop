@@ -107,17 +107,9 @@ $this->title = 'Edit category';
                     ]
                 ])->label('SEO title')
                 ?>
-                <?= $addForm->field($category_translation, 'seoDescription', [
-                    'inputOptions' => [
-                        'class' => 'form-control'
-                    ]
-                ])->label('SEO description')
+                <?= $addForm->field($category_translation, 'seoDescription')->textarea(['rows' => 3])->label('SEO description');
                 ?>
-                <?= $addForm->field($category_translation, 'seoKeywords', [
-                    'inputOptions' => [
-                        'class' => 'form-control'
-                    ]
-                ])->label('SEO keywords')
+                <?= $addForm->field($category_translation, 'seoKeywords')->textarea(['rows' => 3])->label('SEO keywords')
                 ?>
 
                 <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
