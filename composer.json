@@ -22,7 +22,7 @@
     "yii2tech/ar-position": "*",
 
     "black-lamp/yii2-multi-lang": "1.1.*",
-    "black-lamp/yii2-seo": "0.1"
+    "black-lamp/yii2-seo": "0.1.*"
   },
   "autoload": {
     "psr-4": {
