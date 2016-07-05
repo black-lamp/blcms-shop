@@ -1,8 +1,8 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
+use bl\cms\seo\StaticPageBehavior;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
-use yii\db\Query;
 use yii\web\Controller;
 
 /**
@@ -10,6 +10,17 @@ use yii\web\Controller;
  */
 class CategoryController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'staticPage' => [
+                'class' => StaticPageBehavior::className(),
+                'key' => 'shop'
+            ]
+        ];
+    }
+
+
     public function actionShow($id = null) {
         $category = null;
         $productsQuery = Product::find();
@@ -34,6 +45,9 @@ class CategoryController extends Controller
             $productsQuery->where([
                 'category_id' => $id
             ]);
+        }
+        else {
+            $this->registerStaticSeoData();
         }
 
         return $this->render('show', [
