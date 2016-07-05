@@ -28,6 +28,7 @@ class UrlRule extends Object implements UrlRuleInterface
 
     private $productRoute = 'shop/product/show';
     private $categoryRoute = 'shop/category/show';
+    private $cartRoute = 'shop/cart/index';
 
     /**
      * Parses the given request and returns the corresponding route and parameters.
@@ -70,10 +71,10 @@ class UrlRule extends Object implements UrlRuleInterface
         $categoryId = null;
         for($i = 1; $i < $this->routesCount; $i++) {
             if($i === $this->routesCount - 1) {
-                if($article = $this->findProductBySeoUrl($this->routes[$i], $categoryId)) {
+                if($product = $this->findProductBySeoUrl($this->routes[$i], $categoryId)) {
                     return [
                         '/' . $this->productRoute,
-                        ['id' => $article->id]
+                        ['id' => $product->id]
                     ];
                 }
                 else {
@@ -107,22 +108,22 @@ class UrlRule extends Object implements UrlRuleInterface
     }
 
     private function findProductBySeoUrl($seoUrl, $categoryId, $options = []) {
-        $articlesSeoData = SeoData::find()
+        $productsSeoData = SeoData::find()
             ->where([
                 'entity_name' => ProductTranslation::className(),
                 'seo_url' => $seoUrl
             ])->all();
 
-        if($articlesSeoData) {
-            foreach($articlesSeoData as $articleSeoData) {
-                if($article = Product::find()
+        if($productsSeoData) {
+            foreach($productsSeoData as $productSeoData) {
+                if($product = Product::find()
                     ->joinWith('translations translation')
                     ->where(array_merge([
-                        'translation.id' => $articleSeoData->entity_id,
+                        'translation.id' => $productSeoData->entity_id,
                         'category_id' => $categoryId,
                         'translation.language_id' => $this->currentLanguage->id
                     ], $options))->one()) {
-                    return $article;
+                    return $product;
                 }
             }
         }
@@ -165,6 +166,9 @@ class UrlRule extends Object implements UrlRuleInterface
     {
         if($route == $this->categoryRoute && empty($params['id'])) {
             return $this->prefix;
+        }
+        if ($route == $this->cartRoute) {
+            return $this->prefix . '/cart';
         }
         if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
             $id = $params['id'];
