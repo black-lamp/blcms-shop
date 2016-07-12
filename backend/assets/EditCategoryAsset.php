@@ -8,8 +8,21 @@ use yii\web\AssetBundle;
 
 class EditCategoryAsset extends AssetBundle
 {
-    public $basePath = '@webroot';
-    public $baseUrl = '@web';
+//    public $basePath = 'bl\cms\shop\backend';
+////    public $baseUrl = '@web/shop';
+//    public $js = [
+//        '/web/js/input-tree.js'
+//    ];
+//    public $depends = [
+//        'yii\web\YiiAsset',
+//        'yii\bootstrap\BootstrapAsset',
+//    ];
+
+    public $sourcePath = '@vendor/black-lamp/blcms-shop/backend/web';
+
+    public $css = [
+        'css/input-tree.css'
+    ];
     public $js = [
         'js/input-tree.js'
     ];

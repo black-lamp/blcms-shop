@@ -32,26 +32,21 @@ class CategoryController extends Controller
                 'language_id' => $languageId
             ])->one();
             if(empty($category_translation))
-                $category_translation = new CategoryTranslation();
+            $category_translation = new CategoryTranslation();
         } else {
             $category = new Category();
             $category_translation = new CategoryTranslation();
-            
+
         }
         $image_form = new UploadForm();
         if(Yii::$app->request->isPost) {
+
             $category->load(Yii::$app->request->post());
             $category_translation->load(Yii::$app->request->post());
 
             $image_form->cover = UploadedFile::getInstance($image_form, 'cover');
             $image_form->thumbnail = UploadedFile::getInstance($image_form, 'thumbnail');
             $image_form->menu_item = UploadedFile::getInstance($image_form, 'menu_item');
-//            foreach ($image_form as $key => $image) {
-//                if (!empty($image_form->$key)) {
-//                    $image_name = $image_form->upload($key);
-//                    $category->$key = $image_name;
-//                }
-//            }
 
             if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
                 $image_name = $image_form->upload();
@@ -65,14 +60,6 @@ class CategoryController extends Controller
                     $category->menu_item = $image_name['menu_item'];
                 }
             }
-//            if (!empty($image_form->thumbnail)) {
-//                $image_name = $image_form->upload('thumbnail');
-//                $category->thumbnail = $image_name;
-//            }
-//            if (!empty($image_form->menu_item)) {
-//                $image_name = $image_form->upload('menu_item');
-//                $category->menu_item = $image_name;
-//            }
 
             if($category->validate() && $category_translation->validate())
             {
