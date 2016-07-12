@@ -1,8 +1,11 @@
+```php
 yii migrate --migrationPath=@vendor/black-lamp/blcms-shop/migrations
-
+```
 You need to configure Imagable module:
+```php
 use bl\cms\shop\backend\components\CreateImageImagine;
-
+```
+```php
 'imagable' => [
             'class' => 'bl\imagable\Imagable',
             'imageClass' => CreateImageImagine::className(),
@@ -82,3 +85,4 @@ use bl\cms\shop\backend\components\CreateImageImagine;
                 ]
             ]
         ],
+        ```
