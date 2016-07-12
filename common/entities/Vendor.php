@@ -2,7 +2,6 @@
 
 namespace bl\cms\shop\common\entities;
 
-use bl\cms\shop\common\entities\Product;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -11,6 +10,7 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $title
+ * @property string $image_name
  *
  * @property Product[] $products
  */
@@ -30,7 +30,8 @@ class Vendor extends ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'string', 'max' => 255],
+            [['title'], 'required'],
+            [['title', 'image_name'], 'string', 'max' => 255],
         ];
     }
 
@@ -42,6 +43,7 @@ class Vendor extends ActiveRecord
         return [
             'id' => Yii::t('blcms-shop/backend/vendor', 'ID'),
             'title' => Yii::t('blcms-shop/backend/vendor', 'Title'),
+            'image_name' => Yii::t('blcms-shop/backend/vendor', 'Image filename')
         ];
     }
 

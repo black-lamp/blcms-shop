@@ -1,4 +1,5 @@
 <?php
+use bl\cms\shop\backend\components\form\VendorImageForm;
 use bl\cms\shop\common\entities\Vendor;
 use yii\bootstrap\Html;
 use yii\helpers\Url;
@@ -7,6 +8,7 @@ use yii\helpers\Url;
  * @author Gutsulyak Vadim <guts.vadim@gmail.com>
  *
  * @var Vendor[] $vendors
+ * @var VendorImageForm $image_form
  */
 
 ?>
@@ -24,6 +26,7 @@ use yii\helpers\Url;
                         <thead>
                         <tr>
                             <th><?= 'Id' ?></th>
+                            <th><?= 'Image' ?></th>
                             <th><?= 'Title' ?></th>
                             <th>Edit</th>
                             <th>Delete</th>
@@ -34,6 +37,12 @@ use yii\helpers\Url;
                             <tr>
                                 <td>
                                     <?= $vendor->id ?>
+                                </td>
+
+                                <td>
+                                    <?php if(!empty($vendor->image_name)): ?>
+                                        <?= Html::img($image_form->getSmall($vendor->image_name)) ?>
+                                    <?php endif; ?>
                                 </td>
 
                                 <td>
