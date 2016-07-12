@@ -2,24 +2,25 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
+use Yii;
 use yii\db\ActiveRecord;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
+ *  This is the model class for table "shop_category".
+ *
  * @author Albert Gainutdinov
- * 
+ *
  * @property integer $id
  * @property integer $parent_id
- * @property integer $category_id
+ * @property integer $position
+ * @property integer $show
+ * @property string $image_name
  *
- * @property Product[] $products
- * @property Category $parent
- * @property Category[] $children
- * @property CategoryTranslation $translation
- * @property CategoryTranslation[] $translations
  */
 class Category extends ActiveRecord
 {
+
     public function behaviors()
     {
         return [
@@ -31,24 +32,43 @@ class Category extends ActiveRecord
             'positionBehavior' => [
                 'class' => PositionBehavior::className(),
                 'positionAttribute' => 'position'
-                
+
             ],
         ];
     }
 
-    public function rules()
-    {
-        return [
-            ['parent_id', 'number']
-        ];
-    }
-    
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'shop_category';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['parent_id', 'position'], 'integer'],
+            [['cover', 'thumbnail', 'menu_item'], 'string'],
+            [['show'], 'boolean'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'parent_id' => \Yii::t('shop', 'Parent category'),
+            'position' => \Yii::t('shop', 'Position'),
+            'show' => \Yii::t('shop', 'Show'),
+            'image_name' => \Yii::t('shop', 'Upload image'),
+        ];
     }
 
     /**
@@ -81,5 +101,14 @@ class Category extends ActiveRecord
     public function getTranslations()
     {
         return $this->hasMany(CategoryTranslation::className(), ['category_id' => 'id']);
-    }    
+    }
+    
+    public static function findChilds($parentCategories) {
+        $tree = [];
+        foreach ($parentCategories as $childCategory) {
+            $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
+            $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
+        }
+        return $tree;
+    }
 }

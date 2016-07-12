@@ -1,11 +1,13 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
+use bl\cms\shop\backend\components\form\UploadForm;
 use Yii;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
+use yii\web\UploadedFile;
 
 /**
  * @author by Albert Gainutdinov
@@ -34,10 +36,44 @@ class CategoryController extends Controller
         } else {
             $category = new Category();
             $category_translation = new CategoryTranslation();
+            
         }
+        $image_form = new UploadForm();
         if(Yii::$app->request->isPost) {
             $category->load(Yii::$app->request->post());
             $category_translation->load(Yii::$app->request->post());
+
+            $image_form->cover = UploadedFile::getInstance($image_form, 'cover');
+            $image_form->thumbnail = UploadedFile::getInstance($image_form, 'thumbnail');
+            $image_form->menu_item = UploadedFile::getInstance($image_form, 'menu_item');
+//            foreach ($image_form as $key => $image) {
+//                if (!empty($image_form->$key)) {
+//                    $image_name = $image_form->upload($key);
+//                    $category->$key = $image_name;
+//                }
+//            }
+
+            if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
+                $image_name = $image_form->upload();
+                if (!empty($image_form->cover)) {
+                    $category->cover = $image_name['cover'];
+                }
+                if (!empty($image_form->thumbnail)) {
+                    $category->thumbnail = $image_name['thumbnail'];
+                }
+                if (!empty($image_form->menu_item)) {
+                    $category->menu_item = $image_name['menu_item'];
+                }
+            }
+//            if (!empty($image_form->thumbnail)) {
+//                $image_name = $image_form->upload('thumbnail');
+//                $category->thumbnail = $image_name;
+//            }
+//            if (!empty($image_form->menu_item)) {
+//                $image_name = $image_form->upload('menu_item');
+//                $category->menu_item = $image_name;
+//            }
+
             if($category->validate() && $category_translation->validate())
             {
                 $category->save();
@@ -50,18 +86,36 @@ class CategoryController extends Controller
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
+        
         return $this->render('save', [
             'item' => $category,
             'category_translation' => $category_translation,
-            'category' => Category::find()->with('translations')->all(),
+            'categories' => Category::find()->with('translations')->all(),
             'selectedLanguage' => Language::findOne($languageId),
-            'languages' => Language::findAll(['active' => true])
+            'languages' => Language::findAll(['active' => true]),
+            'image_form' => $image_form,
+            'maxPosition' => Category::find()->orderBy(['position' => SORT_DESC])->one()->position,
+            'minPosition' => Category::find()->orderBy(['position' => SORT_ASC])->one()->position,
         ]);
     }
-
+    
     public function actionDelete($id) {
         Category::deleteAll(['id' => $id]);
         return $this->redirect(Url::to(['/shop/category']));
+    }
+    public function actionDeleteImage($id, $type) {
+        $dir = Yii::getAlias('@frontend/web/images');
+
+        if (!empty($id) && !empty($type)) {
+            $category = Category::findOne($id);
+
+            unlink($dir . '/shop-category/' . $category->$type . '-big.jpg');
+            unlink($dir . '/shop-category/' . $category->$type . '-small.jpg');
+            unlink($dir . '/shop-category/' . $category->$type . '-thumb.jpg');
+            $category->$type = null;
+            $category->save();
+        }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionUp($id) {
