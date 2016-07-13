@@ -213,12 +213,16 @@ $this->title = \Yii::t('shop', 'Edit category');
                                         </td>
                                         <td>
                                             <?php if (!empty($item->menu_item)) : ?>
-                                                <img src="/images/shop-category/menu_item/<?=$item->menu_item . '-small.jpg' ;?>">
+                                                <img data-toggle="modal" data-target="#menuItemModal" src="/images/shop-category/menu_item/<?=$item->menu_item . '-small.jpg' ;?>">
                                             <?php endif; ?>
+                                            <!-- Modal -->
+                                            <div id="menuItemModal" class="modal fade" role="dialog">
+                                                <img style="display: block" class="modal-dialog" src="/images/shop-category/menu_item/<?=$item->menu_item . '-thumb.jpg' ;?>">
+                                            </div>
                                         </td>
                                         <td>
                                             <?php if (!empty($item->menu_item)) : ?>
-                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/menu_item/' . $item->menu_item . '-menu_item.jpg'; ?>">
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/menu_item/' . $item->menu_item . '-big.jpg'; ?>">
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -236,12 +240,16 @@ $this->title = \Yii::t('shop', 'Edit category');
                                         </td>
                                         <td>
                                             <?php if (!empty($item->thumbnail)) : ?>
-                                                <img src="/images/shop-category/thumbnail/<?=$item->thumbnail . '-small.jpg' ;?>">
+                                                <img data-toggle="modal" data-target="#thumbnailModal" src="/images/shop-category/thumbnail/<?=$item->thumbnail . '-small.jpg' ;?>">
                                             <?php endif; ?>
+                                            <!-- Modal -->
+                                            <div id="thumbnailModal" class="modal fade" role="dialog">
+                                                <img style="display: block" class="modal-dialog" src="/images/shop-category/thumbnail/<?=$item->thumbnail . '-thumb.jpg' ;?>">
+                                            </div>
                                         </td>
                                         <td>
                                             <?php if (!empty($item->thumbnail)) : ?>
-                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/thumbnail/' . $item->thumbnail . '-menu_item.jpg'; ?>">
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/thumbnail/' . $item->thumbnail . '-big.jpg'; ?>">
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -259,12 +267,16 @@ $this->title = \Yii::t('shop', 'Edit category');
                                         </td>
                                         <td>
                                             <?php if (!empty($item->cover)) : ?>
-                                                <img src="/images/shop-category/cover/<?=$item->cover . '-small.jpg' ;?>">
+                                                <img data-toggle="modal" data-target="#coverModal" src="/images/shop-category/cover/<?=$item->cover . '-small.jpg' ;?>">
                                             <?php endif; ?>
+                                            <!-- Modal -->
+                                            <div id="coverModal" class="modal fade" role="dialog">
+                                                <img style="display: block" class="modal-dialog" src="/images/shop-category/cover/<?=$item->cover . '-thumb.jpg' ;?>">
+                                            </div>
                                         </td>
                                         <td>
                                             <?php if (!empty($item->cover)) : ?>
-                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/cover/' . $item->cover . '-menu_item.jpg'; ?>">
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/cover/' . $item->cover . '-big.jpg'; ?>">
                                             <?php endif; ?>
                                         </td>
                                         <td>
