@@ -6,7 +6,7 @@ use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use bl\cms\shop\common\entities\Vendor;
-use bl\cms\shop\backend\components\form\VendorImageForm;
+use bl\cms\shop\backend\components\form\VendorImage;
 use yii\helpers\Url;
 
 /**
@@ -15,10 +15,12 @@ use yii\helpers\Url;
 class VendorController extends Controller
 {
     public function actionIndex() {
-        $image_form = new VendorImageForm();
+        $vendors = Vendor::find()->all();
+        $vendor_images = new VendorImage();
+
         return $this->render('list', [
-            'vendors' => Vendor::find()->all(),
-            'image_form' => $image_form
+            'vendors' => $vendors,
+            'vendor_images' => $vendor_images
         ]);
     }
 
@@ -30,24 +32,24 @@ class VendorController extends Controller
             $vendor = new Vendor();
         }
 
-        $image_form = new VendorImageForm();
+        $vendor_image = new VendorImage();
 
         if(Yii::$app->getRequest()->isPost) {
 
             $vendor->load(Yii::$app->request->post());
-            $image_form->imageFile = UploadedFile::getInstance($image_form, 'imageFile');
+            $vendor_image->imageFile = UploadedFile::getInstance($vendor_image, 'imageFile');
 
-            if($vendor->validate() && $image_form->validate()) {
-                if($image_form->notEmpty()) {
+            if($vendor->validate() && $vendor_image->validate()) {
+                if($vendor_image->notEmpty()) {
                     try {
-                        $image_form->Upload();
-                        $vendor->image_name = $image_form->getImageName();
+                        $vendor_image->Upload();
+                        $vendor->image_name = $vendor_image->getImageName();
                     } catch (Exception $ex) {
                         $vendor->addError('image_file', 'Failed to save image.');
                     }
                 }
-
                 $vendor->save();
+
                 Yii::$app->getSession()->setFlash('success', 'All changes has been saved.');
                 return $this->redirect(Url::toRoute('/shop/vendor'));
             }
@@ -58,7 +60,14 @@ class VendorController extends Controller
 
         return $this->render('save', [
             'vendor' => $vendor,
-            'image_form' => $image_form
+            'vendor_image' => $vendor_image
         ]);
+    }
+
+    public function actionRemove($id = null)
+    {
+        Vendor::deleteAll(['id' => $id]);
+        Yii::$app->getSession()->setFlash('success', 'All changes has been saved.');
+        return $this->redirect(Url::toRoute('/shop/vendor'));
     }
 }

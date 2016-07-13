@@ -2,25 +2,24 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use bl\cms\shop\common\entities\Vendor;
-use bl\cms\shop\backend\components\form\VendorImageForm;
+use bl\cms\shop\backend\components\form\VendorImage;
 
 /**
  * @author Gutsulyak Vadim <guts.vadim@gmail.com>
  *
  * @var Vendor $vendor
- * @var VendorImageForm $image_form
+ * @var VendorImage $vendor_image
  */
 
+$this->title = Yii::t('shop', 'Edit Vendor');
 ?>
-
-
 
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
-                <?= 'Vendor' ?>
+                <?= Html::encode($this->title); ?>
             </div>
             <div class="panel-body">
                 <?php $form = ActiveForm::begin([
@@ -28,19 +27,26 @@ use bl\cms\shop\backend\components\form\VendorImageForm;
                         'options' => ['enctype' => 'multipart/form-data']
                     ]) ?>
 
-                <div class="col-md-12">
-                    <!--TITLE-->
+                <div class="col-md-offset-2 col-md-8 rig">
+                    <!--TITLE INPUT-->
                     <?= $form->field($vendor, 'title') ?>
 
                     <!--IMAGE-->
-                    <h2>Image</h2>
+                    <h3><?= Yii::t('shop', 'Image'); ?></h3>
                     <?php if(!empty($vendor->image_name)): ?>
-                        <?= Html::img($image_form->getBig($vendor->image_name)) ?>
+                        <?= Html::img($vendor_image->getBig($vendor->image_name), ['class' => 'img-thumbnail thumbnail center-block']) ?>
                     <?php endif; ?>
-                    <?= $form->field($image_form, 'imageFile')->fileInput() ?>
 
-                    <?= Html::submitButton('Save', [
-                        'class' => 'btn btn-default'
+                    <!--IMAGE INPUT-->
+                    <div class="row">
+                        <div class="col-lg-4 col-lg-offset-4 text-center">
+                            <?= $form->field($vendor_image, 'imageFile')->fileInput() ?>
+                        </div>
+                    </div>
+
+                    <!--SUBMIT-->
+                    <?= Html::submitButton(Yii::t('yii', 'Save'), [
+                        'class' => 'btn btn-success pull-right'
                     ]) ?>
                 </div>
 
