@@ -34,7 +34,21 @@ $this->title = \Yii::t('shop', 'Edit category');
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
-                <p><?= \Yii::t('shop', 'Edit category'); ?></p>
+                <?php if (!empty($item->id)) : ?>
+                    <?php if (!empty($category_translation->title)) : ?>
+                        <span>
+                    <?= \Yii::t('shop', 'Edit category'); ?>
+                </span>
+                    <?php else: ?>
+                        <span>
+                    <?= \Yii::t('shop', 'Add category translation'); ?>
+                </span>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <span>
+                    <?= \Yii::t('shop', 'Add new category'); ?>
+                </span>
+                <?php endif; ?>
             </div>
             <div class="panel-body">
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace bl\cms\shop\backend\controllers;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
 use Yii;
@@ -8,7 +9,6 @@ use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
-use yii2tech\ar\position\PositionBehavior;
 
 /**
  * @author by Albert Gainutdinov
@@ -25,6 +25,7 @@ class CategoryController extends Controller
             'languages' => Language::findAll(['active' => true])
         ]);
     }
+
     public function actionSave($languageId = null, $categoryId = null) {
         if (!empty($categoryId)) {
             $category = Category::findOne($categoryId);
@@ -33,7 +34,7 @@ class CategoryController extends Controller
                 'language_id' => $languageId
             ])->one();
             if(empty($category_translation))
-            $category_translation = new CategoryTranslation();
+                $category_translation = new CategoryTranslation();
         } else {
             $category = new Category();
             $category_translation = new CategoryTranslation();
@@ -74,7 +75,7 @@ class CategoryController extends Controller
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
-        
+
         return $this->render('save', [
             'item' => $category,
             'category_translation' => $category_translation,
@@ -86,11 +87,12 @@ class CategoryController extends Controller
             'minPosition' => Category::find()->orderBy(['position' => SORT_ASC])->one()->position,
         ]);
     }
-    
+
     public function actionDelete($id) {
         Category::deleteAll(['id' => $id]);
         return $this->redirect(Url::to(['/shop/category']));
     }
+
     public function actionDeleteImage($id, $type) {
         $dir = Yii::getAlias('@frontend/web/images');
 
@@ -121,5 +123,4 @@ class CategoryController extends Controller
 
         return $this->actionIndex();
     }
-
 }

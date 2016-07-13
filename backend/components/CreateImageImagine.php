@@ -5,7 +5,6 @@ namespace bl\cms\shop\backend\components;
 use bl\imagable\helpers\FileHelper;
 use bl\imagable\interfaces\CreateImageInterface;
 use yii\base\Object;
-use yii\imagine\Image;
 
 /**
  * Description of CreateImageImagine
