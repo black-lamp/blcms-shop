@@ -172,87 +172,97 @@ $this->title = \Yii::t('shop', 'Edit category');
                         <!-- IMAGE -->
                         <div role="tabpanel" class="tab-pane fade" id="images">
                             <h2><?= \Yii::t('shop', 'Image');?></h2>
-                            <table class="table table-bordered table-stripped">
-                                <tr>
-                                    <th>
-                                        <?= \Yii::t('shop', 'Type');?>
-                                    </th>
-                                    <th>
-                                        <?= \Yii::t('shop', 'Image preview');?>
-                                    </th>
-                                    <th>
-                                        <?= \Yii::t('shop', 'Image URL');?>
-                                    </th>
-                                    <th>
-                                        <?= \Yii::t('shop', 'Actions');?>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <?= \Yii::t('shop', 'Menu item'); ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->menu_item)) : ?>
-                                            <img src="/images/shop-category/menu_item/<?=$item->menu_item . '-thumb.jpg' ;?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->menu_item)) : ?>
-                                            <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/menu_item/' . $item->menu_item . '-menu_item.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->menu_item)) : ?>
-                                            <p><b><?= \Yii::t('shop', 'Delete image');?></b></p>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'menu_item']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                        <?= $addForm->field($image_form, 'menu_item')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <?= \Yii::t('shop', 'Thumbnail'); ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->thumbnail)) : ?>
-                                            <img src="/images/shop-category/thumbnail/<?=$item->thumbnail . '-thumb.jpg' ;?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->thumbnail)) : ?>
-                                            <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/thumbnail/' . $item->thumbnail . '-menu_item.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->thumbnail)) : ?>
-                                            <p><b><?= \Yii::t('shop', 'Delete image');?></b></p>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'thumbnail']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                        <?= $addForm->field($image_form, 'thumbnail')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <?= \Yii::t('shop', 'Cover'); ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->cover)) : ?>
-                                            <img src="/images/shop-category/cover/<?=$item->cover . '-thumb.jpg' ;?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->cover)) : ?>
-                                            <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/cover/' . $item->cover . '-menu_item.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($item->cover)) : ?>
-                                            <p><b><?= \Yii::t('shop', 'Delete image');?></b></p>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'cover']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                        <?= $addForm->field($image_form, 'cover')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-                                    </td>
-                                </tr>
+                            <table class="table table-bordered table-stripped table-hover">
+                                <thead class="thead-inverse">
+                                    <tr>
+                                        <th class="text-center col-xs-2">
+                                            <?= \Yii::t('shop', 'Type');?>
+                                        </th>
+                                        <th class="text-center col-xs-2">
+                                            <?= \Yii::t('shop', 'Image preview');?>
+                                        </th>
+                                        <th class="text-center col-xs-4">
+                                            <?= \Yii::t('shop', 'Image URL');?>
+                                        </th>
+                                        <th class="text-center col-xs-3">
+                                            <?= \Yii::t('shop', 'Upload');?>
+                                        </th>
+                                        <th class="text-center col-xs-1">
+                                            <?= \Yii::t('shop', 'Delete');?>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <?= \Yii::t('shop', 'Menu item'); ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->menu_item)) : ?>
+                                                <img src="/images/shop-category/menu_item/<?=$item->menu_item . '-small.jpg' ;?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->menu_item)) : ?>
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/menu_item/' . $item->menu_item . '-menu_item.jpg'; ?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?= $addForm->field($image_form, 'menu_item')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($item->menu_item)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'menu_item']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <?= \Yii::t('shop', 'Thumbnail'); ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->thumbnail)) : ?>
+                                                <img src="/images/shop-category/thumbnail/<?=$item->thumbnail . '-small.jpg' ;?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->thumbnail)) : ?>
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/thumbnail/' . $item->thumbnail . '-menu_item.jpg'; ?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?= $addForm->field($image_form, 'thumbnail')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($item->thumbnail)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'thumbnail']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <?= \Yii::t('shop', 'Cover'); ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->cover)) : ?>
+                                                <img src="/images/shop-category/cover/<?=$item->cover . '-small.jpg' ;?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($item->cover)) : ?>
+                                                <input type="text" class="form-control" disabled="" value="<?= '/images/shop-category/cover/' . $item->cover . '-menu_item.jpg'; ?>">
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?= $addForm->field($image_form, 'cover')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($item->cover)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $item->id, 'type' => 'cover']);?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
