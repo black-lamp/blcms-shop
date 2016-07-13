@@ -17,6 +17,8 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $show
  * @property string $image_name
  *
+ * @method PositionBehavior moveNext
+ * @method PositionBehavior movePrev
  */
 class Category extends ActiveRecord
 {
