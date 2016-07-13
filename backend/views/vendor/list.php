@@ -28,8 +28,8 @@ $this->title = Yii::t('shop', 'Vendor List');
                             <thead>
                             <tr>
                                 <th><?= 'Id' ?></th>
-                                <th class="col-sm-1 col-md-2"><?= 'Image' ?></th>
-                                <th class="col-md-12 col-sm-12 col-xs-12"><?= 'Title' ?></th>
+                                <th class="col-xs-6 col-sm-4 col-md-3"><?= 'Image' ?></th>
+                                <th class="col-md-12 col-sm-12 col-xs-6"><?= 'Title' ?></th>
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
@@ -46,7 +46,7 @@ $this->title = Yii::t('shop', 'Vendor List');
                                             <a href="<?= $vendor_images->getBig($vendor->image_name) ?>" target="blank">
                                                 <?= Html::img(
                                                     $vendor_images->getBig($vendor->image_name),
-                                                    ['class' => 'img-responsive']
+                                                    ['class' => 'img-responsive center-block']
                                                 )?>
                                             </a>
                                         <?php endif; ?>
