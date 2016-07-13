@@ -7,7 +7,7 @@ use yii\web\UploadedFile;
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
-class UploadForm extends Model
+class CategoryImageForm extends Model
 {
     /**
      * @var UploadedFile[]

@@ -1,6 +1,6 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
-use bl\cms\shop\backend\components\form\UploadForm;
+use bl\cms\shop\backend\components\form\CategoryImageForm;
 use Yii;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
@@ -8,6 +8,7 @@ use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
+use yii2tech\ar\position\PositionBehavior;
 
 /**
  * @author by Albert Gainutdinov
@@ -38,7 +39,7 @@ class CategoryController extends Controller
             $category_translation = new CategoryTranslation();
 
         }
-        $image_form = new UploadForm();
+        $image_form = new CategoryImageForm();
         if(Yii::$app->request->isPost) {
 
             $category->load(Yii::$app->request->post());

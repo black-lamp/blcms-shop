@@ -1,6 +1,6 @@
 <?php
 use bl\cms\shop\backend\assets\EditCategoryAsset;
-use bl\cms\shop\backend\components\form\UploadForm;
+use bl\cms\shop\backend\components\CreateImageImagine;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
  * @var $categories Category[]
  * @var $minPosition Category
  * @var $maxPosition Category
- * @var $image_form UploadForm
+ * @var $image_form CreateImageImagine
  *
  */
 
