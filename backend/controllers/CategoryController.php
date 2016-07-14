@@ -33,14 +33,15 @@ class CategoryController extends Controller
                 'category_id' => $categoryId,
                 'language_id' => $languageId
             ])->one();
-            if(empty($category_translation))
-                $category_translation = new CategoryTranslation();
-        } else {
+            if(empty($category_translation)) $category_translation = new CategoryTranslation();
+        }
+        else {
             $category = new Category();
             $category_translation = new CategoryTranslation();
-
         }
+
         $image_form = new CategoryImageForm();
+
         if(Yii::$app->request->isPost) {
 
             $category->load(Yii::$app->request->post());
@@ -76,8 +77,11 @@ class CategoryController extends Controller
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+        $tree = Category::findChilds($categoriesWithoutParent);
+
         return $this->render('save', [
-            'item' => $category,
+            'category' => $category,
             'category_translation' => $category_translation,
             'categories' => Category::find()->with('translations')->all(),
             'selectedLanguage' => Language::findOne($languageId),
@@ -85,6 +89,8 @@ class CategoryController extends Controller
             'image_form' => $image_form,
             'maxPosition' => Category::find()->orderBy(['position' => SORT_DESC])->one()->position,
             'minPosition' => Category::find()->orderBy(['position' => SORT_ASC])->one()->position,
+            'categoriesWithoutParent' => $categoriesWithoutParent,
+            'categoriesTree' => $tree,
         ]);
     }
 

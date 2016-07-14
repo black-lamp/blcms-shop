@@ -106,11 +106,12 @@ class Category extends ActiveRecord
     }
     
     public static function findChilds($parentCategories) {
-        $tree = [];
-        foreach ($parentCategories as $childCategory) {
-            $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
-            $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
-        }
-        return $tree;
+    $tree = [];
+    foreach ($parentCategories as $childCategory) {
+        $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
+        $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
     }
+    return $tree;
+}
+
 }
