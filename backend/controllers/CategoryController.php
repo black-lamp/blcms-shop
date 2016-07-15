@@ -20,7 +20,7 @@ class CategoryController extends Controller
         return $this->render('index', [
             'categories' => Category::find()
                 ->with(['translations'])
-                ->orderBy(['position' => SORT_ASC])
+                ->orderBy(['parent_id' => SORT_ASC, 'position' => SORT_ASC])
                 ->all(),
             'languages' => Language::findAll(['active' => true])
         ]);

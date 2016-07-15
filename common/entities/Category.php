@@ -33,8 +33,10 @@ class Category extends ActiveRecord
             ],
             'positionBehavior' => [
                 'class' => PositionBehavior::className(),
-                'positionAttribute' => 'position'
-
+                'positionAttribute' => 'position',
+                'groupAttributes' => [
+                    'parent_id'
+                ],
             ],
         ];
     }
@@ -58,6 +60,7 @@ class Category extends ActiveRecord
             [['show'], 'boolean'],
         ];
     }
+
 
     /**
      * @inheritdoc

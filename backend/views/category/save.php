@@ -115,12 +115,11 @@ $this->title = \Yii::t('shop', 'Edit category');
 
                             <!-- PARENT -->
                             <b><?= \Yii::t('shop', 'Parent category'); ?></b>
-                            <?php
-                            //                            die(var_dump($categoriesTree));
-                            echo '<ul class="list-group ul-treefree ul-dropfree">';
-                            echo treeRecoursion($categoriesTree);
-                            echo '</ul>';
-                            ?>
+                            <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
+                            <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
+                            <?= treeRecoursion($categoriesTree); ?>
+                            <?= '</ul>'; ?>
+                            
                             <?php
                             function treeRecoursion($categoriesTree)
                             {
@@ -147,7 +146,7 @@ $this->title = \Yii::t('shop', 'Edit category');
 
                             ?>
 
-                            <!-- DESCRIPTION -->7
+                            <!-- DESCRIPTION -->
                             <?= $addForm->field($category_translation, 'description', [
                                 'inputOptions' => [
                                     'class' => 'form-control'
@@ -219,7 +218,7 @@ $this->title = \Yii::t('shop', 'Edit category');
                                     <td>
                                         <?php if (!empty($category->menu_item)) : ?>
                                             <img data-toggle="modal" data-target="#menuItemModal"
-                                                 src="/images/shop-category/menu_item/<?= $category->menu_item . '-small.jpg'; ?>">
+                                                 src="/images/shop-category/menu_item/<?= $category->menu_item . '-small.jpg'; ?>" class="thumb">
                                         <!-- Modal -->
                                         <div id="menuItemModal" class="modal fade" role="dialog">
                                             <img style="display: block" class="modal-dialog"
@@ -250,7 +249,7 @@ $this->title = \Yii::t('shop', 'Edit category');
                                     <td>
                                         <?php if (!empty($category->thumbnail)) : ?>
                                             <img data-toggle="modal" data-target="#thumbnailModal"
-                                                 src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-small.jpg'; ?>">
+                                                 src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-small.jpg'; ?>" class="thumb">
                                         <!-- Modal -->
                                         <div id="thumbnailModal" class="modal fade" role="dialog">
                                             <img style="display: block" class="modal-dialog"
@@ -281,7 +280,7 @@ $this->title = \Yii::t('shop', 'Edit category');
                                     <td>
                                         <?php if (!empty($category->cover)) : ?>
                                             <img data-toggle="modal" data-target="#coverModal"
-                                                 src="/images/shop-category/cover/<?= $category->cover . '-small.jpg'; ?>">
+                                                 src="/images/shop-category/cover/<?= $category->cover . '-small.jpg'; ?>" class="thumb">
                                         <!-- Modal -->
                                         <div id="coverModal" class="modal fade" role="dialog">
                                             <img style="display: block" class="modal-dialog"

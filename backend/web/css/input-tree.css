@@ -16,3 +16,13 @@ ul.ul-dropfree div.drop {
     background-repeat:no-repeat;
     cursor:pointer;
 }
+
+div.modal {
+    cursor: pointer;
+}
+img.modal-dialog {
+    cursor: auto;
+}
+img.thumb {
+    cursor: pointer;
+}
