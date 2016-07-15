@@ -6,12 +6,13 @@ use bl\cms\shop\backend\components\form\VendorImage;
 
 /**
  * @author Gutsulyak Vadim <guts.vadim@gmail.com>
+ * @author Nozhenko Vyacheslav <vv.nojenko@gmail.com>
  *
  * @var Vendor $vendor
  * @var VendorImage $vendor_image
  */
 
-$this->title = Yii::t('shop', 'Edit Vendor');
+$this->title = Yii::t('shop', 'Save vendor');
 ?>
 
 <div class="row">
@@ -29,23 +30,23 @@ $this->title = Yii::t('shop', 'Edit Vendor');
 
                 <div class="col-md-offset-2 col-md-8 rig">
                     <!--TITLE INPUT-->
-                    <?= $form->field($vendor, 'title') ?>
+                    <?= $form->field($vendor, 'title')->label(Yii::t('shop','Title')) ?>
 
                     <!--IMAGE-->
-                    <h3><?= Yii::t('shop', 'Image'); ?></h3>
+                    <h4><?= Yii::t('shop', 'Logo'); ?></h4>
                     <?php if(!empty($vendor->image_name)): ?>
                         <?= Html::img($vendor_image->getBig($vendor->image_name), ['class' => 'img-thumbnail thumbnail center-block']) ?>
                     <?php endif; ?>
 
                     <!--IMAGE INPUT-->
                     <div class="row">
-                        <div class="col-lg-4 col-lg-offset-4 text-center">
-                            <?= $form->field($vendor_image, 'imageFile')->fileInput() ?>
+                        <div class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 text-center">
+                            <?= $form->field($vendor_image, 'imageFile')->fileInput()->label(Yii::t('shop', 'Upload image')); ?>
                         </div>
                     </div>
 
                     <!--SUBMIT-->
-                    <?= Html::submitButton(Yii::t('yii', 'Save'), [
+                    <?= Html::submitButton(Yii::t('shop', 'Save'), [
                         'class' => 'btn btn-success pull-right'
                     ]) ?>
                 </div>

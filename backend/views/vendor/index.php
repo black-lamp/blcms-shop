@@ -1,0 +1,101 @@
+<?php
+use bl\cms\shop\backend\components\form\VendorImage;
+use bl\cms\shop\common\entities\Vendor;
+use yii\bootstrap\Html;
+use yii\helpers\Url;
+
+/**
+ * @author Gutsulyak Vadim <guts.vadim@gmail.com>
+ * @author Nozhenko Vyacheslav <vv.nojenko@gmail.com>
+ *
+ * @var Vendor[] $vendors
+ * @var VendorImage $vendor_images
+ */
+
+$this->title = Yii::t('shop', 'Vendors');
+?>
+
+<h1><?= Html::encode($this->title); ?></h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-list"></i>
+                <?= Yii::t('shop', 'Vendor list'); ?>
+            </div>
+            <div>
+                <div class="panel-body">
+                    <table class="table-bordered table-condensed table-hover">
+                        <?php if (!empty($vendors)): ?>
+                            <thead>
+                            <tr>
+                                <th class="col-xs-1 col-sm-1 col-md-1"><?= 'Id' ?></th>
+                                <th class="col-xs-2 col-sm-2 col-md-2"><?= Yii::t('shop', 'Logo') ?></th>
+                                <th class="col-xs-5 col-sm-7 col-md-7"><?= Yii::t('shop', 'Title') ?></th>
+                                <th class="col-sm-1 col-md-1 text-center"><?= Yii::t('shop', 'Edit') ?></th>
+                                <th class="col-sm-1 col-md-1 text-center"><?= Yii::t('shop', 'Delete') ?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($vendors as $vendor): ?>
+                                <tr>
+                                    <td class="text-muted">
+                                        <?= $vendor->id ?>
+                                    </td>
+
+                                    <td>
+                                        <div class="text-center">
+                                            <?php if (!empty($vendor->image_name)): ?>
+                                                <a href="<?= $vendor_images->getBig($vendor->image_name) ?>" target="blank">
+                                                    <?= Html::img(
+                                                        $vendor_images->getBig($vendor->image_name),
+                                                        ['class' => 'img-responsive']
+                                                    )?>
+                                                </a>
+                                            <?php else: ?>
+                                                <div class="glyphicon glyphicon-picture text-muted" data-toggle="tooltip" data-placement="top"
+                                                     title="<?= Yii::t('shop', 'No image') ?>"
+                                                     data-original-title="<?= Yii::t('shop', 'No image') ?>"></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <?= $vendor->title ?>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <?= Html::a('', [
+                                            'save',
+                                            'id' => $vendor->id
+                                        ], [
+                                            'class' => 'glyphicon glyphicon-edit text-warning btn btn-warning btn-sm'
+                                        ]); ?>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <?= Html::a('', [
+                                            'remove',
+                                            'id' => $vendor->id
+                                        ], [
+                                            'class' => 'glyphicon glyphicon-remove text-danger btn btn-default btn-sm'
+                                        ]); ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        <? endif; ?>
+                    </table>
+                    <div class="row-fluid" style="margin-top: 15px;">
+                        <a href="<?= Url::to(['save']); ?>"
+                           class="btn btn-primary pull-right">
+                            <i class="fa fa-user-plus"></i> <?= Yii::t('shop', 'Add'); ?>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<?php $this->registerJs("$(\"[data-toggle='tooltip']\").tooltip();") ?>

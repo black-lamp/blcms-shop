@@ -11,6 +11,7 @@ use yii\helpers\Url;
 
 /**
  * @author Gutsulyak Vadim <guts.vadim@gmail.com>
+ * @author Nozhenko Vyacheslav <vv.nojenko@gmail.com>
  */
 class VendorController extends Controller
 {
@@ -18,7 +19,7 @@ class VendorController extends Controller
         $vendors = Vendor::find()->all();
         $vendor_images = new VendorImage();
 
-        return $this->render('list', [
+        return $this->render('index', [
             'vendors' => $vendors,
             'vendor_images' => $vendor_images
         ]);
