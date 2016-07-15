@@ -96,7 +96,7 @@ class CategoryController extends Controller
 
     public function actionDelete($id) {
         Category::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to(['/shop/category']));
+        return $this->actionIndex();
     }
 
     public function actionDeleteImage($id, $type) {
@@ -127,6 +127,14 @@ class CategoryController extends Controller
             $category->moveNext();
         }
 
+        return $this->actionIndex();
+    }
+
+    public function actionSwitchShow($id) {
+        if($category = Category::findOne($id)) {
+            $category->show = !$category->show;
+            $category->save();
+        }
         return $this->actionIndex();
     }
 }

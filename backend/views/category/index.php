@@ -80,16 +80,16 @@ $this->title = 'Product category list';
                                 </td>
 
                                 <td class="text-center">
-<!--                                    <a href="--><?//= Url::to([
-//                                        'switch-show',
-//                                        'id' => $category->id
-//                                    ]) ?><!--">-->
-<!--                                        --><?// if ($category->show): ?>
-<!--                                            <i class="glyphicon glyphicon-ok text-primary"></i>-->
-<!--                                        --><?// else: ?>
-<!--                                            <i class="glyphicon glyphicon-minus text-danger"></i>-->
-<!--                                        --><?// endif; ?>
-<!--                                    </a>-->
+                                    <a href="<?= Url::to([
+                                        'switch-show',
+                                        'id' => $category->id
+                                    ]) ?>" class="category-nav">
+                                        <? if ($category->show): ?>
+                                            <i class="glyphicon glyphicon-ok text-primary"></i>
+                                        <? else: ?>
+                                            <i class="glyphicon glyphicon-minus text-danger"></i>
+                                        <? endif; ?>
+                                    </a>
                                 </td>
 
                                 <td>
@@ -101,7 +101,7 @@ $this->title = 'Product category list';
 
                                 <td>
                                     <a href="<?= Url::to(['delete', 'id' => $category->id])?>"
-                                       class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
+                                       class="category-nav glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
                                     </a>
                                 </td>
                             </tr>

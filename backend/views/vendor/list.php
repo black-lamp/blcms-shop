@@ -47,7 +47,7 @@ $this->title = Yii::t('shop', 'Vendor List');
                                                 <?= Html::img(
                                                     $vendor_images->getBig($vendor->image_name),
                                                     ['class' => 'img-responsive']
-                                                )?>
+                                                ) ?>
                                             </a>
                                         <?php endif; ?>
                                     </td>
@@ -67,12 +67,12 @@ $this->title = Yii::t('shop', 'Vendor List');
 
                                     <td>
                                         <div class="text-center">
-                                        <?= Html::a('', [
-                                            'remove',
-                                            'id' => $vendor->id
-                                        ], [
-                                            'class' => 'glyphicon glyphicon-remove text-danger btn btn-default btn-sm'
-                                        ]); ?>
+                                            <?= Html::a('', [
+                                                'remove',
+                                                'id' => $vendor->id
+                                            ], [
+                                                'class' => 'glyphicon glyphicon-remove text-danger btn btn-default btn-sm'
+                                            ]); ?>
                                         </div>
                                     </td>
                                 </tr>
