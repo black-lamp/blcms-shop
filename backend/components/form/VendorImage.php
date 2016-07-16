@@ -31,7 +31,7 @@ class VendorImage extends Model
     public function attributeLabels()
     {
         return [
-            'imageFile' => Yii::t('blcms-shop/backend/vendor', 'Upload image')
+            'imageFile' => Yii::t('shop', 'Upload image')
         ];
     }
 

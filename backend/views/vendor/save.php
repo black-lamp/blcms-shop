@@ -28,9 +28,9 @@ $this->title = Yii::t('shop', 'Save vendor');
                         'options' => ['enctype' => 'multipart/form-data']
                     ]) ?>
 
-                <div class="col-md-offset-2 col-md-8 rig">
+                <div class="col-md-offset-2 col-md-8">
                     <!--TITLE INPUT-->
-                    <?= $form->field($vendor, 'title')->label(Yii::t('shop','Title')) ?>
+                    <?= $form->field($vendor, 'title') ?>
 
                     <!--IMAGE-->
                     <h4><?= Yii::t('shop', 'Logo'); ?></h4>
@@ -41,7 +41,7 @@ $this->title = Yii::t('shop', 'Save vendor');
                     <!--IMAGE INPUT-->
                     <div class="row">
                         <div class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 text-center">
-                            <?= $form->field($vendor_image, 'imageFile')->fileInput()->label(Yii::t('shop', 'Upload image')); ?>
+                            <?= $form->field($vendor_image, 'imageFile')->fileInput(); ?>
                         </div>
                     </div>
 

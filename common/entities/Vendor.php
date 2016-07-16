@@ -41,9 +41,9 @@ class Vendor extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('blcms-shop/backend/vendor', 'ID'),
-            'title' => Yii::t('blcms-shop/backend/vendor', 'Title'),
-            'image_name' => Yii::t('blcms-shop/backend/vendor', 'Image filename')
+            'id' => Yii::t('blcms-shop/backend/vendor', 'Id'),
+            'title' => Yii::t('blcms-shop/backend/vendor', Yii::t('shop','Title')),
+            'image_name' => Yii::t('blcms-shop/backend/vendor', Yii::t('shop','Image filename'))
         ];
     }
 

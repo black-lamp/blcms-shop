@@ -46,16 +46,16 @@ class VendorController extends Controller
                         $vendor_image->Upload();
                         $vendor->image_name = $vendor_image->getImageName();
                     } catch (Exception $ex) {
-                        $vendor->addError('image_file', 'Failed to save image.');
+                        $vendor->addError('image_file', Yii::t('shop', 'Failed to save image'));
                     }
                 }
                 $vendor->save();
 
-                Yii::$app->getSession()->setFlash('success', 'All changes has been saved.');
+                Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'All changes have been saved'));
                 return $this->redirect(Url::toRoute('/shop/vendor'));
             }
             else {
-                Yii::$app->getSession()->setFlash('danger', 'Failed to save changes.');
+                Yii::$app->getSession()->setFlash('danger', Yii::t('shop', 'Failed to save changes'));
             }
         }
 
@@ -68,7 +68,8 @@ class VendorController extends Controller
     public function actionRemove($id = null)
     {
         Vendor::deleteAll(['id' => $id]);
-        Yii::$app->getSession()->setFlash('success', 'All changes has been saved.');
+
+        Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'All changes have been saved'));
         return $this->redirect(Url::toRoute('/shop/vendor'));
     }
 }
