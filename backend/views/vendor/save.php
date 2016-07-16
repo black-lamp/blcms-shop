@@ -34,9 +34,17 @@ $this->title = Yii::t('shop', 'Save vendor');
 
                     <!--IMAGE-->
                     <h4><?= Yii::t('shop', 'Logo'); ?></h4>
-                    <?php if(!empty($vendor->image_name)): ?>
-                        <?= Html::img($vendor_image->getBig($vendor->image_name), ['class' => 'img-thumbnail thumbnail center-block']) ?>
-                    <?php endif; ?>
+                    <div class="text-center">
+                        <?php if(!empty($vendor->image_name)): ?>
+                            <?= Html::img($vendor_image->getBig($vendor->image_name), [
+                                'class' => 'img-thumbnail thumbnail center-block'
+                            ]) ?>
+                        <?php else: ?>
+                            <div class="glyphicon glyphicon-picture text-muted" data-toggle="tooltip" data-placement="top"
+                                 title="<?= Yii::t('shop', 'No image') ?>"
+                                 data-original-title="<?= Yii::t('shop', 'No image') ?>"></div>
+                        <?php endif; ?>
+                    </div>
 
                     <!--IMAGE INPUT-->
                     <div class="row">
@@ -56,3 +64,4 @@ $this->title = Yii::t('shop', 'Save vendor');
         </div>
     </div>
 </div>
+<?php $this->registerJs("$(\"[data-toggle='tooltip']\").tooltip();") ?>

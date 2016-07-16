@@ -46,12 +46,16 @@ $this->title = Yii::t('shop', 'Vendors');
                                     <td>
                                         <div class="text-center">
                                             <?php if (!empty($vendor->image_name)): ?>
-                                                <a href="<?= $vendor_images->getBig($vendor->image_name) ?>" target="blank">
-                                                    <?= Html::img(
-                                                        $vendor_images->getBig($vendor->image_name),
-                                                        ['class' => 'img-responsive']
-                                                    )?>
-                                                </a>
+                                                <?= Html::img($vendor_images->getThumb($vendor->image_name), [
+                                                        'class' => 'img-responsive',
+                                                        'data-toggle' => 'modal',
+                                                        'data-target' => '#' . $vendor->image_name
+                                                ])?>
+                                                <div id="<?= $vendor->image_name ?>" class="modal fade" role="dialog">
+                                                    <?= Html::img($vendor_images->getBig($vendor->image_name), [
+                                                            'class' => 'modal-dialog'
+                                                    ])?>
+                                                </div>
                                             <?php else: ?>
                                                 <div class="glyphicon glyphicon-picture text-muted" data-toggle="tooltip" data-placement="top"
                                                      title="<?= Yii::t('shop', 'No image') ?>"
