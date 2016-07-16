@@ -61,13 +61,13 @@ class VendorImage extends Model
         unlink($this->_dir . $this->_orig_image_name);
     }
 
-    // TODO
     public function Remove($image_name)
     {
         if(!empty($image_name)) {
-            unlink($this->_dir . $this->getBig($image_name));
-            unlink($this->_dir . $this->getThumb($image_name));
-            unlink($this->_dir . $this->getSmall($image_name));
+            $dir = Yii::getAlias('@frontend/web');
+            unlink($dir . $this->getBig($image_name));
+            unlink($dir . $this->getThumb($image_name));
+            unlink($dir . $this->getSmall($image_name));
         }
     }
 

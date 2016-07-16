@@ -67,6 +67,12 @@ class VendorController extends Controller
 
     public function actionRemove($id = null)
     {
+        $vendor = Vendor::find()
+            ->where(['id' => $id])
+            ->one();
+        $vendor_image = new VendorImage();
+        $vendor_image->Remove($vendor->image_name);
+
         Vendor::deleteAll(['id' => $id]);
 
         Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'All changes have been saved'));
