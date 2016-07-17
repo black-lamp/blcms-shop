@@ -12,7 +12,7 @@ use yii\helpers\Url;
  * @var VendorImage $vendor_images
  */
 
-$this->title = Yii::t('shop', 'Vendors');
+$this->title = Yii::t('shop', 'Product vendors');
 ?>
 
 <h1><?= Html::encode($this->title); ?></h1>
