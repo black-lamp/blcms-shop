@@ -105,9 +105,9 @@ class CategoryController extends Controller
         if (!empty($id) && !empty($type)) {
             $category = Category::findOne($id);
 
-            unlink($dir . '/shop-category/' . $category->$type . '-big.jpg');
-            unlink($dir . '/shop-category/' . $category->$type . '-small.jpg');
-            unlink($dir . '/shop-category/' . $category->$type . '-thumb.jpg');
+            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-big.jpg');
+            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-small.jpg');
+            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-thumb.jpg');
             $category->$type = null;
             $category->save();
         }
