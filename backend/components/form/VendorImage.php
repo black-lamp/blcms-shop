@@ -15,7 +15,6 @@ class VendorImage extends Model
     /** @var UploadedFile */
     public $imageFile;
 
-    private $_dir;
     private $_orig_image_name;
     private $_image_name;
     private $_image_extension = '.jpg';
@@ -46,19 +45,16 @@ class VendorImage extends Model
 
     public function Upload()
     {
-        $this->_dir = Yii::getAlias('@frontend/web/images/');
-
-        /** @var Imagable $imagable */
-        $imagable = \Yii::$app->imagable;
-        $imagable->imagesPath = $this->_dir;
+        /** @var Imagable $image */
+        $image = Yii::$app->imagable;
 
         // save original
         $this->_orig_image_name = $this->imageFile->baseName . $this->_image_extension;
-        $this->imageFile->saveAs($this->_dir . $this->_orig_image_name);
+        $this->imageFile->saveAs($image->imagesPath . $this->_orig_image_name);
         // create small, thumb & big
-        $this->_image_name = $imagable->create($this->_category, $this->_dir . $this->_orig_image_name);
+        $this->_image_name = $image->create($this->_category, $image->imagesPath . $this->_orig_image_name);
         // delete original
-        unlink($this->_dir . $this->_orig_image_name);
+        unlink($image->imagesPath . $this->_orig_image_name);
     }
 
     public function Remove($image_name)
