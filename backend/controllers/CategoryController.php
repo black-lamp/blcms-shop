@@ -11,7 +11,7 @@ use yii\helpers\Url;
 use yii\web\UploadedFile;
 
 /**
- * @author by Albert Gainutdinov
+ * @author Albert Gainutdinov
  */
 
 class CategoryController extends Controller

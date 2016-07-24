@@ -1,5 +1,7 @@
 <?php
+use bl\cms\shop\backend\assets\EditProductAsset;
 use bl\cms\shop\common\entities\CategoryTranslation;
+use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
@@ -10,10 +12,12 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Vendor;
 use bl\multilang\entities\Language;
 use dosamigos\tinymce\TinyMce;
-use yii\bootstrap\Html;
+use marqu3s\summernote\Summernote;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /* @var $languages Language[] */
 /* @var $selectedLanguage Language */
@@ -22,23 +26,54 @@ use yii\widgets\ActiveForm;
 /* @var $params_translation ParamTranslation */
 /* @var $categories Category[] */
 
-$this->title = 'Edit product';
+EditProductAsset::register($this);
+$this->title = \Yii::t('shop', 'Edit product');
 ?>
 
-<? $form = ActiveForm::begin(['method' => 'post']); ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <?= 'Product' ?>
-                    <?= 'Product' ?>
-                </div>
-                <div class="panel-body">
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="glyphicon glyphicon-list"></i>
+            <?php if (!empty($product->id)) : ?>
+                <?php if (!empty($products_translation->title)) : ?>
+                    <span>
+                    <?= \Yii::t('shop', 'Edit product'); ?>
+                </span>
+                <?php else: ?>
+                    <span>
+                    <?= \Yii::t('shop', 'Add product translation'); ?>
+                </span>
+                <?php endif; ?>
+            <?php else : ?>
+                <span>
+                    <?= \Yii::t('shop', 'Add new product'); ?>
+                </span>
+            <?php endif; ?>
+        </div>
+        <div class="panel-body">
+
+            <!-- TABS -->
+            <div id="tabs">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a data-toggle="tab" href="#basic"><?= \Yii::t('shop', 'Basic'); ?></a></li>
+                    <li><a data-toggle="tab" href="#seo"><?= \Yii::t('shop', 'SEO data'); ?></a></li>
+                    <li><a data-toggle="tab" href="#media"><?= \Yii::t('shop', 'Photo/Video'); ?></a></li>
+                    <li><a data-toggle="tab" href="#prices"><?= \Yii::t('shop', 'Prices'); ?></a></li>
+                    <li><a data-toggle="tab" href="#params"><?= \Yii::t('shop', 'Params'); ?></a></li>
+                </ul>
+
+                <? $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content', 'enctype' => 'multipart/form-data']]); ?>
+                <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+
+                <div id="basic">
+                    <!--BASIC-->
+                    <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
+                    <!-- LANGUAGES -->
                     <? if (count($languages) > 1): ?>
                         <div class="dropdown">
-                            <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <button class="btn btn-warning btn-xs dropdown-toggle" type="button"
+                                    id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="true">
                                 <?= $selectedLanguage->name ?>
                                 <span class="caret"></span>
                             </button>
@@ -47,11 +82,11 @@ $this->title = 'Edit product';
                                     <? foreach ($languages as $language): ?>
                                         <li>
                                             <a href="
-                                            <?= Url::to([
+                                        <?= Url::to([
                                                 'save',
                                                 'productId' => $product->id,
                                                 'languageId' => $language->id]) ?>
-                                            ">
+                                                ">
                                                 <?= $language->name ?>
                                             </a>
                                         </li>
@@ -60,113 +95,64 @@ $this->title = 'Edit product';
                             <? endif; ?>
                         </div>
                     <? endif; ?>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="form-group field-validarticleform-category_id required has-success">
 
-                                <!--CATEGORIES-->
-                                <?= $form->field($product, 'category_id', [
-                                    'inputOptions' => [
-                                        'class' => 'form-control'
-                                    ]
-                                ])->dropDownList(
-                                    ['' => '-- no categories --'] +
-                                    ArrayHelper::map(CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'category_id', 'title')
-                                )->label('Category')
-                                ?>
+                    <!--NAME-->
+                    <?= $form->field($products_translation, 'title', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->label(\Yii::t('shop', 'Name'))
+                    ?>
+                    <!--CATEGORY-->
+                    <?= $form->field($product, 'category_id', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->dropDownList(
+                        ['' => '-- no categories --'] +
+                        ArrayHelper::map(CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'category_id', 'title')
+                    )->label(\Yii::t('shop', 'Category'));
+                    ?>
+                    <?= $form->field($product, 'price', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->label(\Yii::t('shop', 'Price'))
+                    ?>
+                    <!--COUNTRY-->
+                    <?= $form->field($product, 'country_id', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->dropDownList(
+                        ['' => '-- no countries --'] +
+                        ArrayHelper::map(ProductCountryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'country_id', 'title')
+                    )->label(\Yii::t('shop', 'Country'));
+                    ?>
+                    <!--VENDOR-->
+                    <?= $form->field($product, 'vendor_id', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->dropDownList(
+                        ['' => '-- no vendor --'] +
+                        ArrayHelper::map(Vendor::find()->all(), 'id', 'title')
+                    )->label(\Yii::t('shop', 'Vendor'))
+                    ?>
+                    <!--SHORT DESCRIPTION-->
+                    <?= $form->field($products_translation, 'description', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->widget(Summernote::className())->label(\Yii::t('shop', 'Short description'));
+                    ?>
 
-                            </div>
-
-                            <!--COUNTRY-->
-                            <?= $form->field($product, 'country_id', [
-                                'inputOptions' => [
-                                    'class' => 'form-control'
-                                ]
-                            ])->dropDownList(
-                                ['' => '-- no countries --'] +
-                                ArrayHelper::map(ProductCountryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(), 'country_id', 'title')
-                            )->label('Country')
-                            ?>
-
-                            <!--VENDOR-->
-                            <?= $form->field($product, 'vendor_id', [
-                                'inputOptions' => [
-                                    'class' => 'form-control'
-                                ]
-                            ])->dropDownList(
-                                ['' => '-- no vendor --'] +
-                                ArrayHelper::map(Vendor::find()->all(), 'id', 'title')
-                            )->label('Vendor')
-                            ?>
-
-                            <!--TITLE-->
-                            <?= $form->field($products_translation, 'title', [
-                                'inputOptions' => [
-                                    'class' => 'form-control'
-                                ]
-                            ])->label('Title')
-                            ?>
-
-                            <!--DESCRIPTION-->
-                            <?= $form->field($products_translation, 'description', [
-                                'inputOptions' => [
-                                    'class' => 'form-control'
-                                ]
-                            ])->widget(TinyMce::className(), [
-                                'options' => ['rows' => 10],
-                                'language' => 'ru',
-                                'clientOptions' => [
-                                    'relative_urls' => false,
-                                    'plugins' => [
-                                        'textcolor colorpicker',
-                                        "advlist autolink lists link charmap print preview anchor",
-                                        "searchreplace visualblocks code fullscreen",
-                                        "insertdatetime media table contextmenu paste",
-                                        'image'
-                                    ],
-                                    'toolbar' => Yii::$app->params['toolbar'],
-                                ]
-                            ])->label('Description')
-                            ?>
-                        </div>
-
-                        <div class="col-md-3 text-center">
-                            <!--IMAGE-->
-                            <h2>Image</h2>
-                            <? if(!empty($product->image_name)): ?>
-                                <?= Html::img($product->getThumbImage()) ?>
-                            <? endif; ?>
-
-                            <?= $form->field($product, 'imageFile')->fileInput() ?>
-
-                            <!--EXPORT-->
-                            <hr>
-                            <?= $form->field($product, 'export')
-                                ->checkbox(['class' => 'i-checks','checked ' => ($product->export) ? '' : false])
-                            ?>
-                        </div>
-                    </div>
-
-                    <!-- FULL TEXT FIELD -->
+                    <!-- FULL TEXT -->
                     <?= $form->field($products_translation, 'full_text', [
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->widget(TinyMce::className(), [
-                        'options' => ['rows' => 20],
-                        'language' => 'ru',
-                        'clientOptions' => [
-                            'relative_urls' => false,
-                            'plugins' => [
-                                'textcolor colorpicker',
-                                "advlist autolink lists link charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table contextmenu paste",
-                                'image'
-                            ],
-                            'toolbar' => Yii::$app->params['toolbar'],
-                        ]
-                    ])->label('Full text')
+                    ])->widget(Summernote::className())->label(\Yii::t('shop', 'Full description'))
                     ?>
 
                     <!-- CHARACTERISTICS -->
@@ -176,21 +162,7 @@ $this->title = 'Edit product';
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->widget(TinyMce::className(), [
-                        'options' => ['rows' => 10],
-                        'language' => 'ru',
-                        'clientOptions' => [
-                            'relative_urls' => false,
-                            'plugins' => [
-                                'textcolor colorpicker',
-                                "advlist autolink lists link charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table contextmenu paste",
-                                'image'
-                            ],
-                            'toolbar' => Yii::$app->params['toolbar'],
-                        ]
-                    ])->label('Characteristics')
+                    ])->widget(Summernote::className())->label('Characteristics')
                     ?>
 
                     <!--DOSES-->
@@ -198,26 +170,21 @@ $this->title = 'Edit product';
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->widget(TinyMce::className(), [
-                        'options' => ['rows' => 10],
-                        'language' => 'ru',
-                        'clientOptions' => [
-                            'relative_urls' => false,
-                            'plugins' => [
-                                'textcolor colorpicker',
-                                "advlist autolink lists link charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table contextmenu paste",
-                                'image'
-                            ],
-                            'toolbar' => Yii::$app->params['toolbar'],
-                        ]
-                    ])->label('Doses')
+                    ])->widget(Summernote::className())->label('Doses')
                     ?>
 
-                    <!-- SEO FIELDS -->
-                    <hr>
-                    <h2>SEO options</h2>
+                    <!-- EXPORT -->
+                    <?= $form->field($product, 'export', [
+                        'inputOptions' => [
+                            'class' => 'form-control'
+                        ]
+                    ])->checkbox(['class' => 'i-checks', 'checked ' => ($product->export) ? '' : false])
+                    ?>
+                </div>
+
+                <!-- SEO -->
+                <div id="seo">
+                    <h2><?= \Yii::t('shop', 'SEO options'); ?></h2>
                     <?= $form->field($products_translation, 'seoUrl', [
                         'inputOptions' => [
                             'class' => 'form-control'
@@ -228,119 +195,95 @@ $this->title = 'Edit product';
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->label('SEO title')
+                    ])->label(\Yii::t('shop', 'SEO title'))
                     ?>
                     <?= $form->field($products_translation, 'seoDescription', [
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->textarea(['rows' => 3])->label('SEO description')
+                    ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO description'))
                     ?>
                     <?= $form->field($products_translation, 'seoKeywords', [
                         'inputOptions' => [
                             'class' => 'form-control'
                         ]
-                    ])->textarea(['rows' => 3])->label('SEO keywords')
+                    ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO keywords'))
                     ?>
+                </div>
 
-                    <? if (!$product->isNewRecord): ?>
-                        <!--PARAMS-->
-                        <hr>
-                        <h2>Params</h2>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <?php if (!empty($product->params)) : ?>
-
-                                            <table class="table table-hover">
-                                                <thead>
-                                                <tr>
-                                                    <th class="col-lg-4 text-center">
-                                                        Name
-                                                    </th>
-                                                    <th class="col-lg-5 text-center">
-                                                        Value
-                                                    </th>
-                                                    <th class="col-lg-2 text-center">
-                                                        Languages
-                                                    </th>
-                                                    <th class="col-lg-1 text-center">
-                                                        Control
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <?php foreach ($product->params as $param) : ?>
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            <?= $param->translation->name ?>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <?= $param->translation->value ?>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <? if (count($languages) > 1): ?>
-                                                                <? $translations = ArrayHelper::index($param->translations, 'language_id') ?>
-                                                                <? foreach ($languages as $language): ?>
-                                                                    <a href="<?= Url::to([
-                                                                        'add-param',
-                                                                        'id' => $param->id,
-                                                                        'languageId' => $language->id
-                                                                    ]) ?>"
-                                                                       type="button"
-                                                                       class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
-                                                                       ?> btn-xs"><?= $language->name ?></a>
-                                                                <? endforeach; ?>
-                                                            <? endif; ?>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <a href="<?= Url::to([
-                                                                'add-param',
-                                                                'id' => $param->translation->param_id,
-                                                                'languageId' => $param->translation->language_id
-                                                            ]) ?>"
-                                                               class="btn btn-primary pull-left">E</a>
-                                                            <a href="<?= Url::to([
-                                                                'delete-param',
-                                                                'id' => $param->translation->param_id,
-                                                                'productId' => $param->product_id,
-                                                                'languageId' => $selectedLanguage
-                                                            ]) ?>"
-                                                               class="btn btn-danger pull-right">D</a>
-                                                        </td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                                </tbody>
-                                            </table>
-                                        <? endif; ?>
-                                        <a href="<?= Url::to([
-                                            'add-param',
-                                            'productId' => $product->id,
-                                            'languageId' => $product->translation->language_id
-                                        ]) ?>"
-                                           class="btn btn-primary pull-right">Add param</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!--MEDIA-->
+                <div id="media">
+                    <h2>
+                        <?= \Yii::t('shop', 'Photo/Video'); ?>
+                    </h2>
+                    <? if(!empty($product->image_name)): ?>
+                        <?= Html::img($product->getThumbImage()) ?>
                     <? endif; ?>
 
-                    <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
+                    <?= $form->field($product, 'imageFile')->fileInput() ?>
                 </div>
+                <? ActiveForm::end(); ?>
+
+                <!--PRODUCT PRICES-->
+                <div id="prices">
+                    <h2>
+                        <?= \Yii::t('shop', 'Prices'); ?>
+                    </h2>
+                    <? if (!$product->isNewRecord): ?>
+                        <? Pjax::begin([
+                            'linkSelector' => '.price',
+                            'enablePushState' => false,
+                            'timeout' => 5000
+                        ]);
+                        ?>
+                        <?= $this->render('/price/add', [
+                            'priceList' => $product->prices,
+                            'priceModel' => new ProductPrice(),
+                            'priceTranslationModel' => new ProductPriceTranslation(),
+                            'product' => $product,
+                            'languages' => $languages,
+                            'language' => $selectedLanguage
+                        ]) ?>
+                        <? Pjax::end(); ?>
+                    <? endif; ?>
+                </div>
+
+                <!--PARAMS-->
+                <div id="params">
+                    <h2>
+                        <?= \Yii::t('shop', 'Params'); ?>
+                    </h2>
+                    <? if (!$product->isNewRecord): ?>
+                        <? Pjax::begin([
+                            'linkSelector' => '.param',
+                            'enablePushState' => false,
+                            'timeout' => 5000
+                        ]);
+                        ?>
+                        <?= $this->render('/product/add-param', [
+                            'product' => $product,
+                            'param' => new Param(),
+                            'param_translation' => new ParamTranslation(),
+                            'languages' => Language::findAll(['active' => true]),
+                            'selectedLanguage' => Language::findOne($selectedLanguage->id),
+                            'products' => Product::find()->with('translations')->all(),
+                            'productId' => $product->id
+                        ]);
+                        ?>
+                        <? Pjax::end(); ?>
+                    <? endif; ?>
+                </div>
+
             </div>
         </div>
     </div>
-<? ActiveForm::end(); ?>
+</div>
 
-<!--PRODUCT PRICES-->
-<? if (!$product->isNewRecord): ?>
-    <?= $this->render('/price/add', [
-        'priceList' => $product->prices,
-        'priceModel' => new ProductPrice(),
-        'priceTranslationModel' => new ProductPriceTranslation(),
-        'product' => $product,
-        'languages' => $languages,
-        'selectedLanguage' => $selectedLanguage
-    ]) ?>
-<? endif; ?>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+<script>
+    $(function () {
+        $("#tabs").tabs();
+    });
+</script>
+

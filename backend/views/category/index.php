@@ -1,4 +1,5 @@
 <?php
+use bl\cms\shop\backend\assets\PjaxLoaderAsset;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
@@ -9,12 +10,16 @@ use yii\widgets\Pjax;
 /* @var $languages Language[] */
 
 $this->title = \Yii::t('shop', 'Product categories');
+
+PjaxLoaderAsset::register($this);
 ?>
 
 <? Pjax::begin([
     'linkSelector' => '.category-nav',
-    'enablePushState' => false
-]) ?>
+    'enablePushState' => false,
+    'timeout' => 10000
+]);
+?>
 <h1><?=\Yii::t('shop', 'Product categories'); ?></h1>
 <div class="row">
     <div class="col-md-12">

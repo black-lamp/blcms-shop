@@ -16,9 +16,7 @@ use yii\web\Controller;
 use yii\web\UploadedFile;
 
 /**
- * @author xalbert.einsteinx
- * Date: 20.05.2016
- * Time: 10:56
+ * @author Albert Gainutdinov
  */
 
 class ProductController extends Controller
@@ -91,18 +89,19 @@ class ProductController extends Controller
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
+
         return $this->render('save', [
+            'params_translation' => new ParamTranslation(),
             'product' => $product,
             'products_translation' => $products_translation,
             'category' => Category::find()->with('translations')->all(),
-            'selectedLanguage' => $selectedLanguage,
-            'languages' => Language::findAll(['active' => true])
+            'selectedLanguage' => $selectedLanguage
         ]);
     }
 
     public function actionRemove($id) {
         Product::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to(['/shop/product']));
+        return $this->actionIndex();
     }
     
     public function actionAddParam($id = null, $languageId = null, $productId = null) {
@@ -124,6 +123,7 @@ class ProductController extends Controller
         }
 
         if(Yii::$app->request->isPost) {
+
             $param->load(Yii::$app->request->post());
             $param_translation->load(Yii::$app->request->post());
             if($param->validate() && $param_translation->validate())
@@ -133,32 +133,34 @@ class ProductController extends Controller
                 $param_translation->language_id = $languageId;
                 $param_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::to([
-                    'save',
-                    'productId' => $param->product_id,
-                    'languageId' => $param_translation->language_id])
-                );
             }
             else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
-        return $this->render('add-param', [
-            'param' => $param,
-            'param_translation' => $param_translation,
-            'languages' => Language::findAll(['active' => true]),
+        return $this->renderPartial('add-param', [
+            'product' => Product::findOne($productId),
+            'param' => new Param(),
+            'param_translation' => new ParamTranslation(),
             'selectedLanguage' => Language::findOne($languageId),
             'products' => Product::find()->with('translations')->all(),
             'productId' => $productId
         ]);
-    }
 
-    public function actionDeleteParam($id, $productId) {
+    }
+  
+
+    public function actionDeleteParam($id, $productId, $languageId) {
         Param::deleteAll(['id' => $id]);
-        return $this->redirect(Url::to([
-            'save',
-            'productId' => $productId,
-        ]));
+        return $this->renderPartial('add-param', [
+            'product' => Product::findOne($productId),
+            'param' => new Param(),
+            'param_translation' => new ParamTranslation(),
+            'selectedLanguage' => Language::findOne($languageId),
+            'products' => Product::find()->with('translations')->all(),
+            'productId' => $productId
+        ]);
+
     }
 
     public function actionUp($id) {

@@ -1,100 +1,102 @@
 <?php
 use bl\cms\shop\common\entities\Param;
+use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /**
  * @author Albert Gainutdinov
  *
- *@var $param Param
- *@var $languages Language[]
- *@var $selectedLanguage Language[]
- *@var $products Product
- *@var $productId Product
+ * @var $param Param
+ * @var $param_translation ParamTranslation
+ * @var $selectedLanguage Language[]
+ * @var $products Product
+ * @var $productId Product
+ * @var $product Product
  */
 
 $this->title = 'Edit param';
 
 ?>
 
-<div class="row wrapper wrapper-content animated fadeInRight">
+<? $form = ActiveForm::begin([
+    'action' => [
+        'product/add-param',
+        'productId' => $productId,
+        'languageId' => $selectedLanguage->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'param',
+        'data-pjax' => true
+    ]
+]);
+?>
 
-<? $form = ActiveForm::begin(['method'=>'post']) ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="glyphicon glyphicon-edit"></i>
-                    <?= 'Param' ?>
-                </div>
-                <div class="panel-body">
-                    <? if(count($languages) > 1): ?>
-                        <div class="dropdown">
-                            <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <?= $selectedLanguage->name ?>
-                                <span class="caret"></span>
-                            </button>
-                            <? if(count($languages) > 1): ?>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <? foreach($languages as $language): ?>
-                                        <li>
-                                            <a href="
-                                            <?= Url::to([
-                                                'add-param',
-                                                'id' => $param->id,
-                                                'productId' => $productId,
-                                                'languageId' => $language->id])?>
-                                            ">
-                                                <?= $language->name?>
-                                            </a>
-                                        </li>
-                                    <? endforeach; ?>
-                                </ul>
-                            <? endif; ?>
-                        </div>
-                    <? endif; ?>
-                    <div class="form-group field-validarticleform-category_id required has-success">
-                        <div class="help-block"></div>
-                    </div>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th class="col-md-5 text-center">
+            <?= \Yii::t('shop', 'Title'); ?>
+        </th>
+        <th class="col-md-6 text-center">
+            <?= \Yii::t('shop', 'Value'); ?>
+        </th>
+        <th class="col-md-1 text-center">
+            <?= \Yii::t('shop', 'Control'); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if (!empty($product->params)) : ?>
+        <?php foreach ($product->params as $param) : ?>
+            <tr class="text-center">
+                <td>
+                    <?= $param->translation->name ?>
+                </td>
+                <td>
+                    <?= $param->translation->value ?>
+                </td>
+                <td>
+                    <a href="<?= Url::to([
+                        'delete-param',
+                        'id' => $param->translation->param_id,
+                        'productId' => $param->product_id,
+                        'languageId' => $selectedLanguage->id
+                    ]) ?>"
+                       class="param glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <? endif; ?>
+        <tr>
+            <td>
+                <?= $form->field($param_translation, 'name', [
+                    'inputOptions' => [
+                        'class' => 'form-control col-md-5'
+                    ]
+                ])->label(false)
+                ?>
+            </td>
+            <td>
+                <?= $form->field($param_translation, 'value', [
+                    'inputOptions' => [
+                        'class' => 'form-control col-md-5'
+                    ]
+                ])->label(false)
+                ?>
+            </td>
+            <td>
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-                    <?= $form->field($param, 'product_id', [
-                        'inputOptions' => [
-                            'class' => 'form-control'
-                        ]
-                    ])->dropDownList(
-                        ['' => '-- no vendor --'] +
-                        ArrayHelper::map(
-                            ProductTranslation::find()
-                            ->where(['language_id' => 1])
-                            ->groupBy('product_id')
-                            ->all(),
-                            'product_id',
-                            'title'
-                        )
-                    )
-                    ?>
-
-                    <?= $form->field($param_translation, 'name', [
-                        'inputOptions' => [
-                            'class' => 'form-control'
-                        ]
-                    ])->label('Name')
-                    ?>
-                    <?= $form->field($param_translation, 'value', [
-                        'inputOptions' => [
-                            'class' => 'form-control'
-                        ]
-                    ])->label('Value')
-                    ?>
-
-                    <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
-                </div>
-            </div>
-        </div>
-    </div>
-<? ActiveForm::end(); ?>
-</div>
+<? $form->end(); ?>

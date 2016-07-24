@@ -15,7 +15,7 @@ class PriceController extends Controller
     public function actionAdd($productId, $languageId) {
         $price = new ProductPrice();
         $priceTranslation = new ProductPriceTranslation();
-
+        
         $product = Product::findOne($productId);
         $selectedLanguage = Language::findOne($languageId);
 
@@ -33,20 +33,19 @@ class PriceController extends Controller
                 }
             }
         }
-
+        
         return $this->renderPartial('add', [
             'priceList' => $product->prices,
             'priceModel' => $price,
             'priceTranslationModel' => $priceTranslation,
             'product' => $product,
             'languages' => Language::findAll(['active' => true]),
-            'selectedLanguage' => $selectedLanguage
+            'language' => $selectedLanguage
         ]);
-
     }
 
-    public function actionRemove($priceId) {
+    public function actionRemove($priceId, $productId, $languageId) {
         ProductPrice::deleteAll(['id' => $priceId]);
-        return $this->actionAdd(1, 2);
+        return $this->actionAdd($productId, $languageId);
     }
 }

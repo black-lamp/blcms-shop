@@ -26,8 +26,7 @@ EditCategoryAsset::register($this);
 $this->title = \Yii::t('shop', 'Edit category');
 ?>
 
-<? $addForm = ActiveForm::begin(['action' => Url::to(['/shop/category/save', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), 'method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
-
+<? $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -118,7 +117,7 @@ $this->title = \Yii::t('shop', 'Edit category');
                             <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
                             <?= treeRecoursion($categoriesTree); ?>
                             <?= '</ul>'; ?>
-                            
+
                             <?php
                             function treeRecoursion($categoriesTree)
                             {
@@ -196,20 +195,20 @@ $this->title = \Yii::t('shop', 'Edit category');
                                         <?= \Yii::t('shop', 'Type'); ?>
                                     </th>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <th class="text-center col-md-2">
-                                        <?= \Yii::t('shop', 'Image preview'); ?>
-                                    </th>
-                                    <th class="text-center col-md-5">
-                                        <?= \Yii::t('shop', 'Image URL'); ?>
-                                    </th>
+                                        <th class="text-center col-md-2">
+                                            <?= \Yii::t('shop', 'Image preview'); ?>
+                                        </th>
+                                        <th class="text-center col-md-5">
+                                            <?= \Yii::t('shop', 'Image URL'); ?>
+                                        </th>
                                     <?php endif; ?>
                                     <th class="text-center col-md-3">
                                         <?= \Yii::t('shop', 'Upload'); ?>
                                     </th>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <th class="text-center col-md-1">
-                                        <?= \Yii::t('shop', 'Delete'); ?>
-                                    </th>
+                                        <th class="text-center col-md-1">
+                                            <?= \Yii::t('shop', 'Delete'); ?>
+                                        </th>
                                     <?php endif; ?>
                                 </tr>
                                 </thead>
@@ -221,32 +220,33 @@ $this->title = \Yii::t('shop', 'Edit category');
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                                         <td>
                                             <?php if (!empty($category->menu_item)) : ?>
-                                            <img data-toggle="modal" data-target="#menuItemModal"
-                                                 src="/images/shop-category/menu_item/<?= $category->menu_item . '-small.jpg'; ?>" class="thumb">
-                                            <!-- Modal -->
-                                            <div id="menuItemModal" class="modal fade" role="dialog">
-                                                <img style="display: block" class="modal-dialog"
-                                                     src="/images/shop-category/menu_item/<?= $category->menu_item . '-thumb.jpg'; ?>">
-                                            </div>
+                                                <img data-toggle="modal" data-target="#menuItemModal"
+                                                     src="/images/shop-category/menu_item/<?= $category->menu_item . '-small.jpg'; ?>"
+                                                     class="thumb">
+                                                <!-- Modal -->
+                                                <div id="menuItemModal" class="modal fade" role="dialog">
+                                                    <img style="display: block" class="modal-dialog"
+                                                         src="/images/shop-category/menu_item/<?= $category->menu_item . '-thumb.jpg'; ?>">
+                                                </div>
                                             <?php endif; ?>
                                         </td>
-                                    <td>
-                                        <?php if (!empty($category->menu_item)) : ?>
-                                        <input type="text" class="form-control" disabled=""
-                                                   value="<?= '/images/shop-category/menu_item/' . $category->menu_item . '-big.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
+                                        <td>
+                                            <?php if (!empty($category->menu_item)) : ?>
+                                                <input type="text" class="form-control" disabled=""
+                                                       value="<?= '/images/shop-category/menu_item/' . $category->menu_item . '-big.jpg'; ?>">
+                                            <?php endif; ?>
+                                        </td>
                                     <?php endif; ?>
                                     <td>
                                         <?= $addForm->field($image_form, 'menu_item')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
                                     </td>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <td class="text-center">
-                                        <?php if (!empty($category->menu_item)) : ?>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'menu_item']); ?>"
-                                               class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                    </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($category->menu_item)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'menu_item']); ?>"
+                                                   class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
                                     <?php endif; ?>
                                 </tr>
                                 <tr>
@@ -256,32 +256,33 @@ $this->title = \Yii::t('shop', 'Edit category');
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                                         <td>
                                             <?php if (!empty($category->thumbnail)) : ?>
-                                                <img data-toggle="modal" data-target="#thumbnailModal"
-                                                 src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-small.jpg'; ?>" class="thumb">
-                                        <!-- Modal -->
-                                        <div id="thumbnailModal" class="modal fade" role="dialog">
-                                            <img style="display: block" class="modal-dialog"
-                                                 src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-thumb.jpg'; ?>">
+                                            <img data-toggle="modal" data-target="#thumbnailModal"
+                                                 src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-small.jpg'; ?>"
+                                                 class="thumb">
+                                            <!-- Modal -->
+                                            <div id="thumbnailModal" class="modal fade" role="dialog">
+                                                <img style="display: block" class="modal-dialog"
+                                                     src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-thumb.jpg'; ?>">
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($category->thumbnail)) : ?>
+                                                <input type="text" class="form-control" disabled=""
+                                                       value="<?= '/images/shop-category/thumbnail/' . $category->thumbnail . '-big.jpg'; ?>">
                                             <?php endif; ?>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($category->thumbnail)) : ?>
-                                        <input type="text" class="form-control" disabled=""
-                                                   value="<?= '/images/shop-category/thumbnail/' . $category->thumbnail . '-big.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
+                                        </td>
                                     <?php endif; ?>
                                     <td>
                                         <?= $addForm->field($image_form, 'thumbnail')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
                                     </td>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <td class="text-center">
-                                        <?php if (!empty($category->thumbnail)) : ?>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'thumbnail']); ?>"
-                                               class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                    </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($category->thumbnail)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'thumbnail']); ?>"
+                                                   class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
                                     <?php endif; ?>
                                 </tr>
                                 <tr>
@@ -289,34 +290,35 @@ $this->title = \Yii::t('shop', 'Edit category');
                                         <?= \Yii::t('shop', 'Cover'); ?>
                                     </td>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <td>
-                                        <?php if (!empty($category->cover)) : ?>
-                                        <img data-toggle="modal" data-target="#coverModal"
-                                             src="/images/shop-category/cover/<?= $category->cover . '-small.jpg'; ?>" class="thumb">
-                                        <!-- Modal -->
-                                        <div id="coverModal" class="modal fade" role="dialog">
-                                            <img style="display: block" class="modal-dialog"
-                                                 src="/images/shop-category/cover/<?= $category->cover . '-thumb.jpg'; ?>">
-                                        </div>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($category->cover)) : ?>
-                                        <input type="text" class="form-control" disabled=""
-                                               value="<?= '/images/shop-category/cover/' . $category->cover . '-big.jpg'; ?>">
-                                        <?php endif; ?>
-                                    </td>
+                                        <td>
+                                            <?php if (!empty($category->cover)) : ?>
+                                                <img data-toggle="modal" data-target="#coverModal"
+                                                     src="/images/shop-category/cover/<?= $category->cover . '-small.jpg'; ?>"
+                                                     class="thumb">
+                                                <!-- Modal -->
+                                                <div id="coverModal" class="modal fade" role="dialog">
+                                                    <img style="display: block" class="modal-dialog"
+                                                         src="/images/shop-category/cover/<?= $category->cover . '-thumb.jpg'; ?>">
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($category->cover)) : ?>
+                                                <input type="text" class="form-control" disabled=""
+                                                       value="<?= '/images/shop-category/cover/' . $category->cover . '-big.jpg'; ?>">
+                                            <?php endif; ?>
+                                        </td>
                                     <?php endif; ?>
                                     <td>
                                         <?= $addForm->field($image_form, 'cover')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
                                     </td>
                                     <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
-                                    <td class="text-center">
-                                        <?php if (!empty($category->cover)) : ?>
-                                            <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'cover']); ?>"
-                                               class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                                        <?php endif; ?>
-                                    </td>
+                                        <td class="text-center">
+                                            <?php if (!empty($category->cover)) : ?>
+                                                <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'cover']); ?>"
+                                                   class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                                            <?php endif; ?>
+                                        </td>
                                     <?php endif; ?>
                                 </tr>
                                 </tbody>

@@ -1,4 +1,5 @@
 <?php
+use bl\cms\shop\backend\assets\PjaxLoaderAsset;
 use  bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
@@ -9,12 +10,10 @@ use yii\widgets\Pjax;
 /* @var $languages Language[] */
 
 $this->title = 'Products list';
+
+PjaxLoaderAsset::register($this);
 ?>
 
-<? Pjax::begin([
-    'linkSelector' => '.product-nav',
-    'enablePushState' => false
-]) ?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
@@ -23,6 +22,11 @@ $this->title = 'Products list';
                 <?= 'Products list' ?>
             </div>
             <div class="panel-body">
+                <? Pjax::begin([
+                    'linkSelector' => '.product-nav',
+                    'enablePushState' => false,
+                    'timeout' => 10000,
+                ]) ?>
                 <table class="table table-hover">
                     <? if (!empty($products)): ?>
                         <thead>
@@ -67,7 +71,6 @@ $this->title = 'Products list';
                                         <?= $product->translation->description ?>
                                     <? endif; ?>
                                 </td>
-
                                 <td>
                                     <? if(count($languages) > 1): ?>
                                         <? $translations = ArrayHelper::index($product->translations, 'language_id') ?>
@@ -83,8 +86,6 @@ $this->title = 'Products list';
                                         <? endforeach; ?>
                                     <? endif; ?>
                                 </td>
-
-
                                 <td>
                                     <a href="<?= Url::to([
                                         'save',
@@ -98,7 +99,7 @@ $this->title = 'Products list';
                                     <a href="<?= Url::to([
                                         'remove',
                                         'id' => $product->id
-                                    ])?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
+                                    ])?>" id="remove" class="product-nav glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
                                     </a>
                                 </td>
                             </tr>
@@ -106,7 +107,8 @@ $this->title = 'Products list';
                         </tbody>
                     <? endif; ?>
                 </table>
-                <!-- TODO: languageId -->
+                <? Pjax::end() ?>
+
                 <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
                    class="btn btn-primary pull-right">
                     <i class="fa fa-user-plus"></i> <?= 'Add' ?>
@@ -115,4 +117,3 @@ $this->title = 'Products list';
         </div>
     </div>
 </div>
-<? Pjax::end() ?>

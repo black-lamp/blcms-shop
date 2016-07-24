@@ -47,6 +47,7 @@ class Product extends ActiveRecord
     {
         return [
             [['position', 'category_id', 'vendor_id', 'country_id'], 'number'],
+            [['price'], 'number'],
             [['imageFile'], 'file'],
             [['export'], 'boolean']
         ];
