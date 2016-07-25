@@ -73,7 +73,7 @@ use yii\widgets\Pjax;
                             <?= $priceForm->field($priceTranslationModel, 'title') ?>
                         </div>
                         <div class="col-md-3">
-                            <?= $priceForm->field($priceModel, 'price')->textInput(['type' => 'number']) ?>
+                            <?= $priceForm->field($priceModel, 'price')->textInput(['type' => 'number', 'step' => '0.01']) ?>
                         </div>
                         <div class="col-md-2">
                             <?= $priceForm->field($priceModel, 'sale_type_id')
@@ -85,7 +85,7 @@ use yii\widgets\Pjax;
                             ?>
                         </div>
                         <div class="col-md-3">
-                            <?= $priceForm->field($priceModel, 'sale')->textInput(['type' => 'number']) ?>
+                            <?= $priceForm->field($priceModel, 'sale')->textInput(['type' => 'number', 'step' => '0.01']) ?>
                         </div>
                         <div class="col-md-1">
                             <?= Html::submitButton('Add', ['class' => 'btn btn-primary'])  ?>
