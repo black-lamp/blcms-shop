@@ -144,6 +144,11 @@ $this->title = 'Edit product';
                             <?= $form->field($product, 'export')
                                 ->checkbox(['class' => 'i-checks','checked ' => ($product->export) ? '' : false])
                             ?>
+                            <!--IN STOCK-->
+                            <hr>
+                            <?= $form->field($product, 'in_stock')
+                                ->checkbox(['class' => 'i-checks','checked ' => ($product->in_stock) ? '' : false])
+                            ?>
                         </div>
                     </div>
 
