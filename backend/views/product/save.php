@@ -104,7 +104,18 @@ $this->title = 'Edit product';
                                 'inputOptions' => [
                                     'class' => 'form-control'
                                 ]
-                            ])->label('Title')
+                            ])->label('Title');
+                            ?>
+
+                            <!--ANCHOR NAME-->
+                            <?= $form->field($products_translation, 'anchor_name', [
+                                'inputOptions' => [
+                                    'class' => 'form-control',
+                                    'data-toggle' => 'tooltip',
+                                    'data-placement' => 'top',
+                                    'title' => 'Anchor name in links to this product',
+                                ]
+                            ])->label('Anchor name');
                             ?>
 
                             <!--DESCRIPTION-->

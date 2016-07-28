@@ -12,12 +12,14 @@ use yii\db\Expression;
  * @author Albert Gainutdinov
  *
  * @property integer $id
- * @property integer $article_id
  * @property integer $language_id
  * @property integer $product_id
  * @property string $title
  * @property string $description
- * @property string $name
+ * @property string $characteristics
+ * @property string $dose
+ * @property string $full_text
+ * @property string $anchor_name
  */
 
 class ProductTranslation extends ActiveRecord
@@ -43,7 +45,7 @@ class ProductTranslation extends ActiveRecord
     {
         return [
             [['language_id', 'product_id'], 'number'],
-            [['title', 'description', 'characteristics', 'dose'], 'string'],
+            [['title', 'description', 'characteristics', 'dose', 'anchor_name'], 'string'],
             [['full_text'], 'string', 'max' => 65536],
             [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
         ];
