@@ -45,8 +45,8 @@ class PriceController extends Controller
 
     }
 
-    public function actionRemove($priceId) {
+    public function actionRemove($priceId, $productId, $languageId) {
         ProductPrice::deleteAll(['id' => $priceId]);
-        return $this->actionAdd(1, 2);
+        return $this->actionAdd($productId, $languageId);
     }
 }

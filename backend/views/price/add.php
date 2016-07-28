@@ -116,7 +116,9 @@ use yii\widgets\Pjax;
                                     <td>
                                         <?= Html::a('', [
                                                 'price/remove',
-                                                'priceId' => $price->id
+                                                'priceId' => $price->id,
+                                                'productId' =>$product->id,
+                                                'languageId' => $language->id
                                             ], [
                                                 'class' => 'glyphicon glyphicon-remove text-danger btn btn-default btn-sm'
                                             ]
