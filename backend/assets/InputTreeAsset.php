@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
-class EditCategoryAsset extends AssetBundle
+class InputTreeAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/black-lamp/blcms-shop/backend/web';
 

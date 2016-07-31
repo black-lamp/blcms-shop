@@ -1,0 +1,10 @@
+div#tabs {
+    border: none !important;
+}
+ul.nav-tabs {
+    background: #fff;
+    border: none !important;
+}
+ul.nav-tabs li a {
+    width: 100% !important;
+}

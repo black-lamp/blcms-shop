@@ -71,14 +71,10 @@ class CategoryController extends Controller
                 $category_translation->language_id = $languageId;
                 $category_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::toRoute('/shop/category'));
             }
-            else
-                Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-        $tree = Category::findChilds($categoriesWithoutParent);
 
         return $this->render('save', [
             'category' => $category,
@@ -90,7 +86,7 @@ class CategoryController extends Controller
             'maxPosition' => Category::find()->orderBy(['position' => SORT_DESC])->one()->position,
             'minPosition' => Category::find()->orderBy(['position' => SORT_ASC])->one()->position,
             'categoriesWithoutParent' => $categoriesWithoutParent,
-            'categoriesTree' => $tree,
+            'categoriesTree' => Category::findChilds($categoriesWithoutParent),
         ]);
     }
 

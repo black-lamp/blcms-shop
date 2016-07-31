@@ -9,14 +9,16 @@ use yii\web\AssetBundle;
 class EditProductAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/black-lamp/blcms-shop/backend/web';
-    
-    public $js = [
-        'js/jquery-ui.min.js',
+
+    public $css = [
+        'css/style.css',
     ];
 
     public $depends = [
+        'yii\jui\JuiAsset',
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
-        'bl\cms\shop\backend\assets\PjaxLoaderAsset'
+        'bl\cms\shop\backend\assets\PjaxLoaderAsset',
+        'bl\cms\shop\backend\assets\InputTreeAsset'
     ];
 }

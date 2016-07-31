@@ -7,14 +7,15 @@ use bl\multilang\entities\Language;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /** @var Product $product
-* @var ProductPrice $priceModel 
-* @var ProductPriceTranslation $priceTranslationModel
-* @var ProductPrice[] $priceList
-* @var Language[] $languages
-* @var Language $language
-*/
+ * @var ProductPrice $priceModel
+ * @var ProductPriceTranslation $priceTranslationModel
+ * @var ProductPrice[] $priceList
+ * @var Language[] $languages
+ * @var Language $language
+ */
 ?>
 
 <? $form = ActiveForm::begin([
@@ -30,18 +31,18 @@ use yii\helpers\Html;
     ]
 ]) ?>
 
-<? if (!empty($priceList)): ?>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
-            <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Price'); ?></th>
-            <th class="col-md-2 text-center"><?= \Yii::t('shop', 'Sale type'); ?></th>
-            <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Sale'); ?></th>
-            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Control'); ?></th>
-        </tr>
-        </thead>
-        <tbody>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
+        <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Price'); ?></th>
+        <th class="col-md-2 text-center"><?= \Yii::t('shop', 'Sale type'); ?></th>
+        <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Sale'); ?></th>
+        <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Control'); ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <? if (!empty($priceList)): ?>
         <? foreach ($priceList as $price): ?>
             <tr class="text-center">
                 <? if (!empty($price->translation)): ?>
@@ -64,34 +65,34 @@ use yii\helpers\Html;
                 </td>
             </tr>
         <? endforeach; ?>
-            <tr>
-                <!--Title-->
-                <td>
-                    <?= $form->field($priceTranslationModel, 'title')->label(false) ?>
-                </td>
-                <!--Price-->
-                <td>
-                    <?= $form->field($priceModel, 'price')->textInput(['type' => 'number'])->label(false) ?>
-                </td>
-                <!--Sale type-->
-                <td>
-                    <?= $form->field($priceModel, 'sale_type_id')
-                        ->dropDownList(
-                            ['' => '--none--'] +
-                            ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
-                        )->label(false)
-                    ?>
-                </td>
-                <!--Sale-->
-                <td>
-                    <?= $form->field($priceModel, 'sale')->textInput(['type' => 'number'])->label(false) ?>
-                </td>
-                <td>
-                    <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
-                </td>
-            </tr>
+    <? endif; ?>
+    <tr>
+        <!--Title-->
+        <td>
+            <?= $form->field($priceTranslationModel, 'title')->label(false) ?>
+        </td>
+        <!--Price-->
+        <td>
+            <?= $form->field($priceModel, 'price')->textInput(['type' => 'number'])->label(false) ?>
+        </td>
+        <!--Sale type-->
+        <td>
+            <?= $form->field($priceModel, 'sale_type_id')
+                ->dropDownList(
+                    ['' => '--none--'] +
+                    ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
+                )->label(false)
+            ?>
+        </td>
+        <!--Sale-->
+        <td>
+            <?= $form->field($priceModel, 'sale')->textInput(['type' => 'number'])->label(false) ?>
+        </td>
+        <td>
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
 <? $form->end() ?>
 
-        </tbody>
-    </table>
-<? endif; ?>

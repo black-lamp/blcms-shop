@@ -1,5 +1,5 @@
 <?php
-use bl\cms\shop\backend\assets\EditCategoryAsset;
+use bl\cms\shop\backend\assets\InputTreeAsset;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
  * @var $categoriesTree Category
  */
 
-EditCategoryAsset::register($this);
+InputTreeAsset::register($this);
 $this->title = \Yii::t('shop', 'Edit category');
 ?>
 
@@ -112,37 +112,11 @@ $this->title = \Yii::t('shop', 'Edit category');
                             ?>
 
                             <!-- PARENT -->
-                            <b><?= \Yii::t('shop', 'Parent category'); ?></b>
+                             <b><?= \Yii::t('shop', 'Parent category'); ?></b>
                             <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
                             <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
-                            <?= treeRecoursion($categoriesTree); ?>
+                            <?= CategoryTranslation::treeRecoursion($categoriesTree);; ?>
                             <?= '</ul>'; ?>
-
-                            <?php
-                            function treeRecoursion($categoriesTree)
-                            {
-                                foreach ($categoriesTree as $oneCategory) {
-                                    if (!empty($oneCategory['childCategory'])) {
-                                        echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
-                                            . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"' . '><label for="'
-                                            . $oneCategory[0]->id . '">'
-                                            . $oneCategory[0]->translation->title
-                                            . '</label>';
-                                        echo '<ul class="list-group">';
-                                        treeRecoursion($oneCategory['childCategory']);
-                                        echo '</ul></li>';
-                                    } else {
-                                        echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
-                                            . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"><label for="'
-                                            . $oneCategory[0]->id . '">'
-                                            . $oneCategory[0]->translation->title
-                                            . '</label>';
-                                        echo '</li>';
-                                    }
-                                }
-                            }
-
-                            ?>
 
                             <!-- DESCRIPTION -->
                             <?= $addForm->field($category_translation, 'description', [

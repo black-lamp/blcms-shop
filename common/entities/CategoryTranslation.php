@@ -52,4 +52,27 @@ class CategoryTranslation extends ActiveRecord
     public function getLanguage() {
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
+
+    public static function treeRecoursion($categoriesTree)
+    {
+        foreach ($categoriesTree as $oneCategory) {
+            if (!empty($oneCategory['childCategory'])) {
+                echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
+                    . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"' . '><label for="'
+                    . $oneCategory[0]->id . '">'
+                    . $oneCategory[0]->translation->title
+                    . '</label>';
+                echo '<ul class="list-group">';
+                self::treeRecoursion($oneCategory['childCategory']);
+                echo '</ul></li>';
+            } else {
+                echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
+                    . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"><label for="'
+                    . $oneCategory[0]->id . '">'
+                    . $oneCategory[0]->translation->title
+                    . '</label>';
+                echo '</li>';
+            }
+        }
+    }
 }

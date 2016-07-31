@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
+use bl\cms\shop\backend\components\form\ProductImageForm;
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamsTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
@@ -11,7 +13,6 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Yii;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -84,18 +85,19 @@ class ProductController extends Controller
                 $products_translation->language_id = $languageId;
                 $products_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(Url::toRoute('/shop/product'));
             }
-            else
-                Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+
         return $this->render('save', [
+            'languages' => Language::find()->all(),
             'params_translation' => new ParamTranslation(),
             'product' => $product,
             'products_translation' => $products_translation,
-            'category' => Category::find()->with('translations')->all(),
-            'selectedLanguage' => $selectedLanguage
+            'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+            'selectedLanguage' => $selectedLanguage,
+            'categoriesTree' => Category::findChilds($categoriesWithoutParent),
         ]);
     }
 
@@ -174,8 +176,45 @@ class ProductController extends Controller
     public function actionDown($id) {
         if($product = Product::findOne($id)) {
             $product->moveNext();
+            return $this->actionIndex();
         }
 
-        return $this->actionIndex();
+    }
+
+    public function actionAddImage($productId) {
+        $product = Product::findOne($productId);
+        $image_form = new ProductImageForm();
+
+        if(Yii::$app->request->isPost) {
+
+            $product->load(Yii::$app->request->post());
+
+            $image_form->cover = UploadedFile::getInstance($image_form, 'cover');
+            $image_form->thumbnail = UploadedFile::getInstance($image_form, 'thumbnail');
+            $image_form->menu_item = UploadedFile::getInstance($image_form, 'menu_item');
+
+            if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
+                $image_name = $image_form->upload();
+                if (!empty($image_form->cover)) {
+                    $product->cover = $image_name['cover'];
+                }
+                if (!empty($image_form->thumbnail)) {
+                    $product->thumbnail = $image_name['thumbnail'];
+                }
+                if (!empty($image_form->menu_item)) {
+                    $product->menu_item = $image_name['menu_item'];
+                }
+            }
+
+            if($product->validate())
+            {
+                $product->save();
+            }
+        }
+
+        return $this->renderPartial('add-image', [
+            'product' => $product,
+            'image_form' => $image_form
+        ]);
     }
 }
