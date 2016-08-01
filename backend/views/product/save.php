@@ -11,6 +11,7 @@ use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ProductCountryTranslation;
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\ProductVideo;
 use bl\cms\shop\common\entities\Vendor;
 use bl\multilang\entities\Language;
 use marqu3s\summernote\Summernote;
@@ -208,11 +209,11 @@ $this->title = \Yii::t('shop', 'Edit product');
             </div>
 
             <? $form::end(); ?>
-
             
             <!--MEDIA-->
             <div id="media">
                 <? if (!$product->isNewRecord): ?>
+                    <!--PHOTO-->
                     <? Pjax::begin([
                         'linkSelector' => '.media',
                         'enablePushState' => false,
@@ -224,10 +225,7 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'image_form' => new ProductImageForm()
                     ]) ?>
                     <? Pjax::end(); ?>
-                <? endif; ?>
-            </div>
-            <div id="media">
-                <? if (!$product->isNewRecord): ?>
+                    <!--VIDEO-->
                     <? Pjax::begin([
                         'linkSelector' => '.media',
                         'enablePushState' => false,
@@ -236,7 +234,7 @@ $this->title = \Yii::t('shop', 'Edit product');
                     ?>
                     <?= $this->render('/product/add-video', [
                         'product' => $product,
-                        'video_form' => new ProductVideoForm()
+                        'video_form' => new ProductVideo()
                     ]) ?>
                     <? Pjax::end(); ?>
                 <? endif; ?>
@@ -291,16 +289,6 @@ $this->title = \Yii::t('shop', 'Edit product');
                     <? Pjax::end(); ?>
                 <? endif; ?>
             </div>
-
         </div>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-
-<script>
-    $(function () {
-        $("#tabs").tabs();
-    });
-</script>
-

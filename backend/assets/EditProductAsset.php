@@ -14,6 +14,10 @@ class EditProductAsset extends AssetBundle
         'css/style.css',
     ];
 
+    public $js = [
+        'js/tabs.js'
+    ];
+
     public $depends = [
         'yii\jui\JuiAsset',
         'yii\web\YiiAsset',

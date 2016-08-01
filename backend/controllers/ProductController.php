@@ -9,6 +9,7 @@ use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductTranslation;
+use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
@@ -232,6 +233,27 @@ class ProductController extends Controller
     }
     
     public function actionAddVideo($productId) {
-        
+        $product = Product::findOne($productId);
+        $video = new ProductVideo();
+
+        if(Yii::$app->request->isPost) {
+
+            $video->load(Yii::$app->request->post());
+
+//            die(var_dump($video->file_name));
+            if (!empty($video->resource) && !empty($video->file_name)) {
+
+                $video->product_id = $product->id;
+                if ($video->validate()) {
+                    $video->save();
+                }
+            }
+        }
+
+        return $this->renderPartial('add-video', [
+            'product' => $product,
+            'video_form' => $video,
+            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+        ]);
     }
 }
