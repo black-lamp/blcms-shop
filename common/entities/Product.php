@@ -136,4 +136,11 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(ProductImage::className(), ['product_id' => 'id']);
     }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVideos()
+    {
+        return $this->hasMany(ProductVideo::className(), ['product_id' => 'id']);
+    }
 }

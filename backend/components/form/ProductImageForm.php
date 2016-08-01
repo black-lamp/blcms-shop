@@ -19,12 +19,13 @@ class ProductImageForm extends Model
      */
     public $image;
     public $link;
+    public $alt;
 
     public function rules()
     {
         return [
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
-            [['link'], 'string', 'skipOnEmpty' => true]
+            [['link', 'alt'], 'string', 'skipOnEmpty' => true]
         ];
     }
 
@@ -55,11 +56,7 @@ class ProductImageForm extends Model
         $imagable->imagesPath = $dir;
         if (exif_imagetype($link) == IMAGETYPE_JPEG || exif_imagetype($link) == IMAGETYPE_PNG) {
             if (!empty($link)) {
-
-
-
-
-
+                
                 $baseName = Product::generateImageName($link);
 
                 $newFile = Yii::getAlias('@frontend/web/images/shop-product/') . $baseName . '.jpg';

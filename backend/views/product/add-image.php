@@ -13,90 +13,24 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 ?>
 
+<h1><?= \Yii::t('shop', 'Image'); ?></h1>
 <p><?= \Yii::t('shop', 'Upload image or copy from web'); ?></p>
-<? $uploadImageForm = ActiveForm::begin([
-    'action' => [
-        'product/upload-image',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'class' => 'image',
-        'data-pjax' => true
-    ]
-]);
-?>
-<table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-    <thead class="thead-inverse">
-    <tr>
-        <th class="col-md-4">
-            <?= \Yii::t('shop', 'Image'); ?>
-        </th>
-        <th class="col-md-5">
-            <?= \Yii::t('shop', 'Alt'); ?>
-        </th>
-        <th class="col-md-3">
-            <?= \Yii::t('shop', 'Add'); ?>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-        </td>
-        <td></td>
-        <td>
-            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<? $uploadImageForm->end(); ?>
-
-<? $copyImageForm = ActiveForm::begin([
-    'action' => [
-        'product/copy-image',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'class' => 'image',
-        'data-pjax' => true
-    ]
-]);
-?>
-<table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-    <tbody>
-        <tr>
-            <td class="col-md-4">
-                <?= $copyImageForm->field($image_form, 'link')->label(\Yii::t('shop', 'Insert image link')); ?>
-            </td>
-            <td class="col-md-5"></td>
-            <td class="col-md-3">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
-            </td>
-        </tr>
-    </tbody>
-</table>
-<? $copyImageForm->end(); ?>
 
 <div role="tabpanel" class="tab-pane" id="images">
-    <h2><?= \Yii::t('shop', 'Image'); ?></h2>
-    <table class="table-bordered table-condensed table-stripped table-hover">
+    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <thead class="thead-inverse">
         <?php if (!empty($product->images)) : ?>
         <tr>
             <th class="text-center col-md-2">
                 <?= \Yii::t('shop', 'Image preview'); ?>
             </th>
-            <th class="text-center col-md-5">
+            <th class="text-center col-md-4">
                 <?= \Yii::t('shop', 'Image URL'); ?>
             </th>
-            <th class="text-center col-md-5">
+            <th class="text-center col-md-4">
                 <?= \Yii::t('shop', 'Alt'); ?>
             </th>
-            <th class="text-center col-md-1">
+            <th class="text-center col-md-2">
                 <?= \Yii::t('shop', 'Delete'); ?>
             </th>
         </tr>
@@ -127,9 +61,83 @@ use yii\widgets\ActiveForm;
                 </td>
             </tr>
         <?php endforeach; ?>
-
         <?php endif; ?>
-
         </tbody>
     </table>
 </div>
+
+<? $uploadImageForm = ActiveForm::begin([
+    'action' => [
+        'product/upload-image',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'image',
+        'data-pjax' => true
+    ]
+]);
+?>
+    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+        <thead class="thead-inverse">
+        <tr class="text-center">
+            <th class="col-md-2"></th>
+            <th class="col-md-4 text-center">
+                <?= \Yii::t('shop', 'Image'); ?>
+            </th>
+            <th class="col-md-4 text-center">
+                <?= \Yii::t('shop', 'Alt'); ?>
+            </th>
+            <th class="col-md-2 text-center">
+                <?= \Yii::t('shop', 'Add'); ?>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="col-md-2"></td>
+            <td class="col-md-4">
+                <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
+            </td>
+            <td class="col-md-4">
+                <?= $uploadImageForm->field($image_form, 'alt')->label(false); ?>
+            </td>
+            <td class="text-center">
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<? $uploadImageForm->end(); ?>
+
+<? $copyImageForm = ActiveForm::begin([
+    'action' => [
+        'product/copy-image',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'image',
+        'data-pjax' => true
+    ]
+]);
+?>
+    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+        <tbody>
+        <tr class="text-center">
+            <td class="col-md-2"></td>
+            <td class="col-md-4">
+                <?= $copyImageForm->field($image_form, 'link')->textInput([
+                    'placeholder' => Yii::t('shop', 'Insert image link')
+                ])->label(false); ?>
+            </td>
+            <td class="col-md-4">
+                <?= $copyImageForm->field($image_form, 'alt')->label(false); ?>
+            </td>
+            <td class="col-md-2">
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<? $copyImageForm->end(); ?>

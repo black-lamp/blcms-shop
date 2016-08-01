@@ -1,6 +1,7 @@
 <?php
 use bl\cms\shop\backend\assets\EditProductAsset;
 use bl\cms\shop\backend\components\form\ProductImageForm;
+use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
@@ -221,6 +222,21 @@ $this->title = \Yii::t('shop', 'Edit product');
                     <?= $this->render('/product/add-image', [
                         'product' => $product,
                         'image_form' => new ProductImageForm()
+                    ]) ?>
+                    <? Pjax::end(); ?>
+                <? endif; ?>
+            </div>
+            <div id="media">
+                <? if (!$product->isNewRecord): ?>
+                    <? Pjax::begin([
+                        'linkSelector' => '.media',
+                        'enablePushState' => false,
+                        'timeout' => 10000
+                    ]);
+                    ?>
+                    <?= $this->render('/product/add-video', [
+                        'product' => $product,
+                        'video_form' => new ProductVideoForm()
                     ]) ?>
                     <? Pjax::end(); ?>
                 <? endif; ?>

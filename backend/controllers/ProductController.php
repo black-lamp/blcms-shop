@@ -171,6 +171,7 @@ class ProductController extends Controller
             if (!empty($image_form->image)) {
                 $UploadedImageName = $image_form->upload();
                 $image->file_name = $UploadedImageName;
+                $image->alt = $image_form->alt;
                 $image->product_id = $product->id;
                 if ($image->validate()) {
                     $image->save();
@@ -197,6 +198,7 @@ class ProductController extends Controller
             if (!empty($image_form->link)) {
                 $image_name = $image_form->copy($image_form->link);
                 $image->file_name = $image_name;
+                $image->alt = $image_form->alt;
                 $image->product_id = $product->id;
                 if ($image->validate()) {
                     $image->save();
@@ -227,5 +229,9 @@ class ProductController extends Controller
                 'image_form' => new ProductImageForm()
             ]);
         }
+    }
+    
+    public function actionAddVideo($productId) {
+        
     }
 }
