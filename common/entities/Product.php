@@ -128,4 +128,12 @@ class Product extends ActiveRecord
         }
         return $fileName;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImages()
+    {
+        return $this->hasMany(ProductImage::className(), ['product_id' => 'id']);
+    }
 }

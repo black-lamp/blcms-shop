@@ -211,9 +211,6 @@ $this->title = \Yii::t('shop', 'Edit product');
             
             <!--MEDIA-->
             <div id="media">
-                <h2>
-                    <?= \Yii::t('shop', 'Photo/Video'); ?>
-                </h2>
                 <? if (!$product->isNewRecord): ?>
                     <? Pjax::begin([
                         'linkSelector' => '.media',

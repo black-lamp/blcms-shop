@@ -7,6 +7,7 @@ use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamsTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\multilang\entities\Language;
 use Imagine\Gd\Imagine;
@@ -157,56 +158,72 @@ class ProductController extends Controller
         return $this->actionIndex();
     }
 
-    public function actionAddImage($productId) {
+    public function actionUploadImage($productId) {
         $product = Product::findOne($productId);
         $image_form = new ProductImageForm();
+        $image = new ProductImage();
 
         if(Yii::$app->request->isPost) {
 
-            $product->load(Yii::$app->request->post());
+            $image_form->load(Yii::$app->request->post());
+            $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
-            $image_form->cover = UploadedFile::getInstance($image_form, 'cover');
-            $image_form->thumbnail = UploadedFile::getInstance($image_form, 'thumbnail');
-            $image_form->menu_item = UploadedFile::getInstance($image_form, 'menu_item');
-
-            if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
-                $image_name = $image_form->upload();
-                if (!empty($image_form->cover)) {
-                    $product->cover = $image_name['cover'];
+            if (!empty($image_form->image)) {
+                $UploadedImageName = $image_form->upload();
+                $image->file_name = $UploadedImageName;
+                $image->product_id = $product->id;
+                if ($image->validate()) {
+                    $image->save();
                 }
-                if (!empty($image_form->thumbnail)) {
-                    $product->thumbnail = $image_name['thumbnail'];
-                }
-                if (!empty($image_form->menu_item)) {
-                    $product->menu_item = $image_name['menu_item'];
-                }
-            }
-            if($product->validate())
-            {
-                $product->save();
             }
         }
         
         return $this->renderPartial('add-image', [
             'product' => $product,
-            'image_form' => $image_form
+            'image_form' => $image_form,
+            'images' => ProductImage::find()->where(['product_id' => $product->id])->all()
         ]);
     }
 
-    public function actionDeleteImage($id, $type) {
+    public function actionCopyImage($productId) {
+        $product = Product::findOne($productId);
+        $image_form = new ProductImageForm();
+        $image = new ProductImage();
+
+        if(Yii::$app->request->isPost) {
+
+            $image_form->load(Yii::$app->request->post());
+
+            if (!empty($image_form->link)) {
+                $image_name = $image_form->copy($image_form->link);
+                $image->file_name = $image_name;
+                $image->product_id = $product->id;
+                if ($image->validate()) {
+                    $image->save();
+                }
+            }
+        }
+
+        return $this->renderPartial('add-image', [
+            'product' => $product,
+            'image_form' => $image_form,
+            'images' => ProductImage::find()->where(['product_id' => $product->id])->all()
+        ]);
+    }
+
+    public function actionDeleteImage($id) {
         $dir = Yii::getAlias('@frontend/web/images');
 
-        if (!empty($id) && !empty($type)) {
-            $product = Product::findOne($id);
+        if (!empty($id)) {
+            $image = ProductImage::findOne($id);
+            ProductImage::deleteAll(['id' => $id]);
 
-            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-big.jpg');
-            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-small.jpg');
-            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-thumb.jpg');
-            $product->$type = null;
-            $product->save();
+            unlink($dir . '/shop-product/' . $image->file_name . '-big.jpg');
+            unlink($dir . '/shop-product/' . $image->file_name . '-small.jpg');
+            unlink($dir . '/shop-product/' . $image->file_name . '-thumb.jpg');
 
             return $this->renderPartial('add-image', [
-                'product' => $product,
+                'product' => Product::findOne($image->product_id),
                 'image_form' => new ProductImageForm()
             ]);
         }

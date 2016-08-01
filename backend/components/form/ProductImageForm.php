@@ -1,6 +1,7 @@
 <?php
 
 namespace bl\cms\shop\backend\components\form;
+use bl\cms\shop\common\entities\Product;
 use Yii;
 use yii\base\Model;
 use yii\web\UploadedFile;
@@ -16,59 +17,59 @@ class ProductImageForm extends Model
     /**
      * @var UploadedFile[]
      */
-    public $cover;
-    /**
-     * @var UploadedFile[]
-     */
-    public $thumbnail;
-    /**
-     * @var UploadedFile[]
-     */
-    public $menu_item;
+    public $image;
+    public $link;
 
     public function rules()
     {
         return [
-            [['cover', 'thumbnail', 'menu_item'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            [['link'], 'string', 'skipOnEmpty' => true]
         ];
     }
 
     public function upload()
     {
         if ($this->validate()) {
-            $dir = Yii::getAlias('@frontend/web' . $this->getDirectory());
+            $dir = Yii::getAlias('@frontend/web/images/');
 
             $imagable = \Yii::$app->imagable;
             $imagable->imagesPath = $dir;
-            $image_name = [];
 
             /** @var Imagable $this */
-            if (!empty($this->cover)) {
-                $this->cover->saveAs($dir . $this->cover->baseName . '.jpg');
-                $image_name['cover'] = $imagable->create('cover', $dir . $this->cover->baseName . '.jpg');
-                unlink($dir . $this->cover->baseName . '.jpg');
-            }
+            if (!empty($this->image)) {
+                $this->image->saveAs($dir . $this->image->baseName . '.jpg');
+//                die(Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
+                $image_name = $imagable->create('shop-product', Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
 
-            /** @var Imagable $this */
-            if (!empty($this->thumbnail)) {
-                $this->thumbnail->saveAs($dir . $this->thumbnail->baseName . '.jpg');
-                $image_name['thumbnail'] = $imagable->create('thumbnail', $dir . $this->thumbnail->baseName . '.jpg');
-                unlink($dir . $this->thumbnail->baseName . '.jpg');
+                unlink($dir . $this->image->baseName . '.jpg');
+                return $image_name;
             }
-
-            /** @var Imagable $this */
-            if (!empty($this->menu_item)) {
-                $this->menu_item->saveAs($dir . $this->menu_item->baseName . '.jpg');
-                $image_name['menu_item'] = $imagable->create('menu_item', $dir . $this->menu_item->baseName . '.jpg');
-                unlink($dir . $this->menu_item->baseName . '.jpg');
-            }
-            return $image_name;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    private function getDirectory() {
-        return $dir = '/images/shop-product';
+    public function copy($link) {
+        $dir = Yii::getAlias('@frontend/web/images/');
+        $imagable = \Yii::$app->imagable;
+        $imagable->imagesPath = $dir;
+        if (exif_imagetype($link) == IMAGETYPE_JPEG || exif_imagetype($link) == IMAGETYPE_PNG) {
+            if (!empty($link)) {
+
+
+
+
+
+                $baseName = Product::generateImageName($link);
+
+                $newFile = Yii::getAlias('@frontend/web/images/shop-product/') . $baseName . '.jpg';
+                if (copy($link, $newFile)) {
+                    $image_name = $imagable->create('shop-product', $newFile);
+                    unlink($newFile);
+                    return $image_name;
+                }
+            }
+        }
+        return false;
     }
 }

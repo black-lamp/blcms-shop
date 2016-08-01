@@ -3,17 +3,20 @@
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $product Product
+ * @var $image_form ProductImageForm
  */
 
+use bl\cms\shop\backend\components\form\ProductImageForm;
 use bl\cms\shop\common\entities\Product;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 ?>
 
-<? $addForm = ActiveForm::begin([
+<p><?= \Yii::t('shop', 'Upload image or copy from web'); ?></p>
+<? $uploadImageForm = ActiveForm::begin([
     'action' => [
-        'product/add-image',
+        'product/upload-image',
         'productId' => $product->id
     ],
     'method' => 'post',
@@ -23,144 +26,110 @@ use yii\widgets\ActiveForm;
     ]
 ]);
 ?>
+<table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+    <thead class="thead-inverse">
+    <tr>
+        <th class="col-md-4">
+            <?= \Yii::t('shop', 'Image'); ?>
+        </th>
+        <th class="col-md-5">
+            <?= \Yii::t('shop', 'Alt'); ?>
+        </th>
+        <th class="col-md-3">
+            <?= \Yii::t('shop', 'Add'); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
+        </td>
+        <td></td>
+        <td>
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<? $uploadImageForm->end(); ?>
+
+<? $copyImageForm = ActiveForm::begin([
+    'action' => [
+        'product/copy-image',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'image',
+        'data-pjax' => true
+    ]
+]);
+?>
+<table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+    <tbody>
+        <tr>
+            <td class="col-md-4">
+                <?= $copyImageForm->field($image_form, 'link')->label(\Yii::t('shop', 'Insert image link')); ?>
+            </td>
+            <td class="col-md-5"></td>
+            <td class="col-md-3">
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<? $copyImageForm->end(); ?>
+
 <div role="tabpanel" class="tab-pane" id="images">
     <h2><?= \Yii::t('shop', 'Image'); ?></h2>
     <table class="table-bordered table-condensed table-stripped table-hover">
         <thead class="thead-inverse">
+        <?php if (!empty($product->images)) : ?>
         <tr>
+            <th class="text-center col-md-2">
+                <?= \Yii::t('shop', 'Image preview'); ?>
+            </th>
+            <th class="text-center col-md-5">
+                <?= \Yii::t('shop', 'Image URL'); ?>
+            </th>
+            <th class="text-center col-md-5">
+                <?= \Yii::t('shop', 'Alt'); ?>
+            </th>
             <th class="text-center col-md-1">
-                <?= \Yii::t('shop', 'Type'); ?>
+                <?= \Yii::t('shop', 'Delete'); ?>
             </th>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <th class="text-center col-md-2">
-                    <?= \Yii::t('shop', 'Image preview'); ?>
-                </th>
-                <th class="text-center col-md-5">
-                    <?= \Yii::t('shop', 'Image URL'); ?>
-                </th>
-            <?php endif; ?>
-            <th class="text-center col-md-3">
-                <?= \Yii::t('shop', 'Upload'); ?>
-            </th>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <th class="text-center col-md-1">
-                    <?= \Yii::t('shop', 'Delete'); ?>
-                </th>
-            <?php endif; ?>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="text-center">
-                <?= \Yii::t('shop', 'Menu item'); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <td>
-                    <?php if (!empty($product->menu_item)) : ?>
-                        <img data-toggle="modal" data-target="#menuItemModal"
-                             src="/images/shop-product/menu_item/<?= $product->menu_item . '-small.jpg'; ?>"
-                             class="thumb">
-                        <!-- Modal -->
-                        <div id="menuItemModal" class="modal fade" role="dialog">
-                            <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-product/menu_item/<?= $product->menu_item . '-thumb.jpg'; ?>">
-                        </div>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <?php if (!empty($product->menu_item)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-product/menu_item/' . $product->menu_item . '-big.jpg'; ?>">
-                    <?php endif; ?>
-                </td>
-            <?php endif; ?>
-            <td>
-                <?= $addForm->field($image_form, 'menu_item')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
+        <?php foreach ($product->images as $image) : ?>
+            <tr>
                 <td class="text-center">
-                    <?php if (!empty($product->menu_item)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'menu_item']); ?>"
-                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                    <?php endif; ?>
-                </td>
-            <?php endif; ?>
-        </tr>
-        <tr>
-            <td class="text-center">
-                <?= \Yii::t('shop', 'Thumbnail'); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <td>
-                    <?php if (!empty($product->thumbnail)) : ?>
-                    <img data-toggle="modal" data-target="#thumbnailModal"
-                         src="/images/shop-product/thumbnail/<?= $product->thumbnail . '-small.jpg'; ?>"
+                    <img data-toggle="modal" data-target="#menuItemModal"
+                         src="/images/shop-product/<?= $image->file_name . '-small.jpg'; ?>"
                          class="thumb">
                     <!-- Modal -->
-                    <div id="thumbnailModal" class="modal fade" role="dialog">
+                    <div id="menuItemModal" class="modal fade" role="dialog">
                         <img style="display: block" class="modal-dialog"
-                             src="/images/shop-product/thumbnail/<?= $product->thumbnail . '-thumb.jpg'; ?>">
-                        <?php endif; ?>
+                             src="/images/shop-product/<?= $image->file_name . '-thumb.jpg'; ?>">
                     </div>
                 </td>
                 <td>
-                    <?php if (!empty($product->thumbnail)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-product/thumbnail/' . $product->thumbnail . '-big.jpg'; ?>">
-                    <?php endif; ?>
-                </td>
-            <?php endif; ?>
-            <td>
-                <?= $addForm->field($image_form, 'thumbnail')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <td class="text-center">
-                    <?php if (!empty($product->thumbnail)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'thumbnail']); ?>"
-                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                    <?php endif; ?>
-                </td>
-            <?php endif; ?>
-        </tr>
-        <tr>
-            <td class="text-center">
-                <?= \Yii::t('shop', 'Cover'); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
-                <td>
-                    <?php if (!empty($product->cover)) : ?>
-                        <img data-toggle="modal" data-target="#coverModal"
-                             src="/images/shop-product/cover/<?= $product->cover . '-small.jpg'; ?>"
-                             class="thumb">
-                        <!-- Modal -->
-                        <div id="coverModal" class="modal fade" role="dialog">
-                            <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-product/cover/<?= $product->cover . '-thumb.jpg'; ?>">
-                        </div>
-                    <?php endif; ?>
+                    <input type="text" class="form-control" disabled=""
+                           value="<?= '/images/shop-product/menu_item/' . $image->file_name . '-big.jpg'; ?>">
                 </td>
                 <td>
-                    <?php if (!empty($product->cover)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-product/cover/' . $product->cover . '-big.jpg'; ?>">
-                    <?php endif; ?>
+                    <?= $image->alt; ?>
                 </td>
-            <?php endif; ?>
-            <td>
-                <?= $addForm->field($image_form, 'cover')->fileInput()->label(\Yii::t('shop', 'Upload image')); ?>
-            </td>
-            <?php if (!empty($product->menu_item) || !empty($product->thumbnail) || !empty($product->cover)) : ?>
                 <td class="text-center">
-                    <?php if (!empty($product->cover)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'cover']); ?>"
-                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                    <?php endif; ?>
+                    <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id]); ?>"
+                       class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                 </td>
-            <?php endif; ?>
-        </tr>
+            </tr>
+        <?php endforeach; ?>
+
+        <?php endif; ?>
+
         </tbody>
     </table>
 </div>
-<?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
-
-<? $addForm->end(); ?>
