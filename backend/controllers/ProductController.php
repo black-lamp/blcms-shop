@@ -284,4 +284,23 @@ class ProductController extends Controller
             'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()]
         );
     }
+
+    public function actionDeleteVideo($id)
+    {
+        $dir = Yii::getAlias('@frontend/web/video');
+
+        if (!empty($id)) {
+            $video = ProductVideo::findOne($id);
+            ProductVideo::deleteAll(['id' => $id]);
+
+            unlink($dir . '/' . $video->file_name);
+            unlink($dir . '/shop-product/' . $image->file_name . '-small.jpg');
+            unlink($dir . '/shop-product/' . $image->file_name . '-thumb.jpg');
+
+            return $this->renderPartial('add-image', [
+                'product' => Product::findOne($image->product_id),
+                'image_form' => new ProductImageForm()
+            ]);
+        }
+    }
 }

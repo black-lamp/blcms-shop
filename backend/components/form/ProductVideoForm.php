@@ -31,12 +31,12 @@ class ProductVideoForm extends Model
             if (!file_exists($dir)) {
                 mkdir($dir);
             }
-            
+
             if (!empty($this->file_name)) {
 
-                $baseName = Product::generateImageName($this->file_name->name);
+                $baseName = Product::generateImageName($this->file_name->name) . '.' . end(explode("/", $this->file_name->type));
 
-                $this->file_name->saveAs($dir . '/' . $baseName . '.' . end(explode("/", $this->file_name->type)));
+                $this->file_name->saveAs($dir . '/' . $baseName);
 
                 return $baseName;
             }

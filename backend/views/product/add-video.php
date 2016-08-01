@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
             <?= \Yii::t('shop', 'Resource'); ?>
         </th>
         <th class="text-center col-md-5">
-            <?= \Yii::t('shop', 'Link'); ?>
+            <?= \Yii::t('shop', 'ID'); ?>
         </th>
         <th></th>
     </tr>
