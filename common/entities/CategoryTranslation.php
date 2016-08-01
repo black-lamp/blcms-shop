@@ -53,24 +53,28 @@ class CategoryTranslation extends ActiveRecord
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
 
-    public static function treeRecoursion($categoriesTree)
+    public static function treeRecoursion($categoriesTree, $categoryId = null)
     {
         foreach ($categoriesTree as $oneCategory) {
             if (!empty($oneCategory['childCategory'])) {
-                echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
-                    . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"' . '><label for="'
-                    . $oneCategory[0]->id . '">'
-                    . $oneCategory[0]->translation->title
-                    . '</label>';
+                echo sprintf('<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="%s" id="%s" %s><label for="%s">%s</label>',
+                    $oneCategory[0]->id,
+                    $oneCategory[0]->id,
+                    $categoryId == $oneCategory[0]->id ? 'disabled' : '',
+                    $oneCategory[0]->id,
+                    $oneCategory[0]->translation->title
+                );
                 echo '<ul class="list-group">';
-                self::treeRecoursion($oneCategory['childCategory']);
+                self::treeRecoursion($oneCategory['childCategory'], $categoryId);
                 echo '</ul></li>';
             } else {
-                echo '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="'
-                    . $oneCategory[0]->id . '"  id="' . $oneCategory[0]->id . '"><label for="'
-                    . $oneCategory[0]->id . '">'
-                    . $oneCategory[0]->translation->title
-                    . '</label>';
+                echo sprintf('<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="%s" id="%s" %s><label for="%s">%s</label>',
+                    $oneCategory[0]->id,
+                    $oneCategory[0]->id,
+                    $categoryId == $oneCategory[0]->id ? 'disabled' : '',
+                    $oneCategory[0]->id,
+                    $oneCategory[0]->translation->title
+                );
                 echo '</li>';
             }
         }

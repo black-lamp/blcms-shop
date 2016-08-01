@@ -111,11 +111,11 @@ $this->title = \Yii::t('shop', 'Edit category');
                             ])->checkbox(['class' => 'i-checks', 'checked ' => ($category->show) ? '' : false])
                             ?>
 
-                            <!-- PARENT -->
+                            <!-- PARENT CATEGORY -->
                              <b><?= \Yii::t('shop', 'Parent category'); ?></b>
                             <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
                             <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
-                            <?= CategoryTranslation::treeRecoursion($categoriesTree);; ?>
+                            <?= CategoryTranslation::treeRecoursion($categoriesTree, $category->id); ?>
                             <?= '</ul>'; ?>
 
                             <!-- DESCRIPTION -->
