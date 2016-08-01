@@ -17,7 +17,7 @@ use yii\web\Controller;
 use yii\web\UploadedFile;
 
 /**
- * @author Albert Gainutdinov
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
 class ProductController extends Controller
@@ -57,34 +57,13 @@ class ProductController extends Controller
 
             $product->load(Yii::$app->request->post());
             $products_translation->load(Yii::$app->request->post());
-
-            $product->imageFile = UploadedFile::getInstance($product, 'imageFile');
+            
             if($product->validate() && $products_translation->validate())
             {
-                if (!empty($product->imageFile)) {
-                    try {
-                        // save image
-                        $fileName = Product::generateImageName($product->imageFile->baseName);
-                        $imagine = new Imagine();
-                        $imagine->open($product->imageFile->tempName)
-                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))
-                            ->thumbnail(new Box(1500, 1000), ImageInterface::THUMBNAIL_INSET)
-                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-big.jpg'))
-                            ->thumbnail(new Box(400, 400), ImageInterface::THUMBNAIL_INSET)
-                            ->save(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-thumb.jpg'));
-
-                        $product->image_name = $fileName;
-                    }
-                    catch(\Exception $ex) {
-                        $product->addError('image_file', 'File save failed');
-                    }
-                }
-
                 $product->save();
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $languageId;
                 $products_translation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
             }
         }
 
@@ -162,23 +141,20 @@ class ProductController extends Controller
             'products' => Product::find()->with('translations')->all(),
             'productId' => $productId
         ]);
-
     }
 
     public function actionUp($id) {
         if(!empty($product = Product::findOne($id))) {
             $product->movePrev();
         }
-
         return $this->actionIndex();
     }
 
     public function actionDown($id) {
         if($product = Product::findOne($id)) {
             $product->moveNext();
-            return $this->actionIndex();
         }
-
+        return $this->actionIndex();
     }
 
     public function actionAddImage($productId) {
@@ -205,16 +181,34 @@ class ProductController extends Controller
                     $product->menu_item = $image_name['menu_item'];
                 }
             }
-
             if($product->validate())
             {
                 $product->save();
             }
         }
-
+        
         return $this->renderPartial('add-image', [
             'product' => $product,
             'image_form' => $image_form
         ]);
+    }
+
+    public function actionDeleteImage($id, $type) {
+        $dir = Yii::getAlias('@frontend/web/images');
+
+        if (!empty($id) && !empty($type)) {
+            $product = Product::findOne($id);
+
+            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-big.jpg');
+            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-small.jpg');
+            unlink($dir . '/shop-product/' . $type . '/' . $product->$type . '-thumb.jpg');
+            $product->$type = null;
+            $product->save();
+
+            return $this->renderPartial('add-image', [
+                'product' => $product,
+                'image_form' => new ProductImageForm()
+            ]);
+        }
     }
 }

@@ -8,7 +8,7 @@ use yii\helpers\Url;
 use yii\web\Controller;
 
 /**
- * @author Gutsulyak Vadim <guts.vadim@gmail.com>
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 class PriceController extends Controller
 {

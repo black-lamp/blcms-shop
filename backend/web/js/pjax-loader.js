@@ -1,5 +1,5 @@
 /**
- * @author Albert Gainutdinov
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * This script adds animation for Pjax loading.
  */

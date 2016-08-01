@@ -85,7 +85,6 @@ class CategoryController extends Controller
             'image_form' => $image_form,
             'maxPosition' => Category::find()->orderBy(['position' => SORT_DESC])->one()->position,
             'minPosition' => Category::find()->orderBy(['position' => SORT_ASC])->one()->position,
-            'categoriesWithoutParent' => $categoriesWithoutParent,
             'categoriesTree' => Category::findChilds($categoriesWithoutParent),
         ]);
     }

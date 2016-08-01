@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Albert Gainutdinov
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
 namespace bl\cms\shop\backend;

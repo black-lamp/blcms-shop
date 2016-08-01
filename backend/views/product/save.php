@@ -20,12 +20,16 @@ use yii\jui\JuiAsset;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
-/* @var $languages Language[] */
-/* @var $selectedLanguage Language */
-/* @var $product Product */
-/* @var $products_translation ProductTranslation */
-/* @var $params_translation ParamTranslation */
-/* @var $categories CategoryTranslation[] */
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $languages Language[]
+ * @var $selectedLanguage Language
+ * @var $product Product
+ * @var $products_translation ProductTranslation
+ * @var $params_translation ParamTranslation
+ * @var $categories CategoryTranslation[]
+ */
 
 EditProductAsset::register($this);
 
@@ -134,7 +138,7 @@ $this->title = \Yii::t('shop', 'Edit product');
                     'inputOptions' => [
                         'class' => 'form-control'
                     ]
-                ])->label(\Yii::t('shop', 'Price'))
+                ])->textInput(['type' => 'number', 'step' => '0.01'])->label(\Yii::t('shop', 'Price'))
                 ?>
                 <!--COUNTRY-->
                 <?= $form->field($product, 'country_id', [
@@ -210,16 +214,11 @@ $this->title = \Yii::t('shop', 'Edit product');
                 <h2>
                     <?= \Yii::t('shop', 'Photo/Video'); ?>
                 </h2>
-<!--                --><?// if (!empty($product->image_name)): ?>
-<!--                    --><?//= Html::img($product->getThumbImage()) ?>
-<!--                --><?// endif; ?>
-<!--                --><?//= $form->field($product, 'imageFile')->fileInput() ?>
-
                 <? if (!$product->isNewRecord): ?>
                     <? Pjax::begin([
-                        'linkSelector' => '.price',
+                        'linkSelector' => '.media',
                         'enablePushState' => false,
-                        'timeout' => 5000
+                        'timeout' => 10000
                     ]);
                     ?>
                     <?= $this->render('/product/add-image', [

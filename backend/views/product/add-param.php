@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
 /**
- * @author Albert Gainutdinov
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $param Param
  * @var $param_translation ParamTranslation
@@ -20,8 +20,6 @@ use yii\widgets\Pjax;
  * @var $productId Product
  * @var $product Product
  */
-
-$this->title = 'Edit param';
 
 ?>
 

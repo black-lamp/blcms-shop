@@ -6,8 +6,12 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
-/* @var $categories CategoryTranslation */
-/* @var $languages Language[] */
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ * 
+ * @var $categories CategoryTranslation
+ * @var $languages Language[]
+ */
 
 $this->title = \Yii::t('shop', 'Product categories');
 
@@ -20,13 +24,12 @@ PjaxLoaderAsset::register($this);
     'timeout' => 10000
 ]);
 ?>
-<h1><?=\Yii::t('shop', 'Product categories'); ?></h1>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
-                <?= \Yii::t('shop', 'Categories list'); ?>
+                <?= \Yii::t('shop', 'Product categories'); ?>
             </div>
             <div class="panel-body">
                 <table class="table table-hover">

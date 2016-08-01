@@ -9,7 +9,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /**
- * @author Albert Gainutdinov
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $category Category
  * @var $category_translation CategoryTranslation

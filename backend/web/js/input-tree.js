@@ -1,3 +1,9 @@
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * This script hides and displays categories and adds some styles in category tree.
+ */
+
 $(".ul-dropfree").find("li:has(ul)").prepend('<div class="drop"></div>');
 $(".ul-dropfree div.drop").click(function() {
     if ($(this).nextAll("ul").css('display')=='none') {

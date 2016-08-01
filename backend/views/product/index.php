@@ -6,10 +6,14 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
-/* @var $categories CategoryTranslation */
-/* @var $languages Language[] */
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $categories CategoryTranslation
+ * @var $languages Language[]
+ */
 
-$this->title = 'Products list';
+$this->title = \Yii::t('shop', 'Product list');
 
 PjaxLoaderAsset::register($this);
 ?>
@@ -19,7 +23,7 @@ PjaxLoaderAsset::register($this);
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
-                <?= 'Products list' ?>
+                <?= \Yii::t('shop', 'Product list'); ?>
             </div>
             <div class="panel-body">
                 <? Pjax::begin([
@@ -31,20 +35,19 @@ PjaxLoaderAsset::register($this);
                     <? if (!empty($products)): ?>
                         <thead>
                         <tr>
-                            <th class="col-lg-1"><?='Position'; ?></th>
-                            <th class="col-lg-3"><?= 'Title' ?></th>
-                            <th class="col-lg-2"><?= 'Category' ?></th>
-                            <th class="col-lg-3"><?= 'Description' ?></th>
+                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Position'); ?></th>
+                            <th class="col-md-4 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
+                            <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Category'); ?></th>
                             <? if(count($languages) > 1): ?>
-                                <th class="col-lg-3"><?= 'Language' ?></th>
+                                <th class="col-lg-2 text-center"><?= \Yii::t('shop', 'Language'); ?></th>
                             <? endif; ?>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Edit'); ?></th>
+                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Delete'); ?></th>
                         </tr>
                         </thead>
                         <tbody>
                         <? foreach ($products as $product): ?>
-                            <tr>
+                            <tr class="text-center">
                                 <td class="text-center">
                                     <?= $product->position ?>
                                     <a href="<?= Url::to([
@@ -58,17 +61,12 @@ PjaxLoaderAsset::register($this);
                                     ]) ?>" class="product-nav glyphicon glyphicon-arrow-down text-primary pull-left">
                                     </a>
                                 </td>
-                                <td>
+                                <td class="text-left">
                                     <?= $product->translation->title ?>
                                 </td>
                                 <td>
                                     <? if(!empty($product->category)): ?>
                                         <?= $product->category->translation->title ?>
-                                    <? endif; ?>
-                                </td>
-                                <td>
-                                    <? if(!empty($product->category)): ?>
-                                        <?= $product->translation->description ?>
                                     <? endif; ?>
                                 </td>
                                 <td>

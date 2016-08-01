@@ -9,20 +9,8 @@ use bl\cms\shop\common\entities\Product;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-
-//var_dump($product);
-//
-//if (!empty($product->cover)) {
-//    echo $product->cover;
-//}
-//if (!empty($product->thumbnail)) {
-//    echo $product->thumbnail;
-//}
-//if (!empty($product->menu_item)) {
-//    echo $product->menu_item;
-//}
-
 ?>
+
 <? $addForm = ActiveForm::begin([
     'action' => [
         'product/add-image',
@@ -93,7 +81,7 @@ use yii\widgets\ActiveForm;
                 <td class="text-center">
                     <?php if (!empty($product->menu_item)) : ?>
                         <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'menu_item']); ?>"
-                           class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -129,7 +117,7 @@ use yii\widgets\ActiveForm;
                 <td class="text-center">
                     <?php if (!empty($product->thumbnail)) : ?>
                         <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'thumbnail']); ?>"
-                           class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -165,7 +153,7 @@ use yii\widgets\ActiveForm;
                 <td class="text-center">
                     <?php if (!empty($product->cover)) : ?>
                         <a href="<?= Url::toRoute(['delete-image', 'id' => $product->id, 'type' => 'cover']); ?>"
-                           class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -173,6 +161,6 @@ use yii\widgets\ActiveForm;
         </tbody>
     </table>
 </div>
-<?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+<?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
 
 <? $addForm->end(); ?>

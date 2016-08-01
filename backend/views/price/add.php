@@ -9,7 +9,10 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
-/** @var Product $product
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ * 
+ * @var Product $product
  * @var ProductPrice $priceModel
  * @var ProductPriceTranslation $priceTranslationModel
  * @var ProductPrice[] $priceList
@@ -86,7 +89,7 @@ use yii\widgets\Pjax;
         </td>
         <!--Sale-->
         <td>
-            <?= $form->field($priceModel, 'sale')->textInput(['type' => 'number'])->label(false) ?>
+            <?= $form->field($priceModel, 'sale')->textInput(['type' => 'number', 'step' => '0.01'])->label(false) ?>
         </td>
         <td>
             <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
