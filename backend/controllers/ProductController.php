@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
+
 use bl\cms\shop\backend\components\form\ProductImageForm;
+use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
@@ -21,7 +23,6 @@ use yii\web\UploadedFile;
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
-
 class ProductController extends Controller
 {
     public function actionIndex()
@@ -35,11 +36,11 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionSave($languageId = null, $productId = null){
-        if(!empty($languageId)) {
+    public function actionSave($languageId = null, $productId = null)
+    {
+        if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
-        }
-        else {
+        } else {
             $selectedLanguage = Language::getCurrent();
         }
 
@@ -49,19 +50,18 @@ class ProductController extends Controller
                 'product_id' => $productId,
                 'language_id' => $languageId
             ])->one();
-            if(empty($products_translation))
+            if (empty($products_translation))
                 $products_translation = new ProductTranslation();
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
         }
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 
             $product->load(Yii::$app->request->post());
             $products_translation->load(Yii::$app->request->post());
-            
-            if($product->validate() && $products_translation->validate())
-            {
+
+            if ($product->validate() && $products_translation->validate()) {
                 $product->save();
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $languageId;
@@ -82,12 +82,14 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionRemove($id) {
+    public function actionRemove($id)
+    {
         Product::deleteAll(['id' => $id]);
         return $this->actionIndex();
     }
-    
-    public function actionAddParam($id = null, $languageId = null, $productId = null) {
+
+    public function actionAddParam($id = null, $languageId = null, $productId = null)
+    {
         if (!empty($id)) {
             $param = Param::find()->where([
                 'id' => $id
@@ -96,28 +98,25 @@ class ProductController extends Controller
                 'language_id' => $languageId,
                 'param_id' => $id
             ])->one();
-            if(empty($param_translation))
+            if (empty($param_translation))
                 $param_translation = new ParamTranslation();
-        }
-        else {
+        } else {
             $param = new Param();
             $param->product_id = $productId;
             $param_translation = new ParamTranslation();
         }
 
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 
             $param->load(Yii::$app->request->post());
             $param_translation->load(Yii::$app->request->post());
-            if($param->validate() && $param_translation->validate())
-            {
+            if ($param->validate() && $param_translation->validate()) {
                 $param->save();
                 $param_translation->param_id = $param->id;
                 $param_translation->language_id = $languageId;
                 $param_translation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-            }
-            else
+            } else
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
@@ -131,9 +130,10 @@ class ProductController extends Controller
         ]);
 
     }
-  
 
-    public function actionDeleteParam($id, $productId, $languageId) {
+
+    public function actionDeleteParam($id, $productId, $languageId)
+    {
         Param::deleteAll(['id' => $id]);
         return $this->renderPartial('add-param', [
             'product' => Product::findOne($productId),
@@ -145,26 +145,29 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionUp($id) {
-        if(!empty($product = Product::findOne($id))) {
+    public function actionUp($id)
+    {
+        if (!empty($product = Product::findOne($id))) {
             $product->movePrev();
         }
         return $this->actionIndex();
     }
 
-    public function actionDown($id) {
-        if($product = Product::findOne($id)) {
+    public function actionDown($id)
+    {
+        if ($product = Product::findOne($id)) {
             $product->moveNext();
         }
         return $this->actionIndex();
     }
 
-    public function actionUploadImage($productId) {
+    public function actionUploadImage($productId)
+    {
         $product = Product::findOne($productId);
         $image_form = new ProductImageForm();
         $image = new ProductImage();
 
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 
             $image_form->load(Yii::$app->request->post());
             $image_form->image = UploadedFile::getInstance($image_form, 'image');
@@ -179,7 +182,7 @@ class ProductController extends Controller
                 }
             }
         }
-        
+
         return $this->renderPartial('add-image', [
             'product' => $product,
             'image_form' => $image_form,
@@ -187,12 +190,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionCopyImage($productId) {
+    public function actionCopyImage($productId)
+    {
         $product = Product::findOne($productId);
         $image_form = new ProductImageForm();
         $image = new ProductImage();
 
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 
             $image_form->load(Yii::$app->request->post());
 
@@ -214,7 +218,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionDeleteImage($id) {
+    public function actionDeleteImage($id)
+    {
         $dir = Yii::getAlias('@frontend/web/images');
 
         if (!empty($id)) {
@@ -231,16 +236,15 @@ class ProductController extends Controller
             ]);
         }
     }
-    
-    public function actionAddVideo($productId) {
+
+    public function actionAddVideo($productId)
+    {
         $product = Product::findOne($productId);
         $video = new ProductVideo();
 
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 
             $video->load(Yii::$app->request->post());
-
-//            die(var_dump($video->file_name));
             if (!empty($video->resource) && !empty($video->file_name)) {
 
                 $video->product_id = $product->id;
@@ -255,5 +259,29 @@ class ProductController extends Controller
             'video_form' => $video,
             'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
         ]);
+    }
+
+    public function actionUploadVideo($productId)
+    {
+        $product = Product::findOne($productId);
+        $videoForm = new ProductVideoForm();
+        $video = new ProductVideo();
+
+
+        if (Yii::$app->request->isPost) {
+            $videoForm->load(Yii::$app->request->post());
+            $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
+            if ($fileName = $videoForm->upload()) {
+                $video->file_name = $fileName;
+                $video->resource = 'videofile';
+                $video->product_id = $productId;
+                $video->save();
+            }
+        }
+
+        return $this->renderPartial('upload-video', ['productId' => $product->id,
+            'video_form' => $videoForm,
+            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()]
+        );
     }
 }

@@ -234,7 +234,8 @@ $this->title = \Yii::t('shop', 'Edit product');
                     ?>
                     <?= $this->render('/product/add-video', [
                         'product' => $product,
-                        'video_form' => new ProductVideo()
+                        'video_form' => new ProductVideo(),
+                        'video_form_upload' => new ProductVideoForm()
                     ]) ?>
                     <? Pjax::end(); ?>
                 <? endif; ?>

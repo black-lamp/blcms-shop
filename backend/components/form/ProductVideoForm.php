@@ -1,6 +1,7 @@
 <?php
 
 namespace bl\cms\shop\backend\components\form;
+use bl\cms\shop\common\entities\Product;
 use Yii;
 use yii\base\Model;
 
@@ -11,34 +12,37 @@ use yii\base\Model;
 class ProductVideoForm extends Model
 {
 
-    public $file;
-    public $resource;
+    public $file_name;
 
     public function rules()
     {
         return [
-            [['file', 'resource'], 'string', 'skipOnEmpty' => true]
+            [['file_name'], 'file', 'skipOnEmpty' => false, 'extensions' => 'avi, mp4']
         ];
     }
 
     public function upload()
     {
-//        if ($this->validate()) {
-//            $dir = Yii::getAlias('@frontend/web/images/');
-//
-//            $imagable = \Yii::$app->imagable;
-//            $imagable->imagesPath = $dir;
-//
-//            /** @var Imagable $this */
-//            if (!empty($this->image)) {
-//                $this->image->saveAs($dir . $this->image->baseName . '.jpg');
-////                die(Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
-//                $image_name = $imagable->create('shop-product', Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
-//
-//                unlink($dir . $this->image->baseName . '.jpg');
-//                return $image_name;
-//            }
-//        }
+
+        if ($this->validate()) {
+
+            $dir = Yii::getAlias('@frontend/web/video');
+
+            if (!file_exists($dir)) {
+                mkdir($dir);
+            }
+            
+            if (!empty($this->file_name)) {
+
+                $baseName = Product::generateImageName($this->file_name->name);
+
+                $this->file_name->saveAs($dir . '/' . $baseName . '.' . end(explode("/", $this->file_name->type)));
+
+                return $baseName;
+            }
+
+        }
+
         return false;
     }
     

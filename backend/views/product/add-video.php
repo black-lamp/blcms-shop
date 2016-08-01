@@ -77,4 +77,31 @@ use yii\widgets\ActiveForm;
 </table>
 <? $addVideoForm->end(); ?>
 
-
+<? $uploadVideoForm = ActiveForm::begin([
+    'action' => [
+        'product/upload-video',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'image',
+        'data-pjax' => true,
+        'enctype' => 'multipart/form-data'
+    ]
+]);
+?>
+    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+        <tbody>
+        <tr class="text-center">
+            <td class="col-md-4">
+            </td>
+            <td class="col-md-6">
+                <?= $uploadVideoForm->field($video_form_upload, 'file_name')->fileInput()->label(false); ?>
+            </td>
+            <td class="col-md-2">
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<? $uploadVideoForm->end(); ?>

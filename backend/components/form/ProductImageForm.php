@@ -40,7 +40,6 @@ class ProductImageForm extends Model
             /** @var Imagable $this */
             if (!empty($this->image)) {
                 $this->image->saveAs($dir . $this->image->baseName . '.jpg');
-//                die(Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
                 $image_name = $imagable->create('shop-product', Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
 
                 unlink($dir . $this->image->baseName . '.jpg');
