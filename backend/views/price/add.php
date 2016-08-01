@@ -73,7 +73,7 @@ use yii\widgets\Pjax;
         </td>
         <!--Price-->
         <td>
-            <?= $form->field($priceModel, 'price')->textInput(['type' => 'number'])->label(false) ?>
+            <?= $form->field($priceModel, 'price')->textInput(['type' => 'number', 'step' => '0.01'])->label(false) ?>
         </td>
         <!--Sale type-->
         <td>
