@@ -51,6 +51,16 @@ use yii\widgets\ActiveForm;
                 <?= $video->file_name; ?>
             </td>
             <td class="text-center">
+                <?php if ($video->resource == 'youtube') : ?>
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/<?=$video->file_name; ?>" frameborder="0" allowfullscreen></iframe>
+                <?php elseif ($video->resource == 'vimeo') : ?>
+                    <iframe src="https://player.vimeo.com/video/<?=$video->file_name; ?>" width="100%" height="200" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                <?php elseif ($video->resource == 'videofile') : ?>
+                    <video width="100%" height="200" controls>
+                        <source src="/video/<?=$video->file_name; ?>" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                <?php endif; ?>
             </td>
             <td class="text-center">
                 <a href="<?= Url::toRoute(['delete-video', 'id' => $video->id]); ?>"
