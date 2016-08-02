@@ -16,7 +16,6 @@ use yii\widgets\ActiveForm;
 ?>
 
 <h1><?= \Yii::t('shop', 'Video'); ?></h1>
-<p><?= \Yii::t('shop', 'Upload video or insert from video-services'); ?></p>
 
 <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
     <thead class="thead-inverse">
@@ -69,7 +68,11 @@ use yii\widgets\ActiveForm;
 ?>
 <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
     <tr class="text-center">
-        <td class="col-md-2"></td>
+        <td class="col-md-2">
+            <strong>
+                <?= \Yii::t('shop', 'Add from service'); ?>
+            </strong>
+        </td>
         <td class="col-md-4">
             <?= $addVideoForm->field($video_form, 'resource')->dropDownList(
                 [
@@ -79,7 +82,7 @@ use yii\widgets\ActiveForm;
             )->label(false); ?>
         </td>
         <td class="col-md-4">
-            <?= $addVideoForm->field($video_form, 'file_name')->label(false); ?>
+            <?= $addVideoForm->field($video_form, 'file_name')->textInput(['placeholder' => \Yii::t('shop', 'Link to video')])->label(false); ?>
         </td>
         <td class="col-md-2">
             <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -102,7 +105,11 @@ use yii\widgets\ActiveForm;
 ?>
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tr class="text-center">
-            <td class="col-md-2"></td>
+            <td class="col-md-2">
+                <strong>
+                    <?= \Yii::t('shop', 'Upload'); ?>
+                </strong>
+            </td>
             <td class="col-md-4">
             </td>
             <td class="col-md-4">

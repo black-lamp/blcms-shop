@@ -13,8 +13,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 ?>
-    <h1><?= \Yii::t('shop', 'Image'); ?></h1>
-    <p><?= \Yii::t('shop', 'Upload image or copy from web'); ?></p>
+    <h1><?= \Yii::t('shop', 'Photo'); ?></h1>
 
     <div role="tabpanel" class="tab-pane" id="images">
         <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
@@ -81,14 +80,18 @@ use yii\widgets\ActiveForm;
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tbody>
         <tr class="text-center">
-            <td class="col-md-2"></td>
+            <td class="col-md-2">
+                <strong>
+                    <?= \Yii::t('shop', 'Add from web'); ?>
+                </strong>
+            </td>
             <td class="col-md-4">
                 <?= $copyImageForm->field($image_form, 'link')->textInput([
-                    'placeholder' => Yii::t('shop', 'Insert image link')
+                    'placeholder' => Yii::t('shop', 'Image link')
                 ])->label(false); ?>
             </td>
             <td class="col-md-4">
-                <?= $copyImageForm->field($image_form, 'alt')->label(false); ?>
+                <?= $copyImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -113,13 +116,16 @@ use yii\widgets\ActiveForm;
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tbody>
         <tr>
-            <td class="col-md-2">
+            <td class="col-md-2 text-center">
+                <strong>
+                    <?= \Yii::t('shop', 'Upload'); ?>
+                </strong>
             </td>
             <td class="col-md-4">
                 <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
             </td>
             <td class="text-center col-md-4">
-                <?= $uploadImageForm->field($image_form, 'alt')->label(false); ?>
+                <?= $uploadImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="text-center col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
