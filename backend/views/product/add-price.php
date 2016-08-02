@@ -23,7 +23,7 @@ use yii\widgets\Pjax;
 
 <? $form = ActiveForm::begin([
     'action' => [
-        'price/add',
+        'add-price',
         'productId' => $product->id,
         'languageId' => $language->id
     ],
@@ -56,7 +56,7 @@ use yii\widgets\Pjax;
                 <td><?= $price->sale ?></td>
                 <td class="text-center">
                     <?= Html::a('', [
-                        'price/remove',
+                        'remove-price',
                         'priceId' => $price->id,
                         'productId' => $product->id,
                         'languageId' => $language->id

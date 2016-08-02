@@ -251,7 +251,7 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'timeout' => 5000
                     ]);
                     ?>
-                    <?= $this->render('/price/add', [
+                    <?= $this->render('add-price', [
                         'priceList' => $product->prices,
                         'priceModel' => new ProductPrice(),
                         'priceTranslationModel' => new ProductPriceTranslation(),
