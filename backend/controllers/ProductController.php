@@ -213,8 +213,7 @@ class ProductController extends Controller
 
         return $this->renderPartial('add-image', [
             'product' => $product,
-            'image_form' => $image_form,
-            'images' => ProductImage::find()->where(['product_id' => $product->id])->all()
+            'image_form' => new ProductImageForm(),
         ]);
     }
 
@@ -257,9 +256,10 @@ class ProductController extends Controller
 
         return $this->renderPartial('add-video', [
             'product' => $product,
-            'video_form' => $video,
+            'video_form' => new ProductVideo(),
             'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
         ]);
+
     }
 
     public function actionUploadVideo($productId)
@@ -280,10 +280,11 @@ class ProductController extends Controller
             }
         }
 
-        return $this->renderPartial('upload-video', ['productId' => $product->id,
-            'video_form' => $videoForm,
-            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()]
-        );
+        return $this->renderPartial('add-video', [
+            'product' => $product,
+            'video_form' => new ProductVideoForm(),
+            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+        ]);
     }
 
     public function actionDeleteVideo($id)
@@ -297,10 +298,13 @@ class ProductController extends Controller
             }
             ProductVideo::deleteAll(['id' => $id]);
 
-            return $this->renderPartial('add-image', [
-                'product' => Product::findOne($image->product_id),
-                'image_form' => new ProductImageForm()
+            return $this->renderPartial('add-video', [
+                'product' => Product::findOne($video->product_id),
+                'video_form' => new ProductVideo(),
+                'video_form_upload' => new ProductVideoForm(),
+                'videos' => ProductVideo::find()->where(['product_id' => $video->product_id])->all()
             ]);
         }
+        return false;
     }
 }

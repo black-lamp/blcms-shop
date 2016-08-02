@@ -23,7 +23,6 @@ use yii\widgets\ActiveForm;
     ],
     'method' => 'post',
     'options' => [
-        'class' => 'media',
         'data-pjax' => true
     ]
 ]);
@@ -70,7 +69,7 @@ use yii\widgets\ActiveForm;
             <?= $addVideoForm->field($video_form, 'file_name')->label(false); ?>
         </td>
         <td class="col-md-2">
-            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
         </td>
     </tr>
     </tbody>
@@ -84,7 +83,6 @@ use yii\widgets\ActiveForm;
     ],
     'method' => 'post',
     'options' => [
-        'class' => 'image',
         'data-pjax' => true,
         'enctype' => 'multipart/form-data'
     ]
@@ -99,7 +97,7 @@ use yii\widgets\ActiveForm;
                 <?= $uploadVideoForm->field($video_form_upload, 'file_name')->fileInput()->label(false); ?>
             </td>
             <td class="col-md-2">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
             </td>
         </tr>
         </tbody>
