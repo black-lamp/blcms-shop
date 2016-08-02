@@ -240,7 +240,6 @@ class ProductController extends Controller
     public function actionAddVideo($productId)
     {
         $product = Product::findOne($productId);
-        $video_form = new ProductVideoForm();
         $video = new ProductVideo();
 
         if (Yii::$app->request->isPost) {
@@ -249,9 +248,47 @@ class ProductController extends Controller
 
             if (!empty($video->resource) && !empty($video->file_name)) {
 
-                $video->product_id = $product->id;
-                if ($video->validate()) {
-                    $video->save();
+                if ($video->resource == 'youtube') {
+                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
+                        $id = $match[1];
+                        $video->product_id = $product->id;
+                        $video->file_name = $id;
+                        if ($video->validate()) {
+                            $video->save();
+                        }
+                    }
+                    else {
+                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                    }
+                }
+                elseif ($video->resource == 'vimeo') {
+                    $regexstr = '~
+                        # Match Vimeo link and embed code
+                        (?:&lt;iframe [^&gt;]*src=")?		# If iframe match up to first quote of src
+                        (?:							        # Group vimeo url
+                            https?:\/\/				        # Either http or https
+                            (?:[\w]+\.)*			        # Optional subdomains
+                            vimeo\.com				        # Match vimeo.com
+                            (?:[\/\w]*\/videos?)?	        # Optional video sub directory this handles groups links also
+                            \/						        # Slash before Id
+                            ([0-9]+)				        # $1: VIDEO_ID is numeric
+                            [^\s]*					        # Not a space
+                        )							        # End group
+                        "?							        # Match end quote if part of src
+                        (?:[^&gt;]*&gt;&lt;/iframe&gt;)?	# Match the end of the iframe
+                        (?:&lt;p&gt;.*&lt;/p&gt;)?		    # Match any title information stuff
+                        ~ix';
+                    if (preg_match($regexstr, $video->file_name, $match)) {
+                        $id = $match[1];
+                        $video->product_id = $product->id;
+                        $video->file_name = $id;
+                        if ($video->validate()) {
+                            $video->save();
+                        }
+                    }
+                    else {
+                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                    }
                 }
             }
         }

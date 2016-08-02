@@ -34,7 +34,8 @@ class ProductVideo extends \yii\db\ActiveRecord
     {
         return [
             [['product_id'], 'integer'],
-            [['resource', 'file_name'], 'string', 'max' => 255],
+            [['resource'], 'string', 'max' => 255],
+            [['file_name'], 'string', 'max' => 500],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }

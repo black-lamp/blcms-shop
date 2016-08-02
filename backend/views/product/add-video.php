@@ -17,6 +17,12 @@ use yii\widgets\ActiveForm;
 
 <h1><?= \Yii::t('shop', 'Video'); ?></h1>
 
+<!--ALERT WIDGET-->
+<?= \common\widgets\Alert::widget([
+    'options' => [
+        'class' => 'alert-fade',
+    ]]);?>
+
 <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
     <thead class="thead-inverse">
     <tr>
