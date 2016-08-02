@@ -39,11 +39,11 @@ use yii\widgets\ActiveForm;
             <?php foreach ($product->images as $image) : ?>
                 <tr>
                     <td class="text-center">
-                        <img data-toggle="modal" data-target="#menuItemModal"
+                        <img data-toggle="modal" data-target="#menuItemModal-<?=$image->id ?>"
                              src="/images/shop-product/<?= $image->file_name . '-small.jpg'; ?>"
                              class="thumb">
                         <!-- Modal -->
-                        <div id="menuItemModal" class="modal fade" role="dialog">
+                        <div id="menuItemModal-<?=$image->id ?>" class="modal fade" role="dialog">
                             <img style="display: block" class="modal-dialog"
                                  src="/images/shop-product/<?= $image->file_name . '-thumb.jpg'; ?>">
                         </div>
