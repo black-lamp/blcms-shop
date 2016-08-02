@@ -24,10 +24,15 @@ use yii\widgets\ActiveForm;
         <th class="text-center col-md-2">
             <?= \Yii::t('shop', 'Resource'); ?>
         </th>
-        <th class="text-center col-md-5">
+        <th class="text-center col-md-4">
             <?= \Yii::t('shop', 'ID'); ?>
         </th>
-        <th></th>
+        <th class="text-center col-md-4">
+            <?= \Yii::t('shop', 'Preview'); ?>
+        </th>
+        <th class="text-center col-md-2">
+            <?= \Yii::t('shop', 'Delete'); ?>
+        </th>
     </tr>
     </thead>
 
@@ -35,10 +40,12 @@ use yii\widgets\ActiveForm;
     <?php foreach ($product->videos as $video) : ?>
         <tr>
             <td class="text-center">
-                <input type="text" disabled="" value="<?= $video->resource; ?>">
+                <?= $video->resource; ?>
             </td>
             <td class="text-center">
-                <input type="text" disabled="" value="<?= $video->file_name; ?>">
+                <?= $video->file_name; ?>
+            </td>
+            <td class="text-center">
             </td>
             <td class="text-center">
                 <a href="<?= Url::toRoute(['delete-video', 'id' => $video->id]); ?>"
@@ -60,8 +67,9 @@ use yii\widgets\ActiveForm;
     ]
 ]);
 ?>
-<table>
+<table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
     <tr class="text-center">
+        <td class="col-md-2"></td>
         <td class="col-md-4">
             <?= $addVideoForm->field($video_form, 'resource')->dropDownList(
                 [
@@ -70,7 +78,7 @@ use yii\widgets\ActiveForm;
                 ]
             )->label(false); ?>
         </td>
-        <td class="col-md-6">
+        <td class="col-md-4">
             <?= $addVideoForm->field($video_form, 'file_name')->label(false); ?>
         </td>
         <td class="col-md-2">
@@ -94,9 +102,10 @@ use yii\widgets\ActiveForm;
 ?>
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tr class="text-center">
+            <td class="col-md-2"></td>
             <td class="col-md-4">
             </td>
-            <td class="col-md-6">
+            <td class="col-md-4">
                 <?= $uploadVideoForm->field($video_form_upload, 'file_name')->fileInput()->label(false); ?>
             </td>
             <td class="col-md-2">

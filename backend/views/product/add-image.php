@@ -31,14 +31,14 @@ use yii\widgets\ActiveForm;
                     <?= \Yii::t('shop', 'Alt'); ?>
                 </th>
                 <th class="text-center col-md-2">
-                    <?= \Yii::t('shop', 'Delete'); ?>
+                    <?= \Yii::t('shop', 'Manage'); ?>
                 </th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($product->images as $image) : ?>
                 <tr>
-                    <td class="text-center">
+                    <td class="text-center col-md-2">
                         <img data-toggle="modal" data-target="#menuItemModal-<?=$image->id ?>"
                              src="/images/shop-product/<?= $image->file_name . '-small.jpg'; ?>"
                              class="thumb">
@@ -48,14 +48,14 @@ use yii\widgets\ActiveForm;
                                  src="/images/shop-product/<?= $image->file_name . '-thumb.jpg'; ?>">
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center col-md-4">
                         <input type="text" class="form-control" disabled=""
                                value="<?= '/images/shop-product/menu_item/' . $image->file_name . '-big.jpg'; ?>">
                     </td>
-                    <td>
+                    <td class="text-center col-md-4">
                         <?= $image->alt; ?>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center col-md-2">
                         <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id]); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     </td>
@@ -65,36 +65,6 @@ use yii\widgets\ActiveForm;
             </tbody>
         </table>
     </div>
-
-<? $uploadImageForm = ActiveForm::begin([
-    'action' => [
-        'product/upload-image',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'class' => 'image',
-        'data-pjax' => true
-    ]
-]);
-?>
-    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-        <tbody>
-        <tr>
-            <td class="col-md-2"></td>
-            <td class="col-md-4">
-                <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
-            </td>
-            <td class="col-md-4">
-                <?= $uploadImageForm->field($image_form, 'alt')->label(false); ?>
-            </td>
-            <td class="text-center">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-<? $uploadImageForm->end(); ?>
 
 <? $copyImageForm = ActiveForm::begin([
     'action' => [
@@ -127,3 +97,34 @@ use yii\widgets\ActiveForm;
         </tbody>
     </table>
 <? $copyImageForm->end(); ?>
+
+<? $uploadImageForm = ActiveForm::begin([
+    'action' => [
+        'product/upload-image',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'class' => 'image',
+        'data-pjax' => true
+    ]
+]);
+?>
+    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
+        <tbody>
+        <tr>
+            <td class="col-md-2">
+            </td>
+            <td class="col-md-4">
+                <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
+            </td>
+            <td class="text-center col-md-4">
+                <?= $uploadImageForm->field($image_form, 'alt')->label(false); ?>
+            </td>
+            <td class="text-center col-md-2">
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<? $uploadImageForm->end(); ?>
