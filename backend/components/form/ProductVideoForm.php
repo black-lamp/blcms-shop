@@ -13,6 +13,7 @@ class ProductVideoForm extends Model
 {
 
     public $file_name;
+    public $resource;
 
     public function rules()
     {

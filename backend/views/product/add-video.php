@@ -4,8 +4,10 @@
  *
  * @var $product Product
  * @var $video_form ProductVideo
+ * @var $video_form_upload ProductVideoForm
  */
 
+use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductVideo;
 use yii\helpers\Html;
@@ -16,17 +18,6 @@ use yii\widgets\ActiveForm;
 <h1><?= \Yii::t('shop', 'Video'); ?></h1>
 <p><?= \Yii::t('shop', 'Upload video or insert from video-services'); ?></p>
 
-<? $addVideoForm = ActiveForm::begin([
-    'action' => [
-        'product/add-video',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'data-pjax' => true
-    ]
-]);
-?>
 <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
     <thead class="thead-inverse">
     <tr>
@@ -55,7 +46,21 @@ use yii\widgets\ActiveForm;
             </td>
         </tr>
     <?php endforeach; ?>
+    </tbody>
+</table>
 
+<? $addVideoForm = ActiveForm::begin([
+    'action' => [
+        'product/add-video',
+        'productId' => $product->id
+    ],
+    'method' => 'post',
+    'options' => [
+        'data-pjax' => true
+    ]
+]);
+?>
+<table>
     <tr class="text-center">
         <td class="col-md-4">
             <?= $addVideoForm->field($video_form, 'resource')->dropDownList(
@@ -72,7 +77,6 @@ use yii\widgets\ActiveForm;
             <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
         </td>
     </tr>
-    </tbody>
 </table>
 <? $addVideoForm->end(); ?>
 
@@ -89,7 +93,6 @@ use yii\widgets\ActiveForm;
 ]);
 ?>
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-        <tbody>
         <tr class="text-center">
             <td class="col-md-4">
             </td>
@@ -100,6 +103,5 @@ use yii\widgets\ActiveForm;
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
             </td>
         </tr>
-        </tbody>
     </table>
 <? $uploadVideoForm->end(); ?>

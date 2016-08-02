@@ -240,11 +240,13 @@ class ProductController extends Controller
     public function actionAddVideo($productId)
     {
         $product = Product::findOne($productId);
+        $video_form = new ProductVideoForm();
         $video = new ProductVideo();
 
         if (Yii::$app->request->isPost) {
 
             $video->load(Yii::$app->request->post());
+
             if (!empty($video->resource) && !empty($video->file_name)) {
 
                 $video->product_id = $product->id;
@@ -257,6 +259,7 @@ class ProductController extends Controller
         return $this->renderPartial('add-video', [
             'product' => $product,
             'video_form' => new ProductVideo(),
+            'video_form_upload' => new ProductVideoForm(),
             'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
         ]);
 
@@ -283,6 +286,7 @@ class ProductController extends Controller
         return $this->renderPartial('add-video', [
             'product' => $product,
             'video_form' => new ProductVideoForm(),
+            'video_form_upload' => new ProductVideoForm(),
             'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
         ]);
     }
