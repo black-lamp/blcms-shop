@@ -185,9 +185,9 @@ class ProductController extends Controller
 
         return $this->renderPartial('add-image', [
             'product' => $product,
-            'image_form' => $image_form,
-            'images' => ProductImage::find()->where(['product_id' => $product->id])->all()
+            'image_form' => new ProductImageForm()
         ]);
+
     }
 
     public function actionCopyImage($productId)
@@ -235,6 +235,7 @@ class ProductController extends Controller
                 'image_form' => new ProductImageForm()
             ]);
         }
+        return false;
     }
 
     public function actionAddVideo($productId)
@@ -291,11 +292,10 @@ class ProductController extends Controller
 
         if (!empty($id)) {
             $video = ProductVideo::findOne($id);
+            if ($video->resource == 'videofile') {
+                unlink($dir . '/' . $video->file_name);
+            }
             ProductVideo::deleteAll(['id' => $id]);
-
-            unlink($dir . '/' . $video->file_name);
-            unlink($dir . '/shop-product/' . $image->file_name . '-small.jpg');
-            unlink($dir . '/shop-product/' . $image->file_name . '-thumb.jpg');
 
             return $this->renderPartial('add-image', [
                 'product' => Product::findOne($image->product_id),

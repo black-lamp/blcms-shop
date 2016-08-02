@@ -215,7 +215,6 @@ $this->title = \Yii::t('shop', 'Edit product');
                 <? if (!$product->isNewRecord): ?>
                     <!--PHOTO-->
                     <? Pjax::begin([
-                        'linkSelector' => '.media',
                         'enablePushState' => false,
                         'timeout' => 10000
                     ]);
@@ -227,7 +226,6 @@ $this->title = \Yii::t('shop', 'Edit product');
                     <? Pjax::end(); ?>
                     <!--VIDEO-->
                     <? Pjax::begin([
-                        'linkSelector' => '.media',
                         'enablePushState' => false,
                         'timeout' => 10000
                     ]);

@@ -57,7 +57,7 @@ use yii\widgets\ActiveForm;
                     </td>
                     <td class="text-center">
                         <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id]); ?>"
-                           class="media glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                           class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -89,7 +89,7 @@ use yii\widgets\ActiveForm;
                 <?= $uploadImageForm->field($image_form, 'alt')->label(false); ?>
             </td>
             <td class="text-center">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
             </td>
         </tr>
         </tbody>
@@ -121,7 +121,7 @@ use yii\widgets\ActiveForm;
                 <?= $copyImageForm->field($image_form, 'alt')->label(false); ?>
             </td>
             <td class="col-md-2">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'media btn btn-primary']) ?>
+                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
             </td>
         </tr>
         </tbody>
