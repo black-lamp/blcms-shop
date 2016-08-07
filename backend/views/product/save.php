@@ -97,11 +97,11 @@ $this->title = \Yii::t('shop', 'Edit product');
         <div id="tabs">
             <!-- TABS -->
             <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#basic"><?= \Yii::t('shop', 'Basic'); ?></a></li>
-                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#photo"><?= \Yii::t('shop', 'Photo'); ?></a></li>
-                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#video"><?= \Yii::t('shop', 'Video'); ?></a></li>
-                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#prices"><?= \Yii::t('shop', 'Prices'); ?></a></li>
-                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#params"><?= \Yii::t('shop', 'Params'); ?></a></li>
+                <li><a data-toggle="tab" href="#basic"><?= \Yii::t('shop', 'Basic'); ?></a></li>
+                <li><a data-toggle="tab" href="#photo"><?= \Yii::t('shop', 'Photo'); ?></a></li>
+                <li><a data-toggle="tab" href="#video"><?= \Yii::t('shop', 'Video'); ?></a></li>
+                <li><a data-toggle="tab" href="#prices"><?= \Yii::t('shop', 'Prices'); ?></a></li>
+                <li><a data-toggle="tab" href="#params"><?= \Yii::t('shop', 'Params'); ?></a></li>
             </ul>
 
             <? $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content', 'enctype' => 'multipart/form-data']]); ?>
@@ -109,6 +109,11 @@ $this->title = \Yii::t('shop', 'Edit product');
             <!--BASIC-->
             <div id="basic">
 
+                <a href="<?=Url::to(['/shop/product']);?>">
+                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                        'class' => 'btn btn-primary pull-right'
+                    ]) ;?>
+                </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
                 <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
@@ -120,18 +125,7 @@ $this->title = \Yii::t('shop', 'Edit product');
                 ])->label(\Yii::t('shop', 'Name'))
                 ?>
                 <!--CATEGORY-->
-                <?= $form->field($product, 'category_id', [
-                    'inputOptions' => [
-                        'class' => 'form-control'
-                    ]
-                ])->dropDownList(
-                    ['' => '-- no categories --'] +
-                    ArrayHelper::map($categories, 'category_id', 'title')
-                )->label(\Yii::t('shop', 'Category'));
-                ?>
-
-                <!-- PARENT -->
-                <b><?= \Yii::t('shop', 'Parent category'); ?></b>
+                <b><?= \Yii::t('shop', 'Category'); ?></b>
                 <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
                 <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
                 <?= CategoryTranslation::treeRecoursion($categoriesTree);; ?>
@@ -207,6 +201,11 @@ $this->title = \Yii::t('shop', 'Edit product');
                 ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO keywords'))
                 ?>
 
+                <a href="<?=Url::to(['/shop/product']);?>">
+                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                        'class' => 'btn btn-primary pull-right'
+                    ]) ;?>
+                </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
             </div>

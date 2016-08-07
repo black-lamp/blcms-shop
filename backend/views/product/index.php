@@ -24,6 +24,10 @@ PjaxLoaderAsset::register($this);
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
                 <?= \Yii::t('shop', 'Product list'); ?>
+                <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
+                   class="text-right btn btn-primary pull-right">
+                    <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
+                </a>
             </div>
             <div class="panel-body">
                 <? Pjax::begin([
@@ -109,7 +113,7 @@ PjaxLoaderAsset::register($this);
 
                 <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
                    class="btn btn-primary pull-right">
-                    <i class="fa fa-user-plus"></i> <?= 'Add' ?>
+                    <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
                 </a>
             </div>
         </div>

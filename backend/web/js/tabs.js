@@ -8,8 +8,3 @@ $(function () {
     $("#tabs").tabs();
 });
 
-/*DISABLE TABS FOR NEW PRODUCT*/
-$( ".disabled" ).tabs( "disable" );
-
-
-

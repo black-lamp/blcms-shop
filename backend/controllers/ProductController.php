@@ -19,6 +19,7 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -58,6 +59,9 @@ class ProductController extends Controller
             $product = new Product();
             $products_translation = new ProductTranslation();
         }
+
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+
         if (Yii::$app->request->isPost) {
 
             $product->load(Yii::$app->request->post());
@@ -66,21 +70,24 @@ class ProductController extends Controller
             if ($product->validate() && $products_translation->validate()) {
                 $product->save();
                 $products_translation->product_id = $product->id;
-                $products_translation->language_id = $languageId;
+                $products_translation->language_id = $selectedLanguage->id;
                 $products_translation->save();
+
+                return $this->redirect(Url::toRoute(['save',
+                    'productId' => $product->id,
+                    'languageId' =>$selectedLanguage->id
+                ]));
             }
         }
 
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-
         return $this->render('save', [
             'languages' => Language::find()->all(),
-            'params_translation' => new ParamTranslation(),
+            'selectedLanguage' => $selectedLanguage,
             'product' => $product,
             'products_translation' => $products_translation,
             'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-            'selectedLanguage' => $selectedLanguage,
             'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+            'params_translation' => new ParamTranslation(),
         ]);
     }
 

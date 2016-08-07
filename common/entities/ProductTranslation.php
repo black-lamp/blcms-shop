@@ -2,7 +2,6 @@
 namespace bl\cms\shop\common\entities;
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
-use bl\seo\entities\SeoData;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -11,15 +10,26 @@ use yii\db\Expression;
 /**
  * @author Albert Gainutdinov
  *
- * @property integer $language_id
+ * @property integer $id
  * @property integer $product_id
+ * @property integer $language_id
  * @property string $title
  * @property string $description
  * @property string $full_text
+ * @property string $creation_time
+ * @property string $update_time
+ *
+ * @property Language $language
+ * @property Product $product
  */
 
 class ProductTranslation extends ActiveRecord
 {
+    public static function tableName()
+    {
+        return 'shop_product_translation';
+    }
+
     public function behaviors()
     {
         return [
@@ -40,28 +50,17 @@ class ProductTranslation extends ActiveRecord
     public function rules()
     {
         return [
-            [['language_id', 'product_id'], 'number'],
-            [['title', 'description'], 'string'],
-            [['full_text'], 'string', 'max' => 65536],
+            [['product_id', 'language_id'], 'integer'],
+            [['description', 'full_text'], 'string'],
+            [['creation_time', 'update_time'], 'safe'],
+            [['title'], 'string', 'max' => 255],
+            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+
             /*SEO params*/
             [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
+            ['seoUrl', 'required']
         ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'shop_product_translation';
-    }
-
-    public static function getOneProduct($id){
-        $model = Category::find()
-            ->andWhere(['id' => $id])->one();
-        if(empty($model->id))
-            return $id;
-        return $model;
     }
 
     /**
