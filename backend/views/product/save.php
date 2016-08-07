@@ -98,17 +98,19 @@ $this->title = \Yii::t('shop', 'Edit product');
             <!-- TABS -->
             <ul class="nav nav-tabs nav-justified">
                 <li class="active"><a data-toggle="tab" href="#basic"><?= \Yii::t('shop', 'Basic'); ?></a></li>
-                <li><a data-toggle="tab" href="#seo"><?= \Yii::t('shop', 'SEO data'); ?></a></li>
-                <li><a data-toggle="tab" href="#media"><?= \Yii::t('shop', 'Photo/Video'); ?></a></li>
-                <li><a data-toggle="tab" href="#prices"><?= \Yii::t('shop', 'Prices'); ?></a></li>
-                <li><a data-toggle="tab" href="#params"><?= \Yii::t('shop', 'Params'); ?></a></li>
+                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#photo"><?= \Yii::t('shop', 'Photo'); ?></a></li>
+                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#video"><?= \Yii::t('shop', 'Video'); ?></a></li>
+                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#prices"><?= \Yii::t('shop', 'Prices'); ?></a></li>
+                <li><a <?=(!$product->isNewRecord) ? 'class="disabled' : ''; ?> data-toggle="tab" href="#params"><?= \Yii::t('shop', 'Params'); ?></a></li>
             </ul>
 
             <? $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content', 'enctype' => 'multipart/form-data']]); ?>
-            <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
             <!--BASIC-->
             <div id="basic">
+
+                <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+
                 <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
                 <!--NAME-->
                 <?= $form->field($products_translation, 'title', [
@@ -177,10 +179,8 @@ $this->title = \Yii::t('shop', 'Edit product');
                     ]
                 ])->widget(Summernote::className())->label(\Yii::t('shop', 'Full description'));
                 ?>
-            </div>
 
-            <!-- SEO -->
-            <div id="seo">
+                <!-- SEO -->
                 <h2><?= \Yii::t('shop', 'SEO options'); ?></h2>
                 <?= $form->field($products_translation, 'seoUrl', [
                     'inputOptions' => [
@@ -206,14 +206,16 @@ $this->title = \Yii::t('shop', 'Edit product');
                     ]
                 ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO keywords'))
                 ?>
+
+                <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+
             </div>
 
             <? $form::end(); ?>
-            
-            <!--MEDIA-->
-            <div id="media">
+
+            <!--PHOTO-->
+            <div id="photo">
                 <? if (!$product->isNewRecord): ?>
-                    <!--PHOTO-->
                     <? Pjax::begin([
                         'enablePushState' => false,
                         'timeout' => 10000
@@ -224,7 +226,12 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'image_form' => new ProductImageForm()
                     ]) ?>
                     <? Pjax::end(); ?>
-                    <!--VIDEO-->
+                <? endif; ?>
+            </div>
+
+            <!--VIDEO-->
+            <div id="video">
+                <? if (!$product->isNewRecord): ?>
                     <? Pjax::begin([
                         'enablePushState' => false,
                         'timeout' => 10000
@@ -241,9 +248,6 @@ $this->title = \Yii::t('shop', 'Edit product');
 
             <!--PRODUCT PRICES-->
             <div id="prices">
-                <h2>
-                    <?= \Yii::t('shop', 'Prices'); ?>
-                </h2>
                 <? if (!$product->isNewRecord): ?>
                     <? Pjax::begin([
                         'linkSelector' => '.price',
@@ -265,9 +269,6 @@ $this->title = \Yii::t('shop', 'Edit product');
 
             <!--PARAMS-->
             <div id="params">
-                <h2>
-                    <?= \Yii::t('shop', 'Params'); ?>
-                </h2>
                 <? if (!$product->isNewRecord): ?>
                     <? Pjax::begin([
                         'linkSelector' => '.param',

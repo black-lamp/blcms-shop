@@ -13,11 +13,17 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 ?>
-    <h1><?= \Yii::t('shop', 'Photo'); ?></h1>
+
+    <br>
 
     <div role="tabpanel" class="tab-pane" id="images">
         <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
             <thead class="thead-inverse">
+            <tr>
+                <th class="text-center" colspan="4">
+                    <h2><?= \Yii::t('shop', 'Photo'); ?></h2>
+                </th>
+            </tr>
             <?php if (!empty($product->images)) : ?>
             <tr>
                 <th class="text-center col-md-2">
@@ -38,11 +44,11 @@ use yii\widgets\ActiveForm;
             <?php foreach ($product->images as $image) : ?>
                 <tr>
                     <td class="text-center col-md-2">
-                        <img data-toggle="modal" data-target="#menuItemModal-<?=$image->id ?>"
+                        <img data-toggle="modal" data-target="#menuItemModal-<?= $image->id ?>"
                              src="/images/shop-product/<?= $image->file_name . '-small.jpg'; ?>"
                              class="thumb">
                         <!-- Modal -->
-                        <div id="menuItemModal-<?=$image->id ?>" class="modal fade" role="dialog">
+                        <div id="menuItemModal-<?= $image->id ?>" class="modal fade" role="dialog">
                             <img style="display: block" class="modal-dialog"
                                  src="/images/shop-product/<?= $image->file_name . '-thumb.jpg'; ?>">
                         </div>

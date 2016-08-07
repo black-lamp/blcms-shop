@@ -37,6 +37,13 @@ use yii\widgets\Pjax;
 <table class="table table-bordered">
     <thead>
     <tr>
+        <th class="text-center" colspan="5">
+            <h2>
+                <?= \Yii::t('shop', 'Prices'); ?>
+            </h2>
+        </th>
+    </tr>
+    <tr>
         <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
         <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Price'); ?></th>
         <th class="col-md-2 text-center"><?= \Yii::t('shop', 'Sale type'); ?></th>
