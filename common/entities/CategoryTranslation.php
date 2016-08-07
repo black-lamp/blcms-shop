@@ -57,7 +57,8 @@ class CategoryTranslation extends ActiveRecord
     {
         foreach ($categoriesTree as $oneCategory) {
             if (!empty($oneCategory['childCategory'])) {
-                echo sprintf('<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="%s" id="%s" %s><label for="%s">%s</label>',
+                echo sprintf('<li class="list-group-item"><input type="radio" %s name="Category[parent_id]" value="%s" id="%s" %s><label for="%s">%s</label>',
+                    Category::findOne($categoryId)->parent_id ==  $oneCategory[0]->id ? ' checked ' : '',
                     $oneCategory[0]->id,
                     $oneCategory[0]->id,
                     $categoryId == $oneCategory[0]->id ? 'disabled' : '',

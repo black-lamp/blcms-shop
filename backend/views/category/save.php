@@ -5,6 +5,7 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use marqu3s\summernote\Summernote;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
@@ -49,6 +50,13 @@ $this->title = \Yii::t('shop', 'Edit category');
             </div>
             <div class="panel-body">
 
+                <a href="<?=Url::to(['/shop/category']);?>">
+                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                        'class' => 'btn btn-primary pull-right'
+                    ]) ;?>
+                </a>
+                <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+                
                 <!-- TABS -->
                 <div>
                     <!-- Tabs navigation -->
@@ -301,6 +309,11 @@ $this->title = \Yii::t('shop', 'Edit category');
                     </div>
                 </div>
 
+                <a href="<?=Url::to(['/shop/category']);?>">
+                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                        'class' => 'btn btn-primary pull-right'
+                    ]) ;?>
+                </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
             </div>
         </div>
