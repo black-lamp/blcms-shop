@@ -82,23 +82,33 @@ class ProductController extends Controller
         $next = Product::find()->with('translations')->where(['>', 'id', $id])->andWhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
 
         if (empty($next[1]) && !empty($next[0])) {
-            $next[1] = Product::find()->with('translations')->where(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->one();
+            $next[1] = Product::find()->with('translations')->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->one();
         }
         if (empty($next[0])) {
-            $next = Product::find()->with('translations')->where(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
+            $next = Product::find()->with('translations')->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
         }
 
         if (empty($previous[1]) && !empty($previous[0])) {
-            $previous[1] = Product::find()->with('translations')->where(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->one();
+            $previous[1] = Product::find()->with('translations')->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->one();
         }
         if (empty($previous[0])) {
-            $previous = Product::find()->with('translations')->where(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->limit('2')->all();
+            $previous = Product::find()->with('translations')->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->limit('2')->all();
         }
 
-        $recommendedProducts[0] = $previous[1];
-        $recommendedProducts[1] = $previous[0];
-        $recommendedProducts[2] = $next[0];
-        $recommendedProducts[3] = $next[1];
+        $recommendedProducts = [];
+        if (!empty($previous[1])) {
+            $recommendedProducts[] = $previous[1];
+        }
+        if (!empty($previous[0])) {
+            $recommendedProducts[] = $previous[0];
+        }
+        if (!empty($next[0])) {
+            $recommendedProducts[] = $next[0];
+        }
+        if (!empty($next[1])) {
+            $recommendedProducts[] = $next[1];
+        }
+
         return $recommendedProducts;
     }
 }
