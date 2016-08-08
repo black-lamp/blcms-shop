@@ -24,7 +24,9 @@
     "black-lamp/yii2-multi-lang": "1.1.*",
     "black-lamp/yii2-seo": "0.1.*",
     "marqu3s/yii2-summernote": "dev-master",
-    "black-lamp/yii2-imagable": "1.*"
+    "black-lamp/yii2-imagable": "1.*",
+
+    "xalberteinsteinx/yii2-input-tree": "*"
   },
   "autoload": {
     "psr-4": {
