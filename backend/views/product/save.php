@@ -36,7 +36,6 @@ use yii\widgets\Pjax;
 EditProductAsset::register($this);
 
 $this->title = \Yii::t('shop', 'Edit product');
-
 $newProductMessage = Yii::t('shop', 'You must save new product before this action');
 ?>
 

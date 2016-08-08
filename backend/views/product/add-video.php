@@ -22,7 +22,8 @@ use yii\widgets\ActiveForm;
 <?= \common\widgets\Alert::widget([
     'options' => [
         'class' => 'alert-fade',
-    ]]); ?>
+    ]]);
+?>
 
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <thead class="thead-inverse">
@@ -31,20 +32,22 @@ use yii\widgets\ActiveForm;
                 <h2><?= \Yii::t('shop', 'Video'); ?></h2>
             </th>
         </tr>
-        <tr>
-            <th class="text-center col-md-2">
-                <?= \Yii::t('shop', 'Resource'); ?>
-            </th>
-            <th class="text-center col-md-4">
-                <?= \Yii::t('shop', 'ID'); ?>
-            </th>
-            <th class="text-center col-md-4">
-                <?= \Yii::t('shop', 'Preview'); ?>
-            </th>
-            <th class="text-center col-md-2">
-                <?= \Yii::t('shop', 'Delete'); ?>
-            </th>
-        </tr>
+        <?php if (!empty($product->videos)) : ?>
+            <tr>
+                <th class="text-center col-md-2">
+                    <?= \Yii::t('shop', 'Resource'); ?>
+                </th>
+                <th class="text-center col-md-4">
+                    <?= \Yii::t('shop', 'ID'); ?>
+                </th>
+                <th class="text-center col-md-4">
+                    <?= \Yii::t('shop', 'Preview'); ?>
+                </th>
+                <th class="text-center col-md-2">
+                    <?= \Yii::t('shop', 'Delete'); ?>
+                </th>
+            </tr>
+        <?php endif; ?>
         </thead>
 
         <tbody>
