@@ -36,6 +36,8 @@ use yii\widgets\Pjax;
 EditProductAsset::register($this);
 
 $this->title = \Yii::t('shop', 'Edit product');
+
+$newProductMessage = Yii::t('shop', 'You must save new product before this action');
 ?>
 
 <div class="panel panel-default">
@@ -109,10 +111,10 @@ $this->title = \Yii::t('shop', 'Edit product');
             <!--BASIC-->
             <div id="basic">
 
-                <a href="<?=Url::to(['/shop/product']);?>">
-                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                <a href="<?= Url::to(['/shop/product']); ?>">
+                    <?= Html::button(\Yii::t('shop', 'Close'), [
                         'class' => 'btn btn-danger pull-right'
-                    ]) ;?>
+                    ]); ?>
                 </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
@@ -127,8 +129,8 @@ $this->title = \Yii::t('shop', 'Edit product');
                 <!--CATEGORY-->
                 <b><?= \Yii::t('shop', 'Category'); ?></b>
                 <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
-                <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
-                <?= CategoryTranslation::treeRecoursion($categoriesTree);; ?>
+                <?= '<li class="list-group-item"><input type="radio" checked name="Product[category_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
+                <?= CategoryTranslation::treeRecoursion($categoriesTree, $product->category_id, 'Product[category_id]'); ?>
                 <?= '</ul>'; ?>
 
                 <!--STANDART PRICE-->
@@ -201,10 +203,10 @@ $this->title = \Yii::t('shop', 'Edit product');
                 ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO keywords'))
                 ?>
 
-                <a href="<?=Url::to(['/shop/product']);?>">
-                    <?=Html::button(\Yii::t('shop', 'Close'), [
+                <a href="<?= Url::to(['/shop/product']); ?>">
+                    <?= Html::button(\Yii::t('shop', 'Close'), [
                         'class' => 'btn btn-danger pull-right'
-                    ]) ;?>
+                    ]); ?>
                 </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
@@ -225,6 +227,10 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'image_form' => new ProductImageForm()
                     ]) ?>
                     <? Pjax::end(); ?>
+                    <? else : ?>
+                    <p>
+                        <?= $newProductMessage; ?>
+                    </p>
                 <? endif; ?>
             </div>
 
@@ -242,6 +248,10 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'video_form_upload' => new ProductVideoForm()
                     ]) ?>
                     <? Pjax::end(); ?>
+                    <? else : ?>
+                    <p>
+                        <?= $newProductMessage; ?>
+                    </p>
                 <? endif; ?>
             </div>
 
@@ -263,6 +273,10 @@ $this->title = \Yii::t('shop', 'Edit product');
                         'language' => $selectedLanguage
                     ]) ?>
                     <? Pjax::end(); ?>
+                    <? else : ?>
+                    <p>
+                        <?= $newProductMessage; ?>
+                    </p>
                 <? endif; ?>
             </div>
 
@@ -286,6 +300,10 @@ $this->title = \Yii::t('shop', 'Edit product');
                     ]);
                     ?>
                     <? Pjax::end(); ?>
+                    <? else : ?>
+                    <p>
+                        <?= $newProductMessage; ?>
+                    </p>
                 <? endif; ?>
             </div>
         </div>

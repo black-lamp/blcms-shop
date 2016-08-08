@@ -122,8 +122,8 @@ $this->title = \Yii::t('shop', 'Edit category');
                             <!-- PARENT CATEGORY -->
                              <b><?= \Yii::t('shop', 'Parent category'); ?></b>
                             <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
-                            <?= '<li class="list-group-item"><input type="radio" name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
-                            <?= CategoryTranslation::treeRecoursion($categoriesTree, $category->id); ?>
+                            <?= '<li class="list-group-item"><input type="radio" checked name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
+                            <?= CategoryTranslation::treeRecoursion($categoriesTree, $category->parent_id, 'Category[parent_id]', $category_translation->category_id); ?>
                             <?= '</ul>'; ?>
 
                             <!-- DESCRIPTION -->
