@@ -52,7 +52,7 @@ $this->title = \Yii::t('shop', 'Edit category');
 
                 <a href="<?=Url::to(['/shop/category']);?>">
                     <?=Html::button(\Yii::t('shop', 'Close'), [
-                        'class' => 'btn btn-primary pull-right'
+                        'class' => 'btn btn-danger pull-right'
                     ]) ;?>
                 </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
@@ -311,7 +311,7 @@ $this->title = \Yii::t('shop', 'Edit category');
 
                 <a href="<?=Url::to(['/shop/category']);?>">
                     <?=Html::button(\Yii::t('shop', 'Close'), [
-                        'class' => 'btn btn-primary pull-right'
+                        'class' => 'btn btn-danger pull-right'
                     ]) ;?>
                 </a>
                 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">

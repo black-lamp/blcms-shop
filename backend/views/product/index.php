@@ -25,7 +25,7 @@ PjaxLoaderAsset::register($this);
                 <i class="glyphicon glyphicon-list"></i>
                 <?= \Yii::t('shop', 'Product list'); ?>
                 <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
-                   class="text-right btn btn-primary pull-right">
+                   class="text-right btn btn-primary btn-xs pull-right">
                     <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
                 </a>
             </div>
@@ -42,7 +42,7 @@ PjaxLoaderAsset::register($this);
                             <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Position'); ?></th>
                             <th class="col-md-4 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
                             <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Category'); ?></th>
-                            <? if(count($languages) > 1): ?>
+                            <? if (count($languages) > 1): ?>
                                 <th class="col-lg-2 text-center"><?= \Yii::t('shop', 'Language'); ?></th>
                             <? endif; ?>
                             <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Edit'); ?></th>
@@ -69,12 +69,12 @@ PjaxLoaderAsset::register($this);
                                     <?= $product->translation->title ?>
                                 </td>
                                 <td>
-                                    <? if(!empty($product->category)): ?>
+                                    <? if (!empty($product->category)): ?>
                                         <?= $product->category->translation->title ?>
                                     <? endif; ?>
                                 </td>
                                 <td>
-                                    <? if(count($languages) > 1): ?>
+                                    <? if (count($languages) > 1): ?>
                                         <? $translations = ArrayHelper::index($product->translations, 'language_id') ?>
                                         <? foreach ($languages as $language): ?>
                                             <a href="<?= Url::to([
@@ -93,7 +93,7 @@ PjaxLoaderAsset::register($this);
                                         'save',
                                         'productId' => $product->id,
                                         'languageId' => $product->translation->language->id
-                                    ])?>" class="glyphicon glyphicon-edit text-warning btn btn-default btn-sm">
+                                    ]) ?>" class="glyphicon glyphicon-edit text-warning btn btn-default btn-sm">
                                     </a>
                                 </td>
 
@@ -101,7 +101,8 @@ PjaxLoaderAsset::register($this);
                                     <a href="<?= Url::to([
                                         'remove',
                                         'id' => $product->id
-                                    ])?>" id="remove" class="product-nav glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
+                                    ]) ?>" id="remove"
+                                       class="product-nav glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
                                     </a>
                                 </td>
                             </tr>
