@@ -167,9 +167,9 @@ $this->title = \Yii::t('shop', 'Edit category');
                             ?>
                         </div>
 
-                        <!-- IMAGE -->
+                        <!-- IMAGES -->
                         <div role="tabpanel" class="tab-pane fade" id="images">
-                            <h2><?= \Yii::t('shop', 'Image'); ?></h2>
+                            <h2><?= \Yii::t('shop', 'Images'); ?></h2>
                             <table class="table-bordered table-condensed table-stripped table-hover">
                                 <thead class="thead-inverse">
                                 <tr>

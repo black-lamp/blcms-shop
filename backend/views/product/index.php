@@ -1,6 +1,6 @@
 <?php
 use bl\cms\shop\backend\assets\PjaxLoaderAsset;
-use  bl\cms\shop\common\entities\CategoryTranslation;
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
