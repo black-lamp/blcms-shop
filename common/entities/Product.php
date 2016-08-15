@@ -1,29 +1,53 @@
 <?php
+
 namespace bl\cms\shop\common\entities;
+
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
+ * This is the model class for table "shop_product".
+ *
  * @author Albert Gainutdinov
  *
  * @property integer $id
+ * @property integer $position
  * @property integer $category_id
- * @property integer $product_id
- * @property integer $vendor_id
  * @property string $image_name
+ * @property integer $vendor_id
+ * @property integer $country_id
+ * @property boolean $in_stock
+ * @property integer $price
+ * @property integer $articulus
  *
- * @property Category $category
- * @property Vendor $vendor
- * @property Param[] $params
- * @property ProductPrice[] $prices
- * @property ProductTranslation[] $translations
- * @property ProductTranslation $translation
  */
 class Product extends ActiveRecord
 {
-    public $imageFile;
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'shop_product';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus'], 'integer'],
+            [['price'], 'double'],
+            [['in_stock'], 'boolean'],
+            [['image_name'], 'string', 'max' => 255],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
+            [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
+        ];
+    }
 
     public function behaviors()
     {
@@ -43,21 +67,6 @@ class Product extends ActiveRecord
         ];
     }
 
-    public function rules()
-    {
-        return [
-            [['position', 'category_id', 'vendor_id', 'country_id'], 'number'],
-            [['price'], 'number']
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'shop_product';
-    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -99,33 +108,12 @@ class Product extends ActiveRecord
         return $this->hasMany(Param::className(), ['product_id' => 'id']);
     }
 
-    // TODO: remove this method
-    public function getImageSrc($type) {
-        if(!empty($this->image_name)) {
-            return '/images/shop/' . $this->image_name . '-' . $type . '.jpg';
-        }
-
-        return null;
-    }
-
-    public function getThumbImage() {
-        return $this->getImageSrc('thumb');
-    }
-
-    public function getOriginalImage() {
-        return $this->getImageSrc('original');
-    }
-
-    public function getBigImage() {
-        return $this->getImageSrc('big');
-    }
-
-    public static function generateImageName($baseName) {
-        $fileName = hash('crc32', $baseName . time());
-        if(file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
-            return static::generateImageName($baseName);
-        }
-        return $fileName;
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountry()
+    {
+        return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
     }
 
     /**
@@ -135,6 +123,7 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(ProductImage::className(), ['product_id' => 'id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -142,4 +131,14 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(ProductVideo::className(), ['product_id' => 'id']);
     }
+
+    public static function generateImageName($baseName)
+    {
+        $fileName = hash('crc32', $baseName . time());
+        if (file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
+            return static::generateImageName($baseName);
+        }
+        return $fileName;
+    }
+
 }

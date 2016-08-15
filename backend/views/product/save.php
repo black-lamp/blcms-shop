@@ -125,6 +125,13 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                     ]
                 ])->label(\Yii::t('shop', 'Name'))
                 ?>
+                <!--ARTICULUS-->
+                <?= $form->field($product, 'articulus', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->label(\Yii::t('shop', 'Articulus'))
+                ?>
                 <!--CATEGORY-->
                 <b><?= \Yii::t('shop', 'Category'); ?></b>
                 <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
