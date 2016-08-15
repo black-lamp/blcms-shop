@@ -1,121 +1,166 @@
 <?php
 use bl\cms\shop\backend\assets\PjaxLoaderAsset;
+use bl\cms\shop\backend\assets\ProductAsset;
+use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
+use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
+ * @var $this yii\web\View
  * @var $categories CategoryTranslation
  * @var $languages Language[]
+ * @var $searchModel bl\cms\shop\common\entities\ProductSearch
+ * @var $dataProvider yii\data\ActiveDataProvider
  */
 
 $this->title = \Yii::t('shop', 'Product list');
-PjaxLoaderAsset::register($this);
+ProductAsset::register($this);
 ?>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="glyphicon glyphicon-list"></i>
-                <?= \Yii::t('shop', 'Product list'); ?>
-                <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
-                   class="text-right btn btn-primary btn-xs pull-right">
-                    <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
-                </a>
-            </div>
-            <div class="panel-body">
-                <? Pjax::begin([
-                    'linkSelector' => '.product-nav',
-                    'enablePushState' => false,
-                    'timeout' => 10000,
-                ]) ?>
-                <table class="table table-hover">
-                    <? if (!empty($products)): ?>
-                        <thead>
-                        <tr>
-                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Position'); ?></th>
-                            <th class="col-md-4 text-center"><?= \Yii::t('shop', 'Title'); ?></th>
-                            <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Category'); ?></th>
-                            <? if (count($languages) > 1): ?>
-                                <th class="col-lg-2 text-center"><?= \Yii::t('shop', 'Language'); ?></th>
-                            <? endif; ?>
-                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Edit'); ?></th>
-                            <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Delete'); ?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <? foreach ($products as $product): ?>
-                            <tr class="text-center">
-                                <td class="text-center">
-                                    <?= $product->position ?>
-                                    <a href="<?= Url::to([
-                                        'up',
-                                        'id' => $product->id
-                                    ]) ?>" class="product-nav glyphicon glyphicon-arrow-up text-primary pull-left">
-                                    </a>
-                                    <a href="<?= Url::to([
-                                        'down',
-                                        'id' => $product->id
-                                    ]) ?>" class="product-nav glyphicon glyphicon-arrow-down text-primary pull-left">
-                                    </a>
-                                </td>
-                                <td class="text-left">
-                                    <?= $product->translation->title ?>
-                                </td>
-                                <td>
-                                    <? if (!empty($product->category)): ?>
-                                        <?= $product->category->translation->title ?>
-                                    <? endif; ?>
-                                </td>
-                                <td>
-                                    <? if (count($languages) > 1): ?>
-                                        <? $translations = ArrayHelper::index($product->translations, 'language_id') ?>
-                                        <? foreach ($languages as $language): ?>
-                                            <a href="<?= Url::to([
-                                                'save',
-                                                'productId' => $product->id,
-                                                'languageId' => $language->id
-                                            ]) ?>"
-                                               type="button"
-                                               class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
-                                               ?> btn-xs"><?= $language->name ?></a>
-                                        <? endforeach; ?>
-                                    <? endif; ?>
-                                </td>
-                                <td>
-                                    <a href="<?= Url::to([
-                                        'save',
-                                        'productId' => $product->id,
-                                        'languageId' => $product->translation->language->id
-                                    ]) ?>" class="glyphicon glyphicon-edit text-warning btn btn-default btn-sm">
-                                    </a>
-                                </td>
+<?php Pjax::begin([
+    'linkSelector' => '.pjax',
+    'enablePushState' => false,
+    'timeout' => 10000,
+    ]);
+?>
 
-                                <td>
-                                    <a href="<?= Url::to([
-                                        'remove',
-                                        'id' => $product->id
-                                    ]) ?>" id="remove"
-                                       class="product-nav glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
-                                    </a>
-                                </td>
-                            </tr>
-                        <? endforeach; ?>
-                        </tbody>
-                    <? endif; ?>
-                </table>
-                <? Pjax::end() ?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="glyphicon glyphicon-list"></i>
+        <?= \Yii::t('shop', 'Product list'); ?>
+        <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
+           class="text-right btn btn-primary btn-xs pull-right">
+            <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
+        </a>
+    </div>
+    <div class="panel-body">
 
-                <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
-                   class="btn btn-primary pull-right">
-                    <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
-                </a>
-            </div>
-        </div>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'tableOptions' => [
+                'id' => 'my-grid',
+                'class' => 'table table-hover'
+            ],
+
+            'summary' => "",
+
+            'columns' => [
+                [
+                    'class' => 'yii\grid\SerialColumn',
+                    'headerOptions' => ['class' => 'text-center col-md-1'],
+                ],
+
+                /*TITLE*/
+                [
+                    'attribute' => 'title',
+                    'value' => 'translation.title',
+                    'label' => Yii::t('shop', 'Title'),
+                    'format' => 'text',
+                    'headerOptions' => ['class' => 'text-center col-md-3'],
+                ],
+
+                /*CATEGORY*/
+                [
+                    'attribute' => 'category',
+                    'value' => 'category.translation.title',
+                    'label' => Yii::t('shop', 'Category'),
+                    'format' => 'text',
+                    'filter' => ArrayHelper::map(Category::find()->all(), 'id', 'translation.title'),
+                    'headerOptions' => ['class' => 'text-center col-md-3'],
+                ],
+
+                /*CREATION DATE*/
+                [
+                    'attribute' => 'creation_time',
+                    'format' => ['date', 'php:d-m-Y'],
+                    'label' => Yii::t('shop', 'Creation date'),
+                    'headerOptions' => ['class' => 'text-center col-md-2'],
+
+                ],
+
+                /*LANGUAGE*/
+                [
+                    'attribute' => 'language',
+                    'format' => 'html',
+                    'label' => Yii::t('shop', 'Translations'),
+                    'headerOptions' => ['class' => 'text-center col-md-2'],
+                    'value' => function ($model) {
+                        $languages = Language::findAll(['active' => true]);
+                        if (count($languages)) {
+                            $translations = ArrayHelper::index($model->translations, 'language_id');
+
+                            $buttons = '';
+                            foreach ($languages as $language) {
+                                $buttons .= Html::a(
+                                    $language->name,
+                                    Url::toRoute(['save', 'productId' => $model->id, 'languageId' => $language->id]),
+                                    [
+                                        'class' => !empty($translations[$language->id]) ? 'btn btn-primary btn-xs' : 'btn btn-danger btn-xs'
+                                    ]
+                                );
+                            }
+                            return $buttons;
+                        } else return false;
+                    }
+                ],
+
+                /*POSITION*/
+                [
+                    'attribute' => 'position',
+                    'format' => 'html',
+                    'label' => Yii::t('shop', 'Position'),
+                    'headerOptions' => ['class' => 'text-center col-md-1'],
+
+                    'value' => function ($model) {
+                        $buttonUp = Html::a(
+                            '',
+                            Url::toRoute(['up', 'id' => $model->id]),
+                            [
+                                'class' => 'pjax product-nav glyphicon glyphicon-arrow-up text-primary pull-left'
+                            ]
+                        );
+                        $position = Html::tag('span', $model->position, ['class' => 'pull-left']);
+                        $buttonDown = Html::a(
+                            '',
+                            Url::toRoute(['down', 'id' => $model->id]),
+                            [
+                                'class' => 'pjax product-nav glyphicon glyphicon-arrow-down text-primary pull-left'
+                            ]
+                        );
+                        return $buttonUp . $position . $buttonDown;
+                    }
+                ],
+
+                /*ACTION BUTTONS*/
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{update} {delete}',
+                    'headerOptions' => ['class' => 'text-center col-md-1'],
+                    'buttons' => [
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['save', 'productId' => $key, 'languageId' => Language::getCurrent()->id]),
+                                ['title' => Yii::t('yii', 'Update'), 'data-pjax' => '0']);
+                        },
+                        'delete' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['remove', 'id' => $key]),
+                                ['title' => Yii::t('yii', 'Delete'), 'class' => 'pjax']);
+                        }
+                    ]
+                ],
+            ],
+        ]);
+        ?>
     </div>
 </div>
+
+<?php
+Pjax::end();
+?>

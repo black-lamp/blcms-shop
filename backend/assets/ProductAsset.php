@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
-class EditProductAsset extends AssetBundle
+class ProductAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/black-lamp/blcms-shop/backend/web';
 
@@ -14,12 +14,10 @@ class EditProductAsset extends AssetBundle
         'css/style.css',
     ];
 
-    public $js = [
-        'js/tabs.js'
-    ];
-
     public $depends = [
-        'bl\cms\shop\backend\assets\ProductAsset',
-        'bl\cms\shop\backend\assets\InputTreeAsset'
+        'yii\jui\JuiAsset',
+        'yii\web\YiiAsset',
+        'yii\bootstrap\BootstrapAsset',
+        'bl\cms\shop\backend\assets\PjaxLoaderAsset',
     ];
 }

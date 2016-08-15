@@ -4,7 +4,9 @@ namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
@@ -15,7 +17,6 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $id
  * @property integer $position
  * @property integer $category_id
- * @property string $image_name
  * @property integer $vendor_id
  * @property integer $country_id
  * @property boolean $in_stock
@@ -42,7 +43,7 @@ class Product extends ActiveRecord
             [['position', 'category_id', 'vendor_id', 'country_id', 'articulus'], 'integer'],
             [['price'], 'double'],
             [['in_stock'], 'boolean'],
-            [['image_name'], 'string', 'max' => 255],
+            [['owner'], 'string'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
@@ -63,6 +64,14 @@ class Product extends ActiveRecord
                 'groupAttributes' => [
                     'category_id'
                 ],
+            ],
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
             ],
         ];
     }

@@ -12,9 +12,11 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
+use bl\cms\shop\common\entities\ProductSearch;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
+use common\models\User;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
@@ -30,7 +32,13 @@ class ProductController extends Controller
 {
     public function actionIndex()
     {
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
+            'model' => new ProductSearch,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
             'products' => Product::find()
                 ->with(['category'])
                 ->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])
@@ -58,6 +66,8 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
+
+            $product->owner = Yii::$app->user->id;
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();

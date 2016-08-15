@@ -1,3 +1,10 @@
+/*PRODUCT INDEX PAGE*/
+.grid-view th, .grid-view td {
+    max-width: 200px;
+    overflow: hidden;
+    text-align: center;
+}
+
 /*TABS*/
 div#tabs {
     border: none !important;
