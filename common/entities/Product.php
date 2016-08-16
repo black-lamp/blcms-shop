@@ -40,9 +40,8 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus', 'owner'], 'integer'],
             [['price'], 'double'],
-            [['owner'], 'string'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
