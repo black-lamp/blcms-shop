@@ -162,18 +162,20 @@ class ProductController extends Controller
     }
 
     public function actionUp($id) {
-        if(!empty($product = Product::findOne($id))) {
+        $product = Product::findOne($id);
+        if(!empty($product)) {
             $product->movePrev();
         }
 
-        return $this->actionIndex();
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionDown($id) {
-        if($product = Product::findOne($id)) {
+        $product = Product::findOne($id);
+        if($product) {
             $product->moveNext();
         }
 
-        return $this->actionIndex();
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }
