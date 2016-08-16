@@ -42,7 +42,6 @@ class Product extends ActiveRecord
         return [
             [['position', 'category_id', 'vendor_id', 'country_id', 'articulus'], 'integer'],
             [['price'], 'double'],
-            [['in_stock'], 'boolean'],
             [['owner'], 'string'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
