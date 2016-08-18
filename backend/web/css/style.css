@@ -10,7 +10,7 @@ div#tabs {
     border: none !important;
 }
 ul.nav-tabs {
-    background: #fff;
+    /*background: #fff;*/
     border: none !important;
 }
 ul.nav-tabs li a {
