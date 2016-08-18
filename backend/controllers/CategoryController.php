@@ -138,6 +138,7 @@ class CategoryController extends Controller
             ]
         ]);
     }
+    
     public function actionAddImages($categoryId, $languageId) {
 
         if (!empty($categoryId)) {

@@ -71,10 +71,11 @@ use yii\widgets\ActiveForm;
         </table>
     </div>
 
-<? $copyImageForm = ActiveForm::begin([
+<? $addImageForm = ActiveForm::begin([
     'action' => [
-        'product/copy-image',
-        'productId' => $product->id
+        'product/add-image',
+        'productId' => $product->id,
+        'languageId' => $selectedLanguage->id
     ],
     'method' => 'post',
     'options' => [
@@ -92,12 +93,12 @@ use yii\widgets\ActiveForm;
                 </strong>
             </td>
             <td class="col-md-4">
-                <?= $copyImageForm->field($image_form, 'link')->textInput([
+                <?= $addImageForm->field($image_form, 'link')->textInput([
                     'placeholder' => Yii::t('shop', 'Image link')
                 ])->label(false); ?>
             </td>
             <td class="col-md-4">
-                <?= $copyImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+                <?= $addImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -105,20 +106,7 @@ use yii\widgets\ActiveForm;
         </tr>
         </tbody>
     </table>
-<? $copyImageForm->end(); ?>
 
-<? $uploadImageForm = ActiveForm::begin([
-    'action' => [
-        'product/upload-image',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'class' => 'image',
-        'data-pjax' => true
-    ]
-]);
-?>
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tbody>
         <tr>
@@ -128,10 +116,10 @@ use yii\widgets\ActiveForm;
                 </strong>
             </td>
             <td class="col-md-4">
-                <?= $uploadImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
+                <?= $addImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
             </td>
             <td class="text-center col-md-4">
-                <?= $uploadImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+                <?= $addImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="text-center col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -139,4 +127,4 @@ use yii\widgets\ActiveForm;
         </tr>
         </tbody>
     </table>
-<? $uploadImageForm->end(); ?>
+<? $addImageForm->end(); ?>

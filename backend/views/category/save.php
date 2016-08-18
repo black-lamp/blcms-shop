@@ -31,61 +31,58 @@ TabsAsset::register($this);
 $this->title = \Yii::t('shop', 'Edit category');
 ?>
 
-<? $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="glyphicon glyphicon-list"></i>
-                <?php if (!empty($category->id)) : ?>
-                    <?php if (!empty($category_translation->title)) : ?>
-                        <span>
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="glyphicon glyphicon-list"></i>
+            <?php if (!empty($category->id)) : ?>
+                <?php if (!empty($category_translation->title)) : ?>
+                    <span>
                     <?= \Yii::t('shop', 'Edit category'); ?>
                 </span>
-                    <?php else: ?>
-                        <span>
+                <?php else: ?>
+                    <span>
                     <?= \Yii::t('shop', 'Add category translation'); ?>
                 </span>
-                    <?php endif; ?>
-                <?php else : ?>
-                    <span>
+                <?php endif; ?>
+            <?php else : ?>
+                <span>
                     <?= \Yii::t('shop', 'Add new category'); ?>
                 </span>
-                <?php endif; ?>
-            </div>
-            <div class="panel-body">
-                
-                <ul class="tabs">
-                    <li>
-                        <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['add-basic', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                    </li>
-                    <li>
-                        <?= Html::a(Yii::t('shop', 'SEO data'), Url::to(['add-seo', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                    </li>
-                    <li>
-                        <?= Html::a(Yii::t('shop', 'Images'), Url::to(['add-images', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                    </li>
-                </ul>
+            <?php endif; ?>
+        </div>
+        <div class="panel-body">
+
+            <ul class="tabs">
+                <li>
+                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['add-basic', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                </li>
+                <li>
+                    <?= Html::a(Yii::t('shop', 'SEO data'), Url::to(['add-seo', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                </li>
+                <li>
+                    <?= Html::a(Yii::t('shop', 'Images'), Url::to(['add-images', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                </li>
+            </ul>
 
 
-                <? Pjax::begin([
-                    'linkSelector' => '.image',
-                    'enablePushState' => true,
-                    'timeout' => 10000
-                ]);
-                ?>
+            <? Pjax::begin([
+                'linkSelector' => '.image',
+                'enablePushState' => true,
+                'timeout' => 10000
+            ]);
+            ?>
 
-                <?= $this->render($viewName, $params);
-                ?>
-                <? Pjax::end(); ?>
+            <?= $this->render($viewName, $params);
+            ?>
+            <? Pjax::end(); ?>
 
 
-                <a href="<?= Url::to(['/shop/category']); ?>">
-                    <?= Html::button(\Yii::t('shop', 'Close'), [
-                        'class' => 'btn btn-danger pull-right'
-                    ]); ?>
-                </a>
-            </div>
+            <a href="<?= Url::to(['/shop/category']); ?>">
+                <?= Html::button(\Yii::t('shop', 'Close'), [
+                    'class' => 'btn btn-danger pull-right'
+                ]); ?>
+            </a>
         </div>
     </div>
-
-<? ActiveForm::end(); ?>
+</div>

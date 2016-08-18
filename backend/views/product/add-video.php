@@ -13,7 +13,6 @@ use bl\cms\shop\common\entities\ProductVideo;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-
 ?>
 
     <br>
@@ -85,11 +84,13 @@ use yii\widgets\ActiveForm;
 <? $addVideoForm = ActiveForm::begin([
     'action' => [
         'product/add-video',
-        'productId' => $product->id
+        'productId' => $product->id,
+        'languageId' => $selectedLanguage->id
     ],
     'method' => 'post',
     'options' => [
-        'data-pjax' => true
+        'data-pjax' => true,
+        'enctype' => 'multipart/form-data'
     ]
 ]);
 ?>
@@ -116,20 +117,7 @@ use yii\widgets\ActiveForm;
             </td>
         </tr>
     </table>
-<? $addVideoForm->end(); ?>
 
-<? $uploadVideoForm = ActiveForm::begin([
-    'action' => [
-        'product/upload-video',
-        'productId' => $product->id
-    ],
-    'method' => 'post',
-    'options' => [
-        'data-pjax' => true,
-        'enctype' => 'multipart/form-data'
-    ]
-]);
-?>
     <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
         <tr class="text-center">
             <td class="col-md-2">
@@ -140,11 +128,11 @@ use yii\widgets\ActiveForm;
             <td class="col-md-4">
             </td>
             <td class="col-md-4">
-                <?= $uploadVideoForm->field($video_form_upload, 'file_name')->fileInput()->label(false); ?>
+                <?= $addVideoForm->field($video_form_upload, 'file_name')->fileInput()->label(false); ?>
             </td>
             <td class="col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
             </td>
         </tr>
     </table>
-<? $uploadVideoForm->end(); ?>
+<? $addVideoForm->end(); ?>

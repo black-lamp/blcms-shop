@@ -74,8 +74,6 @@ use yii\widgets\Pjax;
                     <a href="<?= Url::to([
                         'delete-param',
                         'id' => $param->translation->param_id,
-                        'productId' => $param->product_id,
-                        'languageId' => $selectedLanguage->id
                     ]) ?>"
                        class="param glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                 </td>

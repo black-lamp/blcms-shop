@@ -72,6 +72,53 @@ class ProductController extends Controller
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
+        return $this->render('save', [
+            'viewName' => 'add-basic',
+            'selectedLanguage' => $selectedLanguage,
+            'product' => $product,
+
+            'params' => [
+                'languages' => Language::find()->all(),
+                'selectedLanguage' => $selectedLanguage,
+                'product' => $product,
+                'products_translation' => $products_translation,
+                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+                'params_translation' => new ParamTranslation(),
+            ]
+        ]);
+    }
+
+    public function actionRemove($id)
+    {
+        Product::deleteAll(['id' => $id]);
+        return $this->actionIndex();
+    }
+
+    public function actionAddBasic($languageId = null, $productId = null) {
+        if (!empty($languageId)) {
+            $selectedLanguage = Language::findOne($languageId);
+        } else {
+            $selectedLanguage = Language::getCurrent();
+        }
+
+        if (!empty($productId)) {
+            $product = Product::findOne($productId);
+            $products_translation = ProductTranslation::find()->where([
+                'product_id' => $productId,
+                'language_id' => $languageId
+            ])->one();
+            if (empty($products_translation))
+                $products_translation = new ProductTranslation();
+        } else {
+            $product = new Product();
+            $products_translation = new ProductTranslation();
+
+            $product->owner = Yii::$app->user->id;
+        }
+
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+
         if (Yii::$app->request->isPost) {
 
             $product->load(Yii::$app->request->post());
@@ -91,39 +138,27 @@ class ProductController extends Controller
         }
 
         return $this->render('save', [
-            'languages' => Language::find()->all(),
+            'viewName' => 'add-basic',
             'selectedLanguage' => $selectedLanguage,
             'product' => $product,
-            'products_translation' => $products_translation,
-            'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-            'categoriesTree' => Category::findChilds($categoriesWithoutParent),
-            'params_translation' => new ParamTranslation(),
+
+            'params' => [
+                'languages' => Language::find()->all(),
+                'selectedLanguage' => $selectedLanguage,
+                'product' => $product,
+                'products_translation' => $products_translation,
+                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+                'params_translation' => new ParamTranslation(),
+            ]
         ]);
     }
 
-    public function actionRemove($id)
+    public function actionAddParam($languageId = null, $productId = null)
     {
-        Product::deleteAll(['id' => $id]);
-        return $this->actionIndex();
-    }
-
-    public function actionAddParam($id = null, $languageId = null, $productId = null)
-    {
-        if (!empty($id)) {
-            $param = Param::find()->where([
-                'id' => $id
-            ])->one();
-            $param_translation = ParamTranslation::find()->where([
-                'language_id' => $languageId,
-                'param_id' => $id
-            ])->one();
-            if (empty($param_translation))
-                $param_translation = new ParamTranslation();
-        } else {
-            $param = new Param();
-            $param->product_id = $productId;
-            $param_translation = new ParamTranslation();
-        }
+        $param = new Param();
+        $param->product_id = $productId;
+        $param_translation = new ParamTranslation();
 
         if (Yii::$app->request->isPost) {
 
@@ -139,22 +174,40 @@ class ProductController extends Controller
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
-        return $this->renderPartial('add-param', [
-            'product' => Product::findOne($productId),
-            'param' => new Param(),
-            'param_translation' => new ParamTranslation(),
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
+        {
+            return $this->renderPartial('add-param', [
+                'product' => Product::findOne($productId),
+                'param' => new Param(),
+                'param_translation' => new ParamTranslation(),
+                'selectedLanguage' => Language::findOne($languageId),
+                'products' => Product::find()->with('translations')->all(),
+                'productId' => $productId
+            ]);
+        }
+        return $this->render('save', [
+            'viewName' => 'add-param',
             'selectedLanguage' => Language::findOne($languageId),
-            'products' => Product::find()->with('translations')->all(),
-            'productId' => $productId
+            'product' => Product::findOne($productId),
+
+            'params' => [
+                'product' => Product::findOne($productId),
+                'param' => new Param(),
+                'param_translation' => new ParamTranslation(),
+                'selectedLanguage' => Language::findOne($languageId),
+                'products' => Product::find()->with('translations')->all(),
+                'productId' => $productId
+            ]
         ]);
 
     }
 
-
-    public function actionDeleteParam($id, $productId, $languageId)
+    public function actionDeleteParam($id)
     {
         Param::deleteAll(['id' => $id]);
-        return $this->actionAddParam(null, $languageId, $productId);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionUp($id)
@@ -173,8 +226,8 @@ class ProductController extends Controller
         return $this->actionIndex();
     }
 
-    public function actionUploadImage($productId)
-    {
+
+    public function actionAddImage($productId, $languageId) {
         $product = Product::findOne($productId);
         $image_form = new ProductImageForm();
         $image = new ProductImage();
@@ -184,48 +237,48 @@ class ProductController extends Controller
             $image_form->load(Yii::$app->request->post());
             $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
-            if (!empty($image_form->image)) {
-                $UploadedImageName = $image_form->upload();
-                $image->file_name = $UploadedImageName;
-                $image->alt = $image_form->alt;
-                $image->product_id = $product->id;
-                if ($image->validate()) {
-                    $image->save();
+            if (!empty($image_form->image) || !empty($image_form->link)) {
+                if (!empty($image_form->image)) {
+                    $UploadedImageName = $image_form->upload();
+                    $image->file_name = $UploadedImageName;
+                    $image->alt = $image_form->alt;
+                    $image->product_id = $product->id;
+                    if ($image->validate()) {
+                        $image->save();
+                    }
+                }
+                if (!empty($image_form->link)) {
+                    $image_name = $image_form->copy($image_form->link);
+                    $image->file_name = $image_name;
+                    $image->alt = $image_form->alt;
+                    $image->product_id = $product->id;
+                    if ($image->validate()) {
+                        $image->save();
+                    }
                 }
             }
         }
 
-        return $this->renderPartial('add-image', [
-            'product' => $product,
-            'image_form' => new ProductImageForm()
-        ]);
-
-    }
-
-    public function actionCopyImage($productId)
-    {
-        $product = Product::findOne($productId);
-        $image_form = new ProductImageForm();
-        $image = new ProductImage();
-
-        if (Yii::$app->request->isPost) {
-
-            $image_form->load(Yii::$app->request->post());
-
-            if (!empty($image_form->link)) {
-                $image_name = $image_form->copy($image_form->link);
-                $image->file_name = $image_name;
-                $image->alt = $image_form->alt;
-                $image->product_id = $product->id;
-                if ($image->validate()) {
-                    $image->save();
-                }
-            }
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
+        {
+            return $this->renderPartial('add-image', [
+                'selectedLanguage' => Language::findOne($languageId),
+                'product' => $product,
+                'image_form' => new ProductImageForm()
+            ]);
         }
-
-        return $this->renderPartial('add-image', [
+        return $this->render('save', [
+            'viewName' => 'add-image',
+            'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
-            'image_form' => new ProductImageForm(),
+
+            'params' => [
+                'selectedLanguage' => Language::findOne($languageId),
+                'product' => $product,
+                'image_form' => new ProductImageForm()
+            ]
         ]);
     }
 
@@ -241,24 +294,33 @@ class ProductController extends Controller
             unlink($dir . '/shop-product/' . $image->file_name . '-small.jpg');
             unlink($dir . '/shop-product/' . $image->file_name . '-thumb.jpg');
 
-            return $this->renderPartial('add-image', [
-                'product' => Product::findOne($image->product_id),
-                'image_form' => new ProductImageForm()
-            ]);
+            return $this->redirect(Yii::$app->request->referrer);
+
         }
         return false;
     }
 
-    public function actionAddVideo($productId)
+    public function actionAddVideo($productId, $languageId)
     {
         $product = Product::findOne($productId);
         $video = new ProductVideo();
+        $videoForm = new ProductVideoForm();
+
 
         if (Yii::$app->request->isPost) {
 
             $video->load(Yii::$app->request->post());
 
-            if (!empty($video->resource) && !empty($video->file_name)) {
+//            if (!empty($video->resource) && !empty($videoForm->file_name)) {
+
+                $videoForm->load(Yii::$app->request->post());
+                $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
+                if ($fileName = $videoForm->upload()) {
+                    $video->file_name = $fileName;
+                    $video->resource = 'videofile';
+                    $video->product_id = $productId;
+                    $video->save();
+                }
 
                 if ($video->resource == 'youtube') {
                     if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
@@ -302,41 +364,33 @@ class ProductController extends Controller
                         \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                     }
                 }
-            }
+//            }
         }
 
-        return $this->renderPartial('add-video', [
-            'product' => $product,
-            'video_form' => new ProductVideo(),
-            'video_form_upload' => new ProductVideoForm(),
-            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
-        ]);
-
-    }
-
-    public function actionUploadVideo($productId)
-    {
-        $product = Product::findOne($productId);
-        $videoForm = new ProductVideoForm();
-        $video = new ProductVideo();
-
-
-        if (Yii::$app->request->isPost) {
-            $videoForm->load(Yii::$app->request->post());
-            $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
-            if ($fileName = $videoForm->upload()) {
-                $video->file_name = $fileName;
-                $video->resource = 'videofile';
-                $video->product_id = $productId;
-                $video->save();
-            }
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
+        {
+            return $this->renderPartial('add-video', [
+                'product' => $product,
+                'selectedLanguage' => Language::findOne($languageId),
+                'video_form' => new ProductVideo(),
+                'video_form_upload' => new ProductVideoForm(),
+                'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+            ]);
         }
-
-        return $this->renderPartial('add-video', [
+        return $this->render('save', [
+            'viewName' => 'add-video',
+            'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
-            'video_form' => new ProductVideoForm(),
-            'video_form_upload' => new ProductVideoForm(),
-            'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+
+            'params' => [
+                'product' => $product,
+                'selectedLanguage' => Language::findOne($languageId),
+                'video_form' => new ProductVideo(),
+                'video_form_upload' => new ProductVideoForm(),
+                'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+            ]
         ]);
     }
 
@@ -351,12 +405,7 @@ class ProductController extends Controller
             }
             ProductVideo::deleteAll(['id' => $id]);
 
-            return $this->renderPartial('add-video', [
-                'product' => Product::findOne($video->product_id),
-                'video_form' => new ProductVideo(),
-                'video_form_upload' => new ProductVideoForm(),
-                'videos' => ProductVideo::find()->where(['product_id' => $video->product_id])->all()
-            ]);
+            return $this->redirect(Yii::$app->request->referrer);
         }
         return false;
     }
@@ -383,13 +432,34 @@ class ProductController extends Controller
             }
         }
 
-        return $this->renderPartial('add-price', [
-            'priceList' => $product->prices,
-            'priceModel' => $price,
-            'priceTranslationModel' => $priceTranslation,
+
+
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
+        {
+            return $this->renderPartial('add-price', [
+                'priceList' => $product->prices,
+                'priceModel' => $price,
+                'priceTranslationModel' => $priceTranslation,
+                'product' => $product,
+                'languages' => Language::findAll(['active' => true]),
+                'language' => $selectedLanguage
+            ]);
+        }
+        return $this->render('save', [
+            'viewName' => 'add-price',
+            'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
-            'languages' => Language::findAll(['active' => true]),
-            'language' => $selectedLanguage
+
+            'params' => [
+                'priceList' => $product->prices,
+                'priceModel' => $price,
+                'priceTranslationModel' => $priceTranslation,
+                'product' => $product,
+                'languages' => Language::findAll(['active' => true]),
+                'language' => $selectedLanguage
+            ]
         ]);
     }
 
