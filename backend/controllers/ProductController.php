@@ -30,6 +30,7 @@ use yii\web\UploadedFile;
  */
 class ProductController extends Controller
 {
+    public $tabTitle;
     public function actionIndex()
     {
         $searchModel = new ProductSearch();
@@ -431,9 +432,7 @@ class ProductController extends Controller
                 }
             }
         }
-
-
-
+        
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
         )

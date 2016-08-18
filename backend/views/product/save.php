@@ -98,35 +98,33 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
         <!--BODY PANEL-->
         <div class="panel-body">
 
+<!--            --><?// Pjax::begin([
+//                'linkSelector' => '.image',
+//                'enablePushState' => true,
+//                'timeout' => 10000
+//            ]);
+//            ?>
+
             <ul class="tabs">
-                <li>
-                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-basic' ? 'active' : '';?>">
+                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
                 </li>
-                <li>
-                    <?= Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-image' ? 'active' : '';?>">
+                    <?= Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
                 </li>
-                <li>
-                    <?= Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-video' ? 'active' : '';?>">
+                    <?= Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
                 </li>
-                <li>
-                    <?= Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-price' ? 'active' : '';?>">
+                    <?= Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
                 </li>
-                <li>
-                    <?= Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-param' ? 'active' : '';?>">
+                    <?= Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
                 </li>
             </ul>
+            <?= $this->render($viewName, $params); ?>
+<!--            --><?// Pjax::end(); ?>
 
-            <? Pjax::begin([
-                'linkSelector' => '.image',
-                'enablePushState' => true,
-                'timeout' => 10000
-            ]);
-            ?>
-
-            <?= $this->render($viewName, $params);
-            ?>
-            <? Pjax::end(); ?>
-            
         </div>
     </div>
 </div>
