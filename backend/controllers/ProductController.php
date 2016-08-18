@@ -30,7 +30,6 @@ use yii\web\UploadedFile;
  */
 class ProductController extends Controller
 {
-    public $tabTitle;
     public function actionIndex()
     {
         $searchModel = new ProductSearch();
@@ -131,19 +130,20 @@ class ProductController extends Controller
                 $products_translation->language_id = $selectedLanguage->id;
                 $products_translation->save();
 
-                return $this->redirect(Url::toRoute(['save',
-                    'productId' => $product->id,
-                    'languageId' =>$selectedLanguage->id
-                ]));
+
+
+//                return $this->redirect(Url::toRoute(['save',
+//                    'productId' => $product->id,
+//                    'languageId' =>$selectedLanguage->id
+//                ]));
             }
         }
 
-        return $this->render('save', [
-            'viewName' => 'add-basic',
-            'selectedLanguage' => $selectedLanguage,
-            'product' => $product,
-
-            'params' => [
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        )
+        {
+            return $this->renderPartial('add-basic', [
                 'languages' => Language::find()->all(),
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
@@ -151,8 +151,26 @@ class ProductController extends Controller
                 'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
                 'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                 'params_translation' => new ParamTranslation(),
-            ]
-        ]);
+            ]);
+        }
+        else {
+            return $this->render('save', [
+                'viewName' => 'add-basic',
+                'selectedLanguage' => $selectedLanguage,
+                'product' => $product,
+
+                'params' => [
+                    'languages' => Language::find()->all(),
+                    'selectedLanguage' => $selectedLanguage,
+                    'product' => $product,
+                    'products_translation' => $products_translation,
+                    'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+                    'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+                    'params_translation' => new ParamTranslation(),
+                ]
+            ]);
+        }
+
     }
 
     public function actionAddParam($languageId = null, $productId = null)
@@ -432,7 +450,7 @@ class ProductController extends Controller
                 }
             }
         }
-        
+
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
         )
