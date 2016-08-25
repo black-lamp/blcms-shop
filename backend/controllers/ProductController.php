@@ -76,9 +76,9 @@ class ProductController extends Controller
             'viewName' => 'add-basic',
             'selectedLanguage' => $selectedLanguage,
             'product' => $product,
+            'languages' => Language::find()->all(),
 
             'params' => [
-                'languages' => Language::find()->all(),
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
                 'products_translation' => $products_translation,
@@ -130,18 +130,10 @@ class ProductController extends Controller
                 $products_translation->language_id = $selectedLanguage->id;
                 $products_translation->save();
 
-
-
-//                return $this->redirect(Url::toRoute(['save',
-//                    'productId' => $product->id,
-//                    'languageId' =>$selectedLanguage->id
-//                ]));
             }
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (Yii::$app->request->isPjax)
         {
             return $this->renderPartial('add-basic', [
                 'languages' => Language::find()->all(),
@@ -158,6 +150,7 @@ class ProductController extends Controller
                 'viewName' => 'add-basic',
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
+                'languages' => Language::find()->all(),
 
                 'params' => [
                     'languages' => Language::find()->all(),
@@ -193,9 +186,8 @@ class ProductController extends Controller
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (Yii::$app->request->isPjax)
+
         {
             return $this->renderPartial('add-param', [
                 'product' => Product::findOne($productId),
@@ -210,6 +202,7 @@ class ProductController extends Controller
             'viewName' => 'add-param',
             'selectedLanguage' => Language::findOne($languageId),
             'product' => Product::findOne($productId),
+            'languages' => Language::find()->all(),
 
             'params' => [
                 'product' => Product::findOne($productId),
@@ -278,9 +271,8 @@ class ProductController extends Controller
             }
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (Yii::$app->request->isPjax)
+
         {
             return $this->renderPartial('add-image', [
                 'selectedLanguage' => Language::findOne($languageId),
@@ -289,6 +281,7 @@ class ProductController extends Controller
             ]);
         }
         return $this->render('save', [
+            'languages' => Language::find()->all(),
             'viewName' => 'add-image',
             'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
@@ -332,30 +325,30 @@ class ProductController extends Controller
 
 //            if (!empty($video->resource) && !empty($videoForm->file_name)) {
 
-                $videoForm->load(Yii::$app->request->post());
-                $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
-                if ($fileName = $videoForm->upload()) {
-                    $video->file_name = $fileName;
-                    $video->resource = 'videofile';
-                    $video->product_id = $productId;
-                    $video->save();
-                }
+            $videoForm->load(Yii::$app->request->post());
+            $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
+            if ($fileName = $videoForm->upload()) {
+                $video->file_name = $fileName;
+                $video->resource = 'videofile';
+                $video->product_id = $productId;
+                $video->save();
+            }
 
-                if ($video->resource == 'youtube') {
-                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
-                        $id = $match[1];
-                        $video->product_id = $product->id;
-                        $video->file_name = $id;
-                        if ($video->validate()) {
-                            $video->save();
-                        }
-                    }
-                    else {
-                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+            if ($video->resource == 'youtube') {
+                if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
+                    $id = $match[1];
+                    $video->product_id = $product->id;
+                    $video->file_name = $id;
+                    if ($video->validate()) {
+                        $video->save();
                     }
                 }
-                elseif ($video->resource == 'vimeo') {
-                    $regexstr = '~
+                else {
+                    \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                }
+            }
+            elseif ($video->resource == 'vimeo') {
+                $regexstr = '~
                         # Match Vimeo link and embed code
                         (?:&lt;iframe [^&gt;]*src=")?		# If iframe match up to first quote of src
                         (?:							        # Group vimeo url
@@ -371,24 +364,23 @@ class ProductController extends Controller
                         (?:[^&gt;]*&gt;&lt;/iframe&gt;)?	# Match the end of the iframe
                         (?:&lt;p&gt;.*&lt;/p&gt;)?		    # Match any title information stuff
                         ~ix';
-                    if (preg_match($regexstr, $video->file_name, $match)) {
-                        $id = $match[1];
-                        $video->product_id = $product->id;
-                        $video->file_name = $id;
-                        if ($video->validate()) {
-                            $video->save();
-                        }
-                    }
-                    else {
-                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                if (preg_match($regexstr, $video->file_name, $match)) {
+                    $id = $match[1];
+                    $video->product_id = $product->id;
+                    $video->file_name = $id;
+                    if ($video->validate()) {
+                        $video->save();
                     }
                 }
+                else {
+                    \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                }
+            }
 //            }
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (Yii::$app->request->isPjax)
+
         {
             return $this->renderPartial('add-video', [
                 'product' => $product,
@@ -402,6 +394,7 @@ class ProductController extends Controller
             'viewName' => 'add-video',
             'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
+            'languages' => Language::find()->all(),
 
             'params' => [
                 'product' => $product,
@@ -450,10 +443,8 @@ class ProductController extends Controller
                 }
             }
         }
+        if (Yii::$app->request->isPjax)
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
         {
             return $this->renderPartial('add-price', [
                 'priceList' => $product->prices,
@@ -468,6 +459,7 @@ class ProductController extends Controller
             'viewName' => 'add-price',
             'selectedLanguage' => Language::findOne($languageId),
             'product' => $product,
+            'languages' => Language::find()->all(),
 
             'params' => [
                 'priceList' => $product->prices,
