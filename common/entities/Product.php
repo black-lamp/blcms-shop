@@ -22,10 +22,18 @@ use yii2tech\ar\position\PositionBehavior;
  * @property boolean $in_stock
  * @property integer $price
  * @property integer $articulus
+ * @property integer $status
  *
  */
 class Product extends ActiveRecord
 {
+    /**
+     * Constants for status column
+     */
+    const STATUS_ON_MODERATION = 1;
+    const STATUS_DECLINED = 2;
+    const STATUS_SUCCESS = 10;
+
     /**
      * @inheritdoc
      */
@@ -40,7 +48,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus', 'owner'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus', 'owner', 'status'], 'integer'],
             [['price'], 'double'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],

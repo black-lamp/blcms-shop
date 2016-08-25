@@ -68,6 +68,10 @@ class ProductController extends Controller
             $products_translation = new ProductTranslation();
 
             $product->owner = Yii::$app->user->id;
+
+            if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                $product->status = Product::STATUS_SUCCESS;
+            }
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
@@ -115,6 +119,9 @@ class ProductController extends Controller
             $products_translation = new ProductTranslation();
 
             $product->owner = Yii::$app->user->id;
+            if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                $product->status = Product::STATUS_SUCCESS;
+            }
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
