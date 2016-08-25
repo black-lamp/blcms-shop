@@ -15,6 +15,7 @@ class ProductSearch extends Product
 
     public $title;
     public $category;
+    public $status;
 
     /**
      * @inheritdoc
@@ -22,7 +23,7 @@ class ProductSearch extends Product
     public function rules()
     {
         return [
-            [['title', 'category'], 'safe']
+            [['title', 'category', 'status'], 'safe']
         ];
     }
 
@@ -53,7 +54,8 @@ class ProductSearch extends Product
 
         $query->andFilterWhere([
                     'shop_product.category_id' => $this->category,
-                ])->andFilterWhere(['like', 'shop_product_translation.title', $this->title]);
+                ])->andFilterWhere(['like', 'shop_product_translation.title', $this->title
+                ])->andFilterWhere(['shop_product.status' => $this->status]);
 
 
         $dataProvider = new ActiveDataProvider([
