@@ -35,7 +35,10 @@ class ProductController extends Controller
         $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
+
         return $this->render('index', [
+            'notModeratedProductsCount' => $notModeratedProductsCount,
             'model' => new ProductSearch,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -99,7 +102,8 @@ class ProductController extends Controller
         return $this->actionIndex();
     }
 
-    public function actionAddBasic($languageId = null, $productId = null) {
+    public function actionAddBasic($languageId = null, $productId = null)
+    {
         if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
         } else {
@@ -140,8 +144,7 @@ class ProductController extends Controller
             }
         }
 
-        if (Yii::$app->request->isPjax)
-        {
+        if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-basic', [
                 'languages' => Language::find()->all(),
                 'selectedLanguage' => $selectedLanguage,
@@ -151,8 +154,7 @@ class ProductController extends Controller
                 'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                 'params_translation' => new ParamTranslation(),
             ]);
-        }
-        else {
+        } else {
             return $this->render('save', [
                 'viewName' => 'add-basic',
                 'selectedLanguage' => $selectedLanguage,
@@ -193,9 +195,7 @@ class ProductController extends Controller
                 Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
         }
 
-        if (Yii::$app->request->isPjax)
-
-        {
+        if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-param', [
                 'product' => Product::findOne($productId),
                 'param' => new Param(),
@@ -246,7 +246,8 @@ class ProductController extends Controller
     }
 
 
-    public function actionAddImage($productId, $languageId) {
+    public function actionAddImage($productId, $languageId)
+    {
         $product = Product::findOne($productId);
         $image_form = new ProductImageForm();
         $image = new ProductImage();
@@ -278,9 +279,7 @@ class ProductController extends Controller
             }
         }
 
-        if (Yii::$app->request->isPjax)
-
-        {
+        if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-image', [
                 'selectedLanguage' => Language::findOne($languageId),
                 'product' => $product,
@@ -349,12 +348,10 @@ class ProductController extends Controller
                     if ($video->validate()) {
                         $video->save();
                     }
-                }
-                else {
+                } else {
                     \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                 }
-            }
-            elseif ($video->resource == 'vimeo') {
+            } elseif ($video->resource == 'vimeo') {
                 $regexstr = '~
                         # Match Vimeo link and embed code
                         (?:&lt;iframe [^&gt;]*src=")?		# If iframe match up to first quote of src
@@ -378,17 +375,14 @@ class ProductController extends Controller
                     if ($video->validate()) {
                         $video->save();
                     }
-                }
-                else {
+                } else {
                     \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                 }
             }
 //            }
         }
 
-        if (Yii::$app->request->isPjax)
-
-        {
+        if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-video', [
                 'product' => $product,
                 'selectedLanguage' => Language::findOne($languageId),
@@ -429,30 +423,29 @@ class ProductController extends Controller
         return false;
     }
 
-    public function actionAddPrice($productId, $languageId) {
+    public function actionAddPrice($productId, $languageId)
+    {
         $price = new ProductPrice();
         $priceTranslation = new ProductPriceTranslation();
 
         $product = Product::findOne($productId);
         $selectedLanguage = Language::findOne($languageId);
 
-        if(\Yii::$app->request->isPost) {
+        if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
-            if($price->load($post) && $priceTranslation->load($post)) {
+            if ($price->load($post) && $priceTranslation->load($post)) {
                 $price->product_id = $product->id;
-                if($price->save()) {
+                if ($price->save()) {
                     $priceTranslation->price_id = $price->id;
                     $priceTranslation->language_id = $selectedLanguage->id;
-                    if($priceTranslation->save()) {
+                    if ($priceTranslation->save()) {
                         $price = new ProductPrice();
                         $priceTranslation = new ProductPriceTranslation();
                     }
                 }
             }
         }
-        if (Yii::$app->request->isPjax)
-
-        {
+        if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-price', [
                 'priceList' => $product->prices,
                 'priceModel' => $price,
@@ -479,8 +472,32 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionRemovePrice($priceId, $productId, $languageId) {
+    public function actionRemovePrice($priceId, $productId, $languageId)
+    {
         ProductPrice::deleteAll(['id' => $priceId]);
         return $this->actionAddPrice($productId, $languageId);
+    }
+
+    public function actionChangeProductStatus($id, $status)
+    {
+        if (Yii::$app->user->can('moderateProductCreation') && !empty($id) && !empty($status)) {
+            $product = Product::findOne($id);
+            if ($product->status == Product::STATUS_ON_MODERATION) {
+
+                switch ($status) {
+                    case Product::STATUS_SUCCESS:
+                        $product->status = Product::STATUS_SUCCESS;
+                        $product->save();
+                        break;
+                    case Product::STATUS_DECLINED:
+                        $product->status = Product::STATUS_DECLINED;
+                        $product->save();
+                        break;
+                }
+
+
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }
