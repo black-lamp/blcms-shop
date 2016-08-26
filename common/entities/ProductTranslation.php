@@ -58,8 +58,7 @@ class ProductTranslation extends ActiveRecord
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
 
             /*SEO params*/
-            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
-            ['seoUrl', 'required']
+            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
         ];
     }
 

@@ -21,6 +21,7 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Yii;
+use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
@@ -69,12 +70,6 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
-
-            $product->owner = Yii::$app->user->id;
-
-            if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                $product->status = Product::STATUS_SUCCESS;
-            }
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
@@ -121,21 +116,26 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $products_translation = new ProductTranslation();
-
-            $product->owner = Yii::$app->user->id;
-            if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                $product->status = Product::STATUS_SUCCESS;
-            }
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
         if (Yii::$app->request->isPost) {
 
+            $product->owner = Yii::$app->user->id;
+            if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                $product->status = Product::STATUS_SUCCESS;
+            }
+
             $product->load(Yii::$app->request->post());
             $products_translation->load(Yii::$app->request->post());
 
             if ($product->validate() && $products_translation->validate()) {
+
+                if (empty($products_translation->seoUrl)) {
+                    $products_translation->seoUrl = Inflector::slug($products_translation->title);
+                }
+
                 $product->save();
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $selectedLanguage->id;
@@ -499,5 +499,9 @@ class ProductController extends Controller
             }
         }
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionGenerateSeoUrl($title) {
+        return Inflector::slug($title);
     }
 }

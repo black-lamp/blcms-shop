@@ -98,6 +98,8 @@ use yii\widgets\ActiveForm;
         ]
     ])->label('SEO URL')
     ?>
+    <?= Html::button('Generate', ['class' => 'btn btn-primary pull-right', 'id' => 'generate-seo-url']); ?>
+
     <?= $form->field($products_translation, 'seoTitle', [
         'inputOptions' => [
             'class' => 'form-control'
