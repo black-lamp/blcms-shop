@@ -57,14 +57,19 @@ class CategoryController extends Controller
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
+        $maxPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one();
+        $maxPosition = (!empty($maxPositionCategory)) ? $maxPositionCategory->position : 0;
+        $minPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one();
+        $minPosition = (!empty($minPositionCategory)) ? $minPositionCategory->position : 0;
+
         return $this->render('save', [
             'viewName' => 'add-basic',
             'selectedLanguage' => Language::findOne($languageId),
             'category' => $category,
 
             'params' => [
-                'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one()->position,
-                'minPosition' => Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one()->position,
+                'maxPosition' => $maxPosition,
+                'minPosition' => $minPosition,
                 'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                 'category' => $category,
                 'category_translation' => $category_translation,
