@@ -20,8 +20,8 @@ use yii\db\ActiveRecord;
 class ProductImage extends ActiveRecord
 {
 
-    public $imageCategory = 'shop-product';
-    private $_image_extension = '.jpg';
+    private $imageCategory = 'shop-product';
+    private $image_extension = '.jpg';
 
     /**
      * @inheritdoc
@@ -70,18 +70,18 @@ class ProductImage extends ActiveRecord
     }
 
     public function getBig($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-big' . $this->_image_extension);
+        return ($this->imageCategory . '/' . $file_name . '-big' . $this->image_extension);
     }
 
     public function getThumb($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-thumb' . $this->_image_extension);
+        return ($this->imageCategory . '/' . $file_name . '-thumb' . $this->image_extension);
     }
 
     public function getSmall($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-small' . $this->_image_extension);
+        return ($this->imageCategory . '/' . $file_name . '-small' . $this->image_extension);
     }
 
     public function getOriginal($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-original' . $this->_image_extension);
+        return ($this->imageCategory . '/' . $file_name . '-original' . $this->image_extension);
     }
 }
