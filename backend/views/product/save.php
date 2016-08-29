@@ -1,27 +1,12 @@
 <?php
-use bl\articles\backend\assets\TabsAsset;
 use bl\cms\shop\backend\assets\EditProductAsset;
-use bl\cms\shop\backend\components\form\ProductImageForm;
-use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\common\entities\CategoryTranslation;
-use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductPrice;
-use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\cms\shop\common\entities\ProductTranslation;
-use bl\cms\shop\common\entities\ProductCountryTranslation;
-use bl\cms\shop\common\entities\Category;
-use bl\cms\shop\common\entities\ProductVideo;
-use bl\cms\shop\common\entities\Vendor;
 use bl\multilang\entities\Language;
-use marqu3s\summernote\Summernote;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\jui\JuiAsset;
-use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -35,7 +20,6 @@ use yii\widgets\Pjax;
  */
 
 EditProductAsset::register($this);
-TabsAsset::register($this);
 
 $this->title = \Yii::t('shop', 'Edit product');
 $newProductMessage = Yii::t('shop', 'You must save new product before this action');
