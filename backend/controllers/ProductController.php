@@ -6,7 +6,6 @@ use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
-use bl\cms\shop\common\entities\ParamsTranslation;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductImage;
@@ -16,13 +15,8 @@ use bl\cms\shop\common\entities\ProductSearch;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
-use common\models\User;
-use Imagine\Gd\Imagine;
-use Imagine\Image\Box;
-use Imagine\Image\ImageInterface;
 use Yii;
 use yii\helpers\Inflector;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -245,7 +239,6 @@ class ProductController extends Controller
         return $this->actionIndex();
     }
 
-
     public function actionAddImage($productId, $languageId)
     {
         $product = Product::findOne($productId);
@@ -319,8 +312,6 @@ class ProductController extends Controller
 
             $video->load(Yii::$app->request->post());
 
-//            if (!empty($video->resource) && !empty($videoForm->file_name)) {
-
             $videoForm->load(Yii::$app->request->post());
             $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
             if ($fileName = $videoForm->upload()) {
@@ -369,7 +360,6 @@ class ProductController extends Controller
                     \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                 }
             }
-//            }
         }
 
         if (Yii::$app->request->isPjax) {
@@ -484,14 +474,13 @@ class ProductController extends Controller
                         $product->save();
                         break;
                 }
-
-
             }
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
 
-    public function actionGenerateSeoUrl($title) {
+    public function actionGenerateSeoUrl($title)
+    {
         return Inflector::slug($title);
     }
 }
