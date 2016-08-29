@@ -38,7 +38,7 @@ class CategoryImageForm extends Model
         if ($this->validate()) {
             $dir = Yii::getAlias('@frontend/web/images/shop-category');
 
-            $imagable = \Yii::$app->imagable;
+            $imagable = \Yii::$app->shop_imagable;
             $imagable->imagesPath = Yii::getAlias('@frontend/web/images/shop-category');
             $image_name = [];
 

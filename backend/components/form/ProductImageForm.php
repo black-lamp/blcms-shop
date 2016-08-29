@@ -33,7 +33,7 @@ class ProductImageForm extends Model
         if ($this->validate()) {
             $dir = Yii::getAlias('@frontend/web/images/');
 
-            $imagable = \Yii::$app->imagable;
+            $imagable = \Yii::$app->shop_imagable;
             $imagable->imagesPath = $dir;
 
             /** @var Imagable $this */
@@ -50,7 +50,7 @@ class ProductImageForm extends Model
 
     public function copy($link) {
         $dir = Yii::getAlias('@frontend/web/images/');
-        $imagable = \Yii::$app->imagable;
+        $imagable = \Yii::$app->shop_imagable;
         $imagable->imagesPath = $dir;
         if (exif_imagetype($link) == IMAGETYPE_JPEG || exif_imagetype($link) == IMAGETYPE_PNG) {
             if (!empty($link)) {

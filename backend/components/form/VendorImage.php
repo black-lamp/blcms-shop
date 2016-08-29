@@ -46,7 +46,7 @@ class VendorImage extends Model
     public function Upload()
     {
         /** @var Imagable $image */
-        $image = Yii::$app->imagable;
+        $image = Yii::$app->shop_imagable;
 
         // save original
         $this->_orig_image_name = $this->imageFile->baseName . $this->_image_extension;
