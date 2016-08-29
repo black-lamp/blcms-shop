@@ -7,7 +7,6 @@ use yii\base\Model;
 use yii\web\UploadedFile;
 use bl\imagable\Imagable;
 
-
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */

@@ -19,6 +19,10 @@ use yii\db\ActiveRecord;
 
 class ProductImage extends ActiveRecord
 {
+
+    public $imageCategory = 'shop-product';
+    private $_image_extension = '.jpg';
+
     /**
      * @inheritdoc
      */
@@ -39,12 +43,45 @@ class ProductImage extends ActiveRecord
         ];
     }
 
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    public function removeImage($id) {
+        if(!empty($id)) {
+
+            $image = ProductImage::findOne($id);
+            $image->deleteAll($id);
+            $file_name = $image->file_name;
+
+            $dir = Yii::getAlias('@frontend/web/images/');
+
+            if (!empty($file_name)) {
+                unlink($dir . $this->getBig($file_name));
+                unlink($dir . $this->getThumb($file_name));
+                unlink($dir . $this->getSmall($file_name));
+            }
+
+        }
+    }
+
+    public function getBig($file_name) {
+        return ($this->imageCategory . '/' . $file_name . '-big' . $this->_image_extension);
+    }
+
+    public function getThumb($file_name) {
+        return ($this->imageCategory . '/' . $file_name . '-thumb' . $this->_image_extension);
+    }
+
+    public function getSmall($file_name) {
+        return ($this->imageCategory . '/' . $file_name . '-small' . $this->_image_extension);
+    }
+
+    public function getOriginal($file_name) {
+        return ($this->imageCategory . '/' . $file_name . '-original' . $this->_image_extension);
     }
 }

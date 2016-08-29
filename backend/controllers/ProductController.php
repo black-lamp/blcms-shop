@@ -302,20 +302,10 @@ class ProductController extends Controller
 
     public function actionDeleteImage($id)
     {
-        $dir = Yii::getAlias('@frontend/web/images');
+        $product_image = new ProductImage();
+        $product_image->removeImage($id);
 
-        if (!empty($id)) {
-            $image = ProductImage::findOne($id);
-            ProductImage::deleteAll(['id' => $id]);
-
-            unlink($dir . '/shop-product/' . $image->file_name . '-big.jpg');
-            unlink($dir . '/shop-product/' . $image->file_name . '-small.jpg');
-            unlink($dir . '/shop-product/' . $image->file_name . '-thumb.jpg');
-
-            return $this->redirect(Yii::$app->request->referrer);
-
-        }
-        return false;
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionAddVideo($productId, $languageId)
