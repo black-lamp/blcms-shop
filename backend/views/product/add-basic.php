@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<? $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content']]); ?>
+<?php $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content']]); ?>
 
 <!--BASIC-->
 <div id="basic">
@@ -128,4 +128,4 @@ use yii\widgets\ActiveForm;
 
 </div>
 
-<? $form::end(); ?>
+<?php $form::end(); ?>

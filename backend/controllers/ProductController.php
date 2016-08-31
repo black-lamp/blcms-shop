@@ -93,7 +93,7 @@ class ProductController extends Controller
 
     public function actionAddBasic($languageId = null, $productId = null)
     {
-        if (Yii::$app->user->can('createProduct')) {
+        if (Yii::$app->user->can('createProduct') || Yii::$app->user->can('createProductWithoutModeration')) {
             if (!empty($languageId)) {
                 $selectedLanguage = Language::findOne($languageId);
             } else {
@@ -168,6 +168,7 @@ class ProductController extends Controller
                 ]);
             }
         }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionAddParam($languageId = null, $productId = null)
