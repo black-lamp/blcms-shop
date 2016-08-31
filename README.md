@@ -1,7 +1,7 @@
 **Applying migrations:**
 ```php
 - yii migrate --migrationPath=@yii/rbac/migrations
-yii migrate --migrationPath=@vendor/black-lamp/blcms-shop/migrations
+- yii migrate --migrationPath=@vendor/black-lamp/blcms-shop/migrations
 ```
 
 **Configuration for Imagable module:**
