@@ -93,69 +93,54 @@ class ProductController extends Controller
 
     public function actionAddBasic($languageId = null, $productId = null)
     {
-        if (!empty($languageId)) {
-            $selectedLanguage = Language::findOne($languageId);
-        } else {
-            $selectedLanguage = Language::getCurrent();
-        }
-
-        if (!empty($productId)) {
-            $product = Product::findOne($productId);
-            $products_translation = ProductTranslation::find()->where([
-                'product_id' => $productId,
-                'language_id' => $languageId
-            ])->one();
-            if (empty($products_translation))
-                $products_translation = new ProductTranslation();
-        } else {
-            $product = new Product();
-            $products_translation = new ProductTranslation();
-        }
-
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-
-        if (Yii::$app->request->isPost) {
-
-            $product->owner = Yii::$app->user->id;
-            if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                $product->status = Product::STATUS_SUCCESS;
+        if (Yii::$app->user->can('createProduct')) {
+            if (!empty($languageId)) {
+                $selectedLanguage = Language::findOne($languageId);
+            } else {
+                $selectedLanguage = Language::getCurrent();
             }
 
-            $product->load(Yii::$app->request->post());
-            $products_translation->load(Yii::$app->request->post());
+            if (!empty($productId)) {
+                $product = Product::findOne($productId);
+                $products_translation = ProductTranslation::find()->where([
+                    'product_id' => $productId,
+                    'language_id' => $languageId
+                ])->one();
+                if (empty($products_translation))
+                    $products_translation = new ProductTranslation();
+            } else {
+                $product = new Product();
+                $products_translation = new ProductTranslation();
+            }
 
-            if ($product->validate() && $products_translation->validate()) {
+            $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
-                if (empty($products_translation->seoUrl)) {
-                    $products_translation->seoUrl = Inflector::slug($products_translation->title);
+            if (Yii::$app->request->isPost) {
+
+                $product->owner = Yii::$app->user->id;
+                if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                    $product->status = Product::STATUS_SUCCESS;
                 }
 
-                $product->save();
-                $products_translation->product_id = $product->id;
-                $products_translation->language_id = $selectedLanguage->id;
-                $products_translation->save();
+                $product->load(Yii::$app->request->post());
+                $products_translation->load(Yii::$app->request->post());
 
+                if ($product->validate() && $products_translation->validate()) {
+
+                    if (empty($products_translation->seoUrl)) {
+                        $products_translation->seoUrl = Inflector::slug($products_translation->title);
+                    }
+
+                    $product->save();
+                    $products_translation->product_id = $product->id;
+                    $products_translation->language_id = $selectedLanguage->id;
+                    $products_translation->save();
+
+                }
             }
-        }
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-basic', [
-                'languages' => Language::find()->all(),
-                'selectedLanguage' => $selectedLanguage,
-                'product' => $product,
-                'products_translation' => $products_translation,
-                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
-                'params_translation' => new ParamTranslation(),
-            ]);
-        } else {
-            return $this->render('save', [
-                'viewName' => 'add-basic',
-                'selectedLanguage' => $selectedLanguage,
-                'product' => $product,
-                'languages' => Language::find()->all(),
-
-                'params' => [
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-basic', [
                     'languages' => Language::find()->all(),
                     'selectedLanguage' => $selectedLanguage,
                     'product' => $product,
@@ -163,10 +148,26 @@ class ProductController extends Controller
                     'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
                     'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                     'params_translation' => new ParamTranslation(),
-                ]
-            ]);
-        }
+                ]);
+            } else {
+                return $this->render('save', [
+                    'viewName' => 'add-basic',
+                    'selectedLanguage' => $selectedLanguage,
+                    'product' => $product,
+                    'languages' => Language::find()->all(),
 
+                    'params' => [
+                        'languages' => Language::find()->all(),
+                        'selectedLanguage' => $selectedLanguage,
+                        'product' => $product,
+                        'products_translation' => $products_translation,
+                        'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+                        'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+                        'params_translation' => new ParamTranslation(),
+                    ]
+                ]);
+            }
+        }
     }
 
     public function actionAddParam($languageId = null, $productId = null)

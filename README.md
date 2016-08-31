@@ -110,7 +110,7 @@ use bl\cms\shop\backend\components\CreateImageImagine;
 ```php
     'modules' => [
     	...
-        'articles' => [
+        'shop' => [
             'class' => 'bl\cms\shop\backend\Module'
         ],
         ...
@@ -121,7 +121,7 @@ use bl\cms\shop\backend\components\CreateImageImagine;
 ```php
     'modules' => [
     	...
-        'articles' => [
+        'shop' => [
             'class' => 'bl\cms\shop\frontend\Module'
         ],
         ...
