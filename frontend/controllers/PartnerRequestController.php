@@ -10,6 +10,8 @@ use yii\web\Controller;
 
 class PartnerRequestController extends Controller
 {
+    const EVENT_SEND = 'send';
+
     public function actionSend()
     {
         $partner = new PartnerRequest();
@@ -21,6 +23,8 @@ class PartnerRequestController extends Controller
 
                 $partner->sender_id = Yii::$app->user->id;
                 $partner->save();
+
+                $this->trigger(self::EVENT_SEND);
 
                 Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your request was successfully sent.'));
             }

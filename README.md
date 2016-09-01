@@ -114,7 +114,11 @@ use bl\cms\shop\backend\components\CreateImageImagine;
             'class' => 'bl\cms\shop\backend\Module'
         ],
         ...
-    ]
+    ],
+    
+    'bootstrap' => [
+        'bl\cms\shop\backend\components\events\PartnersEvents'
+    ],
 ```
 
 ### Add module to your frontend config
@@ -125,6 +129,10 @@ use bl\cms\shop\backend\components\CreateImageImagine;
             'class' => 'bl\cms\shop\frontend\Module'
         ],
         ...
-    ]
+    ],
+    
+    'bootstrap' => [
+        'bl\cms\shop\frontend\components\events\PartnersEvents'
+    ],
 ```
 

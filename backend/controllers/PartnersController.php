@@ -10,10 +10,16 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
  * PartnersController implements the CRUD actions for PartnerRequest model.
  */
+
 class PartnersController extends Controller
 {
+    const EVENT_APPLY = 'apply';
+    const EVENT_DECLINE = 'decline';
+
     /**
      * @inheritdoc
      */
@@ -84,10 +90,13 @@ class PartnersController extends Controller
                         $role = \Yii::$app->authManager->getRole('productPartner');
                         $userId = \Yii::$app->user->id;
                         \Yii::$app->authManager->assign($role, $userId);
+
+                        $this->trigger(self::EVENT_APPLY);
                         break;
                     case PartnerRequest::STATUS_DECLINED:
                         $partner->moderation_status = PartnerRequest::STATUS_DECLINED;
                         $partner->save();
+                        $this->trigger(self::EVENT_DECLINE);
                         break;
                 }
             }
