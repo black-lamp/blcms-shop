@@ -6,6 +6,7 @@ use Yii;
 use bl\cms\shop\common\entities\PartnerRequest;
 use bl\cms\shop\common\entities\SearchPartnerRequest;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -41,15 +42,18 @@ class PartnersController extends Controller
      */
     public function actionIndex()
     {
-        $partners = PartnerRequest::find()->all();
-        $searchModel = new SearchPartnerRequest();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (\Yii::$app->user->can('moderatePartnerRequest')) {
+            $partners = PartnerRequest::find()->all();
+            $searchModel = new SearchPartnerRequest();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'partners' => $partners,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'partners' => $partners,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        else throw new ForbiddenHttpException();
     }
 
     /**
@@ -88,7 +92,7 @@ class PartnersController extends Controller
                         $partner->moderation_status = PartnerRequest::STATUS_SUCCESS;
                         $partner->save();
                         $role = \Yii::$app->authManager->getRole('productPartner');
-                        $userId = \Yii::$app->user->id;
+                        $userId = $partner->sender_id;
                         \Yii::$app->authManager->assign($role, $userId);
 
                         $this->trigger(self::EVENT_APPLY);

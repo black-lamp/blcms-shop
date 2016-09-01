@@ -27,16 +27,52 @@ $this->title = $model->company_name;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'sender_id',
-            'company_name',
-            'website',
-            'message:ntext',
-            'created_at',
-            'moderation_status',
-            'moderated_by',
-            'moderated_at',
-        ],
-    ]) ?>
+            [
+                'label' => Yii::t('shop', 'User'),
+                'value' => $model->sender->username
+            ],
+            [
+                'label' => 'Owner',
+                'value' => $model->company_name,
+            ],
+            [
+                'label' => Yii::t('shop', 'Website'),
+                'value' => $model->website,
+            ],
+            [
+                'label' => Yii::t('shop', 'Message'),
+                'value' => $model->message,
+            ],
+            [
+                'label' => Yii::t('shop', 'Created'),
+                'value' => $model->created_at,
+            ],
+            [
+                'attribute' => 'moderated_at',
+                'label' => Yii::t('shop', 'Moderation status'),
+                'format' => 'raw',
+                'value' => call_user_func(function($data) {
+                    switch ($data->moderation_status) {
+                        case PartnerRequest::STATUS_DECLINED :
+                            return Html::tag('p', \Yii::t('shop', 'Declined'), ['class' => 'btn btn-danger']);
+                        case PartnerRequest::STATUS_SUCCESS :
+                            return Html::tag('p', \Yii::t('shop', 'Accept'), ['class' => 'btn btn-primary']);
+                        case PartnerRequest::STATUS_ON_MODERATION :
+                            return Html::tag('p', \Yii::t('shop', 'On moderation'), ['class' => 'btn btn-warning']);
+                            break;
+                    }
+                    return 'Unknown';
+                }, $model)
+            ],
+            [
+                'label' => Yii::t('shop', 'Moderated by'),
+                'value' => $model->moderated_by,
+            ],
+            [
+                'label' => Yii::t('shop', 'Moderated at'),
+                'value' => $model->moderated_at,
+            ],
+        ]]);
+    ?>
 
 </div>

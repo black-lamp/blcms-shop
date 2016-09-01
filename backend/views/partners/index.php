@@ -1,5 +1,6 @@
 <?php
 
+use bl\cms\shop\common\entities\PartnerRequest;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -51,7 +52,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
                 'contentOptions' => ['class' => 'project-title'],
             ],
-
+            [
+                'headerOptions' => ['class' => 'text-center'],
+                'label' => Yii::t('shop', 'Status'),
+                'format' => 'raw',
+                'value' => function($model) {
+                    switch ($model->moderation_status) {
+                        case PartnerRequest::STATUS_DECLINED :
+                            return Html::tag('p', \Yii::t('shop', 'Declined'), ['class' => 'btn btn-danger']);
+                        case PartnerRequest::STATUS_SUCCESS :
+                            return Html::tag('p', \Yii::t('shop', 'Accept'), ['class' => 'btn btn-primary']);
+                        case PartnerRequest::STATUS_ON_MODERATION :
+                            return Html::tag('p', \Yii::t('shop', 'On moderation'), ['class' => 'btn btn-warning']);
+                            break;
+                    }
+                    return 'Unknown';
+                }
+            ],
             [
                 'label' => 'Ссылка',
                 'format' => 'raw',

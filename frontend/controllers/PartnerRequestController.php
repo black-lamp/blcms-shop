@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
+use bl\cms\shop\frontend\components\events\PartnersEvents;
 use bl\cms\shop\common\entities\PartnerRequest;
 use Yii;
 use yii\web\Controller;
@@ -17,16 +18,19 @@ class PartnerRequestController extends Controller
         $partner = new PartnerRequest();
 
         if (Yii::$app->request->isPost) {
-            $partner->load(Yii::$app->request->post());
 
-            if ($partner->validate()) {
+            if (!Yii::$app->user->can('productPartner')) {
+                $partner->load(Yii::$app->request->post());
 
-                $partner->sender_id = Yii::$app->user->id;
-                $partner->save();
+                if ($partner->validate()) {
 
-                $this->trigger(self::EVENT_SEND);
+                    $partner->sender_id = Yii::$app->user->id;
+                    $partner->save();
 
-                Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your request was successfully sent.'));
+                    $this->trigger(self::EVENT_SEND, new PartnersEvents());
+
+                    Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your request was successfully sent.'));
+                }
             }
         }
 
