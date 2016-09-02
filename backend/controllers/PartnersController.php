@@ -2,6 +2,7 @@
 
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\events\PartnersEvents;
 use Yii;
 use bl\cms\shop\common\entities\PartnerRequest;
 use bl\cms\shop\common\entities\SearchPartnerRequest;
@@ -95,12 +96,12 @@ class PartnersController extends Controller
                         $userId = $partner->sender_id;
                         \Yii::$app->authManager->assign($role, $userId);
 
-                        $this->trigger(self::EVENT_APPLY);
+                        $this->trigger(self::EVENT_APPLY, (new PartnersEvents()));
                         break;
                     case PartnerRequest::STATUS_DECLINED:
                         $partner->moderation_status = PartnerRequest::STATUS_DECLINED;
                         $partner->save();
-                        $this->trigger(self::EVENT_DECLINE);
+                        $this->trigger(self::EVENT_DECLINE, (new PartnersEvents()));
                         break;
                 }
             }
