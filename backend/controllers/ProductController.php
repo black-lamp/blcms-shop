@@ -18,6 +18,7 @@ use bl\multilang\entities\Language;
 use Yii;
 use yii\helpers\Inflector;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -37,16 +38,14 @@ class ProductController extends Controller
             'model' => new ProductSearch,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'products' => Product::find()
-                ->with(['category'])
-                ->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])
-                ->all(),
             'languages' => Language::findAll(['active' => true])
         ]);
     }
 
     public function actionSave($languageId = null, $productId = null)
     {
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+
         if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
         } else {
@@ -54,19 +53,28 @@ class ProductController extends Controller
         }
 
         if (!empty($productId)) {
-            $product = Product::findOne($productId);
-            $products_translation = ProductTranslation::find()->where([
-                'product_id' => $productId,
-                'language_id' => $languageId
-            ])->one();
-            if (empty($products_translation))
-                $products_translation = new ProductTranslation();
-        } else {
-            $product = new Product();
-            $products_translation = new ProductTranslation();
-        }
 
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+            $product = Product::findOne($productId);
+
+            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+                $products_translation = ProductTranslation::find()->where([
+                    'product_id' => $productId,
+                    'language_id' => $languageId
+                ])->one();
+                if (empty($products_translation)) {
+                    $products_translation = new ProductTranslation();
+                }
+            } else {
+                throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to update this product.'));
+            }
+        } else {
+
+            if (\Yii::$app->user->can('createProduct')) {
+
+                $product = new Product();
+                $products_translation = new ProductTranslation();
+            } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to create new product.'));
+        }
 
         return $this->render('save', [
             'viewName' => 'add-basic',
@@ -87,60 +95,82 @@ class ProductController extends Controller
 
     public function actionRemove($id)
     {
-        Product::deleteAll(['id' => $id]);
-        return $this->actionIndex();
+        if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            Product::deleteAll(['id' => $id]);
+            return $this->actionIndex();
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
     }
 
     public function actionAddBasic($languageId = null, $productId = null)
     {
-        if (Yii::$app->user->can('createProduct') || Yii::$app->user->can('createProductWithoutModeration')) {
-            if (!empty($languageId)) {
-                $selectedLanguage = Language::findOne($languageId);
-            } else {
-                $selectedLanguage = Language::getCurrent();
-            }
+        if (!empty($languageId)) {
+            $selectedLanguage = Language::findOne($languageId);
+        } else {
+            $selectedLanguage = Language::getCurrent();
+        }
 
-            if (!empty($productId)) {
-                $product = Product::findOne($productId);
+        if (!empty($productId)) {
+            $product = Product::findOne($productId);
+
+            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
                 $products_translation = ProductTranslation::find()->where([
                     'product_id' => $productId,
                     'language_id' => $languageId
                 ])->one();
-                if (empty($products_translation))
+                if (empty($products_translation)) {
                     $products_translation = new ProductTranslation();
-            } else {
+                }
+            } else throw new ForbiddenHttpException();
+
+        } else {
+            if (\Yii::$app->user->can('createProduct')) {
                 $product = new Product();
                 $products_translation = new ProductTranslation();
+            } else throw new ForbiddenHttpException();
+        }
+
+        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+
+        if (Yii::$app->request->isPost) {
+            $product->owner = Yii::$app->user->id;
+            if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                $product->status = Product::STATUS_SUCCESS;
             }
 
-            $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
+            $product->load(Yii::$app->request->post());
+            $products_translation->load(Yii::$app->request->post());
 
-            if (Yii::$app->request->isPost) {
+            if ($product->validate() && $products_translation->validate()) {
 
-                $product->owner = Yii::$app->user->id;
-                if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                    $product->status = Product::STATUS_SUCCESS;
+                if (empty($products_translation->seoUrl)) {
+                    $products_translation->seoUrl = Inflector::slug($products_translation->title);
                 }
 
-                $product->load(Yii::$app->request->post());
-                $products_translation->load(Yii::$app->request->post());
-
-                if ($product->validate() && $products_translation->validate()) {
-
-                    if (empty($products_translation->seoUrl)) {
-                        $products_translation->seoUrl = Inflector::slug($products_translation->title);
-                    }
-
-                    $product->save();
-                    $products_translation->product_id = $product->id;
-                    $products_translation->language_id = $selectedLanguage->id;
-                    $products_translation->save();
-
-                }
+                $product->save();
+                $products_translation->product_id = $product->id;
+                $products_translation->language_id = $selectedLanguage->id;
+                $products_translation->save();
             }
+        }
 
-            if (Yii::$app->request->isPjax) {
-                return $this->renderPartial('add-basic', [
+        if (Yii::$app->request->isPjax) {
+            return $this->renderPartial('add-basic', [
+                'languages' => Language::find()->all(),
+                'selectedLanguage' => $selectedLanguage,
+                'product' => $product,
+                'products_translation' => $products_translation,
+                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
+                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+                'params_translation' => new ParamTranslation(),
+            ]);
+        } else {
+            return $this->render('save', [
+                'viewName' => 'add-basic',
+                'selectedLanguage' => $selectedLanguage,
+                'product' => $product,
+                'languages' => Language::find()->all(),
+
+                'params' => [
                     'languages' => Language::find()->all(),
                     'selectedLanguage' => $selectedLanguage,
                     'product' => $product,
@@ -148,194 +178,189 @@ class ProductController extends Controller
                     'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
                     'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                     'params_translation' => new ParamTranslation(),
-                ]);
-            } else {
-                return $this->render('save', [
-                    'viewName' => 'add-basic',
-                    'selectedLanguage' => $selectedLanguage,
-                    'product' => $product,
-                    'languages' => Language::find()->all(),
-
-                    'params' => [
-                        'languages' => Language::find()->all(),
-                        'selectedLanguage' => $selectedLanguage,
-                        'product' => $product,
-                        'products_translation' => $products_translation,
-                        'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                        'categoriesTree' => Category::findChilds($categoriesWithoutParent),
-                        'params_translation' => new ParamTranslation(),
-                    ]
-                ]);
-            }
+                ]
+            ]);
         }
-        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionAddParam($languageId = null, $productId = null)
     {
-        $param = new Param();
-        $param->product_id = $productId;
-        $param_translation = new ParamTranslation();
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            $param = new Param();
+            $param->product_id = $productId;
+            $param_translation = new ParamTranslation();
 
-        if (Yii::$app->request->isPost) {
+            if (Yii::$app->request->isPost) {
 
-            $param->load(Yii::$app->request->post());
-            $param_translation->load(Yii::$app->request->post());
-            if ($param->validate() && $param_translation->validate()) {
-                $param->save();
-                $param_translation->param_id = $param->id;
-                $param_translation->language_id = $languageId;
-                $param_translation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-            } else
-                Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
-        }
+                $param->load(Yii::$app->request->post());
+                $param_translation->load(Yii::$app->request->post());
+                if ($param->validate() && $param_translation->validate()) {
+                    $param->save();
+                    $param_translation->param_id = $param->id;
+                    $param_translation->language_id = $languageId;
+                    $param_translation->save();
+                    Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                } else
+                    Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
+            }
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-param', [
-                'product' => Product::findOne($productId),
-                'param' => new Param(),
-                'param_translation' => new ParamTranslation(),
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-param', [
+                    'product' => Product::findOne($productId),
+                    'param' => new Param(),
+                    'param_translation' => new ParamTranslation(),
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'products' => Product::find()->with('translations')->all(),
+                    'productId' => $productId
+                ]);
+            }
+            return $this->render('save', [
+                'viewName' => 'add-param',
                 'selectedLanguage' => Language::findOne($languageId),
-                'products' => Product::find()->with('translations')->all(),
-                'productId' => $productId
+                'product' => Product::findOne($productId),
+                'languages' => Language::find()->all(),
+
+                'params' => [
+                    'product' => Product::findOne($productId),
+                    'param' => new Param(),
+                    'param_translation' => new ParamTranslation(),
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'products' => Product::find()->with('translations')->all(),
+                    'productId' => $productId
+                ]
             ]);
-        }
-        return $this->render('save', [
-            'viewName' => 'add-param',
-            'selectedLanguage' => Language::findOne($languageId),
-            'product' => Product::findOne($productId),
-            'languages' => Language::find()->all(),
-
-            'params' => [
-                'product' => Product::findOne($productId),
-                'param' => new Param(),
-                'param_translation' => new ParamTranslation(),
-                'selectedLanguage' => Language::findOne($languageId),
-                'products' => Product::find()->with('translations')->all(),
-                'productId' => $productId
-            ]
-        ]);
-
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionDeleteParam($id)
     {
-        Param::deleteAll(['id' => $id]);
-        return $this->redirect(Yii::$app->request->referrer);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            Param::deleteAll(['id' => $id]);
+            return $this->redirect(Yii::$app->request->referrer);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionUp($id)
     {
-        if (!empty($product = Product::findOne($id))) {
-            $product->movePrev();
-        }
-        return $this->actionIndex();
+        $product = Product::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+            if (!empty($product)) {
+                $product->movePrev();
+            }
+            return $this->actionIndex();
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionDown($id)
     {
-        if ($product = Product::findOne($id)) {
-            $product->moveNext();
-        }
-        return $this->actionIndex();
+        $product = Product::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+
+            if ($product) {
+                $product->moveNext();
+            }
+            return $this->actionIndex();
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionAddImage($productId, $languageId)
     {
-        $product = Product::findOne($productId);
-        $image_form = new ProductImageForm();
-        $image = new ProductImage();
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            $product = Product::findOne($productId);
+            $image_form = new ProductImageForm();
+            $image = new ProductImage();
 
-        if (Yii::$app->request->isPost) {
+            if (Yii::$app->request->isPost) {
 
-            $image_form->load(Yii::$app->request->post());
-            $image_form->image = UploadedFile::getInstance($image_form, 'image');
+                $image_form->load(Yii::$app->request->post());
+                $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
-            if (!empty($image_form->image) || !empty($image_form->link)) {
-                if (!empty($image_form->image)) {
-                    $UploadedImageName = $image_form->upload();
-                    $image->file_name = $UploadedImageName;
-                    $image->alt = $image_form->alt;
-                    $image->product_id = $product->id;
-                    if ($image->validate()) {
-                        $image->save();
+                if (!empty($image_form->image) || !empty($image_form->link)) {
+                    if (!empty($image_form->image)) {
+                        $UploadedImageName = $image_form->upload();
+                        $image->file_name = $UploadedImageName;
+                        $image->alt = $image_form->alt;
+                        $image->product_id = $product->id;
+                        if ($image->validate()) {
+                            $image->save();
+                        }
                     }
-                }
-                if (!empty($image_form->link)) {
-                    $image_name = $image_form->copy($image_form->link);
-                    $image->file_name = $image_name;
-                    $image->alt = $image_form->alt;
-                    $image->product_id = $product->id;
-                    if ($image->validate()) {
-                        $image->save();
+                    if (!empty($image_form->link)) {
+                        $image_name = $image_form->copy($image_form->link);
+                        $image->file_name = $image_name;
+                        $image->alt = $image_form->alt;
+                        $image->product_id = $product->id;
+                        if ($image->validate()) {
+                            $image->save();
+                        }
                     }
                 }
             }
-        }
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-image', [
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-image', [
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'product' => $product,
+                    'image_form' => new ProductImageForm()
+                ]);
+            }
+            return $this->render('save', [
+                'languages' => Language::find()->all(),
+                'viewName' => 'add-image',
                 'selectedLanguage' => Language::findOne($languageId),
                 'product' => $product,
-                'image_form' => new ProductImageForm()
+
+                'params' => [
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'product' => $product,
+                    'image_form' => new ProductImageForm()
+                ]
             ]);
-        }
-        return $this->render('save', [
-            'languages' => Language::find()->all(),
-            'viewName' => 'add-image',
-            'selectedLanguage' => Language::findOne($languageId),
-            'product' => $product,
-
-            'params' => [
-                'selectedLanguage' => Language::findOne($languageId),
-                'product' => $product,
-                'image_form' => new ProductImageForm()
-            ]
-        ]);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionDeleteImage($id)
     {
-        $product_image = new ProductImage();
-        $product_image->removeImage($id);
-
-        return $this->redirect(Yii::$app->request->referrer);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            $product_image = new ProductImage();
+            $product_image->removeImage($id);
+            return $this->redirect(Yii::$app->request->referrer);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionAddVideo($productId, $languageId)
     {
-        $product = Product::findOne($productId);
-        $video = new ProductVideo();
-        $videoForm = new ProductVideoForm();
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            $product = Product::findOne($productId);
+            $video = new ProductVideo();
+            $videoForm = new ProductVideoForm();
 
+            if (Yii::$app->request->isPost) {
 
-        if (Yii::$app->request->isPost) {
+                $video->load(Yii::$app->request->post());
 
-            $video->load(Yii::$app->request->post());
-
-            $videoForm->load(Yii::$app->request->post());
-            $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
-            if ($fileName = $videoForm->upload()) {
-                $video->file_name = $fileName;
-                $video->resource = 'videofile';
-                $video->product_id = $productId;
-                $video->save();
-            }
-
-            if ($video->resource == 'youtube') {
-                if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
-                    $id = $match[1];
-                    $video->product_id = $product->id;
-                    $video->file_name = $id;
-                    if ($video->validate()) {
-                        $video->save();
-                    }
-                } else {
-                    \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                $videoForm->load(Yii::$app->request->post());
+                $videoForm->file_name = UploadedFile::getInstance($videoForm, 'file_name');
+                if ($fileName = $videoForm->upload()) {
+                    $video->file_name = $fileName;
+                    $video->resource = 'videofile';
+                    $video->product_id = $productId;
+                    $video->save();
                 }
-            } elseif ($video->resource == 'vimeo') {
-                $regexstr = '~
+
+                if ($video->resource == 'youtube') {
+                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $video->file_name, $match)) {
+                        $id = $match[1];
+                        $video->product_id = $product->id;
+                        $video->file_name = $id;
+                        if ($video->validate()) {
+                            $video->save();
+                        }
+                    } else {
+                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
+                    }
+                } elseif ($video->resource == 'vimeo') {
+                    $regexstr = '~
                         # Match Vimeo link and embed code
                         (?:&lt;iframe [^&gt;]*src=")?		# If iframe match up to first quote of src
                         (?:							        # Group vimeo url
@@ -351,113 +376,120 @@ class ProductController extends Controller
                         (?:[^&gt;]*&gt;&lt;/iframe&gt;)?	# Match the end of the iframe
                         (?:&lt;p&gt;.*&lt;/p&gt;)?		    # Match any title information stuff
                         ~ix';
-                if (preg_match($regexstr, $video->file_name, $match)) {
-                    $id = $match[1];
-                    $video->product_id = $product->id;
-                    $video->file_name = $id;
-                    if ($video->validate()) {
-                        $video->save();
+                    if (preg_match($regexstr, $video->file_name, $match)) {
+                        $id = $match[1];
+                        $video->product_id = $product->id;
+                        $video->file_name = $id;
+                        if ($video->validate()) {
+                            $video->save();
+                        }
+                    } else {
+                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                     }
-                } else {
-                    \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                 }
             }
-        }
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-video', [
-                'product' => $product,
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-video', [
+                    'product' => $product,
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'video_form' => new ProductVideo(),
+                    'video_form_upload' => new ProductVideoForm(),
+                    'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+                ]);
+            }
+            return $this->render('save', [
+                'viewName' => 'add-video',
                 'selectedLanguage' => Language::findOne($languageId),
-                'video_form' => new ProductVideo(),
-                'video_form_upload' => new ProductVideoForm(),
-                'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+                'product' => $product,
+                'languages' => Language::find()->all(),
+
+                'params' => [
+                    'product' => $product,
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'video_form' => new ProductVideo(),
+                    'video_form_upload' => new ProductVideoForm(),
+                    'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+                ]
             ]);
-        }
-        return $this->render('save', [
-            'viewName' => 'add-video',
-            'selectedLanguage' => Language::findOne($languageId),
-            'product' => $product,
-            'languages' => Language::find()->all(),
-
-            'params' => [
-                'product' => $product,
-                'selectedLanguage' => Language::findOne($languageId),
-                'video_form' => new ProductVideo(),
-                'video_form_upload' => new ProductVideoForm(),
-                'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
-            ]
-        ]);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionDeleteVideo($id)
     {
-        $dir = Yii::getAlias('@frontend/web/video');
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            $dir = Yii::getAlias('@frontend/web/video');
 
-        if (!empty($id)) {
-            $video = ProductVideo::findOne($id);
-            if ($video->resource == 'videofile') {
-                unlink($dir . '/' . $video->file_name);
+            if (!empty($id)) {
+                $video = ProductVideo::findOne($id);
+                if ($video->resource == 'videofile') {
+                    unlink($dir . '/' . $video->file_name);
+                }
+                ProductVideo::deleteAll(['id' => $id]);
+
+                return $this->redirect(Yii::$app->request->referrer);
             }
-            ProductVideo::deleteAll(['id' => $id]);
-
-            return $this->redirect(Yii::$app->request->referrer);
-        }
-        return false;
+            return false;
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionAddPrice($productId, $languageId)
     {
-        $price = new ProductPrice();
-        $priceTranslation = new ProductPriceTranslation();
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            $price = new ProductPrice();
+            $priceTranslation = new ProductPriceTranslation();
 
-        $product = Product::findOne($productId);
-        $selectedLanguage = Language::findOne($languageId);
+            $product = Product::findOne($productId);
+            $selectedLanguage = Language::findOne($languageId);
 
-        if (\Yii::$app->request->isPost) {
-            $post = \Yii::$app->request->post();
-            if ($price->load($post) && $priceTranslation->load($post)) {
-                $price->product_id = $product->id;
-                if ($price->save()) {
-                    $priceTranslation->price_id = $price->id;
-                    $priceTranslation->language_id = $selectedLanguage->id;
-                    if ($priceTranslation->save()) {
-                        $price = new ProductPrice();
-                        $priceTranslation = new ProductPriceTranslation();
+            if (\Yii::$app->request->isPost) {
+                $post = \Yii::$app->request->post();
+                if ($price->load($post) && $priceTranslation->load($post)) {
+                    $price->product_id = $product->id;
+                    if ($price->save()) {
+                        $priceTranslation->price_id = $price->id;
+                        $priceTranslation->language_id = $selectedLanguage->id;
+                        if ($priceTranslation->save()) {
+                            $price = new ProductPrice();
+                            $priceTranslation = new ProductPriceTranslation();
+                        }
                     }
                 }
             }
-        }
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-price', [
-                'priceList' => $product->prices,
-                'priceModel' => $price,
-                'priceTranslationModel' => $priceTranslation,
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-price', [
+                    'priceList' => $product->prices,
+                    'priceModel' => $price,
+                    'priceTranslationModel' => $priceTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]);
+            }
+            return $this->render('save', [
+                'viewName' => 'add-price',
+                'selectedLanguage' => Language::findOne($languageId),
                 'product' => $product,
-                'languages' => Language::findAll(['active' => true]),
-                'language' => $selectedLanguage
-            ]);
-        }
-        return $this->render('save', [
-            'viewName' => 'add-price',
-            'selectedLanguage' => Language::findOne($languageId),
-            'product' => $product,
-            'languages' => Language::find()->all(),
+                'languages' => Language::find()->all(),
 
-            'params' => [
-                'priceList' => $product->prices,
-                'priceModel' => $price,
-                'priceTranslationModel' => $priceTranslation,
-                'product' => $product,
-                'languages' => Language::findAll(['active' => true]),
-                'language' => $selectedLanguage
-            ]
-        ]);
+                'params' => [
+                    'priceList' => $product->prices,
+                    'priceModel' => $price,
+                    'priceTranslationModel' => $priceTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]
+            ]);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionRemovePrice($priceId, $productId, $languageId)
     {
-        ProductPrice::deleteAll(['id' => $priceId]);
-        return $this->actionAddPrice($productId, $languageId);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            ProductPrice::deleteAll(['id' => $priceId]);
+            return $this->actionAddPrice($productId, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionChangeProductStatus($id, $status)

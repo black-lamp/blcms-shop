@@ -18,7 +18,7 @@ class ProductOwnerRule extends Rule
      */
     public function execute($userId, $productOwner, $params)
     {
-        return isset($productOwner) ? $productOwner == $userId : false;
+        return isset($params) ? $params['productOwner'] == $userId : false;
     }
 }
 

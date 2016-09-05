@@ -23,6 +23,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $price
  * @property integer $articulus
  * @property integer $status
+ * @property integer $owner
  *
  */
 class Product extends ActiveRecord

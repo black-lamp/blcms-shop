@@ -45,12 +45,11 @@ class ProductSearch extends Product
      */
     public function search($params)
     {
-        $query = Product::find()->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
-
-        $query->joinWith(['translations']);
+        $query = (\Yii::$app->user->can('viewCompleteProductList')) ?
+            Product::find()->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]) :
+            Product::find()->where(['owner' => \Yii::$app->user->id])->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
 
         $this->load($params);
-
 
         $query->andFilterWhere([
                     'shop_product.category_id' => $this->category,
