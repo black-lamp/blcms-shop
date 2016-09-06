@@ -5,12 +5,12 @@ namespace bl\cms\shop\common\entities;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use bl\cms\shop\common\entities\PartnerRequest;
+use bl\cms\shop\common\entities\ShopAttribute;
 
 /**
- * SearchPartnerRequest represents the model behind the search form about `bl\cms\shop\common\entities\PartnerRequest`.
+ * SearchAttribute represents the model behind the search form about `bl\cms\shop\common\entities\ShopAttribute`.
  */
-class SearchPartnerRequest extends PartnerRequest
+class SearchAttribute extends ShopAttribute
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class SearchPartnerRequest extends PartnerRequest
     public function rules()
     {
         return [
-            [['id', 'sender_id', 'moderation_status', 'moderated_by'], 'integer'],
-            [['company_name', 'website', 'message', 'created_at', 'moderated_at'], 'safe'],
+            [['id', 'type_id'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class SearchPartnerRequest extends PartnerRequest
      */
     public function search($params)
     {
-        $query = PartnerRequest::find();
+        $query = ShopAttribute::find();
 
         // add conditions that should always apply here
 
@@ -60,16 +60,10 @@ class SearchPartnerRequest extends PartnerRequest
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'sender_id' => $this->sender_id,
+            'type_id' => $this->type_id,
             'created_at' => $this->created_at,
-            'moderation_status' => $this->moderation_status,
-            'moderated_by' => $this->moderated_by,
-            'moderated_at' => $this->moderated_at,
+            'updated_at' => $this->updated_at,
         ]);
-
-        $query->andFilterWhere(['like', 'company_name', $this->company_name])
-            ->andFilterWhere(['like', 'website', $this->website])
-            ->andFilterWhere(['like', 'message', $this->message]);
 
         return $dataProvider;
     }
