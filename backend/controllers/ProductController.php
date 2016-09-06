@@ -35,7 +35,6 @@ class ProductController extends Controller
 
         return $this->render('index', [
             'notModeratedProductsCount' => $notModeratedProductsCount,
-            'model' => new ProductSearch,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'languages' => Language::findAll(['active' => true])
@@ -417,7 +416,7 @@ class ProductController extends Controller
 
     public function actionDeleteVideo($id)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $dir = Yii::getAlias('@frontend/web/video');
 
             if (!empty($id)) {
