@@ -81,7 +81,7 @@ use yii\widgets\ActiveForm;
         </tbody>
     </table>
 
-<? $addVideoForm = ActiveForm::begin([
+<?php $addVideoForm = ActiveForm::begin([
     'action' => [
         'product/add-video',
         'productId' => $product->id,
@@ -135,4 +135,4 @@ use yii\widgets\ActiveForm;
             </td>
         </tr>
     </table>
-<? $addVideoForm->end(); ?>
+<?php $addVideoForm->end(); ?>

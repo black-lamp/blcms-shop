@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Edit country';
 ?>
 
-<? $form = ActiveForm::begin(['method' => 'post']); ?>
+<?php $form = ActiveForm::begin(['method' => 'post']); ?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
@@ -26,15 +26,15 @@ $this->title = 'Edit country';
                 <?= 'Country'?>
             </div>
             <div class="panel-body">
-                <? if(count($languages) > 1): ?>
+                <?php if(count($languages) > 1): ?>
                     <div class="dropdown">
                         <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <?= $selectedLanguage->name ?>
                             <span class="caret"></span>
                         </button>
-                        <? if(count($languages) > 1): ?>
+                        <?php if(count($languages) > 1): ?>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <? foreach($languages as $language): ?>
+                                <?php foreach($languages as $language): ?>
                                     <li>
                                         <a href="
                                             <?= Url::to([
@@ -45,11 +45,11 @@ $this->title = 'Edit country';
                                             <?= $language->name?>
                                         </a>
                                     </li>
-                                <? endforeach; ?>
+                                <?php endforeach; ?>
                             </ul>
-                        <? endif; ?>
+                        <?php endif; ?>
                     </div>
-                <? endif; ?>
+                <?php endif; ?>
                 <div class="form-group field-toolscategoryform-parent has-success">
 
                     
@@ -68,4 +68,4 @@ $this->title = 'Edit country';
 </div>
 
 
-<? ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>

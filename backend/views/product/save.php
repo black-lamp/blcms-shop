@@ -51,7 +51,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
             <?php endif; ?>
 
             <!-- LANGUAGES -->
-            <? if (count($languages) > 1): ?>
+            <?php if (count($languages) > 1): ?>
                 <div class="dropdown pull-right">
                     <button class="btn btn-warning btn-xs dropdown-toggle" type="button"
                             id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
@@ -59,9 +59,9 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                         <?= $selectedLanguage->name ?>
                         <span class="caret"></span>
                     </button>
-                    <? if (count($languages) > 1): ?>
+                    <?php if (count($languages) > 1): ?>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <? foreach ($languages as $language): ?>
+                            <?php foreach ($languages as $language): ?>
                                 <li>
                                     <a href="
                                         <?= Url::to([
@@ -72,11 +72,11 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                                         <?= $language->name ?>
                                     </a>
                                 </li>
-                            <? endforeach; ?>
+                            <?php endforeach; ?>
                         </ul>
-                    <? endif; ?>
+                    <?php endif; ?>
                 </div>
-            <? endif; ?>
+            <?php endif; ?>
         </div>
 
         <!--BODY PANEL-->

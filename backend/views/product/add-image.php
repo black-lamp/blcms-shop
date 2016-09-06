@@ -71,7 +71,7 @@ use yii\widgets\ActiveForm;
         </table>
     </div>
 
-<? $addImageForm = ActiveForm::begin([
+<?php $addImageForm = ActiveForm::begin([
     'action' => [
         'product/add-image',
         'productId' => $product->id,
@@ -127,4 +127,4 @@ use yii\widgets\ActiveForm;
         </tr>
         </tbody>
     </table>
-<? $addImageForm->end(); ?>
+<?php $addImageForm->end(); ?>

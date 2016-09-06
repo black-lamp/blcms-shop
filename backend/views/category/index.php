@@ -18,7 +18,7 @@ $this->title = \Yii::t('shop', 'Product categories');
 PjaxLoaderAsset::register($this);
 ?>
 
-<? Pjax::begin([
+<?php Pjax::begin([
     'linkSelector' => '.category-nav',
     'enablePushState' => false,
     'timeout' => 10000
@@ -36,22 +36,22 @@ PjaxLoaderAsset::register($this);
                 </div>
                 <div class="panel-body">
                     <table class="table table-hover">
-                        <? if(!empty($categories)): ?>
+                        <?php if(!empty($categories)): ?>
                             <thead>
                             <tr>
                                 <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Position'); ?></th>
                                 <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Name'); ?></th>
                                 <th class="col-md-3 text-center"><?= \Yii::t('shop', 'Parent'); ?></th>
-                                <? if(count($languages) > 1): ?>
+                                <?php if(count($languages) > 1): ?>
                                     <th class="col-md-2 text-center"><?= \Yii::t('shop', 'Language'); ?></th>
-                                <? endif; ?>
+                                <?php endif; ?>
                                 <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Show'); ?></th>
                                 <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Edit'); ?></th>
                                 <th class="col-md-1 text-center"><?= \Yii::t('shop', 'Delete'); ?></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <? foreach($categories as $category): ?>
+                            <?php foreach($categories as $category): ?>
                                 <tr>
                                     <td class="text-center">
                                         <?= $category->position ?>
@@ -70,14 +70,14 @@ PjaxLoaderAsset::register($this);
                                         <?= $category->translation->title ?>
                                     </td>
                                     <td>
-                                        <? if(!empty($category->parent)): ?>
+                                        <?php if(!empty($category->parent)): ?>
                                             <?= $category->parent->translation->title ?>
-                                        <? endif; ?>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        <? if(count($languages) > 1): ?>
-                                            <? $translations = ArrayHelper::index($category->translations, 'language_id') ?>
-                                            <? foreach ($languages as $language): ?>
+                                        <?php if(count($languages) > 1): ?>
+                                            <?php $translations = ArrayHelper::index($category->translations, 'language_id') ?>
+                                            <?php foreach ($languages as $language): ?>
                                                 <a href="<?= Url::to([
                                                     'save',
                                                     'categoryId' => $category->id,
@@ -86,8 +86,8 @@ PjaxLoaderAsset::register($this);
                                                    type="button"
                                                    class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
                                                    ?> btn-xs"><?= $language->name ?></a>
-                                            <? endforeach; ?>
-                                        <? endif; ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </td>
 
                                     <td class="text-center">
@@ -95,11 +95,11 @@ PjaxLoaderAsset::register($this);
                                             'switch-show',
                                             'id' => $category->id
                                         ]) ?>" class="category-nav">
-                                            <? if ($category->show): ?>
+                                            <?php if ($category->show): ?>
                                                 <i class="glyphicon glyphicon-ok text-primary"></i>
-                                            <? else: ?>
+                                            <?php else: ?>
                                                 <i class="glyphicon glyphicon-minus text-danger"></i>
-                                            <? endif; ?>
+                                            <?php endif; ?>
                                         </a>
                                     </td>
 
@@ -116,9 +116,9 @@ PjaxLoaderAsset::register($this);
                                         </a>
                                     </td>
                                 </tr>
-                            <? endforeach; ?>
+                            <?php endforeach; ?>
                             </tbody>
-                        <? endif; ?>
+                        <?php endif; ?>
                     </table>
                     <a href="<?= Url::to(['/shop/category/save', 'languageId' => Language::getCurrent()->id])?>" class="btn btn-primary pull-right">
                         <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
@@ -127,4 +127,4 @@ PjaxLoaderAsset::register($this);
             </div>
         </div>
     </div>
-<? Pjax::end() ?>
+<?php Pjax::end() ?>

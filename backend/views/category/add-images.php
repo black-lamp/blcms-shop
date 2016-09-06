@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<? $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
+<?php $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
 
     <h2><?= \Yii::t('shop', 'Images'); ?></h2>
     <table class="table-bordered table-condensed table-stripped table-hover">
@@ -148,4 +148,4 @@ use yii\widgets\ActiveForm;
 
     <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
-<? $addForm::end(); ?>
+<?php $addForm::end(); ?>

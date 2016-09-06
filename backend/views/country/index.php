@@ -22,27 +22,27 @@ $this->title = 'Countries list';
             <div class="panel-body">
 
                 <table class="table table-hover">
-                    <? if (!empty($countries)): ?>
+                    <?php if (!empty($countries)): ?>
                         <thead>
                         <tr>
                             <th class="col-lg-7"><?= 'Title' ?></th>
-                            <? if(count($languages) > 1): ?>
+                            <?php if(count($languages) > 1): ?>
                                 <th class="col-lg-3"><?= 'Language' ?></th>
-                            <? endif; ?>
+                            <?php endif; ?>
                             <th class="col-lg-1">Edit</th>
                             <th class="col-lg-1">Delete</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <? foreach ($countries as $country) : ?>
+                        <?php foreach ($countries as $country) : ?>
                         <tr>
                             <td>
                                 <?= $country->translation->title; ?>
                             </td>
                             <td>
-                                <? if(count($languages) > 1): ?>
-                                    <? $translations = ArrayHelper::index($country->translations, 'language_id') ?>
-                                    <? foreach ($languages as $language): ?>
+                                <?php if(count($languages) > 1): ?>
+                                    <?php $translations = ArrayHelper::index($country->translations, 'language_id') ?>
+                                    <?php foreach ($languages as $language): ?>
                                         <a href="<?= Url::to([
                                             'save',
                                             'countryId' => $country->id,
@@ -51,8 +51,8 @@ $this->title = 'Countries list';
                                            type="button"
                                            class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
                                            ?> btn-xs"><?= $language->name ?></a>
-                                    <? endforeach; ?>
-                                <? endif; ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <a href="<?= Url::to([
@@ -71,9 +71,9 @@ $this->title = 'Countries list';
                                     </a>
                                 </td>
                             </tr>
-                        <? endforeach; ?>
+                        <?php endforeach; ?>
                         </tbody>
-                    <? endif; ?>
+                    <?php endif; ?>
                 </table>
 
                 <a href="<?= Url::to(['/shop/country/save', 'languageId' => Language::getCurrent()->id]) ?>"

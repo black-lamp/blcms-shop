@@ -23,7 +23,7 @@ use yii\widgets\Pjax;
 
 ?>
 
-<? $form = ActiveForm::begin([
+<?php $form = ActiveForm::begin([
     'action' => [
         'product/add-param',
         'productId' => $productId,
@@ -79,7 +79,7 @@ use yii\widgets\Pjax;
                 </td>
             </tr>
         <?php endforeach; ?>
-    <? endif; ?>
+    <?php endif; ?>
         <tr>
             <td>
                 <?= $form->field($param_translation, 'name', [
@@ -104,4 +104,4 @@ use yii\widgets\Pjax;
     </tbody>
 </table>
 
-<? $form->end(); ?>
+<?php $form->end(); ?>

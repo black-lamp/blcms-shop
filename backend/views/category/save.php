@@ -66,7 +66,7 @@ $this->title = \Yii::t('shop', 'Edit category');
             </ul>
 
 
-            <? Pjax::begin([
+            <?php Pjax::begin([
                 'linkSelector' => '.image',
                 'enablePushState' => true,
                 'timeout' => 10000
@@ -75,7 +75,7 @@ $this->title = \Yii::t('shop', 'Edit category');
 
             <?= $this->render($viewName, $params);
             ?>
-            <? Pjax::end(); ?>
+            <?php Pjax::end(); ?>
 
 
             <a href="<?= Url::to(['/shop/category']); ?>">

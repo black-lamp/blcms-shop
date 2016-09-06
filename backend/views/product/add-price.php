@@ -21,7 +21,7 @@ use yii\widgets\Pjax;
  */
 ?>
 
-<? $form = ActiveForm::begin([
+<?php $form = ActiveForm::begin([
     'action' => [
         'add-price',
         'productId' => $product->id,
@@ -52,12 +52,12 @@ use yii\widgets\Pjax;
     </tr>
     </thead>
     <tbody>
-    <? if (!empty($priceList)): ?>
-        <? foreach ($priceList as $price): ?>
+    <?php if (!empty($priceList)): ?>
+        <?php foreach ($priceList as $price): ?>
             <tr class="text-center">
-                <? if (!empty($price->translation)): ?>
+                <?php if (!empty($price->translation)): ?>
                     <td><?= $price->translation->title ?></td>
-                <? endif; ?>
+                <?php endif; ?>
                 <td><?= $price->price ?></td>
                 <td><?= $price->type->title ?></td>
                 <td><?= $price->sale ?></td>
@@ -74,8 +74,8 @@ use yii\widgets\Pjax;
                     ) ?>
                 </td>
             </tr>
-        <? endforeach; ?>
-    <? endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
     <tr>
         <!--Title-->
         <td>
@@ -104,5 +104,5 @@ use yii\widgets\Pjax;
     </tr>
     </tbody>
 </table>
-<? $form->end() ?>
+<?php $form->end() ?>
 

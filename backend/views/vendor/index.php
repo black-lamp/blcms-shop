@@ -88,7 +88,7 @@ $this->title = Yii::t('shop', 'Product vendors');
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
-                        <? endif; ?>
+                        <?php endif; ?>
                     </table>
                     <div class="row-fluid" style="margin-top: 15px;">
                         <a href="<?= Url::to(['save']); ?>"

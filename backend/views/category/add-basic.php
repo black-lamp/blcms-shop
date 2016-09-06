@@ -9,12 +9,12 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<? $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
+<?php $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
 
     <div role="tabpanel" class="tab-pane active" id="basic">
         <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
         <!-- LANGUAGES -->
-        <? if (count($languages) > 1): ?>
+        <?php if (count($languages) > 1): ?>
             <div class="dropdown">
                 <button class="btn btn-warning btn-xs dropdown-toggle" type="button"
                         id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
@@ -22,9 +22,9 @@ use yii\widgets\ActiveForm;
                     <?= $selectedLanguage->name ?>
                     <span class="caret"></span>
                 </button>
-                <? if (count($languages) > 1): ?>
+                <?php if (count($languages) > 1): ?>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <? foreach ($languages as $language): ?>
+                        <?php foreach ($languages as $language): ?>
                             <li>
                                 <a href="
                                         <?= Url::to([
@@ -35,11 +35,11 @@ use yii\widgets\ActiveForm;
                                     <?= $language->name ?>
                                 </a>
                             </li>
-                        <? endforeach; ?>
+                        <?php endforeach; ?>
                     </ul>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
-        <? endif; ?>
+        <?php endif; ?>
 
         <!-- NAME -->
         <?= $addForm->field($category_translation, 'title', [
@@ -86,4 +86,4 @@ use yii\widgets\ActiveForm;
 
     <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
-<? $addForm::end(); ?>
+<?php $addForm::end(); ?>

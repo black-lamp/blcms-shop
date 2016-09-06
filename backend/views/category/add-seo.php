@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<? $addForm = ActiveForm::begin(['method' => 'post']) ?>
+<?php $addForm = ActiveForm::begin(['method' => 'post']) ?>
 
     <h2><?= \Yii::t('shop', 'SEO options'); ?></h2>
 <?= $addForm->field($category_translation, 'seoUrl', [
@@ -28,4 +28,4 @@ use yii\widgets\ActiveForm;
 
 <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
 
-<? $addForm::end(); ?>
+<?php $addForm::end(); ?>
