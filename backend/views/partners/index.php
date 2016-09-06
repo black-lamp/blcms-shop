@@ -9,7 +9,7 @@ use yii\helpers\Url;
 /* @var $searchModel bl\cms\shop\common\entities\SearchPartnerRequest */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('partner', 'Partner Requests');
+$this->title = Yii::t('shop', 'Partner Requests');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="partner-request-index">
