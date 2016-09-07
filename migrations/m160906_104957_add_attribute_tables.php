@@ -22,15 +22,8 @@ class m160906_104957_add_attribute_tables extends Migration
         ]);
 
         $this->createTable('shop_attribute_type', [
-            'id' => $this->primaryKey()
-        ]);
-
-        $this->createTable('shop_attribute_type_translation', [
             'id' => $this->primaryKey(),
-            'type_id' => $this->integer(),
             'title' => $this->string(),
-            'language_id' => $this->integer(),
-            'attr_type_id' => $this->integer()
         ]);
 
         $this->createTable('shop_attribute_value', [
@@ -55,8 +48,6 @@ class m160906_104957_add_attribute_tables extends Migration
 
         /*CREATING FOREIGN KEYS*/
         $this->addForeignKey('shop_attribute_shop_attribute_type', 'shop_attribute', 'type_id', 'shop_attribute_type', 'id');
-        $this->addForeignKey('shop_attribute_type_translation_shop_attribute_type', 'shop_attribute_type_translation', 'type_id', 'shop_attribute_type', 'id');
-        $this->addForeignKey('shop_attribute_type_translation_language', 'shop_attribute_type_translation', 'language_id', 'language', 'id');
         $this->addForeignKey('shop_attribute_value_shop_attribute', 'shop_attribute_value', 'attribute_id', 'shop_attribute', 'id');
         $this->addForeignKey('shop_attribute_value_translation_shop_attribute_value', 'shop_attribute_value_translation', 'value_id', 'shop_attribute_value', 'id');
         $this->addForeignKey('shop_attribute_value_translation_language', 'shop_attribute_value_translation', 'language_id', 'language', 'id');
@@ -66,19 +57,17 @@ class m160906_104957_add_attribute_tables extends Migration
 
     public function down()
     {
+
         $this->dropForeignKey('shop_attribute_translation_language', 'shop_attribute_translation');
         $this->dropForeignKey('shop_attribute_value_translation_language', 'shop_attribute_value_translation');
-        $this->dropForeignKey('shop_attribute_type_translation_language', 'shop_attribute_type_translation');
 
         $this->dropForeignKey('shop_attribute_shop_attribute_type', 'shop_attribute');
-        $this->dropForeignKey('shop_attribute_type_translation_shop_attribute_type', 'shop_attribute_type_translation');
         $this->dropForeignKey('shop_attribute_value_shop_attribute', 'shop_attribute_value');
         $this->dropForeignKey('shop_attribute_value_translation_shop_attribute_value', 'shop_attribute_value_translation');
 
         $this->dropTable('shop_attribute_value_color_texture');
         $this->dropTable('shop_attribute_value_translation');
         $this->dropTable('shop_attribute_value');
-        $this->dropTable('shop_attribute_type_translation');
         $this->dropTable('shop_attribute_type');
         $this->dropTable('shop_attribute_translation');
         $this->dropTable('shop_attribute');

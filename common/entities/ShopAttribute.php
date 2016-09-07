@@ -70,9 +70,9 @@ class ShopAttribute extends ActiveRecord
     {
         return [
             'id' => Yii::t('shop', 'id'),
-            'type_id' => Yii::t('shop', 'Type ID'),
-            'created_at' => Yii::t('shop', 'Created At'),
-            'updated_at' => Yii::t('shop', 'Updated At'),
+            'type' => Yii::t('shop', 'Type'),
+            'created_at' => Yii::t('shop', 'Created at'),
+            'updated_at' => Yii::t('shop', 'Updated at'),
         ];
     }
 

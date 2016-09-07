@@ -3,10 +3,13 @@
 namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\common\entities\ShopAttributeTranslation;
+use bl\cms\shop\common\entities\ShopAttributeType;
 use bl\multilang\entities\Language;
 use Yii;
 use bl\cms\shop\common\entities\ShopAttribute;
 use bl\cms\shop\common\entities\SearchAttribute;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -63,11 +66,21 @@ class AttributeController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($languageId = null, $attrId = null)
+    public function actionSave($languageId = null, $attrId = null)
     {
         if (empty($languageId)) {
             $languageId =Language::getCurrent()->id;
         }
+        $attributeType = ArrayHelper::toArray(ShopAttributeType::find()->all(), [
+            'bl\cms\shop\common\entities\ShopAttributeType' =>
+                [
+                    'id',
+                    'title' => function($attributeType) {
+                        return \Yii::t('shop', $attributeType->title);
+                    }
+                ]
+        ]);
+
 
         if (empty($attrId)) {
             $model = new ShopAttribute();
@@ -75,7 +88,14 @@ class AttributeController extends Controller
         }
         else {
             $model = ShopAttribute::findOne($attrId);
-            $modelTranslation = ShopAttributeTranslation::find()->where(['attr_id' => $attrId, 'lang_id' => $languageId]);
+            $modelTranslation = ShopAttributeTranslation::find()
+                ->where([
+                    'attr_id' => $attrId,
+                    'language_id' => $languageId
+                ])->one();
+            if (empty($modelTranslation)) {
+                $modelTranslation = new ShopAttributeTranslation();
+            }
         }
 
         if(Yii::$app->request->isPost) {
@@ -91,35 +111,18 @@ class AttributeController extends Controller
             if ($modelTranslation->validate()) {
                 $modelTranslation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->render('create', ['model' => $model, 'modelTranslation' => $modelTranslation]);
+//                return $this->render(['save', 'id' => $model->id]);
+                return $this->redirect(['save', 'attrId' => $model->id, 'languageId' => $languageId]);
             }
         }
 
-        else {
-            return $this->render('create', [
-                'model' => $model,
-                'modelTranslation' => $modelTranslation,
-            ]);
-        }
-    }
 
-    /**
-     * Updates an existing ShopAttribute model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('save', [
+            'attribute' => $model,
+            'attributeTranslation' => $modelTranslation,
+            'attributeType' => $attributeType
+        ]);
     }
 
     /**
@@ -128,11 +131,11 @@ class AttributeController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionRemove($id)
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(Url::to(['/shop/attribute']));
     }
 
     /**

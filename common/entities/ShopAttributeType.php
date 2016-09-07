@@ -12,23 +12,9 @@ use yii\db\ActiveRecord;
  * @property integer $id
  *
  * @property ShopAttribute[] $shopAttributes
- * @property ShopAttributeTypeTranslation[] $shopAttributeTypeTranslations
  */
 class ShopAttributeType extends ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'translation' => [
-                'class' => TranslationBehavior::className(),
-                'translationClass' => ShopAttributeTypeTranslation::className(),
-                'relationColumn' => 'attr_type_id'
-            ],
-        ];
-    }
 
     /**
      * @inheritdoc
@@ -44,6 +30,7 @@ class ShopAttributeType extends ActiveRecord
     public function rules()
     {
         return [
+            [['title'], 'string', 'max' => 255],
         ];
     }
 
@@ -53,7 +40,7 @@ class ShopAttributeType extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
+            'id' => Yii::t('shop', 'id'),
         ];
     }
 

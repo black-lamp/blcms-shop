@@ -3,11 +3,13 @@
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $this yii\web\View
- * @var $model bl\cms\shop\common\entities\ShopAttribute
- * @var $modelTranslation bl\cms\shop\common\entities\ShopAttributeTranslation
+ * @var $attribute bl\cms\shop\common\entities\ShopAttribute
+ * @var $attributeTranslation bl\cms\shop\common\entities\ShopAttributeTranslation
+ * @var $attributeType[] bl\cms\shop\common\entities\ShopAttributeType
  * @var $form yii\widgets\ActiveForm
  */
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -23,10 +25,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($modelTranslation, 'title')->textInput() ?>
+        <?= $form->field($attributeTranslation, 'title')->textInput() ?>
+        <?= $form->field($attribute, 'type_id')->dropDownList(ArrayHelper::map($attributeType,'id', 'title')); ?>
 
         <div class="form-group">
-            <?= Html::submitButton($model->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>
