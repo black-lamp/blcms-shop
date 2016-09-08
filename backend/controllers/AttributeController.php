@@ -2,8 +2,13 @@
 
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\form\AttributeTextureForm;
+use bl\cms\shop\common\entities\SearchAttributeValue;
 use bl\cms\shop\common\entities\ShopAttributeTranslation;
 use bl\cms\shop\common\entities\ShopAttributeType;
+use bl\cms\shop\common\entities\ShopAttributeValue;
+use bl\cms\shop\common\entities\ShopAttributeValueColorTexture;
+use bl\cms\shop\common\entities\ShopAttributeValueTranslation;
 use bl\multilang\entities\Language;
 use Yii;
 use bl\cms\shop\common\entities\ShopAttribute;
@@ -11,8 +16,10 @@ use bl\cms\shop\common\entities\SearchAttribute;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * AttributeController implements the CRUD actions for ShopAttribute model.
@@ -50,43 +57,41 @@ class AttributeController extends Controller
     }
 
     /**
-     * Displays a single ShopAttribute model.
-     * @param integer $id
+     * Save data action for ShopAttribute.
+     * If user has not permissions to do this action, a 403 HTTP exception will be thrown.
+     *
      * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new ShopAttribute model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @throws ForbiddenHttpException if user has not permissions
      */
     public function actionSave($languageId = null, $attrId = null)
     {
         if (empty($languageId)) {
-            $languageId =Language::getCurrent()->id;
+            $languageId = Language::getCurrent()->id;
         }
+        $selectedLanguage = Language::findOne($languageId);
+        $languages = Language::find()->all();
         $attributeType = ArrayHelper::toArray(ShopAttributeType::find()->all(), [
             'bl\cms\shop\common\entities\ShopAttributeType' =>
                 [
                     'id',
-                    'title' => function($attributeType) {
+                    'title' => function ($attributeType) {
                         return \Yii::t('shop', $attributeType->title);
                     }
                 ]
         ]);
 
-
         if (empty($attrId)) {
             $model = new ShopAttribute();
             $modelTranslation = new ShopAttributeTranslation();
-        }
-        else {
+
+            $searchAttributeValueModel = null;
+            $dataProviderAttributeValue = null;
+
+        } else {
+
+            $searchAttributeValueModel = new SearchAttributeValue();
+            $dataProviderAttributeValue = $searchAttributeValueModel->search(Yii::$app->request->queryParams);
+
             $model = ShopAttribute::findOne($attrId);
             $modelTranslation = ShopAttributeTranslation::find()
                 ->where([
@@ -98,7 +103,7 @@ class AttributeController extends Controller
             }
         }
 
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
             $model->load(Yii::$app->request->post());
             $modelTranslation->load(Yii::$app->request->post());
 
@@ -111,17 +116,21 @@ class AttributeController extends Controller
             if ($modelTranslation->validate()) {
                 $modelTranslation->save();
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-//                return $this->render(['save', 'id' => $model->id]);
                 return $this->redirect(['save', 'attrId' => $model->id, 'languageId' => $languageId]);
             }
         }
 
-
-
         return $this->render('save', [
             'attribute' => $model,
             'attributeTranslation' => $modelTranslation,
-            'attributeType' => $attributeType
+            'attributeType' => $attributeType,
+            'languages' => $languages,
+            'selectedLanguage' => $selectedLanguage,
+            'searchModel' => $searchAttributeValueModel,
+            'dataProvider' => $dataProviderAttributeValue,
+            'valueModel' => new ShopAttributeValue(),
+            'valueModelTranslation' => new ShopAttributeValueTranslation(),
+            'attributeTextureModel' => new AttributeTextureForm()
         ]);
     }
 
@@ -151,6 +160,74 @@ class AttributeController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionAddValue($attrId, $languageId)
+    {
+
+        if (!empty($attrId)) {
+            $languageId = empty($languageId) ? Language::getCurrent()->id : $languageId;
+            $model = new ShopAttributeValue();
+            $modelTranslation = new ShopAttributeValueTranslation();
+            $attributeTextureModel = new AttributeTextureForm();
+
+            if (Yii::$app->request->post()) {
+
+                if ($modelTranslation->load(Yii::$app->request->post())) {
+
+                    $model->attribute_id = $attrId;
+
+                    if (ShopAttribute::findOne($attrId)->type_id == 3 || ShopAttribute::findOne($attrId)->type_id == 4) {
+                        $colorTexture = new ShopAttributeValueColorTexture();
+                        if (ShopAttribute::findOne($attrId)->type_id == 3) {
+                            if ($attributeTextureModel->load(Yii::$app->request->post())) {
+                                $colorTexture->color = $attributeTextureModel->color;
+                            }
+                        } elseif (ShopAttribute::findOne($attrId)->type_id == 4) {
+
+                            if ($attributeTextureModel->load(Yii::$app->request->post())) {
+                                $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
+                                $colorTexture->texture = $attributeTextureModel->upload();
+                            }
+                        }
+
+                        $colorTexture->save();
+                        $modelTranslation->value = $colorTexture->id;
+                    }
+
+                    if ($model->save()) {
+                        $modelTranslation->value_id = $model->id;
+                        $modelTranslation->language_id = $languageId;
+
+                        if ($modelTranslation->save()) {
+//                            die(var_dump($modelTranslation));
+                            if (\Yii::$app->request->isPjax) {
+                                $searchAttributeValueModel = new SearchAttributeValue();
+                                $dataProviderAttributeValue = $searchAttributeValueModel->search(Yii::$app->request->queryParams);
+                                return $this->renderPartial('add-value', [
+                                    'dataProvider' => $dataProviderAttributeValue,
+                                    'attribute' => ShopAttribute::findOne($attrId),
+                                    'selectedLanguage' => Language::findOne($languageId),
+                                    'valueModel' => new ShopAttributeValue(),
+                                    'valueModelTranslation' => new ShopAttributeValueTranslation(),
+                                    'attributeTextureModel' => $attributeTextureModel
+                                ]);
+                            }
+                            else {
+                                return $this->redirect(Url::toRoute(['save', 'attrId' => $attrId, 'languageId' => $languageId]));
+
+                            }
+
+                        }
+
+                    }
+                    else die($model->errors);
+                }
+            } else {
+
+                return $this->redirect(Url::toRoute(['add-value', 'attrId' => $attrId, 'languageId' => $languageId]));
+            }
         }
     }
 }

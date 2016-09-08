@@ -29,15 +29,14 @@ class m160906_104957_add_attribute_tables extends Migration
         $this->createTable('shop_attribute_value', [
             'id' => $this->primaryKey(),
             'attribute_id' => $this->integer(),
-            'value' => $this->string()
         ]);
 
         $this->createTable('shop_attribute_value_translation', [
             'id' => $this->primaryKey(),
             'value_id' => $this->integer(),
             'title' => $this->string(),
+            'value' => $this->string(),
             'language_id' => $this->integer(),
-            'attr_value_id' => $this->integer()
         ]);
 
         $this->createTable('shop_attribute_value_color_texture', [

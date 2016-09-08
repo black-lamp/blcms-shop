@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\multilang\entities\Language;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "shop_attribute_value_translation".
@@ -12,12 +13,11 @@ use Yii;
  * @property integer $value_id
  * @property string $title
  * @property integer $language_id
- * @property integer $attr_value_id
  *
  * @property Language $language
  * @property ShopAttributeValue $value
  */
-class ShopAttributeValueTranslation extends \yii\db\ActiveRecord
+class ShopAttributeValueTranslation extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -33,8 +33,10 @@ class ShopAttributeValueTranslation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['value_id', 'language_id', 'attr_value_id'], 'integer'],
+            [['value_id', 'language_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
+            [['value'], 'safe'],
+
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
             [['value_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttributeValue::className(), 'targetAttribute' => ['value_id' => 'id']],
         ];
@@ -46,11 +48,8 @@ class ShopAttributeValueTranslation extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'value_id' => Yii::t('shop', 'Value ID'),
-            'title' => Yii::t('shop', 'Title'),
-            'language_id' => Yii::t('shop', 'Language ID'),
-            'attr_value_id' => Yii::t('shop', 'Attr Value ID'),
+            'id' => Yii::t('shop', 'Id'),
+            'title' => Yii::t('shop', 'Title')
         ];
     }
 

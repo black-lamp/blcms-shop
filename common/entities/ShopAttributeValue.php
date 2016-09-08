@@ -26,8 +26,8 @@ class ShopAttributeValue extends ActiveRecord
         return [
             'translation' => [
                 'class' => TranslationBehavior::className(),
-                'translationClass' => ShopAttributeTranslation::className(),
-                'relationColumn' => 'attr_value_id'
+                'translationClass' => ShopAttributeValueTranslation::className(),
+                'relationColumn' => 'value_id'
             ],
         ];
     }
@@ -47,8 +47,19 @@ class ShopAttributeValue extends ActiveRecord
     {
         return [
             [['attribute_id'], 'integer'],
-            [['value'], 'string', 'max' => 255],
             [['attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttribute::className(), 'targetAttribute' => ['attribute_id' => 'id']],
+        ];
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'Id' => Yii::t('shop', 'Id'),
+            'value' => Yii::t('shop', 'Value')
         ];
     }
 

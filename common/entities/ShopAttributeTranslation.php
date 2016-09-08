@@ -38,6 +38,16 @@ class ShopAttributeTranslation extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'title' => Yii::t('shop', 'Title')
+        ];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getLanguage()

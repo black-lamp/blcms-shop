@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "shop_attribute_value_color_texture".
@@ -42,5 +43,9 @@ class ShopAttributeValueColorTexture extends ActiveRecord
             'color' => Yii::t('shop', 'Color'),
             'texture' => Yii::t('shop', 'Texture'),
         ];
+    }
+
+    public static function getTexture($id) {
+        return Html::img('/images/shop/attribute-texture/' . self::findOne($id)->texture, ['height' => '100']);
     }
 }

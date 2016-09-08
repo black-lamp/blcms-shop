@@ -42,6 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'columns' => [
                 [
+                    'attribute' => 'Id',
                     'value' => 'id',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center']
