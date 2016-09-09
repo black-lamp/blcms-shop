@@ -46,11 +46,11 @@ class m160906_104957_add_attribute_tables extends Migration
         ]);
 
         /*CREATING FOREIGN KEYS*/
-        $this->addForeignKey('shop_attribute_shop_attribute_type', 'shop_attribute', 'type_id', 'shop_attribute_type', 'id');
-        $this->addForeignKey('shop_attribute_value_shop_attribute', 'shop_attribute_value', 'attribute_id', 'shop_attribute', 'id');
-        $this->addForeignKey('shop_attribute_value_translation_shop_attribute_value', 'shop_attribute_value_translation', 'value_id', 'shop_attribute_value', 'id');
-        $this->addForeignKey('shop_attribute_value_translation_language', 'shop_attribute_value_translation', 'language_id', 'language', 'id');
-        $this->addForeignKey('shop_attribute_translation_language', 'shop_attribute_translation', 'language_id', 'language', 'id');
+        $this->addForeignKey('shop_attribute_shop_attribute_type', 'shop_attribute', 'type_id', 'shop_attribute_type', 'id', 'cascade', 'cascade');
+        $this->addForeignKey('shop_attribute_value_shop_attribute', 'shop_attribute_value', 'attribute_id', 'shop_attribute', 'id', 'cascade', 'cascade');
+        $this->addForeignKey('shop_attribute_value_translation_shop_attribute_value', 'shop_attribute_value_translation', 'value_id', 'shop_attribute_value', 'id', 'cascade', 'cascade');
+        $this->addForeignKey('shop_attribute_value_translation_language', 'shop_attribute_value_translation', 'language_id', 'language', 'id', 'cascade', 'cascade');
+        $this->addForeignKey('shop_attribute_translation_language', 'shop_attribute_translation', 'language_id', 'language', 'id', 'cascade', 'cascade');
 
     }
 

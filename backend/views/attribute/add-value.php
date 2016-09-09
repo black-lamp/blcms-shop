@@ -6,9 +6,16 @@ use bl\cms\shop\common\entities\ShopAttributeValueColorTexture;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 ?>
 
+<?php Pjax::begin([
+//    'linkSelector' => '.pjax',
+    'enablePushState' => false,
+    'timeout' => 5000
+]);
+?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
@@ -40,23 +47,26 @@ use yii\widgets\ActiveForm;
                 if (ShopAttribute::findOne($model->attribute_id)->type_id == 4) {
                     return ShopAttributeValueColorTexture::getTexture($model->translation->value);
                 }
-                return $model->value;
+                return $model->translation->value;
             },
             'format' => 'raw'
         ],
     ]
 ]);
+
+
 ?>
 
 <div class="shop-attribute-value-form">
+
     <?php $valueForm = ActiveForm::begin([
         'method' => 'post',
+        'options' => ['data-pjax' => true, 'enctype' => 'multipart/form-data'],
         'action' => [
             'attribute/add-value',
             'attrId' => $attribute->id,
             'languageId' => $selectedLanguage->id
         ],
-        'options' => ['enctype' => 'multipart/form-data']
     ]); ?>
 
     <?= $valueForm->field($valueModelTranslation, 'title')->textInput(['maxlength' => true]) ?>
@@ -71,10 +81,12 @@ use yii\widgets\ActiveForm;
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton($valueModel->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $valueModel->isNewRecord ? 'pjax btn btn-success' : 'pjax btn btn-primary']) ?>
+        <?= Html::submitButton($valueModel->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => 'pjax']) ?>
     </div>
 
-    <?php $valueForm::end(); ?>
+    <?php ActiveForm::end(); ?>
 
 </div>
+<?php Pjax::end(); ?>
+
 

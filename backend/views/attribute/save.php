@@ -79,13 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if (!$attribute->isNewRecord) : ?>
     <div class="panel-body">
 
-        <? Pjax::begin([
-            'linkSelector' => '.pjax',
-            'enablePushState' => false,
-            'timeout' => 10000
-        ]);
-        ?>
-
         <?= $this->render('add-value', [
             'dataProvider' => $dataProvider,
             'attribute' => $attribute,
@@ -95,6 +88,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributeTextureModel' => $attributeTextureModel
         ]); ?>
 
-        <?php Pjax::end(); ?>
     </div>
     <?php endif; ?>

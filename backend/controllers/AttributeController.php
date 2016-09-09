@@ -201,7 +201,6 @@ class AttributeController extends Controller
                         $modelTranslation->language_id = $languageId;
 
                         if ($modelTranslation->save()) {
-//                            die(var_dump($modelTranslation));
                             if (\Yii::$app->request->isPjax) {
                                 $searchAttributeValueModel = new SearchAttributeValue();
                                 $dataProviderAttributeValue = $searchAttributeValueModel->search(Yii::$app->request->queryParams);
@@ -226,7 +225,7 @@ class AttributeController extends Controller
                 }
             } else {
 
-                return $this->redirect(Url::toRoute(['add-value', 'attrId' => $attrId, 'languageId' => $languageId]));
+                return $this->render(Url::toRoute(['add-value', 'attrId' => $attrId, 'languageId' => $languageId]));
             }
         }
     }
