@@ -13,6 +13,7 @@ use bl\multilang\entities\Language;
 use Yii;
 use bl\cms\shop\common\entities\ShopAttribute;
 use bl\cms\shop\common\entities\SearchAttribute;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -217,11 +218,9 @@ class AttributeController extends Controller
                                 return $this->redirect(Url::toRoute(['save', 'attrId' => $attrId, 'languageId' => $languageId]));
 
                             }
-
                         }
-
                     }
-                    else die($model->errors);
+                    else throw new Exception($model->errors);
                 }
             } else {
 

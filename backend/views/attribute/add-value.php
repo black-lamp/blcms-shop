@@ -11,11 +11,12 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::begin([
-//    'linkSelector' => '.pjax',
     'enablePushState' => false,
     'timeout' => 5000
 ]);
+
 ?>
+
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
