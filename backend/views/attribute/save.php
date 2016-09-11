@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('shop', 'Shop Attributes'), 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<? if (count($languages) > 1): ?>
+<?php if (count($languages) > 1): ?>
     <div class="dropdown pull-right">
         <button class="btn btn-warning btn-xs dropdown-toggle" type="button"
                 id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
@@ -34,9 +34,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $selectedLanguage->name ?>
             <span class="caret"></span>
         </button>
-        <? if (count($languages) > 1): ?>
+        <?php if (count($languages) > 1): ?>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <? foreach ($languages as $language): ?>
+                <?php foreach ($languages as $language): ?>
                     <li>
                         <a href="<?= Url::to([
                             'save',
@@ -46,11 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= $language->name ?>
                         </a>
                     </li>
-                <? endforeach; ?>
+                <?php endforeach; ?>
             </ul>
-        <? endif; ?>
+        <?php endif; ?>
     </div>
-<? endif; ?>
+<?php endif; ?>
 
 <div class="panel panel-default">
     <div class="panel-heading">
