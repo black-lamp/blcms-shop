@@ -2,29 +2,38 @@
 
 namespace bl\cms\shop\backend\controllers;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
+use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
-use yii\helpers\Url;
 use yii\web\UploadedFile;
 
 /**
+ * CategoryController implements the CRUD actions for Category model.
  * @author Albert Gainutdinov
  */
 
 class CategoryController extends Controller
 {
-    public function actionIndex() {
+
+    /**
+     * Lists all Category models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new SearchCategory();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
-            'categories' => Category::find()
-                ->with(['translations'])
-                ->orderBy(['parent_id' => SORT_ASC, 'position' => SORT_ASC])
-                ->all(),
-            'languages' => Language::findAll(['active' => true])
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
+
 
     public function actionSave($languageId = null, $categoryId = null) {
         if (!empty($categoryId)) {
@@ -143,7 +152,7 @@ class CategoryController extends Controller
             ]
         ]);
     }
-    
+
     public function actionAddImages($categoryId, $languageId) {
 
         if (!empty($categoryId)) {

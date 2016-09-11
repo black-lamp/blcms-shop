@@ -1,9 +1,13 @@
 <?php
 namespace bl\cms\shop\common\entities;
+
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
+use Yii;
 use yii\db\ActiveRecord;
+
 /**
+ * This is the model class for table "shop_category_translation".
  * @author Albert Gainutdinov
  *
  * @property integer $id
@@ -15,8 +19,13 @@ use yii\db\ActiveRecord;
  * @property Category $category
  * @property Language $language
  */
+
 class CategoryTranslation extends ActiveRecord
 {
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -25,32 +34,58 @@ class CategoryTranslation extends ActiveRecord
             ]
         ];
     }
-    public function rules()
-    {
-        return [
-            [['category_id', 'language_id'], 'number'],
-            [['title', 'description'], 'string'],
-            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
-        ];
-    }
-    public function attributeLabels()
-    {
-        return [
-            'title' => 'Title',
-            'text' => 'Text',
-        ];
-    }
 
-    public static function tableName() {
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
         return 'shop_category_translation';
     }
 
-    public function getCategory() {
-        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['category_id', 'language_id'], 'required'],
+            [['category_id', 'language_id'], 'integer'],
+            [['description'], 'string'],
+            [['title'], 'string', 'max' => 255],
+            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
+
+            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
+        ];
     }
 
-    public function getLanguage() {
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('shop', 'ID'),
+            'title' => Yii::t('shop', 'Title'),
+            'description' => Yii::t('shop', 'Description'),
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguage()
+    {
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
 
     public static function treeRecoursion($categoriesTree, $parentCategory = null, $name, $category_id = null)

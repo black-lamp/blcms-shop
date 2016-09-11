@@ -8,14 +8,15 @@ use yii2tech\ar\position\PositionBehavior;
 
 /**
  *  This is the model class for table "shop_category".
- *
  * @author Albert Gainutdinov
  *
  * @property integer $id
  * @property integer $parent_id
  * @property integer $position
  * @property integer $show
- * @property string $image_name
+ * @property string $cover
+ * @property string $thumbnail
+ * @property string $menu_item
  *
  * @method PositionBehavior moveNext
  * @method PositionBehavior movePrev
@@ -23,6 +24,9 @@ use yii2tech\ar\position\PositionBehavior;
 class Category extends ActiveRecord
 {
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -56,11 +60,10 @@ class Category extends ActiveRecord
     {
         return [
             [['parent_id', 'position'], 'integer'],
-            [['cover', 'thumbnail', 'menu_item'], 'string'],
+            [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
             [['show'], 'boolean'],
         ];
     }
-
 
     /**
      * @inheritdoc
@@ -68,11 +71,12 @@ class Category extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'parent_id' => \Yii::t('shop', 'Parent category'),
-            'position' => \Yii::t('shop', 'Position'),
-            'show' => \Yii::t('shop', 'Show'),
-            'image_name' => \Yii::t('shop', 'Upload image'),
+            'id' => Yii::t('shop', 'ID'),
+            'position' => Yii::t('shop', 'Position'),
+            'show' => Yii::t('shop', 'Show'),
+            'cover' => Yii::t('shop', 'Cover'),
+            'thumbnail' => Yii::t('shop', 'Thumbnail'),
+            'menu_item' => Yii::t('shop', 'Menu Item'),
         ];
     }
 
@@ -107,14 +111,15 @@ class Category extends ActiveRecord
     {
         return $this->hasMany(CategoryTranslation::className(), ['category_id' => 'id']);
     }
-    
-    public static function findChilds($parentCategories) {
-    $tree = [];
-    foreach ($parentCategories as $childCategory) {
-        $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
-        $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
+
+    public static function findChilds($parentCategories)
+    {
+        $tree = [];
+        foreach ($parentCategories as $childCategory) {
+            $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
+            $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
+        }
+        return $tree;
     }
-    return $tree;
-}
 
 }
