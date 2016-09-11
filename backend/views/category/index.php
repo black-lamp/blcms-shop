@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="panel-heading">
         <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-user-plus']) .
-            Yii::t('shop', 'Create Category'), ['create'], ['class' => 'btn btn-primary btn-xs pull-right']);
+            Yii::t('shop', 'Create Category'), ['save', 'languageId' => Language::getCurrent()->id], ['class' => 'btn btn-primary btn-xs pull-right']);
         ?>
         <h5>
             <i class="glyphicon glyphicon-list">
@@ -203,7 +203,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::end(); ?>
 
         <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-user-plus']) .
-            Yii::t('shop', 'Create Category'), ['create'], ['class' => 'btn btn-primary btn-xs pull-right']);
+            Yii::t('shop', 'Create Category'), ['save', 'languageId' => Language::getCurrent()->id], ['class' => 'btn btn-primary btn-xs pull-right']);
         ?>
     </div>
 
