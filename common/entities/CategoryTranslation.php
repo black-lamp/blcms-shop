@@ -112,7 +112,7 @@ class CategoryTranslation extends ActiveRecord
                     $oneCategory[0]->id,
                     $category_id == $oneCategory[0]->id ? 'disabled' : '',
                     $oneCategory[0]->id,
-                    $oneCategory[0]->translation->title
+                    (!empty($oneCategory[0]->translation->title)) ? $oneCategory[0]->translation->title : ''
                 );
                 echo '</li>';
             }

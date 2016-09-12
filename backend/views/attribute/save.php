@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($attributeTranslation, 'title')->textInput() ?>
 
-        <?php $options = (!$attribute->isNewRecord) ? ["disabled" => "disabled" ] : []?>
+        <?php $options = (!$attribute->isNewRecord) ? ["disabled" => "disabled"] : [] ?>
         <?= $form->field($attribute, 'type_id')->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
 
         <div class="form-group">
@@ -77,16 +77,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <hr>
 
     <?php if (!$attribute->isNewRecord) : ?>
-    <div class="panel-body">
+        <div class="panel-body">
 
-        <?= $this->render('add-value', [
-            'dataProvider' => $dataProvider,
-            'attribute' => $attribute,
-            'selectedLanguage' => $selectedLanguage,
-            'valueModelTranslation' => $valueModelTranslation,
-            'valueModel' => $valueModel,
-            'attributeTextureModel' => $attributeTextureModel
-        ]); ?>
+            <?= $this->render('add-value', [
+                'dataProvider' => $dataProvider,
+                'attribute' => $attribute,
+                'selectedLanguage' => $selectedLanguage,
+                'valueModelTranslation' => $valueModelTranslation,
+                'valueModel' => $valueModel,
+                'attributeTextureModel' => $attributeTextureModel
+            ]); ?>
 
-    </div>
+        </div>
     <?php endif; ?>
+</div>

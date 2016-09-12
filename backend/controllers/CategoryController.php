@@ -4,6 +4,7 @@ namespace bl\cms\shop\backend\controllers;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
 use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
+use yii\base\Exception;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
@@ -54,13 +55,17 @@ class CategoryController extends Controller
             $category->load(Yii::$app->request->post());
             $category_translation->load(Yii::$app->request->post());
 
-            if($category->validate() && $category_translation->validate())
+            if($category->validate())
             {
+
                 $category->save();
                 $category_translation->category_id = $category->id;
                 $category_translation->language_id = $languageId;
-                $category_translation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                if ($category_translation->validate()) {
+                    $category_translation->save();
+                    Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                }
+
             }
         }
 
