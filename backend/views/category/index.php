@@ -29,7 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="panel-body">
-        <?php Pjax::begin(); ?>
+        <?php Pjax::begin([
+            'enablePushState' => false,
+            'timeout' => 10000,
+        ]); ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
