@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 /*TITLE*/
                 [
                     'headerOptions' => ['class' => 'text-center col-md-3'],
-//                    'attribute' => 'title',
+                    'attribute' => 'title',
                     'value' => function ($model) {
                         $content = null;
                         if (!empty($model->translation->title)) {

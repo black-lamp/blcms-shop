@@ -46,8 +46,8 @@ class ProductSearch extends Product
     public function search($params)
     {
         $query = (\Yii::$app->user->can('viewCompleteProductList')) ?
-            Product::find()->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]) :
-            Product::find()->where(['owner' => \Yii::$app->user->id])->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
+            Product::find()->joinWith('translations')->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]) :
+            Product::find()->joinWith('translations')->where(['owner' => \Yii::$app->user->id])->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
 
         $this->load($params);
 

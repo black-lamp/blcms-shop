@@ -49,7 +49,7 @@ class SearchCategory extends Category
      */
     public function search($params)
     {
-        $query = Category::find()->orderBy(['parent_id' => SORT_ASC, 'position' => SORT_ASC]);
+        $query = Category::find()->joinWith('translations')->orderBy(['parent_id' => SORT_ASC, 'position' => SORT_ASC]);
 
         $this->load($params);
 
