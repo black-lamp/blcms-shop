@@ -55,7 +55,7 @@ $this->title = \Yii::t('shop', 'Edit category');
 
             <ul class="tabs">
                 <li>
-                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['add-basic', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['save', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
                 </li>
                 <li>
                     <?= Html::a(Yii::t('shop', 'SEO data'), Url::to(['add-seo', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>

@@ -2,10 +2,11 @@
 
 namespace bl\cms\shop\backend\controllers;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
+use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
+use yii\base\ErrorException;
 use yii\base\Exception;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
@@ -129,9 +130,7 @@ class CategoryController extends Controller
         }
 
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (\Yii::$app->request->isPjax)
         {
             return $this->renderPartial('add-basic', [
                 'categoriesTree' => Category::findChilds($categoriesWithoutParent),
@@ -191,9 +190,7 @@ class CategoryController extends Controller
                 $category->save();
             }
         }
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (\Yii::$app->request->isPjax)
         {
             return $this->renderPartial('add-images', [
                 'category' => $category,
@@ -242,9 +239,7 @@ class CategoryController extends Controller
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
             }
         }
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        )
+        if (\Yii::$app->request->isPjax)
         {
             return $this->renderPartial('add-seo', [
                 'category' => $category,
@@ -280,6 +275,40 @@ class CategoryController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+
+    public function actionSelectFilters($languageId = null, $categoryId = null) {
+        if (!empty($categoryId)) {
+            $category = Category::findOne($categoryId);
+            $filters = Filter::find()->where(['category_id' => $category->id])->one();
+            if (empty($filters)) $filters = new Filter();
+        }
+        else throw new Exception('You can not add filter before saving category.');
+
+        if(Yii::$app->request->isPost) {
+
+            $filters->load(Yii::$app->request->post());
+
+            if($filters->validate())
+            {
+                $filters->category_id = $category->id;
+                $filters->save();
+
+                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+            }
+        }
+
+        return $this->render('save', [
+            'category' => $category,
+            'languageId' => $languageId,
+            'selectedLanguage' => Language::findOne($languageId),
+            'viewName' => 'select-filters',
+            'params' => [
+                'filters' => $filters,
+                'languageId' => $languageId
+            ]
+        ]);
+    }
+
     public function actionUp($id) {
         if($category = Category::findOne($id)) {
             $category->movePrev();
@@ -297,10 +326,12 @@ class CategoryController extends Controller
     }
 
     public function actionSwitchShow($id) {
-        if($category = Category::findOne($id)) {
+        $category = Category::findOne($id);
+        if(!empty($category)) {
             $category->show = !$category->show;
             $category->save();
         }
         return $this->actionIndex();
     }
+
 }

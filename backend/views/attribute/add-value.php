@@ -1,7 +1,6 @@
 <?php
 
 use bl\cms\shop\common\entities\ShopAttribute;
-use bl\cms\shop\common\entities\ShopAttributeValue;
 use bl\cms\shop\common\entities\ShopAttributeValueColorTexture;
 use yii\grid\GridView;
 use yii\helpers\Html;

@@ -60,8 +60,8 @@ class Category extends ActiveRecord
     {
         return [
             [['parent_id', 'position'], 'integer'],
-            [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
             [['show'], 'boolean'],
+            [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
         ];
     }
 

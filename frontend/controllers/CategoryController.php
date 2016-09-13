@@ -2,7 +2,10 @@
 namespace bl\cms\shop\frontend\controllers;
 use bl\cms\seo\StaticPageBehavior;
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\frontend\components\ProductSearch;
+use Yii;
 use yii\web\Controller;
 
 /**
@@ -20,8 +23,8 @@ class CategoryController extends Controller
         ];
     }
 
-
     public function actionShow($id = null) {
+
         $category = null;
         $productsQuery = Product::find();
 
@@ -50,11 +53,27 @@ class CategoryController extends Controller
             $this->registerStaticSeoData();
         }
 
+        $searchModel = new ProductSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
         return $this->render('show', [
-            'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
             'category' => $category,
-            'products' => $productsQuery->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])->all()
+            'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
+            'filters' => Filter::find()->where(['category_id' => $category->id])->one(),
+
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
+
+
+
+
+//
+//        return $this->render('show', [
+//            'category' => $category,
+//            'products' => $productsQuery->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])->all()
+//        ]);
         
     }
 }
