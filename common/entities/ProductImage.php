@@ -20,8 +20,8 @@ use yii\db\ActiveRecord;
 class ProductImage extends ActiveRecord
 {
 
-    private $imageCategory = 'shop-product';
-    private $image_extension = '.jpg';
+    private static $imageCategory = 'shop-product';
+    private static $image_extension = '.jpg';
 
     /**
      * @inheritdoc
@@ -69,19 +69,19 @@ class ProductImage extends ActiveRecord
         }
     }
 
-    public function getBig($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-big' . $this->image_extension);
+    public static function getBig($file_name) {
+        return ('/images/' . self::$imageCategory . '/' . $file_name . '-big' . self::$image_extension);
     }
 
-    public function getThumb($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-thumb' . $this->image_extension);
+    public static function getThumb($file_name) {
+        return ('/images/' . self::$imageCategory . '/' . $file_name . '-thumb' . self::$image_extension);
     }
 
-    public function getSmall($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-small' . $this->image_extension);
+    public static function getSmall($file_name) {
+        return ('/images/' . self::$imageCategory . '/' . $file_name . '-small' . self::$image_extension);
     }
 
-    public function getOriginal($file_name) {
-        return ($this->imageCategory . '/' . $file_name . '-original' . $this->image_extension);
+    public static function getOriginal($file_name) {
+        return ('/images/' . self::$imageCategory . '/' . $file_name . '-original' . self::$image_extension);
     }
 }

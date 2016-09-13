@@ -12,10 +12,9 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
+use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\Vendor;
-use bl\multilang\entities\Language;
-use dektrium\user\models\User;
-use yii\grid\GridView;
+use bl\cms\shop\frontend\assets\ProductAsset;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -23,6 +22,8 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Breadcrumbs;
 use yii\widgets\ListView;
 use yii\widgets\Pjax;
+
+ProductAsset::register($this);
 
 $shop = (!empty($category->translation->title)) ?
     [
@@ -45,9 +46,17 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     ]);
     ?>
 </div>
+<h1 class="text-center"><?=$category->translation->title; ?></h1>
 <div class="row products">
     <div class="col-md-12">
-        <div class="col-md-3 menu-categories">
+
+        <?php Pjax::begin([
+            'enablePushState' => false,
+            'enableReplaceState' => false,
+            'timeout' => 10000,
+        ]); ?>
+
+        <div class="col-md-2 menu-categories">
             <?php foreach ($menuItems as $menuItem) : ?>
                 <p>
                     <a href="<?= Url::toRoute(['category/show', 'id' => $menuItem->id]); ?>">
@@ -56,13 +65,8 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
                 </p>
             <?php endforeach; ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
 
-            <?php Pjax::begin([
-                'enablePushState' => false,
-                'enableReplaceState' => false,
-                'timeout' => 10000,
-            ]); ?>
             <?= ListView::widget([
                 'dataProvider' => $dataProvider,
 
@@ -72,7 +76,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
                     'id' => '',
                 ],
 
-                'layout' => "{pager}\n{summary}\n{items}\n{pager}",
+                'layout' => "{pager}\n{items}\n{pager}",
                 'summary' => '{count} ' . \Yii::t('shop', 'from') . ' {totalCount}',
                 'summaryOptions' => [
                     'tag' => 'span',
@@ -81,21 +85,31 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
                 'itemOptions' => [
                     'tag' => 'div',
-                    'class' => '',
+                    'class' => 'product-card',
                 ],
 
                 'emptyText' => \Yii::t('shop', 'The list is empty'),
 
                 'itemView' => function ($model, $key, $index, $widget) {
 
-                    $item = Html::a(Html::tag('span', Html::encode($model->translation->title), ['class' => 'title']),
+                    /*Title*/
+                    $item = Html::a(Html::tag('h3', Html::encode($model->translation->title), ['class' => 'title']),
                         Url::toRoute(['/shop/product/show', 'id' => $model->id]));
-                    $item .= Html::tag('p', $model->translation->description);
-                    if (!empty($model->prices[0]->price)) {
-                        $item .= Html::tag('span', $model->prices[0]->currencySalePrice, ['class' => 'new']);
+                    /*Image*/
+                    if (!empty($model->images[0]->file_name)) {
+                        $item .= Html::tag('div', '', ['style' => 'background: url(' . ProductImage::getThumb($model->images[0]->file_name) . ');',
+                            'class' => 'product-img']);
                     }
-                    if (!empty($model->prices[0]->sale)) {
-                        $item .= Html::tag('span', $model->prices[0]->currencyPrice, ['class' => 'text-muted']);
+
+                    /*Price*/
+
+                    if (!empty($model->prices[0]->price) || !empty($model->prices[0]->sale)) {
+                        if (!empty($model->prices[0]->price)) {
+                            $item .= Html::tag('div', \Yii::$app->formatter->asCurrency($model->prices[0]->price), ['class' => 'new']);
+                        }
+                        if (!empty($model->prices[0]->sale)) {
+                            $item .= Html::tag('div', \Yii::$app->formatter->asCurrency($model->prices[0]->salePrice), ['class' => 'text-muted']);
+                        }
                     }
                     return $item;
                 },
@@ -103,6 +117,12 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             ]);
             ?>
 
+
+        </div>
+
+        <!--FILTERING-->
+        <div class="col-md-2">
+            <h3><?=\Yii::t('shop', 'Filtering') ?></h3>
             <?php $form = ActiveForm::begin([
                 'action' => ['show'],
                 'method' => 'get',
@@ -113,14 +133,14 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             <?= Html::hiddenInput('id', $category->id); ?>
 
             <?php if ($filters->filter_by_country) : ?>
-            <?= $form->field($searchModel, 'country_id')
-                ->dropDownList(ArrayHelper::map(ProductCountry::find()->all(), 'id', 'translation.title'),
-                    ['prompt' => ''])->label(\Yii::t('shop', 'by country')) ?>
+                <?= $form->field($searchModel, 'country_id')
+                    ->dropDownList(ArrayHelper::map(ProductCountry::find()->all(), 'id', 'translation.title'),
+                        ['prompt' => ''])->label(\Yii::t('shop', 'by country')) ?>
             <?php endif; ?>
             <?php if ($filters->filter_by_vendor) : ?>
-            <?= $form->field($searchModel, 'vendor_id')
-                ->dropDownList(ArrayHelper::map(Vendor::find()->all(), 'id', 'title'),
-                    ['prompt' => ''])->label(\Yii::t('shop', 'by vendor')) ?>
+                <?= $form->field($searchModel, 'vendor_id')
+                    ->dropDownList(ArrayHelper::map(Vendor::find()->all(), 'id', 'title'),
+                        ['prompt' => ''])->label(\Yii::t('shop', 'by vendor')) ?>
             <?php endif; ?>
 
             <div class="form-group">
@@ -128,14 +148,10 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             </div>
 
             <?php ActiveForm::end(); ?>
-
-            <?php Pjax::end(); ?>
         </div>
 
-        <!--FILTERING-->
-        <div class="col-md-3">
+        <?php Pjax::end(); ?>
 
-        </div>
     </div>
 </div>
 
