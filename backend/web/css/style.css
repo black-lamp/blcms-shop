@@ -5,6 +5,17 @@
     text-align: center;
 }
 
+/*PRODUCT SAVE*/
+/*Add basic view*/
+div#basic div.seo-url {
+    position: relative;
+}
+div#basic button.btn-generate {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
 /*TABS*/
 div#tabs {
     border: none !important;
