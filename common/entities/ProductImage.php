@@ -55,10 +55,10 @@ class ProductImage extends ActiveRecord
         if(!empty($id)) {
 
             $image = ProductImage::findOne($id);
-            $image->deleteAll($id);
+            $image->delete();
             $file_name = $image->file_name;
 
-            $dir = Yii::getAlias('@frontend/web/images/');
+            $dir = Yii::getAlias('@frontend/web');
 
             if (!empty($file_name)) {
                 unlink($dir . $this->getBig($file_name));

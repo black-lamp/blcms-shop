@@ -14,7 +14,7 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\Vendor;
-use bl\cms\shop\frontend\assets\ProductAsset;
+use bl\cms\shop\frontend\assets\CategoryAsset;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -23,7 +23,7 @@ use yii\widgets\Breadcrumbs;
 use yii\widgets\ListView;
 use yii\widgets\Pjax;
 
-ProductAsset::register($this);
+CategoryAsset::register($this);
 
 $shop = (!empty($category->translation->title)) ?
     [
@@ -52,6 +52,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
         <?php Pjax::begin([
             'enablePushState' => false,
+            'linkSelector' => '.pjax',
             'enableReplaceState' => false,
             'timeout' => 10000,
         ]); ?>
@@ -95,6 +96,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
                     /*Title*/
                     $item = Html::a(Html::tag('h3', Html::encode($model->translation->title), ['class' => 'title']),
                         Url::toRoute(['/shop/product/show', 'id' => $model->id]));
+
                     /*Image*/
                     if (!empty($model->images[0]->file_name)) {
                         $item .= Html::tag('div', '', ['style' => 'background: url(' . ProductImage::getThumb($model->images[0]->file_name) . ');',
@@ -144,7 +146,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             <?php endif; ?>
 
             <div class="form-group">
-                <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>

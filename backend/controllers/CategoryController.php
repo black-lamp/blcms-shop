@@ -81,6 +81,7 @@ class CategoryController extends Controller
             'viewName' => 'add-basic',
             'selectedLanguage' => Language::findOne($languageId),
             'category' => $category,
+            'languages' => Language::findAll(['active' => true]),
 
             'params' => [
                 'maxPosition' => $maxPosition,
@@ -90,7 +91,6 @@ class CategoryController extends Controller
                 'category_translation' => $category_translation,
                 'categories' => Category::find()->with('translations')->all(),
                 'selectedLanguage' => Language::findOne($languageId),
-                'languages' => Language::findAll(['active' => true]),
             ]
         ]);
     }
@@ -146,6 +146,7 @@ class CategoryController extends Controller
             'languageId' => $languageId,
             'categoriesTree' => Category::findChilds($categoriesWithoutParent),
             'selectedLanguage' => Language::findOne($languageId),
+            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'add-basic',
             'params' => [
                 'categoriesTree' => Category::findChilds($categoriesWithoutParent),
@@ -202,6 +203,7 @@ class CategoryController extends Controller
             'category' => $category,
             'languageId' => $languageId,
             'selectedLanguage' => Language::findOne($languageId),
+            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'add-images',
             'params' => [
                 'category' => $category,
@@ -251,6 +253,7 @@ class CategoryController extends Controller
             'category' => $category,
             'languageId' => $languageId,
             'selectedLanguage' => Language::findOne($languageId),
+            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'add-seo',
             'params' => [
                 'category' => $category,
@@ -301,6 +304,7 @@ class CategoryController extends Controller
             'category' => $category,
             'languageId' => $languageId,
             'selectedLanguage' => Language::findOne($languageId),
+            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'select-filters',
             'params' => [
                 'filters' => $filters,

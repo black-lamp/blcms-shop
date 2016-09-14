@@ -34,12 +34,14 @@ class ProductController extends Controller
             'content' => html_entity_decode($product->translation->seoKeywords)
         ]);
 
+        $country = ProductCountry::find()
+            ->with(['translations'])
+            ->where(['id' => $product->country_id])
+            ->one();
+
         return $this->render('show', [
             'categories' => Category::find()->with(['translations'])->all(),
-            'country' => ProductCountry::find()
-                ->with(['translations'])
-                ->where(['id' => $product->country_id])
-                ->one(),
+            'country' => $country,
             'product' => $product,
             'category' => Category::find()->where(['id' => $product->category_id])->one(),
             'params' => Param::find()->where([

@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
-class ProductAsset extends AssetBundle
+class CategoryAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/black-lamp/blcms-shop/frontend/web';
 
@@ -15,11 +15,8 @@ class ProductAsset extends AssetBundle
     ];
 
     public $js = [
-        'scripts/script.js'
     ];
 
     public $depends = [
-        'yii\web\JqueryAsset',
-        'yii\bootstrap\BootstrapAsset',
     ];
 }

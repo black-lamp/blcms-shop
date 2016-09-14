@@ -8,7 +8,7 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\frontend\models\AddToCartModel;
 use bl\cms\shop\frontend\models\Cart;
-use common\entities\Clients;
+use bl\cms\shop\common\entities\Clients;
 use Exception;
 use Yii;
 use yii\web\Controller;
@@ -21,11 +21,13 @@ class CartController extends Controller
             if($model->load(Yii::$app->request->post())) {
                 if($model->validate()) {
                     if($model->add()) {
+                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'You have successfully add this product to cart!'));
+
                     }
                 }
             }
-            return $this->goBack(['shop/category/show']);
         }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionIndex() {

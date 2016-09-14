@@ -16,6 +16,7 @@ use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
 use Yii;
+use yii\base\Exception;
 use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -231,11 +232,21 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
-    public function actionDeleteParam($id)
+    public function actionDeleteParam($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+        $param = Param::findOne($id);
+        $product = Product::findOne($param->product_id);
+
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
             Param::deleteAll(['id' => $id]);
-            return $this->redirect(Yii::$app->request->referrer);
+            return $this->renderPartial('add-param', [
+                'product' => $product,
+                'param' => new Param(),
+                'param_translation' => new ParamTranslation(),
+                'selectedLanguage' => Language::findOne($languageId),
+                'products' => Product::find()->with('translations')->all(),
+                'productId' => $product->id
+            ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
@@ -318,13 +329,25 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
-    public function actionDeleteImage($id)
+    public function actionDeleteImage($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
-            $product_image = new ProductImage();
-            $product_image->removeImage($id);
-            return $this->redirect(Yii::$app->request->referrer);
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+        if (!empty($id)) {
+            $image = ProductImage::find()->where(['id' => $id])->one();
+            if (!empty($image)) {
+                $product = Product::findOne($image->product_id);
+                if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+                    $product_image = new ProductImage();
+                    $product_image->removeImage($id);
+                    return $this->renderPartial('add-image', [
+                        'selectedLanguage' => Language::findOne($languageId),
+                        'product' => $product,
+                        'image_form' => new ProductImageForm()
+                    ]);
+                } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+            }
+        }
+        else throw new Exception();
+
     }
 
     public function actionAddVideo($productId, $languageId)
@@ -397,6 +420,7 @@ class ProductController extends Controller
                     'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
                 ]);
             }
+
             return $this->render('save', [
                 'viewName' => 'add-video',
                 'selectedLanguage' => Language::findOne($languageId),
@@ -414,22 +438,31 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
-    public function actionDeleteVideo($id)
+    public function actionDeleteVideo($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
-            $dir = Yii::getAlias('@frontend/web/video');
-
             if (!empty($id)) {
                 $video = ProductVideo::findOne($id);
-                if ($video->resource == 'videofile') {
-                    unlink($dir . '/' . $video->file_name);
-                }
-                ProductVideo::deleteAll(['id' => $id]);
+                $product = Product::findOne($video->product_id);
 
-                return $this->redirect(Yii::$app->request->referrer);
+                if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+
+                    if ($video->resource == 'videofile') {
+                        $dir = Yii::getAlias('@frontend/web/video');
+                        unlink($dir . '/' . $video->file_name);
+                    }
+                    ProductVideo::deleteAll(['id' => $id]);
+
+                    return $this->renderPartial('add-video', [
+                        'product' => $product,
+                        'selectedLanguage' => Language::findOne($languageId),
+                        'video_form' => new ProductVideo(),
+                        'video_form_upload' => new ProductVideoForm(),
+                        'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+                    ]);
+                } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+
             }
             return false;
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     public function actionAddPrice($productId, $languageId)
