@@ -1,25 +1,25 @@
-div.product-card {
+div.row.products div.product-card {
     width: 48%;
     margin: 1%;
     box-shadow: 0 0 25px rgba(0, 0, 0, .2);
     float: left;
 }
-div.product-card a h3 {
+div.row.products div.product-card a h3 {
     color: #0a0a0a;
     text-align: center;
     font-weight: bold;
 }
-div.product-card > div.product-img {
+div.row.products div.product-card > div.product-img {
     width: 100%;
     height: 350px;
-    background-size: cover;
+    background-size: cover !important;
 }
-div.product-card div.new {
+div.row.products div.product-card div.new {
     padding: 5px;
     font-size: 16px;
     text-align: center;
 }
-div.product-card div.text-muted {
+div.row.products div.product-card div.text-muted {
     position: relative;
     color: red;
     text-decoration: line-through;
