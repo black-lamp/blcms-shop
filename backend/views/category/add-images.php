@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->menu_item)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'menu_item']); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'menu_item', 'languageId' => $languageId]); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
@@ -101,7 +101,7 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->thumbnail)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'thumbnail']); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'thumbnail', 'languageId' => $languageId]); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
@@ -137,7 +137,7 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->cover)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'type' => 'cover']); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'cover', 'languageId' => $languageId]); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>

@@ -24,6 +24,9 @@ use yii2tech\ar\position\PositionBehavior;
 class Category extends ActiveRecord
 {
 
+    private static $imageCategory = 'shop-category';
+    private static $image_extension = '.jpg';
+
     /**
      * @inheritdoc
      */
@@ -120,6 +123,26 @@ class Category extends ActiveRecord
             $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
         }
         return $tree;
+    }
+
+    public static function getBig($category, $imageType) {
+        $fileName = $category->$imageType;
+        return (Yii::getAlias('@frontend/web/images') . '/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
+    }
+
+    public static function getThumb($category, $imageType) {
+        $fileName = $category->$imageType;
+        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-thumb' . self::$image_extension);
+    }
+
+    public static function getSmall($category, $imageType) {
+        $fileName = $category->$imageType;
+        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-small' . self::$image_extension);
+    }
+
+    public static function getOriginal($category, $imageType) {
+        $fileName = $category->$imageType;
+        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-original' . self::$image_extension);
     }
 
 }

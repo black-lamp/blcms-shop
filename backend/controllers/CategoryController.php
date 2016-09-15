@@ -263,16 +263,16 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function actionDeleteImage($id, $type) {
-        $dir = Yii::getAlias('@frontend/web/images');
+    public function actionDeleteImage($id, $imageType, $languageId) {
 
-        if (!empty($id) && !empty($type)) {
+        if (!empty($id) && !empty($imageType)) {
             $category = Category::findOne($id);
 
-            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-big.jpg');
-            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-small.jpg');
-            unlink($dir . '/shop-category/' . $type . '/' . $category->$type . '-thumb.jpg');
-            $category->$type = null;
+            unlink(Category::getBig($category, $imageType));
+            unlink(Category::getSmall($category, $imageType));
+            unlink(Category::getThumb($category, $imageType));
+
+            $category->$imageType = '';
             $category->save();
         }
         return $this->redirect(Yii::$app->request->referrer);
