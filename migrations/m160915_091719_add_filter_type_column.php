@@ -34,15 +34,19 @@ class m160915_091719_add_filter_type_column extends Migration
 
         $this->createTable('shop_filter_input_type', [
             'id' => $this->primaryKey(),
+            'type' => $this->string(),
             'title' => $this->string()
         ]);
         $this->insert('shop_filter_input_type', [
+            'type' => 'dropDownList',
             'title' => 'Drop down list'
         ]);
         $this->insert('shop_filter_input_type', [
+            'type' => 'radioList',
             'title' => 'Radio button'
         ]);
         $this->insert('shop_filter_input_type', [
+            'type' => 'checkboxList',
             'title' => 'Checkbox'
         ]);
 

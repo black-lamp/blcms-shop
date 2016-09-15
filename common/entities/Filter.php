@@ -17,7 +17,6 @@ use yii\db\ActiveRecord;
  * @property FilterType $filterType
  * @property FilterInputType $inputType
  */
-
 class Filter extends ActiveRecord
 {
     /**
@@ -68,5 +67,29 @@ class Filter extends ActiveRecord
     public function getInputType()
     {
         return $this->hasOne(FilterInputType::className(), ['id' => 'input_type']);
+    }
+
+    /**
+     * This method return only these rows which product_id complies existing product.
+     * @property Filter $filters
+     * @property Product $products
+     */
+    public static function getCurrentFilters($filter, $products)
+    {
+        $class = new $filter->type->class_name();
+        $object = $class::find()->all();
+
+        $newObject = [];
+        foreach ($products as $product) {
+
+            $column = $filter->type->column;
+
+            foreach ($object as $key => $item) {
+                if ($item->id == $product->$column) {
+                    $newObject[] = $item;
+                }
+            }
+        }
+        return $newObject;
     }
 }

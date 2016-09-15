@@ -2,10 +2,13 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $menuItems Category
  * @var $category Category
- * @var $products Product
+ * @var $menuItems Category
  * @var $filters Filter
+ * @var $products Product
+ * @var $searchModel ProductSearch
+ * @var $dataProvider ProductSearch
+ *
  */
 
 use bl\cms\shop\common\entities\Category;
@@ -15,6 +18,7 @@ use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\frontend\assets\CategoryAsset;
+use bl\cms\shop\frontend\components\ProductSearch;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -119,7 +123,6 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             ]);
             ?>
 
-
         </div>
 
         <!--FILTERING-->
@@ -135,19 +138,14 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
             <?= Html::hiddenInput('id', $category->id); ?>
 
             <?php foreach ($filters as $filter) : ?>
-                <?php if ($filter->inputType->id == 1): ?>
-
-                    <?php
-                        $class = new $filter->type->class_name();
-                        $object = $class::find()->all();
-                    ?>
-                    <?= $form->field($searchModel, $filter->type->column)
-                        ->dropDownList(ArrayHelper::map(
-                            $object, 'id', $filter->type->displaying_column),
-                            ['prompt' => ''])->label(\Yii::t('shop', $filter->type->title)) ?>
-                <?php endif; ?>
+                <?php
+                    $newObject = Filter::getCurrentFilters($filter, $products);
+                    $inputType = $filter->inputType->type;
+                ?>
+                <?= $form->field($searchModel, $filter->type->column)
+                    ->$inputType(ArrayHelper::map($newObject, 'id', $filter->type->displaying_column),
+                        ['prompt' => ''])->label(\Yii::t('shop', $filter->type->title)) ?>
             <?php endforeach; ?>
-
 
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary']) ?>

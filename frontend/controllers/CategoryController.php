@@ -61,7 +61,7 @@ class CategoryController extends Controller
             'category' => $category,
             'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
             'filters' => Filter::find()->where(['category_id' => $category->id])->all(),
-            'products' => Product::find()->asArray()->all(),
+            'products' => Product::find()->all(),
 
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
