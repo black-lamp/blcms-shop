@@ -60,20 +60,12 @@ class CategoryController extends Controller
         return $this->render('show', [
             'category' => $category,
             'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
-            'filters' => Filter::find()->where(['category_id' => $category->id])->one(),
+            'filters' => Filter::find()->where(['category_id' => $category->id])->all(),
+            'products' => Product::find()->asArray()->all(),
 
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-
-
-
-
-//
-//        return $this->render('show', [
-//            'category' => $category,
-//            'products' => $productsQuery->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC])->all()
-//        ]);
         
     }
 }

@@ -10,6 +10,9 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $title
+ * @property string $class_name
+ * @property string $column
+ * @property string $displaying_column
  *
  * @property Filter[] $shopFilters
  */
@@ -29,7 +32,7 @@ class FilterType extends ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'string', 'max' => 255],
+            [['title', 'class_name', 'column', 'displaying_column'], 'string', 'max' => 255],
         ];
     }
 
@@ -41,6 +44,9 @@ class FilterType extends ActiveRecord
         return [
             'id' => Yii::t('shop', 'ID'),
             'title' => Yii::t('shop', 'Title'),
+            'class_name' => \Yii::t('shop', 'Class name with namespace'),
+            'column' => Yii::t('shop', 'Column'),
+            'displaying_column' => Yii::t('shop', 'Displaying column'),
         ];
     }
 

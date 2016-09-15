@@ -14,12 +14,21 @@ class m160915_091719_add_filter_type_column extends Migration
 
         $this->createTable('shop_filter_type', [
             'id' => $this->primaryKey(),
+            'class_name' => $this->string(),
+            'column' => $this->string(),
+            'displaying_column' => $this->string(),
             'title' => $this->string()
         ]);
         $this->insert('shop_filter_type', [
+            'class_name' => 'bl\cms\shop\common\entities\Vendor',
+            'column' => 'vendor_id',
+            'displaying_column' =>'title',
             'title' => 'Filter by vendor'
         ]);
         $this->insert('shop_filter_type', [
+            'class_name' => 'bl\cms\shop\common\entities\ProductCountry',
+            'column' => 'country_id',
+            'displaying_column' =>'translation.title',
             'title' => 'Filter by country'
         ]);
 

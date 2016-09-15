@@ -49,15 +49,15 @@ class Filter extends ActiveRecord
         return [
             'id' => Yii::t('shop', 'ID'),
             'category_id' => Yii::t('shop', 'Category ID'),
-            'filter_type' => Yii::t('shop', 'Filter'),
-            'input_type' => Yii::t('shop', 'Field type'),
+            'filter_type' => Yii::t('shop', 'Filter type'),
+            'input_type' => Yii::t('shop', 'Field type')
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFilterType()
+    public function getType()
     {
         return $this->hasOne(FilterType::className(), ['id' => 'filter_type']);
     }

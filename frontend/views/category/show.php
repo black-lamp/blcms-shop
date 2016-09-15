@@ -134,16 +134,20 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
             <?= Html::hiddenInput('id', $category->id); ?>
 
-            <?php if ($filters->filter_by_country) : ?>
-                <?= $form->field($searchModel, 'country_id')
-                    ->dropDownList(ArrayHelper::map(ProductCountry::find()->all(), 'id', 'translation.title'),
-                        ['prompt' => ''])->label(\Yii::t('shop', 'by country')) ?>
-            <?php endif; ?>
-            <?php if ($filters->filter_by_vendor) : ?>
-                <?= $form->field($searchModel, 'vendor_id')
-                    ->dropDownList(ArrayHelper::map(Vendor::find()->all(), 'id', 'title'),
-                        ['prompt' => ''])->label(\Yii::t('shop', 'by vendor')) ?>
-            <?php endif; ?>
+            <?php foreach ($filters as $filter) : ?>
+                <?php if ($filter->inputType->id == 1): ?>
+
+                    <?php
+                        $class = new $filter->type->class_name();
+                        $object = $class::find()->all();
+                    ?>
+                    <?= $form->field($searchModel, $filter->type->column)
+                        ->dropDownList(ArrayHelper::map(
+                            $object, 'id', $filter->type->displaying_column),
+                            ['prompt' => ''])->label(\Yii::t('shop', $filter->type->title)) ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
 
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary']) ?>
