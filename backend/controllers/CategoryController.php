@@ -297,19 +297,20 @@ class CategoryController extends Controller
 
             if (!empty($categoryId)) {
                 $category = Category::findOne($categoryId);
-                $filters = Filter::find()->where(['category_id' => $category->id])->one();
-                if (empty($filters)) $filters = new Filter();
+                $filters = Filter::find()->where(['category_id' => $category->id])->all();
+                $newFilter = new Filter();
             } else throw new Exception('You can not add filter before saving category.');
 
             if (Yii::$app->request->isPost) {
 
-                $filters->load(Yii::$app->request->post());
+                $newFilter->load(Yii::$app->request->post());
 
-                if ($filters->validate()) {
-                    $filters->category_id = $category->id;
-                    $filters->save();
+                if ($newFilter->validate()) {
+                    $newFilter->category_id = $category->id;
+                    $newFilter->save();
 
                     Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                    return $this->redirect(Yii::$app->request->referrer);
                 }
             }
 
@@ -321,9 +322,23 @@ class CategoryController extends Controller
                 'viewName' => 'select-filters',
                 'params' => [
                     'filters' => $filters,
+                    'newFilter' => new Filter(),
                     'languageId' => $languageId
                 ]
             ]);
+        }
+        else throw new ForbiddenHttpException();
+    }
+
+    public function actionDeleteFilter($id) {
+        if (\Yii::$app->user->can('viewCompleteProductList')) {
+
+            if (!empty($id)) {
+                $filter = Filter::findOne($id);
+                $filter->delete();
+
+            }
+            return $this->redirect(Yii::$app->request->referrer);
         }
         else throw new ForbiddenHttpException();
     }
