@@ -138,6 +138,3 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     </div>
 </div>
 
-<?= ProductFilterWidget::widget(['category' => $category, 'filters' => $filters, 'searchModel' => $searchModel]); ?>
-
-
