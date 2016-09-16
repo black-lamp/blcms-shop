@@ -291,22 +291,24 @@ class CategoryController extends Controller
     }
 
 
-    public function actionSelectFilters($languageId = null, $categoryId = null) {
+    public function actionSelectFilters($id = null, $languageId = null, $categoryId = null) {
+
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
             if (!empty($categoryId)) {
                 $category = Category::findOne($categoryId);
                 $filters = Filter::find()->where(['category_id' => $category->id])->all();
-                $newFilter = new Filter();
+
+                $filter = (!empty($id)) ? Filter::findOne($id) : new Filter();
             } else throw new Exception('You can not add filter before saving category.');
 
             if (Yii::$app->request->isPost) {
 
-                $newFilter->load(Yii::$app->request->post());
+                $filter->load(Yii::$app->request->post());
 
-                if ($newFilter->validate()) {
-                    $newFilter->category_id = $category->id;
-                    $newFilter->save();
+                if ($filter->validate()) {
+                    $filter->category_id = $category->id;
+                    $filter->save();
 
                     Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
                     return $this->redirect(Yii::$app->request->referrer);
@@ -320,6 +322,7 @@ class CategoryController extends Controller
                 'languages' => Language::findAll(['active' => true]),
                 'viewName' => 'select-filters',
                 'params' => [
+                    'category' => $category,
                     'filters' => $filters,
                     'newFilter' => new Filter(),
                     'languageId' => $languageId

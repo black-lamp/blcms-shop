@@ -15,8 +15,6 @@ class ProductSearch extends Product
 
     public $vendor_id;
     public $country_id;
-//    public $category;
-//    public $title;
 
     /**
      * @inheritdoc
@@ -46,7 +44,7 @@ class ProductSearch extends Product
      */
     public function search($params)
     {
-        $this->load($params);
+        $this->load($params, '');
         $query = Product::find()
             ->with('vendor')
             ->where(['category_id' => $params['id']])

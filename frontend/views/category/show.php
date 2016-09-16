@@ -55,7 +55,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     <div class="col-md-12">
 
         <?php Pjax::begin([
-            'enablePushState' => false,
+            'enablePushState' => true,
             'linkSelector' => '.pjax',
             'enableReplaceState' => false,
             'timeout' => 10000,
@@ -129,13 +129,14 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
         <div class="col-md-2">
             <h3><?=\Yii::t('shop', 'Filtering') ?></h3>
             <?php $form = ActiveForm::begin([
-                'action' => ['show'],
+                'action' => [
+                    '/shop/category/show',
+                    'id' => $category->id
+                ],
                 'method' => 'get',
                 'options' => ['data-pjax' => true]
             ]);
             ?>
-
-            <?= Html::hiddenInput('id', $category->id); ?>
 
             <?php foreach ($filters as $filter) : ?>
                 <?php
@@ -144,7 +145,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
                 ?>
                 <?= $form->field($searchModel, $filter->type->column)
                     ->$inputType(ArrayHelper::map($newObject, 'id', $filter->type->displaying_column),
-                        ['prompt' => ''])->label(\Yii::t('shop', $filter->type->title)) ?>
+                        ['prompt' => '', 'name' => $filter->type->column])->label(\Yii::t('shop', $filter->type->title)) ?>
             <?php endforeach; ?>
 
             <div class="form-group">
