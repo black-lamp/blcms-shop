@@ -14,11 +14,10 @@
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductImage;
-use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\frontend\assets\CategoryAsset;
 use bl\cms\shop\frontend\components\ProductSearch;
+use bl\cms\shop\frontend\components\widgets\ProductFilterWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -127,32 +126,11 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
         <!--FILTERING-->
         <div class="col-md-2">
-            <h3><?=\Yii::t('shop', 'Filtering') ?></h3>
-            <?php $form = ActiveForm::begin([
-                'action' => [
-                    '/shop/category/show',
-                    'id' => $category->id
-                ],
-                'method' => 'get',
-                'options' => ['data-pjax' => true]
-            ]);
+            <?= ProductFilterWidget::widget([
+                'category' => $category,
+                'filters' => $filters,
+                'searchModel' => $searchModel]);
             ?>
-
-            <?php foreach ($filters as $filter) : ?>
-                <?php
-                    $newObject = Filter::getCategoryFilterValues($filter, $category->id);
-                    $inputType = $filter->inputType->type;
-                ?>
-                <?= $form->field($searchModel, $filter->type->column)
-                    ->$inputType(ArrayHelper::map($newObject, 'id', $filter->type->displaying_column),
-                        ['prompt' => '', 'name' => $filter->type->column])->label(\Yii::t('shop', $filter->type->title)) ?>
-            <?php endforeach; ?>
-
-            <div class="form-group">
-                <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
         </div>
 
         <?php Pjax::end(); ?>
@@ -160,6 +138,6 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     </div>
 </div>
 
-
+<?= ProductFilterWidget::widget(['category' => $category, 'filters' => $filters, 'searchModel' => $searchModel]); ?>
 
 
