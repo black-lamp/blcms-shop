@@ -17,7 +17,7 @@ $this->title = Yii::t('shop', 'Filters');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('shop', 'Create new filter'), ['create'], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
+        <?= Html::a(Yii::t('shop', 'Create new filter'), ['save'], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
     </p>
     <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
