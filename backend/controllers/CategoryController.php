@@ -5,7 +5,6 @@ use bl\cms\shop\backend\components\form\CategoryImageForm;
 use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
-use yii\base\ErrorException;
 use yii\base\Exception;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;

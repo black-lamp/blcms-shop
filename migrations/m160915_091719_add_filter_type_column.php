@@ -49,6 +49,10 @@ class m160915_091719_add_filter_type_column extends Migration
             'type' => 'checkboxList',
             'title' => 'Checkbox'
         ]);
+        $this->insert('shop_filter_input_type', [
+            'type' => 'textInput',
+            'title' => 'Text input'
+        ]);
 
         $this->addForeignKey('shop_filters_filter_type_shop_filter_type_id',
             'shop_filters', 'filter_type', 'shop_filter_type', 'id');
