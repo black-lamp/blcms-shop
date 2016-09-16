@@ -139,7 +139,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
             <?php foreach ($filters as $filter) : ?>
                 <?php
-                    $newObject = Filter::getCurrentFilters($filter, $products);
+                    $newObject = Filter::getCategoryFilterValues($filter, $category->id);
                     $inputType = $filter->inputType->type;
                 ?>
                 <?= $form->field($searchModel, $filter->type->column)

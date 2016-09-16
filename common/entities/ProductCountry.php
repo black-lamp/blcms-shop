@@ -44,4 +44,9 @@ class ProductCountry extends ActiveRecord
     {
         return $this->hasMany(ProductCountryTranslation::className(), ['country_id' => 'id']);
     }
+
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['country_id' => 'id']);
+    }
 }

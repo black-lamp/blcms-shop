@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 
 /**
  * This is the model class for table "shop_filters".
@@ -71,25 +72,18 @@ class Filter extends ActiveRecord
 
     /**
      * This method return only these rows which product_id complies existing product.
-     * @property Filter $filters
-     * @property Product $products
+     * @param $filter
+     * @param $categoryId
      */
-    public static function getCurrentFilters($filter, $products)
-    {
-        $class = new $filter->type->class_name();
-        $object = $class::find()->all();
+    public static function getCategoryFilterValues($filter, $categoryId) {
+        /* @var $class ActiveRecordInterface */
 
-        $newObject = [];
-        foreach ($products as $product) {
+        $class = $filter->type->class_name;
+        $objects = $class::find()
+            ->joinWith('products p')
+            ->where(['p.category_id' => $categoryId])
+            ->all();
 
-            $column = $filter->type->column;
-
-            foreach ($object as $key => $item) {
-                if ($item->id == $product->$column) {
-                    $newObject[] = $item;
-                }
-            }
-        }
-        return $newObject;
+        return $objects;
     }
 }
