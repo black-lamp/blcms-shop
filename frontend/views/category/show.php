@@ -17,11 +17,9 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\frontend\assets\CategoryAsset;
 use bl\cms\shop\frontend\components\ProductSearch;
-use bl\cms\shop\frontend\components\widgets\ProductFilterWidget;
-use yii\helpers\ArrayHelper;
+use bl\cms\shop\frontend\components\widgets\ProductFilter;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 use yii\widgets\Breadcrumbs;
 use yii\widgets\ListView;
 use yii\widgets\Pjax;
@@ -53,12 +51,7 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 <div class="row products">
     <div class="col-md-12">
 
-        <?php Pjax::begin([
-            'enablePushState' => true,
-            'linkSelector' => '.pjax',
-            'enableReplaceState' => false,
-            'timeout' => 10000,
-        ]); ?>
+        <?php Pjax::begin(); ?>
 
         <div class="col-md-2 menu-categories">
             <?php foreach ($menuItems as $menuItem) : ?>
@@ -126,7 +119,9 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
         <!--FILTERING-->
         <div class="col-md-2">
-            <?= ProductFilterWidget::widget([
+            <h3><?= \Yii::t('shop', 'Filtering') ?></h3>
+
+            <?= ProductFilter::widget([
                 'category' => $category,
                 'filters' => $filters,
                 'searchModel' => $searchModel]);

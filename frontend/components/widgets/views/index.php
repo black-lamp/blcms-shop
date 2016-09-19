@@ -1,15 +1,22 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $category Category
+ * @var $filters Filter
+ * @var $searchModel ProductSearch
  */
+
+use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Filter;
+use bl\cms\shop\frontend\components\ProductSearch;
+use bl\cms\shop\frontend\components\widgets\assets\ProductFilterAsset;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+ProductFilterAsset::register($this);
 ?>
-
-<h3><?=\Yii::t('shop', 'Filtering') ?></h3>
 
 <?php $form = ActiveForm::begin([
     'action' => [
@@ -24,11 +31,22 @@ use yii\helpers\Html;
 <?php foreach ($filters as $filter) : ?>
     <?php
     $newObject = Filter::getCategoryFilterValues($filter, $category->id);
+    $inputId = $filter->inputType->id;
     $inputType = $filter->inputType->type;
     ?>
-    <?= $form->field($searchModel, $filter->type->column)
-        ->$inputType(ArrayHelper::map($newObject, 'id', $filter->type->displaying_column),
-            ['prompt' => '', 'name' => $filter->type->column])->label(\Yii::t('shop', $filter->type->title)) ?>
+
+    <?php if ($inputId == 1 || $inputId == 2 || $inputId == 3) : ?>
+        <?= $form->field($searchModel, $filter->type->column)
+            ->$inputType(ArrayHelper::map($newObject, 'id', $filter->type->displaying_column),
+                ['prompt' => '', 'name' => $filter->type->column])->label(\Yii::t('shop', $filter->type->title)); ?>
+
+    <?php elseif ($inputId == 4) : ?>
+        <?= $form->field($searchModel, $filter->type->column)
+            ->textInput(['options' => ['prompt' => '', 'name' => $filter->type->column]])->label(\Yii::t('shop', $filter->type->title)); ?>
+
+    <?php endif; ?>
+
+
 <?php endforeach; ?>
 
 <div class="form-group">

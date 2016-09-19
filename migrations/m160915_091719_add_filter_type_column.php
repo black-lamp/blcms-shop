@@ -50,8 +50,16 @@ class m160915_091719_add_filter_type_column extends Migration
             'title' => 'Checkbox'
         ]);
         $this->insert('shop_filter_input_type', [
-            'type' => 'textInput',
+            'type' => 'text',
             'title' => 'Text input'
+        ]);
+        $this->insert('shop_filter_input_type', [
+            'type' => 'range',
+            'title' => 'Range'
+        ]);
+        $this->insert('shop_filter_input_type', [
+            'type' => 'image',
+            'title' => 'Image'
         ]);
 
         $this->addForeignKey('shop_filters_filter_type_shop_filter_type_id',

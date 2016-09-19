@@ -3,6 +3,7 @@
 namespace bl\cms\shop\frontend\components;
 
 use Yii;
+use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use bl\cms\shop\common\entities\Product;
@@ -22,7 +23,7 @@ class ProductSearch extends Product
     public function rules()
     {
         return [
-            [['country_id', 'vendor_id'], 'safe']
+            [['country_id', 'vendor_id'], 'safe'],
         ];
     }
 
@@ -37,9 +38,7 @@ class ProductSearch extends Product
 
     /**
      * Creates data provider instance with search query applied
-     *
      * @param array $params
-     *
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -58,13 +57,10 @@ class ProductSearch extends Product
             'query' => $query,
         ]);
 
-        if (!$this->validate()) {
+        if ($this->validate()) {
 
             return $dataProvider;
         }
-
-
-
-        return $dataProvider;
+        else throw new Exception();
     }
 }

@@ -7,7 +7,7 @@ namespace bl\cms\shop\frontend\components\widgets;
 use yii\base\Widget;
 
 
-class ProductFilterWidget extends Widget
+class ProductFilter extends Widget
 
 {
     public $category;
