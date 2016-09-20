@@ -103,6 +103,14 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProductCountry()
+    {
+        return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTranslations()
     {
         return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);

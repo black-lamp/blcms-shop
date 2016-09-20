@@ -2,6 +2,7 @@
 
 namespace bl\cms\shop\frontend\components;
 
+use bl\cms\shop\common\entities\FilterType;
 use Yii;
 use yii\base\Exception;
 use yii\base\Model;
@@ -14,8 +15,8 @@ use bl\cms\shop\common\entities\Product;
 class ProductSearch extends Product
 {
 
-    public $vendor_id;
-    public $country_id;
+//    public $vendor_id;
+//    public $country_id;
 
     /**
      * @inheritdoc
@@ -40,18 +41,34 @@ class ProductSearch extends Product
      * Creates data provider instance with search query applied
      * @param array $params
      * @return ActiveDataProvider
+     * @throws Exception if search is not validated
      */
     public function search($params)
     {
         $this->load($params, '');
         $query = Product::find()
-            ->with('vendor')
-            ->where(['category_id' => $params['id']])
-            ->andFilterWhere(['vendor_id' => $this->vendor_id])
-            ->andFilterWhere(['country_id' => $this->country_id])
-            ->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
 
-        $query->andFilterWhere(['shop_product.status' => $this->status]);
+            ->where(['category_id' => $params['id']]);
+
+        $filterTypes = FilterType::find()->all();
+        foreach ($filterTypes as $filterType) {
+            $className = $filterType->class_name;
+
+            /*Getting get-method name*/
+            $getMethodName = explode("\\", $className);
+            $getMethodName = lcfirst(end($getMethodName));
+
+            $query->joinWith($getMethodName);
+
+
+            $tableName = $className::tableName();
+            $column = $filterType->column;
+
+
+            $query->andFilterWhere([$tableName . '.' . 'id' => $this->$column]);
+        }
+
+        $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

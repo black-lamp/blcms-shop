@@ -136,3 +136,14 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     ],
 ```
 
+### Filtration widget
+To use the widget, you must have set up relations in the models. For example in model Product:
+```php
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductCountry()
+    {
+        return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
+    }
+```
