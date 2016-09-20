@@ -63,9 +63,9 @@ class m160915_091719_add_filter_type_column extends Migration
         ]);
 
         $this->addForeignKey('shop_filters_filter_type_shop_filter_type_id',
-            'shop_filters', 'filter_type', 'shop_filter_type', 'id');
+            'shop_filters', 'filter_type', 'shop_filter_type', 'id', 'cascade', 'cascade');
         $this->addForeignKey('shop_filters_input_type_shop_filter_input_type_id',
-            'shop_filters', 'input_type', 'shop_filter_input_type', 'id');
+            'shop_filters', 'input_type', 'shop_filter_input_type', 'id', 'cascade', 'cascade');
     }
 
     public function down()
