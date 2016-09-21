@@ -46,11 +46,10 @@ ProductFilterAsset::register($this);
 
     <?php endif; ?>
 
-
 <?php endforeach; ?>
 
 <div class="form-group">
-    <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary']) ?>
+    <?= Html::submitButton(Yii::t('shop', 'Filter'), ['class' => 'pjax btn btn-primary filter-button', 'id' => 'qwe']); ?>
 </div>
 
 <?php ActiveForm::end(); ?>
