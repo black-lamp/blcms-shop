@@ -132,4 +132,3 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 
     </div>
 </div>
-
