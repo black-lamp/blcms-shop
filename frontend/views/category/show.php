@@ -47,7 +47,10 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     ]);
     ?>
 </div>
+<?php if (!empty($category->translation->title)) : ?>
 <h1 class="text-center"><?=$category->translation->title; ?></h1>
+<?php endif; ?>
+
 <div class="row products">
     <div class="col-md-12">
 
@@ -120,7 +123,6 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
         <!--FILTERING-->
         <div class="col-md-2">
             <h3><?= \Yii::t('shop', 'Filtering') ?></h3>
-
             <?= ProductFilter::widget([
                 'category' => $category,
                 'filters' => $filters,

@@ -56,10 +56,12 @@ class CategoryController extends Controller
         $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $filters = (!empty($category->id)) ? Filter::find()->where(['category_id' => $category->id])->all() :
+            null;
         return $this->render('show', [
             'category' => $category,
             'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
-            'filters' => Filter::find()->where(['category_id' => $category->id])->all(),
+            'filters' => $filters,
             'products' => Product::find()->all(),
 
             'searchModel' => $searchModel,
