@@ -4,6 +4,8 @@
  */
 
 namespace bl\cms\shop\frontend\controllers;
+use bl\cms\cart\models\Order;
+use bl\cms\cart\models\SearchOrderProduct;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\frontend\models\AddToCartModel;
@@ -12,24 +14,59 @@ use bl\cms\shop\common\entities\Clients;
 use Exception;
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class CartController extends Controller
 {
-    public function actionAddToCart() {
-        if (Yii::$app->request->isPost) {
-            $model = new AddToCartModel();
-            if($model->load(Yii::$app->request->post())) {
-                if($model->validate()) {
-                    if($model->add()) {
-                        \Yii::$app->session->setFlash('error', \Yii::t('shop', 'You have successfully add this product to cart!'));
 
-                    }
-                }
-            }
-        }
+    public function actionAdd()
+    {
+        $postData = Yii::$app->request->post();
+
+        Yii::$app->cart->add($postData['product_id'], $postData['OrderProduct']['count']);
+        \Yii::$app->getSession()->setFlash('success', 'You have successfully added this product to cart');
         return $this->redirect(Yii::$app->request->referrer);
+//        return json_encode([
+//            'success' => Yii::$app->cart->add($postData['product_id'], $postData['OrderProduct']['count']),
+//        ]);
     }
 
+    public function actionShow()
+    {
+        $cart = \Yii::$app->cart;
+        $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => $cart::STATUS_INCOMPLETE])->one();
+        if (!empty($order)) {
+            $searchModel = new SearchOrderProduct();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $cart::STATUS_INCOMPLETE);
+
+            return $this->render('show', [
+                'order' => new Order(),
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        else Yii::$app->session->setFlash('error', \Yii::t('shop', 'You did not add to cart no one product.'));
+        return $this->render('show');
+
+    }
+
+    public function actionRemove($id) {
+        \Yii::$app->cart->removeItem($id);
+        return $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    public function actionMakeOrder()
+    {
+        $post = Yii::$app->request->post();
+        $order = \Yii::$app->cart->makeOrder($post);
+        if ($order) {
+            \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
+        }
+        else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
+        return $this->render('show');
+    }
+
+    /* TODO: remove next actions */
     public function actionIndex() {
         $cart = new Cart();
         $cart->load(Yii::$app->session->get('cart'));

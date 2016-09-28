@@ -46,9 +46,11 @@ class ProductSearch extends Product
     public function search($params)
     {
         $this->load($params, '');
-        $query = Product::find()
+        $query = Product::find();
 
-            ->where(['category_id' => $params['id']]);
+        if (!empty($params['id'])) {
+            $query->where(['category_id' => $params['id']]);
+        }
 
         $filterTypes = FilterType::find()->all();
         foreach ($filterTypes as $filterType) {

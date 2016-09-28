@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
+use bl\cms\cart\models\OrderProduct;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
@@ -16,7 +17,9 @@ use yii\web\NotFoundHttpException;
  */
 class ProductController extends Controller
 {
-    public function actionShow($id = null) {
+
+    public function actionShow($id = null)
+    {
         $product = Product::findOne($id);
 
         if(empty($product)) {
@@ -47,10 +50,12 @@ class ProductController extends Controller
             'params' => Param::find()->where([
                 'product_id' => $id
                 ])->all(),
+            'cart' => new OrderProduct()
         ]);
     }
 
-    public function actionXml() {
+    public function actionXml()
+    {
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');
@@ -61,7 +66,9 @@ class ProductController extends Controller
             'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
         ]);
     }
-    public function actionHlxml() {
+
+    public function actionHlxml()
+    {
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');

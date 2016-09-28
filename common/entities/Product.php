@@ -2,6 +2,7 @@
 
 namespace bl\cms\shop\common\entities;
 
+use bl\cms\cart\models\CartProductInterface;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -26,7 +27,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $owner
  *
  */
-class Product extends ActiveRecord
+class Product extends ActiveRecord implements CartProductInterface
 {
     /**
      * Constants for status column
@@ -164,5 +165,30 @@ class Product extends ActiveRecord
         }
         return $fileName;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        // TODO: Implement getPrice() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        // TODO: Implement getTitle() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        // TODO: Implement getId() method.
+    }
+
 
 }
