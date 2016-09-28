@@ -1,5 +1,7 @@
 <?php
+use yii\bootstrap\ActiveForm;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -9,64 +11,81 @@ use yii\widgets\DetailView;
  *
  * @var $this yii\web\View
  * @var $model bl\cms\cart\models\Order
+ * @var $statuses[] bl\cms\cart\models\OrderStatus
  */
 
 ?>
-<div class="order-view">
+<div class="panel panel-default">
 
-    <p>
-        <?= Html::a(Yii::t('shop', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('shop', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('shop', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
+    <div class="panel-heading">
+        <h1><?= \Yii::t('shop', 'Order #') . $model->id . ':'; ?></h1>
+    </div>
+
+    <!--CHANGE STATUS-->
+    <div class="panel-body">
+        <h2>
+            <?= Yii::t('shop', 'Order status'); ?>
+        </h2>
+        <?php $form = ActiveForm::begin(); ?>
+        <?= $form->field($model, 'status')->dropDownList(ArrayHelper::map($statuses, 'id', 'title'), ['options' => [$model->status => ['selected' => true]]]); ?>
+        <?= Html::submitButton(Yii::t('shop', 'Change status'), ['class' => 'btn btn-primary']); ?>
+        <?= Html::a(Yii::t('shop', 'Close'), Url::toRoute('/shop/order'), ['class' => 'btn btn-danger']) ?>
+        <?php $form::end(); ?>
+    </div>
+
+    <!--ORDER DETAILS-->
+    <div class="panel-body">
+        <h2>
+            <?= Yii::t('shop', 'Order details'); ?>
+        </h2>
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'first_name',
+                'last_name',
+                'email:email',
+                'phone',
+                'address',
+                'status',
             ],
-        ]) ?>
-    </p>
+        ]); ?>
+    </div>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'first_name',
-            'last_name',
-            'email:email',
-            'phone',
-            'address',
-            'status',
-        ],
-    ]); ?>
+    <!--PRODUCT LIST-->
+    <div class="panel-body">
+        <h2>
+            <?= Yii::t('shop', 'Product list'); ?>
+        </h2>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'label' => 'title',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return Html::a($model->product->translation->title,
+                            Url::to(['/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl]));
+                    }
+                ],
+                'count',
+                /*ACTIONS*/
+                [
+                    'headerOptions' => ['class' => 'text-center col-md-2'],
+                    'attribute' => \Yii::t('shop', 'Delete'),
 
-            [
-                'label' => 'title',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return Html::a($model->product->translation->title,
-                        Url::to(['/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl]));
-                }
+                    'value' => function ($model) {
+
+                        return Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete-product', 'id' => $model->id]),
+                            ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right pjax']);
+
+                    },
+                    'format' => 'raw',
+                    'contentOptions' => ['class' => 'col-md-2 text-center'],
+                ],
             ],
-            'count',
-            /*ACTIONS*/
-            [
-                'headerOptions' => ['class' => 'text-center col-md-2'],
-                'attribute' => \Yii::t('shop', 'Delete'),
-
-                'value' => function ($model) {
-
-                    return Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['remove', 'id' => $model->id]),
-                        ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right pjax']);
-
-                },
-                'format' => 'raw',
-                'contentOptions' => ['class' => 'col-md-2 text-center'],
-            ],
-        ],
-    ]); ?>
-
+        ]); ?>
+    </div>
 </div>

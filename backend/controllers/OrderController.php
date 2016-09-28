@@ -2,6 +2,8 @@
 namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\cart\CartComponent;
+use bl\cms\cart\models\OrderProduct;
+use bl\cms\cart\models\OrderStatus;
 use bl\cms\cart\models\SearchOrderProduct;
 use Yii;
 use bl\cms\cart\models\Order;
@@ -47,62 +49,45 @@ class OrderController extends Controller
     }
 
     /**
-     * Displays a single Order model.
+     * Displays a single Order model and changes status for this model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
-        $searchModel = new SearchOrderProduct();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (!empty($id)) {
+            $model = Order::findOne($id);
+            if (empty($model)) {
+                $model = new Order();
+            }
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->save()) {
+                    \Yii::$app->session->setFlash('success', \Yii::t('shop', 'The record was successfully saved.'));
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+                } else {
+                    die(var_dump($model->errors));
+                    \Yii::$app->session->setFlash('error', \Yii::t('shop', 'An error occurred when saving the record.'));
+                }
+                return $this->redirect(['view', 'id' => $id]);
+            } else {
+                $searchModel = new SearchOrderProduct();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                    'statuses' => OrderStatus::find()->all(),
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+            }
+        } else throw new NotFoundHttpException();
     }
 
-    /**
-     * Creates a new Order model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Order();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Updates an existing Order model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
 
     /**
      * Deletes an existing Order model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * If deletion is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
@@ -111,6 +96,24 @@ class OrderController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Deletes product from existing Order model.
+     * If deletion is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionDeleteProduct($id)
+    {
+        if (($model = OrderProduct::findOne($id)) !== null) {
+            $model->delete();
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     /**

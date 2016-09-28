@@ -47,7 +47,7 @@ $this->title = Yii::t('shop', 'Order Statuses');
                     'attribute' => '',
                     'value' => 'id',
                     'label' => Yii::t('shop', 'Id'),
-                    'contentOptions' => ['class' => 'project-title col-md-2'],
+                    'contentOptions' => ['class' => 'text-center project-title col-md-2'],
                 ],
 
                 /*TITLE*/

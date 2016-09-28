@@ -45,26 +45,27 @@ class OrderStatusController extends Controller
     }
 
     /**
-     * Creates a new OrderStatus model.
+     * Creates a new or updates existing OrderStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
     public function actionSave($id = null)
     {
-        if (!empty($id)) {
-            $model = $this->findModel($id);
-        }
-        else {
-            $model = new OrderStatus();
-        }
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model = (!empty($id)) ? $this->findModel($id) : new OrderStatus();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', \Yii::t('shop', 'The record was successfully saved.'));
+
+            } else {
+                \Yii::$app->session->setFlash('error', \Yii::t('shop', 'An error occurred when saving the record.'));
+            }
+
             return $this->redirect(['save', 'id' => $model->id]);
-        } else {
-            return $this->render('save', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('save', ['model' => $model]);
     }
 
 

@@ -7,30 +7,86 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
+use bl\cms\cart\models\OrderStatus;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
-?>
-<div class="order-index">
+use yii\helpers\Url;
 
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h5>
+            <i class="glyphicon glyphicon-list">
+            </i>
+            <?= \Yii::t('shop', 'Order list'); ?>
+        </h5>
+    </div>
 
     <?= GridView::widget([
+        'filterRowOptions' => ['class' => ''],
+        'options' => [
+            'class' => 'project-list'
+        ],
+        'tableOptions' => [
+            'id' => 'my-grid',
+            'class' => 'table table-hover'
+        ],
+
+        'summary' => "",
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
+            /*Customer*/
             [
-                'label' => 'Customer',
-                'value' => function($model) {
-                    return $model->first_name . ' ' . $model->last_name;
-                }
+                'headerOptions' => ['class' => 'text-center col-md-3'],
+                'value' => function ($model) {
+                    $content = null;
+                    if (!empty($model->first_name) || !empty($model->last_name)) {
+                        $content = Html::a(
+                            $model->first_name . ' ' . $model->last_name,
+                            Url::toRoute(['view', 'id' => $model->id])
+                        );
+                    }
+                    return $content;
+                },
+                'label' => Yii::t('shop', 'Customer'),
+                'format' => 'html',
+                'contentOptions' => ['class' => 'text-center project-title col-md-3'],
             ],
-            'email:email',
-            // 'phone',
-            // 'address',
-             'status',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            'email:email',
+
+            [
+                'headerOptions' => ['class' => 'text-center col-md-3'],
+                'attribute' => 'status',
+                'filter' => ArrayHelper::map(OrderStatus::find()->all(), 'id', 'title'),
+
+                'value' => function ($model) {
+                    $status = (!empty($model->orderStatus->title)) ? $model->orderStatus->title : '';
+                    return Html::a($status, Url::toRoute(['view', 'id' => $model->id]),
+                        ['class' => 'btn btn-default btn-xs']);
+                },
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center col-md-3 text-center'],
+            ],
+
+            /*ACTIONS*/
+            [
+                'headerOptions' => ['class' => 'text-center col-md-2'],
+                'attribute' => \Yii::t('shop', 'Manage'),
+
+                'value' => function ($model) {
+                    return Html::a('<span class="glyphicon glyphicon-star"></span>', Url::toRoute(['view', 'id' => $model->id]),
+                        ['title' => Yii::t('shop', 'Status and details'), 'class' => 'btn btn-primary pjax m-r-md']) .
+                    Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete', 'id' => $model->id]),
+                        ['title' => Yii::t('shop', 'Delete'), 'data-method' => 'post', 'class' => 'btn btn-danger pjax']);
+                },
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center col-md-2 text-center'],
+            ]
         ],
     ]); ?>
 </div>
