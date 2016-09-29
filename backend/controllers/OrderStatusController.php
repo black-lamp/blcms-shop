@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\cart\CartComponent;
+use Exception;
 use Yii;
 use bl\cms\cart\models\OrderStatus;
 use bl\cms\cart\models\SearchOrderStatus;
@@ -74,12 +76,19 @@ class OrderStatusController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws Exception if user try to delete default statuses.
+     * @throws NotFoundHttpException if there is not $id.
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (!empty($id)) {
+            if ($id != CartComponent::STATUS_INCOMPLETE && $id != CartComponent::STATUS_CONFIRMED) {
+                $this->findModel($id)->delete();
+                return $this->redirect(['index']);
+            }
+            else throw new Exception('Removing this status will lead to failure in the Cart component. You can only change title.');
+        }
+        else throw new NotFoundHttpException();
     }
 
     /**
@@ -97,4 +106,5 @@ class OrderStatusController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
