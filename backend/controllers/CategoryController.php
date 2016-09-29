@@ -6,6 +6,7 @@ use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
 use yii\base\Exception;
+use yii\helpers\Url;
 use yii\web\Controller;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
@@ -68,6 +69,7 @@ class CategoryController extends Controller
                     if ($category_translation->validate()) {
                         $category_translation->save();
                         Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                        return $this->redirect(Url::to(['/shop/category/save', 'categoryId' => $category->id, 'languageId' => $category_translation->language_id]));
                     }
 
                 }
