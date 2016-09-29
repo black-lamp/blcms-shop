@@ -67,10 +67,21 @@ use yii\widgets\DetailView;
                     'format' => 'raw',
                     'value' => function ($model) {
                         return Html::a($model->product->translation->title,
-                            Url::to(['/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl]));
+                            Yii::$app->urlManager->hostInfo . '/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl);
                     }
                 ],
-                'count',
+                [
+                    'label' => 'count',
+                    'format' => 'raw',
+                    'value' => 'count'
+                ],
+                [
+                    'label' => 'price',
+                    'value' => function($model) {
+                        $price = (empty($model->price_id)) ? $model->product->price : $model->productPrice->salePrice;
+                        return $price;
+                    }
+                ],
                 /*ACTIONS*/
                 [
                     'headerOptions' => ['class' => 'text-center col-md-2'],

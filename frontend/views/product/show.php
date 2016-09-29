@@ -7,7 +7,7 @@ use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\frontend\assets\ProductAsset;
 use bl\cms\shop\frontend\models\AddToCartModel;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Html;
+use yii\helpers\ArrayHelper;use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 /**
@@ -89,41 +89,18 @@ use yii\widgets\Breadcrumbs;
         <div class="price-wrap">
             <!-- PRICES -->
             <?php if (!empty($product->prices)) : ?>
-                <table class="table table-bordered price-table">
-                    <?php foreach ($product->prices as $key => $price) : ?>
-                        <tr>
-<!--                            <td>-->
-<!--                                <input type="radio" id="addtocartmodel-price_id" name="AddToCartModel[price_id]"-->
-<!--                                       value="--><?//= $price->id; ?><!--" --><?//= ($key == 0) ? 'checked' : ''; ?><!-->-->
-<!--                            </td>-->
-                            <td>
-                                <?= $price->translation->title ?>
-                            </td>
-                            <td>
-                                <?php if (!empty($price->price)) : ?>
-                                    <strong>
-                                        <span><?= \Yii::$app->formatter->asCurrency($price->salePrice); ?></span> грн.
 
-                                    </strong>
-                                    <?php if (!empty($price->sale)) : ?>
-                                        <strike>
-                                            <sup>
-                                                <span
-                                                    class="sup"><?= \Yii::$app->formatter->asCurrency($price->price); ?></span>
-                                                грн.
-                                            </sup>
-                                        </strike>
-                                    <?php endif ?>
-                                <?php endif ?>
-                            </td>
-                        </tr>
-                    <?php endforeach ?>
-                </table>
+                <?= $form->field($cart, 'price_id')->radioList(ArrayHelper::map($product->prices, 'id', function($model) {
+                    return $model->translation->title . \Yii::$app->formatter->asCurrency($model->salePrice) . Html::tag('strike', \Yii::$app->formatter->asCurrency($model->price));
+                })); ?>
             <?php endif ?>
 
             <!-- QUANTITY -->
             <div class="count">
                 <?= $form->field($cart, 'count')->textInput([
+                    'type' => 'number',
+                    'min' => '1',
+                    'value' => '1',
                     'data-action' => 'text',
                     'class' => 'form-control',
                     'id' => 'count'

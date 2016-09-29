@@ -22,8 +22,7 @@ class CartController extends Controller
     public function actionAdd()
     {
         $postData = Yii::$app->request->post();
-
-        Yii::$app->cart->add($postData['product_id'], $postData['OrderProduct']['count']);
+        Yii::$app->cart->add($postData['product_id'], $postData['OrderProduct']['count'], $postData['OrderProduct']['price_id']);
         \Yii::$app->getSession()->setFlash('success', 'You have successfully added this product to cart');
         return $this->redirect(Yii::$app->request->referrer);
 //        return json_encode([
