@@ -1,4 +1,5 @@
 **Applying migrations:**
+**!Important: this migrations must be applied after Dectrium-User module migrations.**
 ```php
 - php yii migrate --migrationPath=@yii/rbac/migrations
 - php yii migrate --migrationPath=@vendor/black-lamp/blcms-shop/migrations
