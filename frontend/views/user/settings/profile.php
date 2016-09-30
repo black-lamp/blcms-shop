@@ -51,11 +51,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'patronymic') ?>
                 <?= $form->field($model, 'phone') ?>
 
-
                 <div class="form-group">
-                    <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+                    <div class="col-lg-offset-3 col-lg-9">
+                        <?= \yii\helpers\Html::submitButton(
+                            Yii::t('user', 'Save'),
+                            ['class' => 'btn btn-block btn-success']
+                        ) ?><br>
+                    </div>
                 </div>
-
 
                 <?php ActiveForm::end(); ?>
             </div>
