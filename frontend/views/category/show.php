@@ -35,9 +35,10 @@ $shop = (!empty($category->translation->title)) ?
 $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
 ?>
 
-<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+<!--BREADCRUMBS-->
+<div>
     <?= Breadcrumbs::widget([
-        'itemTemplate' => '<li><b><span itemprop="title">{link}</span></b></li>',
+        'itemTemplate' => '<li><b><span>{link}</span></b></li>',
         'homeLink' => [
             'label' => Yii::t('frontend/navigation', 'Главная'),
             'url' => Url::toRoute(['/']),
@@ -47,22 +48,29 @@ $links = (!empty($category)) ? [$shop, $category->translation->title] : [$shop];
     ]);
     ?>
 </div>
+
+<!--TITLE-->
 <?php if (!empty($category->translation->title)) : ?>
-<h1 class="text-center"><?=$category->translation->title; ?></h1>
+    <h1 class="text-center"><?= $category->translation->title; ?></h1>
 <?php endif; ?>
 
+<!--PRODUCTS-->
 <div class="row products">
     <div class="col-md-12">
 
-        <?php Pjax::begin(); ?>
+        <?php Pjax::begin([
+            'linkSelector' => '.pjax'
+        ]); ?>
 
         <div class="col-md-2 menu-categories">
             <?php foreach ($menuItems as $menuItem) : ?>
-                <p>
-                    <a href="<?= Url::toRoute(['category/show', 'id' => $menuItem->id]); ?>">
-                        <?= $menuItem->translation->title ?>
-                    </a>
-                </p>
+                <?php if (!empty($menuItem->translation->title)) : ?>
+                    <p>
+                        <a href="<?= Url::toRoute(['category/show', 'id' => $menuItem->id]); ?>">
+                            <?= $menuItem->translation->title ?>
+                        </a>
+                    </p>
+                <?php endif; ?>
             <?php endforeach; ?>
         </div>
         <div class="col-md-8">
