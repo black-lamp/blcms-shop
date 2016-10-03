@@ -7,6 +7,7 @@ namespace bl\cms\shop\frontend\controllers;
 use bl\cms\cart\models\CartForm;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
+use bl\cms\shop\common\components\user\models\UserAddress;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\frontend\models\Cart;
 use bl\cms\shop\common\entities\Clients;
@@ -24,7 +25,7 @@ class CartController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 Yii::$app->cart->add($model->productId, $model->count, $model->priceId);
-                \Yii::$app->getSession()->setFlash('success', 'You have successfully added this product to cart');
+                \Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'You have successfully added this product to cart'));
             }
             else throw new \yii\base\Exception($model->errors);
         }
@@ -74,6 +75,7 @@ class CartController extends Controller
 
                     return $this->render('show', [
                         'order' => new Order(),
+                        'address' => new UserAddress(),
                         'products' => $products,
                     ]);
                 }
