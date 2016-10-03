@@ -37,6 +37,11 @@ class Product extends ActiveRecord implements CartProductInterface
     const STATUS_SUCCESS = 10;
 
     /**
+     * This property is used for the Cart component.
+     */
+    public $count;
+
+    /**
      * @inheritdoc
      */
     public static function tableName()

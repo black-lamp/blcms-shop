@@ -7,17 +7,13 @@ namespace bl\cms\shop\frontend\controllers;
 use bl\cms\cart\models\CartForm;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
-use bl\cms\cart\models\SearchOrderProduct;
 use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductPrice;
-use bl\cms\shop\frontend\models\AddToCartModel;
 use bl\cms\shop\frontend\models\Cart;
 use bl\cms\shop\common\entities\Clients;
 use Exception;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class CartController extends Controller
 {
@@ -45,36 +41,50 @@ class CartController extends Controller
         $cart = \Yii::$app->cart;
         $items = $cart->getOrderItems();
 
-        if (\Yii::$app->user->isGuest) {
-            if (!empty($items)) {
-
+        if (!empty($items)) {
+            if (\Yii::$app->user->isGuest) {
                 $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($items, 'id')])->all();
 
-                return $this->render('show', [
-                    'order' => new Order(),
-                    'products' => $products,
+                foreach ($products as $product) {
+                    foreach ($items as $item) {
+                        if ($item['id'] == $product->id) {
+                            $product->count = $item['count'];
+                        }
+                    }
+                }
 
+                return $this->render('show', [
+                    'products' => $products,
                 ]);
             }
+            else {
+                $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => $cart::STATUS_INCOMPLETE])->one();
+                if (!empty($order)) {
+                    $orderProducts = OrderProduct::find()->where(['order_id' => $order->id])->all();
 
+                    $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($orderProducts, 'product_id')])->all();
+
+                    foreach ($products as $product) {
+                        foreach ($orderProducts as $item) {
+                            if ($item->product_id == $product->id) {
+                                $product->count = $item->count;
+                            }
+                        }
+                    }
+
+                    return $this->render('show', [
+                        'order' => new Order(),
+                        'products' => $products,
+                    ]);
+                }
+            }
         }
-        $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => $cart::STATUS_INCOMPLETE])->one();
-        if (!empty($order)) {
-            $orderProducts = OrderProduct::find()->where(['order_id' => $order->id])->all();
 
-            $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($orderProducts, 'product_id')])->all();
-            $searchModel = new SearchOrderProduct();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $cart::STATUS_INCOMPLETE);
-
-            return $this->render('show', [
-                'order' => new Order(),
-                'products' => $products,
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
+        else {
+            Yii::$app->session->setFlash('error', \Yii::t('shop', 'You did not add to cart no one product.'));
+            return $this->render('show');
         }
-        else Yii::$app->session->setFlash('error', \Yii::t('shop', 'You did not add to cart no one product.'));
-        return $this->render('show');
+
     }
 
     public function actionRemove($id) {
@@ -84,6 +94,7 @@ class CartController extends Controller
 
     public function actionClear() {
         \Yii::$app->cart->clearCart();
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     public function actionMakeOrder()
