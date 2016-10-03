@@ -15,7 +15,7 @@ class m160930_083000_override_user_profile extends UserMigration
             'city' => $this->string(255),
             'house' => $this->string(255),
             'apartment' => $this->string(11),
-            'zip-code' => $this->integer(11),
+            'zipcode' => $this->integer(11),
         ]);
 
         $this->dropForeignKey('fk_user_profile', 'profile');
