@@ -1,12 +1,10 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
-use bl\cms\cart\models\OrderProduct;
+use bl\cms\cart\models\CartForm;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
-use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
-use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductTranslation;
 use Yii;
 use yii\web\Controller;
@@ -50,7 +48,7 @@ class ProductController extends Controller
             'params' => Param::find()->where([
                 'product_id' => $id
                 ])->all(),
-            'cart' => new OrderProduct()
+            'cart' => new CartForm()
         ]);
     }
 

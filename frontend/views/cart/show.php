@@ -2,6 +2,7 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
+use bl\cms\shop\common\entities\Product;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Alert;
 use yii\grid\GridView;
@@ -10,38 +11,29 @@ use yii\helpers\Url;
 
 ?>
 
-<?php if (!empty($dataProvider) && !empty($searchModel)) : ?>
-<?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
-    'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
 
-        [
-            'label' => 'title',
-            'format' => 'raw',
-            'value' => function ($model) {
-                return Html::a($model->product->translation->title, Url::to(['/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl]));
-            }
-        ],
-        'count',
+<table class="table table-hover">
+    <tr>
+        <th class="col-md-1 text-center">Id</th>
+        <th class="col-md-7 text-center">Title</th>
+        <th class="col-md-5 text-center">Price</th>
+    </tr>
+    <?php foreach ($products as $product) : ?>
+        <tr>
+            <td class="text-center">
+                <?= $product->id; ?>
+            </td>
+            <td class="text-center">
+                <?= $product->translation->title; ?>
+            </td>
+            <td class="text-center">
+                <?= $product->price; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
 
-        /*ACTIONS*/
-        [
-            'headerOptions' => ['class' => 'text-center col-md-2'],
-            'attribute' => \Yii::t('shop', 'Delete'),
 
-            'value' => function ($model) {
-
-                return Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['remove', 'id' => $model->id]),
-                    ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right pjax']);
-
-            },
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'col-md-2 text-center'],
-        ],
-    ],
-]); ?>
 
 <!--GET ORDER-->
 <?php $form = ActiveForm::begin([
@@ -61,6 +53,39 @@ use yii\helpers\Url;
 
 <?php $form::end(); ?>
 
-<?php else : ?>
-<?php Alert::widget();?>
-<?php endif; ?>
+
+
+
+
+<?php //if (!empty($dataProvider) && !empty($searchModel)) : ?>
+<?//= GridView::widget([
+//    'dataProvider' => $dataProvider,
+//    'filterModel' => $searchModel,
+//    'columns' => [
+//        ['class' => 'yii\grid\SerialColumn'],
+//
+//        [
+//            'label' => 'title',
+//            'format' => 'raw',
+//            'value' => function ($model) {
+//                return Html::a($model->product->translation->title, Url::to(['/shop/' . $model->product->category->translation->seoUrl . '/' . $model->product->translation->seoUrl]));
+//            }
+//        ],
+//        'count',
+//
+//        /*ACTIONS*/
+//        [
+//            'headerOptions' => ['class' => 'text-center col-md-2'],
+//            'attribute' => \Yii::t('shop', 'Delete'),
+//
+//            'value' => function ($model) {
+//
+//                return Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['remove', 'id' => $model->id]),
+//                    ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right pjax']);
+//
+//            },
+//            'format' => 'raw',
+//            'contentOptions' => ['class' => 'col-md-2 text-center'],
+//        ],
+//    ],
+//]); ?>

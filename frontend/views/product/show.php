@@ -105,7 +105,7 @@ use yii\widgets\Breadcrumbs;
                     'class' => 'form-control',
                     'id' => 'count'
                 ])->label(Yii::t('frontend/shop/product', 'Количество')) ?>
-                <input type="hidden" name="product_id" value="<?= $product->id;?>">
+                <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id]); ?>
             </div>
             <?php if (!empty($product->prices[0]->price)) : ?>
                 <div class="product-price pull-right">
