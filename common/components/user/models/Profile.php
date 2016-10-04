@@ -84,4 +84,5 @@ class Profile extends BaseProfile
     {
         return $this->hasMany(UserAddress::className(), ['user_profile_id' => 'id']);
     }
+
 }
