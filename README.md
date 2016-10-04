@@ -5,6 +5,11 @@
 - php yii migrate --migrationPath=@vendor/black-lamp/blcms-shop/migrations
 ```
 
+For cart module:
+```php
+- php yii migrate --migrationPath=@vendor/black-lamp/blcms-cart/migrations
+```
+
 **Configuration for Imagable module:**
 ```php
 use bl\cms\shop\backend\components\CreateImageImagine;
