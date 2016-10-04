@@ -7,6 +7,7 @@ namespace bl\cms\shop\frontend\controllers;
 use bl\cms\cart\models\CartForm;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
+use bl\cms\shop\common\components\user\models\Profile;
 use bl\cms\shop\common\components\user\models\UserAddress;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\frontend\models\Cart;
@@ -73,8 +74,13 @@ class CartController extends Controller
                         }
                     }
 
+                    $profile = Profile::find()->where(['user_id' => \Yii::$app->user->id])->one();
+
+
                     return $this->render('show', [
                         'order' => new Order(),
+                        'profile' => $profile,
+                        'user' => \Yii::$app->user->identity,
                         'address' => new UserAddress(),
                         'products' => $products,
                     ]);

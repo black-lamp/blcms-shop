@@ -106,7 +106,16 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($order, 'first_name')->textInput()->label(\Yii::t('shop', 'First name')); ?>
+            <?= $form->field($profile, 'name')->textInput()->label(\Yii::t('shop', 'First name')); ?>
+        <?php endif; ?>
+
+        <!--Patronomic-->
+        <?php if (!empty(Yii::$app->user->identity->profile->surname)) : ?>
+            <p>
+                <b><?=Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
+            </p>
+        <?php else : ?>
+            <?= $form->field($profile, 'patronymic')->textInput()->label(\Yii::t('shop', 'Last name')); ?>
         <?php endif; ?>
 
         <!--Surname-->
@@ -115,7 +124,7 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($order, 'last_name')->textInput()->label(\Yii::t('shop', 'Last name')); ?>
+            <?= $form->field($profile, 'surname')->textInput()->label(\Yii::t('shop', 'Last name')); ?>
         <?php endif; ?>
 
         <!--Email-->
@@ -124,7 +133,7 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($order, 'email')->textInput()->label(\Yii::t('shop', 'E-mail')); ?>
+            <?= $form->field($user, 'email')->textInput()->label(\Yii::t('shop', 'E-mail')); ?>
         <?php endif; ?>
 
         <!--Phone-->
@@ -133,7 +142,7 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'Phone') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($order, 'phone')->textInput()->label(\Yii::t('shop', 'Phone')); ?>
+            <?= $form->field($profile, 'phone')->textInput()->label(\Yii::t('shop', 'Phone')); ?>
         <?php endif; ?>
 
         <!--Address-->
