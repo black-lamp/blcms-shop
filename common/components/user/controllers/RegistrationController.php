@@ -121,9 +121,6 @@ class RegistrationController extends Controller
         $model = \Yii::createObject(RegistrationForm::className());
         $event = $this->getFormEvent($model);
 
-        /** @var Profile $profile */
-        $profile = \Yii::createObject(Profile::className());
-
 
         $this->trigger(self::EVENT_BEFORE_REGISTER, $event);
 
@@ -131,11 +128,11 @@ class RegistrationController extends Controller
 
         if ($model->load(\Yii::$app->request->post()) && $model->register()) {
 
+            $newUser = User::find()->where(['username' => $model->username])->one();
+            $profile = Profile::find()->where(['user_id' => $newUser->id])->one();
             if ($profile->load(\Yii::$app->request->post())) {
                 if ($profile->validate()) {
 
-                    $newUser = User::find()->where(['username' => $model->username])->one();
-                    $profile->user_id = $newUser->id;
                     $profile->save();
 
                     $this->trigger(self::EVENT_AFTER_REGISTER, $event);
@@ -151,6 +148,9 @@ class RegistrationController extends Controller
 
 
         }
+
+        /** @var Profile $profile */
+        $profile = \Yii::createObject(Profile::className());
 
         return $this->render('register', [
             'model'  => $model,
