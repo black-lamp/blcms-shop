@@ -35,9 +35,9 @@ class UserAddress extends ActiveRecord
     public function rules()
     {
         return [
-            [['country', 'region', 'city', 'house', 'zipcode'], 'required'],
+            [['country', 'region', 'city', 'street', 'house', 'zipcode'], 'required'],
             [['user_profile_id', 'zipcode'], 'integer'],
-            [['country', 'region', 'city', 'house'], 'string', 'max' => 255],
+            [['country', 'region', 'city', 'street', 'house'], 'string', 'max' => 255],
             [['apartment'], 'string', 'max' => 11],
             [['user_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::className(), 'targetAttribute' => ['user_profile_id' => 'id']],
         ];
