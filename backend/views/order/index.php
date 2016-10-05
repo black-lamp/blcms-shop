@@ -43,21 +43,20 @@ use yii\helpers\Url;
             [
                 'headerOptions' => ['class' => 'text-center col-md-3'],
                 'value' => function ($model) {
-                    $content = null;
-                    if (!empty($model->first_name) || !empty($model->last_name)) {
-                        $content = Html::a(
-                            $model->first_name . ' ' . $model->last_name,
+
+                    $customer = null;
+                    if (!empty($model->user->profile->name) || !empty($model->user->profile->surname)) {
+                        $customer = Html::a(
+                            $model->user->profile->name . ' ' . $model->user->profile->surname,
                             Url::toRoute(['view', 'id' => $model->id])
                         );
                     }
-                    return $content;
+                    return $customer;
                 },
                 'label' => Yii::t('shop', 'Customer'),
                 'format' => 'html',
                 'contentOptions' => ['class' => 'text-center project-title col-md-3'],
             ],
-
-            'email:email',
 
             [
                 'headerOptions' => ['class' => 'text-center col-md-3'],

@@ -113,16 +113,16 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($profile, 'name')->textInput()->label(\Yii::t('shop', 'First name')); ?>
+            <?= $form->field($profile, 'name')->textInput(); ?>
         <?php endif; ?>
 
         <!--Patronomic-->
-        <?php if (!empty(Yii::$app->user->identity->profile->surname)) : ?>
+        <?php if (!empty(Yii::$app->user->identity->profile->patronymic)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
+                <b><?=Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->patronymic; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($profile, 'patronymic')->textInput()->label(\Yii::t('shop', 'Last name')); ?>
+            <?= $form->field($profile, 'patronymic')->textInput(); ?>
         <?php endif; ?>
 
         <!--Surname-->
@@ -131,7 +131,7 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($profile, 'surname')->textInput()->label(\Yii::t('shop', 'Last name')); ?>
+            <?= $form->field($profile, 'surname')->textInput(); ?>
         <?php endif; ?>
 
         <!--Email-->
@@ -140,23 +140,23 @@ use yii\helpers\Url;
                 <b><?=Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($user, 'email')->textInput()->label(\Yii::t('shop', 'E-mail')); ?>
+            <?= $form->field($user, 'email')->textInput(); ?>
         <?php endif; ?>
 
         <!--Phone-->
         <?php if (!empty(Yii::$app->user->identity->profile->phone)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Phone') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
+                <b><?=Yii::t('shop', 'Phone number') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
             </p>
         <?php else : ?>
-            <?= $form->field($profile, 'phone')->textInput()->label(\Yii::t('shop', 'Phone')); ?>
+            <?= $form->field($profile, 'phone')->textInput(); ?>
         <?php endif; ?>
 
         <!--Address selecting-->
         <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
             <?= $form->field($order, 'address_id')
                 ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', 'country'),
-                    ['prompt' => \Yii::t('shop', 'Select address or enter it at the next fields')]); ?>
+                    ['prompt' => \Yii::t('shop', 'Select address')])->label(\Yii::t('shop', 'Select address or enter it at the next fields')); ?>
         <?php endif; ?>
 
         <!--Address-->
