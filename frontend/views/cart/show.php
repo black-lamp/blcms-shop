@@ -1,9 +1,16 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $order \bl\cms\cart\models\Order
+ * @var $profile \bl\cms\shop\common\components\user\models\Profile
+ * @var $user \bl\cms\shop\common\components\user\models\User
+ * @var $address \bl\cms\shop\common\components\user\models\UserAddress
+ * @var $products \bl\cms\shop\common\entities\Product
  */
 
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -145,11 +152,21 @@ use yii\helpers\Url;
             <?= $form->field($profile, 'phone')->textInput()->label(\Yii::t('shop', 'Phone')); ?>
         <?php endif; ?>
 
+        <!--Address selecting-->
+        <?php $userAddresses =\bl\cms\shop\common\components\user\models\UserAddress::find()
+            ->where(['user_profile_id' => \Yii::$app->user->identity->profile->id])->all(); ?>
+
+        <?php if (!empty($userAddresses)) : ?>
+            <?= $form->field($order, 'address_id')
+                ->dropDownList(ArrayHelper::map($userAddresses, 'id', 'country')) ; ?>
+        <?php endif; ?>
+
         <!--Address-->
         <h4><?= \Yii::t('shop', 'Address'); ?></h4>
         <?= $form->field($address, 'country')->textInput(); ?>
         <?= $form->field($address, 'region')->textInput(); ?>
         <?= $form->field($address, 'city')->textInput(); ?>
+        <?= $form->field($address, 'street')->textInput(); ?>
         <?= $form->field($address, 'house')->textInput(); ?>
         <?= $form->field($address, 'apartment')->textInput(); ?>
         <?= $form->field($address, 'zipcode')->textInput(); ?>
