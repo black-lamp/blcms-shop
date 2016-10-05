@@ -28,7 +28,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td><?=$address->id; ?></td>
                         <td>
                             <p><?= "$address->zipcode $address->country, $address->region, $address->city "; ?></p>
-                            <p><em><?= "$address->street, $address->house - $address->apartment"; ?></em></p>
+                            <p><em><?= \Yii::t('shop', 'street') . " $address->street, $address->house" .
+                                    " - $address->apartment"; ?></em></p>
                         </td>
                         <td>
                             <?= Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete-address', 'id' => $address->id]),

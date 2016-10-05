@@ -153,12 +153,10 @@ use yii\helpers\Url;
         <?php endif; ?>
 
         <!--Address selecting-->
-        <?php $userAddresses =\bl\cms\shop\common\components\user\models\UserAddress::find()
-            ->where(['user_profile_id' => \Yii::$app->user->identity->profile->id])->all(); ?>
-
-        <?php if (!empty($userAddresses)) : ?>
+        <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
             <?= $form->field($order, 'address_id')
-                ->dropDownList(ArrayHelper::map($userAddresses, 'id', 'country')) ; ?>
+                ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', 'country'),
+                    ['prompt' => \Yii::t('shop', 'Select address or enter it at the next fields')]); ?>
         <?php endif; ?>
 
         <!--Address-->
