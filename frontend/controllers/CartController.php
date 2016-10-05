@@ -89,7 +89,6 @@ class CartController extends Controller
         }
 
         else {
-            Yii::$app->session->setFlash('error', \Yii::t('shop', 'You did not add to cart no one product.'));
             return $this->render('show');
         }
 

@@ -17,10 +17,13 @@ use yii\helpers\Url;
 ?>
 
 <div class="content">
-
+    <h1><?=\Yii::t('shop', 'Cart'); ?></h1>
 
     <!--PRODUCTS TABLE-->
-    <?php if (!empty($products)) : ?>
+    <?php if (empty($products)) : ?>
+        <p><?=\Yii::t('shop', 'Your cart is empty.'); ?></p>
+        <?= Html::a(\Yii::t('shop', 'Go to shop'), Url::toRoute('/shop'), ['class' => 'btn btn-primary']); ?>
+    <?php else : ?>
         <div>
             <?= Html::a(\Yii::t('shop', 'Clear cart'), Url::toRoute('/shop/cart/clear'), ['class' => 'btn btn-primary']); ?>
         </div>
@@ -110,7 +113,7 @@ use yii\helpers\Url;
         <!--Name-->
         <?php if (!empty(Yii::$app->user->identity->profile->name)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
+                <b><?= Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
             </p>
         <?php else : ?>
             <?= $form->field($profile, 'name')->textInput(); ?>
@@ -119,7 +122,7 @@ use yii\helpers\Url;
         <!--Patronomic-->
         <?php if (!empty(Yii::$app->user->identity->profile->patronymic)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->patronymic; ?>
+                <b><?= Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->patronymic; ?>
             </p>
         <?php else : ?>
             <?= $form->field($profile, 'patronymic')->textInput(); ?>
@@ -128,7 +131,7 @@ use yii\helpers\Url;
         <!--Surname-->
         <?php if (!empty(Yii::$app->user->identity->profile->surname)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
+                <b><?= Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
             </p>
         <?php else : ?>
             <?= $form->field($profile, 'surname')->textInput(); ?>
@@ -137,7 +140,7 @@ use yii\helpers\Url;
         <!--Email-->
         <?php if (!empty(Yii::$app->user->identity->email)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
+                <b><?= Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
             </p>
         <?php else : ?>
             <?= $form->field($user, 'email')->textInput(); ?>
@@ -146,7 +149,7 @@ use yii\helpers\Url;
         <!--Phone-->
         <?php if (!empty(Yii::$app->user->identity->profile->phone)) : ?>
             <p>
-                <b><?=Yii::t('shop', 'Phone number') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
+                <b><?= Yii::t('shop', 'Phone number') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
             </p>
         <?php else : ?>
             <?= $form->field($profile, 'phone')->textInput(); ?>

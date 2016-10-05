@@ -38,17 +38,13 @@ use yii\widgets\DetailView;
         <h2>
             <?= Yii::t('shop', 'Order details'); ?>
         </h2>
-        <?= DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'first_name',
-                'last_name',
-                'email:email',
-                'phone',
-                'address',
-                'status',
-            ],
-        ]); ?>
+
+        <p><b><?= \Yii::t('shop', 'Customer name'); ?>:</b> <?=$model->user->profile->name; ?></p>
+        <p><b><?= \Yii::t('shop', 'Surname'); ?>:</b> <?=$model->user->profile->surname; ?></p>
+        <p><b><?= \Yii::t('shop', 'Patronymic'); ?>:</b> <?=$model->user->profile->patronymic; ?></p>
+        <p><b><?= \Yii::t('shop', 'Phone number'); ?>:</b> <?=$model->user->profile->phone; ?></p>
+
+
     </div>
 
     <!--PRODUCT LIST-->
