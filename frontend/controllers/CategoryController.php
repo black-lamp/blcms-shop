@@ -59,12 +59,14 @@ class CategoryController extends Controller
 
         $filters = (!empty($category->id)) ? Filter::find()->where(['category_id' => $category->id])->all() :
             null;
+        $cart = new CartForm();
+
         return $this->render('show', [
             'category' => $category,
             'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
             'filters' => $filters,
             'products' => Product::find()->all(),
-            'cart' => new CartForm(),
+            'cart' => $cart,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
