@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
+use bl\cms\cart\models\CartForm;
 use bl\cms\seo\StaticPageBehavior;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Filter;
@@ -63,7 +64,7 @@ class CategoryController extends Controller
             'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
             'filters' => $filters,
             'products' => Product::find()->all(),
-
+            'cart' => new CartForm(),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
