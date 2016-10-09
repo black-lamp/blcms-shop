@@ -62,10 +62,6 @@ $shop = (!empty($category->translation->title)) ?
 
 <!--PRODUCTS-->
 <div class="col-md-<?= (!empty($category)) ? '9' : '12'; ?>">
-    <?php $addToCart = ActiveForm::begin([
-        'method' => 'post',
-        'action' => '/shop/cart/add',
-    ]); ?>
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'options' => [
@@ -88,7 +84,6 @@ $shop = (!empty($category->translation->title)) ?
         'itemView' => '_product'
     ]); ?>
     <?php
-    ActiveForm::end();
     ?>
 </div>
 
