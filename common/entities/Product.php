@@ -26,6 +26,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $update_time
  * @property integer $status
  * @property integer $owner
+ * @property integer $availability
  *
  * @property OrderProduct[] $orderProducts
  * @property Param[] $shopParams
@@ -35,6 +36,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property ProductImage[] $ProductImages
  * @property ProductPrice[] $productPrices
  * @property ProductVideo[] $productVideos
+ * @property ProductAvailability $productAvailability
  */
 class Product extends ActiveRecord
 {
@@ -71,6 +73,8 @@ class Product extends ActiveRecord
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
+            [['availability'], 'exist', 'skipOnError' => true, 'targetClass' => ProductAvailability::className(), 'targetAttribute' => ['availability' => 'id']],
+
         ];
     }
 
@@ -114,6 +118,7 @@ class Product extends ActiveRecord
             'update_time' => Yii::t('shop', 'Update Time'),
             'owner' => Yii::t('shop', 'Owner'),
             'status' => Yii::t('shop', 'Status'),
+            'availability' => Yii::t('shop', 'Availability'),
         ];
     }
 
@@ -177,38 +182,6 @@ class Product extends ActiveRecord
         return $this->hasOne(ProductImage::className(), ['product_id' => 'id']);
     }
 
-//    public function getBigImage() {
-//        $image = $this->image;
-//        $imageUrl = (!empty($image)) ?  '/images/' . ProductImage::$imageCategory . '/' . $image->file_name . '-big' . ProductImage::$image_extension :
-//            false;
-//        return $imageUrl;
-//    }
-//
-//    public function getThumbImage() {
-//        $image = $this->image;
-//        $imageUrl = (!empty($image)) ?
-//            '/images/' . ProductImage::$imageCategory . '/' . $image->file_name . '-thumb' . ProductImage::$image_extension :
-//            false;
-//        return $imageUrl;
-//    }
-//
-//    public function getSmallImage() {
-//        $image = $this->image;
-//        $imageUrl = (!empty($image)) ?
-//            '/images/' . ProductImage::$imageCategory . '/' . $image->file_name . '-small' . ProductImage::$image_extension :
-//            false;
-//
-//        return $imageUrl;
-//    }
-//
-//    public function getOriginalImage() {
-//        $image = $this->images[0];
-//        $imageUrl = (!empty($image)) ?
-//            '/images/' . ProductImage::$imageCategory . '/' . $image->file_name . '-original' . ProductImage::$image_extension :
-//            false;
-//        return $imageUrl;
-//    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -226,4 +199,11 @@ class Product extends ActiveRecord
         return $fileName;
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductAvailability()
+    {
+        return $this->hasOne(ProductAvailability::className(), ['id' => 'availability']);
+    }
 }
