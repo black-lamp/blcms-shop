@@ -25,12 +25,12 @@ $this->title = 'Countries list';
                     <?php if (!empty($countries)): ?>
                         <thead>
                         <tr>
-                            <th class="col-lg-7"><?= 'Title' ?></th>
+                            <th class="col-lg-7"><?= \Yii::t('shop', 'Title'); ?></th>
                             <?php if(count($languages) > 1): ?>
-                                <th class="col-lg-3"><?= 'Language' ?></th>
+                                <th class="col-lg-3"><?= \Yii::t('shop', 'Language'); ?></th>
                             <?php endif; ?>
-                            <th class="col-lg-1">Edit</th>
-                            <th class="col-lg-1">Delete</th>
+                            <th class="col-lg-1"><?= \Yii::t('shop', 'Edit'); ?></th>
+                            <th class="col-lg-1"><?= \Yii::t('shop', 'Delete'); ?></th>
                         </tr>
                         </thead>
                         <tbody>
