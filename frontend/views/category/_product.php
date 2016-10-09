@@ -5,9 +5,23 @@
  * @var $model \bl\cms\shop\common\entities\Product
  */
 
+use bl\cms\cart\models\CartForm;
 use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+
+$form = ActiveForm::begin([
+    'method' => 'post',
+    'action' => ['/shop/cart/add'],
+    'options' => [
+        '_fields' => [
+            'class' => 'col-md-4'
+        ]
+    ]
+]);
+$cart = new CartForm();
+
 
 $link = Url::toRoute(['/shop/product/show', 'id' => $model->id]);
 
@@ -42,19 +56,22 @@ $articulus = (!empty($model->articulus)) ?
     '';
 
 $price = (!empty($model->prices)) ?
-    Html::dropDownList('price_id', '', ArrayHelper::map($model->prices, 'id', function ($model) {
+    $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-4']])->dropDownList(ArrayHelper::map($model->prices, 'id', function ($model) {
         $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->price);
         return $priceItem;
-    })) :
-    \Yii::$app->formatter->asCurrency($model->price);
-
-
+    }))->label(\Yii::t('shop', 'Price')) : \Yii::$app->formatter->asCurrency($model->price);
+$count = $form->field($cart, 'count', ['options' => ['class' => 'col-md-4']])->
+    textInput(['type' => 'number', 'min' => 1, 'value' => 1])->label(\Yii::t('shop', 'Count'));
+$productId = $form->field($cart, 'productId')->hiddenInput(['value' => $model->id])->label(false);
 $submitButton = Html::submitButton(Yii::t('shop', 'Add to cart'),
     ['class' => 'btn btn-tight btn-primary']);
 
 $availability = (!empty($model->productAvailability)) ?
-    Html::tag('div', $model->productAvailability->translation->title) : '';
+    Html::tag('div', $model->productAvailability->translation->title, ['class' => 'col-md-12']) : '';
 
 
 echo Html::tag('div', $image, ['class' => 'col-md-3']) .
-    Html::tag('div', $title . $description . $articulus . $price . $submitButton . $availability, ['class' => 'col-md-9']);
+    Html::tag('div', $title . $description . $articulus . $price . $count . $productId . $submitButton . $availability, ['class' => 'col-md-9']);
+
+$form::end();
+
