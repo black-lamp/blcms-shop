@@ -18,6 +18,10 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $thumbnail
  * @property string $menu_item
  *
+ * @property CategoryTranslation[] $categoryTranslations
+ * @property Filter[] $filters
+ * @property Product[] $products
+ *
  * @method PositionBehavior moveNext
  * @method PositionBehavior movePrev
  */
@@ -89,6 +93,14 @@ class Category extends ActiveRecord
     public function getProducts()
     {
         return $this->hasMany(Product::className(), ['category_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFilters()
+    {
+        return $this->hasMany(Filter::className(), ['category_id' => 'id']);
     }
 
     /**
