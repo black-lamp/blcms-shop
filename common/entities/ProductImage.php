@@ -61,27 +61,27 @@ class ProductImage extends ActiveRecord
             $dir = Yii::getAlias('@frontend/web');
 
             if (!empty($file_name)) {
-                unlink($dir . $this->getBig($file_name));
-                unlink($dir . $this->getThumb($file_name));
-                unlink($dir . $this->getSmall($file_name));
+                unlink($dir . $this->getBig());
+                unlink($dir . $this->getThumb());
+                unlink($dir . $this->getSmall());
             }
 
         }
     }
 
-    public static function getBig($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-big' . self::$image_extension);
+    public function getBig() {
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big' . self::$image_extension);
     }
 
-    public static function getThumb($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-thumb' . self::$image_extension);
+    public function getThumb() {
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb' . self::$image_extension);
     }
 
-    public static function getSmall($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-small' . self::$image_extension);
+    public function getSmall() {
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small' . self::$image_extension);
     }
 
-    public static function getOriginal($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-original' . self::$image_extension);
+    public function getOriginal() {
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original' . self::$image_extension);
     }
 }
