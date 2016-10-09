@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <table class="table table-hover">
                 <tr>
                     <th class="col-md-1">#</th>
-                    <th class="col-md-11"><?= \Yii::t('shop', 'Addresses'); ?></th>
+                    <th class="col-md-9"><?= \Yii::t('shop', 'Addresses'); ?></th>
                     <th class="col-md-2"><?= \Yii::t('shop', 'Manage');?></th>
                 </tr>
                 <?php foreach ($addresses as $address) : ?>
