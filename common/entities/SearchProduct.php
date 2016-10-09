@@ -10,7 +10,7 @@ use bl\cms\shop\common\entities\Product;
 /**
  * ProductSearch represents the model behind the search form about `bl\cms\shop\common\entities\Product`.
  */
-class ProductSearch extends Product
+class SearchProduct extends Product
 {
 
     public $title;
@@ -52,9 +52,9 @@ class ProductSearch extends Product
         $this->load($params);
 
         $query->andFilterWhere([
-                    'shop_product.category_id' => $this->category,
-                ])->andFilterWhere(['like', 'shop_product_translation.title', $this->title
-                ])->andFilterWhere(['shop_product.status' => $this->status]);
+            'shop_product.category_id' => $this->category,
+        ])->andFilterWhere(['like', 'shop_product_translation.title', $this->title
+        ])->andFilterWhere(['shop_product.status' => $this->status]);
 
 
         $dataProvider = new ActiveDataProvider([
@@ -65,8 +65,6 @@ class ProductSearch extends Product
 
             return $dataProvider;
         }
-
-
 
         return $dataProvider;
     }

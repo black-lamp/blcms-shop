@@ -20,8 +20,8 @@ use yii\db\ActiveRecord;
 class ProductImage extends ActiveRecord
 {
 
-    private static $imageCategory = 'shop-product';
-    private static $image_extension = '.jpg';
+    public static $imageCategory = 'shop-product';
+    public static $image_extension = '.jpg';
 
     /**
      * @inheritdoc

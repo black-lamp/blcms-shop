@@ -11,7 +11,7 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
-use bl\cms\shop\common\entities\ProductSearch;
+use bl\cms\shop\common\entities\SearchProduct;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
@@ -29,7 +29,7 @@ class ProductController extends Controller
 {
     public function actionIndex()
     {
-        $searchModel = new ProductSearch();
+        $searchModel = new SearchProduct();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
