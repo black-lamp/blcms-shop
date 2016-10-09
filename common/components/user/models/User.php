@@ -6,7 +6,6 @@
 namespace bl\cms\shop\common\components\user\models;
 
 use dektrium\user\models\User as BaseModel;
-use bl\cms\shop\common\components\user\models\Profile as OverridedProfile;
 
 class User extends BaseModel
 {
