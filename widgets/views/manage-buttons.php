@@ -13,20 +13,20 @@ $item = $model;
 
 echo
     Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete', 'id' => $GLOBALS['item']->id]),
-        ['title' => Yii::t('yii', 'Delete'), 'class' => 'text-danger btn btn-default']) .
+        ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right btn-xs']) .
 
     Html::tag('div',
         Html::a(
-            'Edit',
+            Html::tag('span', ' ' . \Yii::t('shop', 'Edit'),['class' => 'glyphicon glyphicon-pencil']),
             Url::toRoute(['save', 'categoryId' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
-                'class' => 'col-md-8 btn btn-default ',
+                'class' => 'btn btn-primary btn-xs',
             ]) .
         Html::a(
             '<span class="caret"></span>',
             Url::toRoute(['save', 'categoryId' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
-                'class' => 'block col-md-4 btn btn-default dropdown-toggle',
+                'class' => 'btn btn-primary btn-xs dropdown-toggle',
                 'type' => 'button', 'id' => 'dropdownMenu1',
                 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true',
                 'aria-expanded' => 'true'
@@ -43,5 +43,5 @@ echo
                 },
                 'class' => 'dropdown-menu', 'aria-labelledby' => 'dropdownMenu1']),
 
-        ['class' => 'btn-group pull-left']
+        ['class' => 'btn-group pull-right m-r-xs']
     );
