@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\models\OrderProduct;
 use bl\multilang\behaviors\TranslationBehavior;
+use dektrium\user\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -66,14 +67,14 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus', 'owner', 'status'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'articulus', 'owner', 'status', 'owner'], 'integer'],
             [['price'], 'double'],
             [['creation_time', 'update_time'], 'safe'],
-            [['owner'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
             [['availability'], 'exist', 'skipOnError' => true, 'targetClass' => ProductAvailability::className(), 'targetAttribute' => ['availability' => 'id']],
+            [['owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['owner' => 'id']],
 
         ];
     }
