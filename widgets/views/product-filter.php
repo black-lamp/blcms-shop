@@ -10,7 +10,7 @@
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\frontend\components\ProductSearch;
-use bl\cms\shop\frontend\components\widgets\assets\ProductFilterAsset;
+use bl\cms\shop\widgets\assets\ProductFilterAsset;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
