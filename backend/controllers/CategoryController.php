@@ -18,12 +18,14 @@ use yii\web\UploadedFile;
  * CategoryController implements the CRUD actions for Category model.
  * @author Albert Gainutdinov
  */
-
 class CategoryController extends Controller
 {
 
     /**
      * Lists all Category models.
+     *
+     * @return mixed
+     * @throws ForbiddenHttpException
      */
     public function actionIndex()
     {
@@ -40,7 +42,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
-
+    /**
+     * @param integer $languageId
+     * @param integer $categoryId
+     *
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionSave($languageId = null, $categoryId = null) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -102,6 +110,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Deletes one category by id
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDelete($id) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -111,6 +126,14 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Basic category settings
+     *
+     * @param integer $languageId
+     * @param integer $categoryId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddBasic($languageId = null, $categoryId = null) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -169,6 +192,14 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Adds category images
+     *
+     * @param integer $languageId
+     * @param integer $categoryId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddImages($categoryId, $languageId) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -224,6 +255,14 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Adds category SEO data
+     *
+     * @param integer $languageId
+     * @param integer $categoryId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddSeo($languageId = null, $categoryId = null) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -274,7 +313,15 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
-    public function actionDeleteImage($id, $imageType, $languageId) {
+    /**
+     * Deletes one image from category
+     *
+     * @param integer $id
+     * @param string $imageType
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionDeleteImage($id, $imageType) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
             if (!empty($id) && !empty($imageType)) {
@@ -292,7 +339,16 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
-
+    /**
+     * Selects product filters for category
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @param integer $categoryId
+     * @return mixed
+     * @throws Exception
+     * @throws ForbiddenHttpException
+     */
     public function actionSelectFilters($id = null, $languageId = null, $categoryId = null) {
 
         if (\Yii::$app->user->can('viewCompleteProductList')) {
@@ -334,6 +390,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Deletes product filter from category
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDeleteFilter($id) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -347,6 +410,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Changes category position to up
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionUp($id) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -359,6 +429,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Changes category position to down
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDown($id) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
@@ -371,6 +448,13 @@ class CategoryController extends Controller
         else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Shows or hides category
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionSwitchShow($id) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
