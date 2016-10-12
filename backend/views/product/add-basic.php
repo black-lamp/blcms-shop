@@ -1,6 +1,10 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $product \bl\cms\shop\common\entities\Product
+ * @var $products_translation \bl\cms\shop\common\entities\Product
+ * @var $selectedLanguage \bl\multilang\entities\Language
  */
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\ProductCountryTranslation;
@@ -13,8 +17,14 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<?php $form = ActiveForm::begin(['method' => 'post', 'options' => ['class' => 'tab-content']]); ?>
-
+<?php $form = ActiveForm::begin([
+    'method' => 'post',
+    'action' => [
+        'product/add-basic',
+        'productId' => $product->id,
+        'languageId' => $selectedLanguage->id
+    ]]);
+?>
 <!--BASIC-->
 <div id="basic">
 

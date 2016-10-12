@@ -81,34 +81,63 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
 
         <!--BODY PANEL-->
         <div class="panel-body">
+            <!--MODERATION-->
+            <?php if (Yii::$app->user->can('moderateProductCreation') && $product->status == Product::STATUS_ON_MODERATION) : ?>
+                <h2><?= \Yii::t('shop', 'Moderation'); ?></h2>
+                <p><?= \Yii::t('shop', 'This product status is "on moderation". You may accept or decline it.'); ?></p>
+                <?= Html::a(\Yii::t('shop', 'Accept'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_SUCCESS]), ['class' => 'btn btn-primary btn-xs']); ?>
+                <?= Html::a(\Yii::t('shop', 'Decline'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_DECLINED]), ['class' => 'btn btn-danger btn-xs']); ?>
+            <?php endif; ?>
 
-<!--            --><?// Pjax::begin([
-//                'linkSelector' => '.image',
-//                'enablePushState' => true,
-//                'timeout' => 10000
-//            ]);
-//            ?>
+            <ul class="nav nav-tabs">
+                <li class="<?= Yii::$app->controller->action->id == 'add-basic' || Yii::$app->controller->action->id == 'save' ? 'tab active' : 'tab'; ?>">
+                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                        [
+                            'aria-expanded' => 'true'
+                        ]); ?>
+                </li>
 
-            <ul class="tabs">
-                <li class="<?= Yii::$app->controller->action->id == 'add-basic' ? 'active' : '';?>">
-                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-image' ? 'active' : ''; ?>">
+                    <?=
+                    ($product->isNewRecord) ?
+                        '<a>' . \Yii::t('shop', 'Photo') . '</a>' :
+                        Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                            [
+                                'aria-expanded' => 'true'
+                            ]); ?>
                 </li>
-                <li class="<?= Yii::$app->controller->action->id == 'add-image' ? 'active' : '';?>">
-                    <?= Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-video' ? 'tab active' : 'tab'; ?>">
+                    <?=
+                    ($product->isNewRecord) ?
+                        '<a>' . \Yii::t('shop', 'Video') . '</a>' :
+
+                        Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                            [
+                                'aria-expanded' => 'true'
+                            ]); ?>
                 </li>
-                <li class="<?= Yii::$app->controller->action->id == 'add-video' ? 'active' : '';?>">
-                    <?= Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-price' ? 'tab active' : 'tab'; ?>">
+                    <?=
+                    ($product->isNewRecord) ?
+                        '<a>' . \Yii::t('shop', 'Prices') . '</a>' :
+                        Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                            [
+                                'aria-expanded' => 'true'
+                            ]); ?>
                 </li>
-                <li class="<?= Yii::$app->controller->action->id == 'add-price' ? 'active' : '';?>">
-                    <?= Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
-                </li>
-                <li class="<?= Yii::$app->controller->action->id == 'add-param' ? 'active' : '';?>">
-                    <?= Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]), ['class' => 'tab']); ?>
+                <li class="<?= Yii::$app->controller->action->id == 'add-param' ? 'tab active' : 'tab'; ?>">
+                    <?=
+                    ($product->isNewRecord) ?
+                        '<a>' . \Yii::t('shop', 'Params') . '</a>' :
+                        Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                            [
+                                'aria-expanded' => 'true'
+                            ]); ?>
                 </li>
             </ul>
-            <?= $this->render($viewName, $params); ?>
-<!--            --><?// Pjax::end(); ?>
 
+            <!--CONTENT-->
+            <?= $this->render($viewName, $params); ?>
         </div>
     </div>
 </div>

@@ -3,6 +3,7 @@ use bl\cms\shop\backend\assets\ProductAsset;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -186,37 +187,7 @@ ProductAsset::register($this);
                     'attribute' => \Yii::t('shop', 'Manage'),
 
                     'value' => function ($model) {
-                        global $products;
-                        $products = $model;
-
-                        $languages = Language::findAll(['active' => true]);
-                        $list =
-                            Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['remove', 'id' => $GLOBALS['products']->id]),
-                                ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right btn-xs pjax']) .
-                            Html::tag('div',
-                                Html::button(
-                                    Language::getCurrent()->name . Html::tag('span', '', ['class' => 'caret']),
-                                    [
-                                        'class' => 'btn btn-warning btn-xs dropdown-toggle',
-                                        'type' => 'button', 'id' => 'dropdownMenu1',
-                                        'data-toggle' => 'dropdown', 'aria-haspopup' => 'true',
-                                        'aria-expanded' => 'true'
-                                    ]) .
-                                Html::ul(
-                                    ArrayHelper::map($languages, 'id', 'name'),
-                                    [
-                                        'item' => function ($item, $index) {
-                                            return Html::tag('li',
-                                                Html::a($item, Url::toRoute(['save', 'productId' => $GLOBALS['products']->id, "languageId" => $index]), []),
-                                                []
-                                            );
-                                        },
-                                        'class' => 'dropdown-menu', 'aria-labelledby' => 'dropdownMenu1']),
-
-                                ['class' => 'dropdown pull-right']
-                            );
-
-                        return $list;
+                        return ManageButtons::widget(['model' => $model]);
                     },
                     'format' => 'raw',
                     'contentOptions' => ['class' => 'col-md-2 text-center'],

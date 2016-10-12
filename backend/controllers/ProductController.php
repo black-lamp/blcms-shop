@@ -96,11 +96,11 @@ class ProductController extends Controller
         ]);
     }
 
-    public function actionRemove($id)
+    public function actionDelete($id)
     {
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
             Product::deleteAll(['id' => $id]);
-            return $this->actionIndex();
+            return $this->redirect('index');
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
     }
 
