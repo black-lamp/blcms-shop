@@ -29,17 +29,20 @@ class ProductController extends Controller
 {
     public function actionIndex()
     {
-        $searchModel = new SearchProduct();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (\Yii::$app->user->can('viewCompleteProductList')) {
+            $searchModel = new SearchProduct();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
+            $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
 
-        return $this->render('index', [
-            'notModeratedProductsCount' => $notModeratedProductsCount,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'languages' => Language::findAll(['active' => true])
-        ]);
+            return $this->render('index', [
+                'notModeratedProductsCount' => $notModeratedProductsCount,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'languages' => Language::findAll(['active' => true])
+            ]);
+        }
+        else throw new ForbiddenHttpException();
     }
 
     public function actionSave($languageId = null, $productId = null)
