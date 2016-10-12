@@ -7,6 +7,8 @@ use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\frontend\components\ProductSearch;
 use Yii;
+use yii\base\Exception;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 
 /**
@@ -71,5 +73,22 @@ class CategoryController extends Controller
             'dataProvider' => $dataProvider,
         ]);
         
+    }
+
+    public function actionGetCategories($parentId = null, $level) {
+        if (\Yii::$app->request->isAjax) {
+
+            if (!empty($level)) {
+                $categories = Category::find()->where(['parent_id' => $parentId])->all();
+
+                return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/categories-ajax', [
+                    'categories' => $categories,
+                    'level' => $level
+                ]);
+            }
+
+            else throw new Exception();
+        }
+        else throw new BadRequestHttpException();
     }
 }
