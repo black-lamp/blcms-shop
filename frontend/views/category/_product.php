@@ -37,7 +37,7 @@ $image = (!empty($model->image)) ?
 $title = (!empty($model->translation->title)) ?
     Html::a(
         Html::tag(
-            'h4',
+            'h3',
             Html::encode($model->translation->title),
             ['class' => 'media-heading']),
         $link, ['class' => 'text-center']) : '';

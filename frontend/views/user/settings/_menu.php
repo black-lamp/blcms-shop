@@ -14,27 +14,36 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
 
 ?>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
-            <?= $user->profile->name ? $user->profile->name . ' ' . $user->profile->surname : $user->username ?>
-        </h3>
-    </div>
-    <div class="panel-body">
-        <?= Menu::widget([
-            'options' => [
-                'class' => 'nav nav-pills nav-stacked',
-            ],
-            'items' => [
-                ['label' => Yii::t('shop', 'Profile'), 'url' => ['/user/settings/profile']],
-                ['label' => Yii::t('shop', 'Addresses'), 'url' => ['/user/settings/addresses']],
-                ['label' => Yii::t('shop', 'Account'), 'url' => ['/user/settings/account']],
-                [
-                    'label' => Yii::t('user', 'Networks'),
-                    'url' => ['/user/settings/networks'],
-                    'visible' => $networksVisible
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <?= $user->profile->name ? $user->profile->name . ' ' . $user->profile->surname : $user->username ?>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <?= Menu::widget([
+                'options' => [
+                    'class' => 'nav nav-pills nav-stacked',
                 ],
-            ],
-        ]) ?>
+                'items' => [
+                    ['label' => Yii::t('shop', 'Profile'), 'url' => ['/user/settings/profile']],
+                    ['label' => Yii::t('shop', 'Addresses'), 'url' => ['/user/settings/addresses']],
+                    ['label' => Yii::t('shop', 'Account'), 'url' => ['/user/settings/account']],
+                    [
+                        'label' => Yii::t('user', 'Networks'),
+                        'url' => ['/user/settings/networks'],
+                        'visible' => $networksVisible
+                    ],
+                ],
+            ]) ?>
+        </div>
     </div>
-</div>
+<?= Html::beginForm(['/site/logout'], 'post')
+
+. Html::submitButton(
+    Html::tag('i', '', ['class' => 'fa fa-sign-out'])
+    . \Yii::t('menu', 'Logout'),
+    ['class' => 'btn btn-link']
+)
+. Html::endForm();
+?>
