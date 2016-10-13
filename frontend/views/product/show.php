@@ -90,7 +90,7 @@ use yii\widgets\Breadcrumbs;
             <!-- PRICES -->
             <?php if (!empty($product->prices)) : ?>
 
-                <?= $form->field($cart, 'price_id')->radioList(ArrayHelper::map($product->prices, 'id', function($model) {
+                <?= $form->field($cart, 'priceId')->radioList(ArrayHelper::map($product->prices, 'id', function($model) {
                     return $model->translation->title . \Yii::$app->formatter->asCurrency($model->salePrice) . Html::tag('strike', \Yii::$app->formatter->asCurrency($model->price));
                 })); ?>
             <?php endif ?>

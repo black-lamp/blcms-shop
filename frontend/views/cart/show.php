@@ -20,7 +20,7 @@ use yii\helpers\Url;
     <h1><?=\Yii::t('shop', 'Cart'); ?></h1>
 
     <!--PRODUCTS TABLE-->
-    <?php if (empty($products)) : ?>
+    <?php if (empty($orderProducts)) : ?>
         <p><?=\Yii::t('shop', 'Your cart is empty.'); ?></p>
         <?= Html::a(\Yii::t('shop', 'Go to shop'), Url::toRoute('/shop'), ['class' => 'btn btn-primary']); ?>
     <?php else : ?>
@@ -34,19 +34,19 @@ use yii\helpers\Url;
                 <th class="col-md-3 text-center">Price</th>
                 <th class="col-md-2 text-center">Count</th>
             </tr>
-            <?php foreach ($products as $product) : ?>
+            <?php foreach ($orderProducts as $orderProduct) : ?>
                 <tr>
                     <td class="text-center">
-                        <?= $product->id; ?>
+                        <?= $orderProduct->product->id; ?>
                     </td>
                     <td class="text-center">
-                        <?= Html::a($product->translation->title, Url::to(['/shop/product/show', 'id' => $product->id])); ?>
+                        <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
                     </td>
                     <td class="text-center">
-                        <?= $product->price; ?>
+                        <?= $orderProduct->productPrice->salePrice; ?>
                     </td>
                     <td class="text-center">
-                        <?= $product->count; ?>
+                        <?= $orderProduct->count; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

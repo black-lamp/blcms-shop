@@ -64,16 +64,6 @@ class CartController extends Controller
                 if (!empty($order)) {
                     $orderProducts = OrderProduct::find()->where(['order_id' => $order->id])->all();
 
-                    $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($orderProducts, 'product_id')])->all();
-
-                    foreach ($products as $product) {
-                        foreach ($orderProducts as $item) {
-                            if ($item->product_id == $product->id) {
-                                $product->count = $item->count;
-                            }
-                        }
-                    }
-
                     $profile = Profile::find()->where(['user_id' => \Yii::$app->user->id])->one();
 
 
@@ -82,7 +72,7 @@ class CartController extends Controller
                         'profile' => $profile,
                         'user' => \Yii::$app->user->identity,
                         'address' => new UserAddress(),
-                        'products' => $products,
+                        'orderProducts' => $orderProducts,
                     ]);
                 }
             }

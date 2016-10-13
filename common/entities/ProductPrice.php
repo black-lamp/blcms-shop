@@ -1,11 +1,10 @@
 <?php
 namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
-use common\entities\Currency;
-use Yii;
 use yii\db\ActiveRecord;
 /**
  * This is the model class for table "shop_product_price".
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @property integer $id
  * @property integer $product_id
@@ -93,11 +92,13 @@ class ProductPrice extends ActiveRecord
     }
 
     public function getCurrencyPrice() {
-        return floor(Currency::currentCurrency() * $this->price);
+        $price = Currency::currentCurrency() * $this->price;
+        return floor($price);
     }
 
     public function getCurrencySalePrice() {
-        return floor(Currency::currentCurrency() * $this->getSalePrice());
+        $price = Currency::currentCurrency() * $this->salePrice;
+        return floor($price);
     }
 
     public function getSalePrice() {
