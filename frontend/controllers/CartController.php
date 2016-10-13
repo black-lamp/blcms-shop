@@ -10,6 +10,7 @@ use bl\cms\cart\models\OrderProduct;
 use bl\cms\shop\common\components\user\models\Profile;
 use bl\cms\shop\common\components\user\models\UserAddress;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\frontend\models\Cart;
 use bl\cms\shop\common\entities\Clients;
 use Exception;
@@ -45,18 +46,22 @@ class CartController extends Controller
 
         if (!empty($items)) {
             if (\Yii::$app->user->isGuest) {
+
                 $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($items, 'id')])->all();
 
                 foreach ($products as $product) {
                     foreach ($items as $item) {
                         if ($item['id'] == $product->id) {
                             $product->count = $item['count'];
+                            if (!empty($item['priceId'])) {
+                                $product->price = ProductPrice::findOne($item['priceId']);
+                            }
                         }
                     }
                 }
 
                 return $this->render('show', [
-                    'products' => $products,
+                    'productsFromSession' => $products,
                 ]);
             }
             else {
@@ -72,7 +77,7 @@ class CartController extends Controller
                         'profile' => $profile,
                         'user' => \Yii::$app->user->identity,
                         'address' => new UserAddress(),
-                        'orderProducts' => $orderProducts,
+                        'productsFromDB' => $orderProducts,
                     ]);
                 }
             }

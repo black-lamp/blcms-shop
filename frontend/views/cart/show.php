@@ -6,7 +6,8 @@
  * @var $profile \bl\cms\shop\common\components\user\models\Profile
  * @var $user \bl\cms\shop\common\components\user\models\User
  * @var $address \bl\cms\shop\common\components\user\models\UserAddress
- * @var $products \bl\cms\shop\common\entities\Product
+ * @var $productsFromDB \bl\cms\cart\models\OrderProduct
+ * @var $productsFromSession \bl\cms\shop\common\entities\Product
  */
 
 use yii\bootstrap\ActiveForm;
@@ -17,11 +18,11 @@ use yii\helpers\Url;
 ?>
 
 <div class="content">
-    <h1><?=\Yii::t('shop', 'Cart'); ?></h1>
+    <h1><?= \Yii::t('shop', 'Cart'); ?></h1>
 
     <!--PRODUCTS TABLE-->
-    <?php if (empty($orderProducts)) : ?>
-        <p><?=\Yii::t('shop', 'Your cart is empty.'); ?></p>
+    <?php if (empty($productsFromDB) && empty($productsFromSession)) : ?>
+        <p><?= \Yii::t('shop', 'Your cart is empty.'); ?></p>
         <?= Html::a(\Yii::t('shop', 'Go to shop'), Url::toRoute('/shop'), ['class' => 'btn btn-primary']); ?>
     <?php else : ?>
         <div>
@@ -34,27 +35,49 @@ use yii\helpers\Url;
                 <th class="col-md-3 text-center">Price</th>
                 <th class="col-md-2 text-center">Count</th>
             </tr>
-            <?php foreach ($orderProducts as $orderProduct) : ?>
-                <tr>
-                    <td class="text-center">
-                        <?= $orderProduct->product->id; ?>
-                    </td>
-                    <td class="text-center">
-                        <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
-                    </td>
-                    <td class="text-center">
-                        <?= $orderProduct->productPrice->salePrice; ?>
-                    </td>
-                    <td class="text-center">
-                        <?= $orderProduct->count; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+
+            <!--PRODUCT LIST FROM DATABASE-->
+            <?php if (!empty($productsFromDB)) : ?>
+                <?php foreach ($productsFromDB as $orderProduct) : ?>
+                    <tr>
+                        <td class="text-center">
+                            <?= $orderProduct->product->id; ?>
+                        </td>
+                        <td class="text-center">
+                            <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $orderProduct->productPrice->salePrice; ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $orderProduct->count; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+
+            <!--PRODUCT LIST FROM SESSION-->
+            <?php elseif (!empty($productsFromSession)) : ?>
+                <?php foreach ($productsFromSession as $product) : ?>
+                    <tr>
+                        <td class="text-center">
+                            <?= $product->id; ?>
+                        </td>
+                        <td class="text-center">
+                            <?= Html::a($product->translation->title, Url::to(['/shop/product/show', 'id' => $product->id])); ?>
+                        </td>
+                        <td class="text-center">
+                            <?= (!empty($product->price->price)) ? $product->price->salePrice : $product->price; ?>
+                        </td>
+                        <td class="text-center">
+                            <?= $product->count; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </table>
 
         <?php if (\Yii::$app->user->isGuest) : ?>
             <!--MODAL WINDOWS-->
-
 
             <!--REGISTRATION-->
             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#registerModal">
