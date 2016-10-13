@@ -137,6 +137,22 @@ use bl\cms\shop\backend\components\CreateImageImagine;
         ...
     ],
     
+    'components' => [
+        ...
+        'urlManager' => [
+            ...
+            'rules' => [
+                ...
+                [
+                    'class' => bl\cms\shop\UrlRule::className(),
+                    'prefix' => 'shop'
+                ]
+            ],
+            ...
+        ],
+        ...
+    ]
+
     'bootstrap' => [
         'bl\cms\shop\frontend\components\events\PartnersEvents'
     ],
