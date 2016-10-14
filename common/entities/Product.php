@@ -9,6 +9,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\Url;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
@@ -207,4 +208,13 @@ class Product extends ActiveRecord
     {
         return $this->hasOne(ProductAvailability::className(), ['id' => 'availability']);
     }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return Url::to(['shop/product/show', 'id' => $this->id]);
+    }
+
 }
