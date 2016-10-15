@@ -163,6 +163,7 @@ class Category extends ActiveRecord
      */
     public function getUrl()
     {
-        return Url::to(['shop/category/show', 'id' => $this->id]);
+        $url = '/' . Yii::$app->controller->module->id . '/category/show';
+        return Url::to([$url, 'id' => $this->id]);
     }
 }

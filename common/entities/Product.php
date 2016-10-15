@@ -214,7 +214,7 @@ class Product extends ActiveRecord
      */
     public function getUrl()
     {
-        return Url::to(['shop/product/show', 'id' => $this->id]);
+        $url = '/' . Yii::$app->controller->module->id . '/product/show';
+        return Url::to([$url, 'id' => $this->id]);
     }
-
 }

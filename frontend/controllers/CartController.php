@@ -159,24 +159,4 @@ class CartController extends Controller
             'cart' => $cart
         ]);
     }
-
-
-    public function actionCartDelete($count = null) {
-        if(!empty($count)) {
-            $session = Yii::$app->session;
-            $products = $session->get('cart');
-            unset($products[$count - 1]);
-            $session->set('cart', $products);
-            if(!empty($products)) {
-                return $this->redirect(['/shop/cart']);
-            }
-            else {
-                return $this->redirect(['/shop']);
-            }
-        }
-    }
-
-    public function actionOrderSuccess() {
-        return $this->render('order-success');
-    }
 }
