@@ -21,8 +21,11 @@ div#widget-menu ul[data-level="1"] > li > a {
     height: 40px;
     line-height: 40px;
 }
-div#widget-menu ul li a:hover {
+div#widget-menu ul li a:hover, div#widget-menu ul li.current a {
     background-color: #e1f5fe;
+}
+div#widget-menu ul li.current a {
+    border-left: 3px solid #4285f4;
 }
 div#widget-menu ul li a span {
     color: #142d3a;
@@ -40,14 +43,22 @@ div#widget-menu ul li i.category-toggle {
     top: 0;
     right: 10px;
 }
+div#widget-menu ul li i.category-toggle:hover {
+    right: 8px;
+    color: #4285f4;
+    transition: 0.15s;
+}
+
 div#widget-menu ul[data-level="1"] > li > a + i.category-toggle {
     font-size: 16px;
     line-height: 40px;
 }
-
-div#widget-menu ul li i.category-toggle.fa-toggle-down {
-    cursor: s-resize;
+div#widget-menu ul[data-level="1"] > li > a + i.category-toggle:hover {
+    font-size: 21px;
+    line-height: 40px;
+    transition: .15s;
 }
-div#widget-menu ul li i.category-toggle.fa-toggle-up {
-    cursor: n-resize;
+
+div#widget-menu ul li i.category-toggle.fa-toggle-down, div#widget-menu ul li i.category-toggle.fa-toggle-up {
+    cursor: pointer;
 }

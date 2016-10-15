@@ -75,7 +75,7 @@ class CategoryController extends Controller
         
     }
 
-    public function actionGetCategories($parentId = null, $level) {
+    public function actionGetCategories($parentId = null, $level, $currentCategoryId) {
         if (\Yii::$app->request->isAjax) {
 
             if (!empty($level)) {
@@ -83,7 +83,8 @@ class CategoryController extends Controller
 
                 return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/categories-ajax', [
                     'categories' => $categories,
-                    'level' => $level
+                    'level' => $level,
+                    'currentCategoryId' => $currentCategoryId,
                 ]);
             }
 
