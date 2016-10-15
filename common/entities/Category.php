@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
@@ -157,4 +158,11 @@ class Category extends ActiveRecord
         return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-original' . self::$image_extension);
     }
 
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return Url::to(['shop/category/show', 'id' => $this->id]);
+    }
 }
