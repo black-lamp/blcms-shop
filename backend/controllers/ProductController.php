@@ -45,7 +45,7 @@ class ProductController extends Controller
         else throw new ForbiddenHttpException();
     }
 
-    public function actionSave($languageId = null, $productId = null)
+    public function actionSave($id = null, $languageId = null)
     {
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
@@ -55,13 +55,13 @@ class ProductController extends Controller
             $selectedLanguage = Language::getCurrent();
         }
 
-        if (!empty($productId)) {
+        if (!empty($id)) {
 
-            $product = Product::findOne($productId);
+            $product = Product::findOne($id);
 
             if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
                 $products_translation = ProductTranslation::find()->where([
-                    'product_id' => $productId,
+                    'product_id' => $id,
                     'language_id' => $languageId
                 ])->one();
                 if (empty($products_translation)) {

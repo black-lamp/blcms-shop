@@ -18,13 +18,13 @@ echo
     Html::tag('div',
         Html::a(
             Html::tag('span', ' ' . \Yii::t('shop', 'Edit'),['class' => 'glyphicon glyphicon-pencil']),
-            Url::toRoute(['save', 'categoryId' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
+            Url::toRoute(['save', 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
                 'class' => 'btn btn-primary btn-xs',
             ]) .
         Html::a(
             '<span class="caret"></span>',
-            Url::toRoute(['save', 'categoryId' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
+            Url::toRoute(['save', 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
                 'class' => 'btn btn-primary btn-xs dropdown-toggle',
                 'type' => 'button', 'id' => 'dropdownMenu1',

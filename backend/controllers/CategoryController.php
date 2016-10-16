@@ -44,18 +44,18 @@ class CategoryController extends Controller
 
     /**
      * @param integer $languageId
-     * @param integer $categoryId
+     * @param integer $id
      *
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionSave($languageId = null, $categoryId = null) {
+    public function actionSave($id = null, $languageId = null) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
-            if (!empty($categoryId)) {
-                $category = Category::findOne($categoryId);
+            if (!empty($id)) {
+                $category = Category::findOne($id);
                 $category_translation = CategoryTranslation::find()->where([
-                    'category_id' => $categoryId,
+                    'category_id' => $id,
                     'language_id' => $languageId
                 ])->one();
                 if (empty($category_translation)) $category_translation = new CategoryTranslation();
