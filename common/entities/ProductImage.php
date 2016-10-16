@@ -67,15 +67,15 @@ class ProductImage extends ActiveRecord
         return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big' . self::$image_extension);
     }
 
-    public function getThumb($file_name) {
+    public function getThumb() {
         return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb' . self::$image_extension);
     }
 
-    public function getSmall($file_name) {
+    public function getSmall() {
         return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small' . self::$image_extension);
     }
 
-    public function getOriginal($file_name) {
+    public function getOriginal() {
         return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original' . self::$image_extension);
     }
 }
