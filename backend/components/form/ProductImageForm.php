@@ -3,6 +3,7 @@
 namespace bl\cms\shop\backend\components\form;
 use bl\cms\shop\common\entities\Product;
 use Yii;
+use yii\base\Exception;
 use yii\base\Model;
 use yii\web\UploadedFile;
 use bl\imagable\Imagable;
@@ -20,6 +21,8 @@ class ProductImageForm extends Model
     public $link;
     public $alt;
 
+    public $extension = '.jpg';
+
     public function rules()
     {
         return [
@@ -31,33 +34,41 @@ class ProductImageForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $dir = Yii::getAlias('@frontend/web/images/');
-
             $imagable = \Yii::$app->shop_imagable;
-            $imagable->imagesPath = $dir;
+            $dir = $imagable->imagesPath . '/shop-product/';
 
             /** @var Imagable $this */
             if (!empty($this->image)) {
-                $this->image->saveAs($dir . $this->image->baseName . '.jpg');
-                $image_name = $imagable->create('shop-product', Yii::getAlias('@frontend/web/images/') . $this->image->baseName . '.jpg');
 
-                unlink($dir . $this->image->baseName . '.jpg');
-                return $image_name;
+                if (!file_exists($dir)) mkdir($dir);
+
+                $newFile = $dir . $this->image->baseName . $this->extension;
+                if ($this->image->saveAs($newFile)) {
+                    $image_name = $imagable->create('shop-product', $newFile);
+                    unlink($newFile);
+                    return $image_name;
+                }
+                else throw new Exception('Image saving failed.');
+
             }
         }
         return false;
     }
 
     public function copy($link) {
-        $dir = Yii::getAlias('@frontend/web/images/');
+
         $imagable = \Yii::$app->shop_imagable;
-        $imagable->imagesPath = $dir;
+        $dir = $imagable->imagesPath . '/shop-product/';
+
         if (exif_imagetype($link) == IMAGETYPE_JPEG || exif_imagetype($link) == IMAGETYPE_PNG) {
+
             if (!empty($link)) {
                 
                 $baseName = Product::generateImageName($link);
 
-                $newFile = Yii::getAlias('@frontend/web/images/shop-product/') . $baseName . '.jpg';
+                if (!file_exists($dir)) mkdir($dir);
+
+                $newFile = $dir . $baseName . $this->extension;
                 if (copy($link, $newFile)) {
                     $image_name = $imagable->create('shop-product', $newFile);
                     unlink($newFile);

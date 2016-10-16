@@ -55,7 +55,7 @@ use yii\widgets\ActiveForm;
                     </td>
                     <td class="text-center col-md-4">
                         <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-product/menu_item/' . $image->file_name . '-big.jpg'; ?>">
+                               value="<?= '/images/shop-product/' . $image->file_name . '-big.jpg'; ?>">
                     </td>
                     <td class="text-center col-md-4">
                         <?= $image->alt; ?>
