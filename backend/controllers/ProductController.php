@@ -341,11 +341,15 @@ class ProductController extends Controller
                 if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
                     $product_image = new ProductImage();
                     $product_image->removeImage($id);
-                    return $this->renderPartial('add-image', [
-                        'selectedLanguage' => Language::findOne($languageId),
-                        'product' => $product,
-                        'image_form' => new ProductImageForm()
-                    ]);
+
+                    if (\Yii::$app->request->isPjax) {
+                        return $this->renderPartial('add-image', [
+                            'selectedLanguage' => Language::findOne($languageId),
+                            'product' => $product,
+                            'image_form' => new ProductImageForm()
+                        ]);
+                    }
+                    else return $this->redirect(\Yii::$app->request->referrer);
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
         }

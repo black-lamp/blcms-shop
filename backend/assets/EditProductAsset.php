@@ -15,7 +15,6 @@ class EditProductAsset extends AssetBundle
     ];
 
     public $js = [
-        'js/tabs.js',
         'js/title-generation.js'
     ];
 
