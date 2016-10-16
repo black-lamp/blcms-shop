@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  * @property string $house
  * @property string $apartment
  * @property integer $zipcode
+ * @property integer $postoffice
  *
  * @property Profile $userProfile
  */
@@ -35,7 +36,7 @@ class UserAddress extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_profile_id', 'zipcode'], 'integer'],
+            [['user_profile_id', 'zipcode', 'postoffice'], 'integer'],
             [['country', 'region', 'city', 'street', 'house'], 'string', 'max' => 255],
             [['apartment'], 'string', 'max' => 11],
             [['user_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::className(), 'targetAttribute' => ['user_profile_id' => 'id']],
@@ -54,6 +55,7 @@ class UserAddress extends ActiveRecord
             'house' => Yii::t('shop', 'House'),
             'apartment' => Yii::t('shop', 'Apartment'),
             'zipcode' => Yii::t('shop', 'Zip-Code'),
+            'post-office' => Yii::t('shop', 'Post office')
         ];
     }
 
