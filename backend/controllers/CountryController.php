@@ -23,16 +23,16 @@ class CountryController extends Controller
         ]);
     }
     
-    public function actionSave($countryId = null, $languageId = null) {
+    public function actionSave($id = null, $languageId = null) {
 
         $selectedLanguage = Language::findOne($languageId);
 
-        if (!empty($countryId)) {
+        if (!empty($id)) {
             $country = ProductCountry::find()->where([
-                'id' => $countryId
+                'id' => $id
             ])->one();
             $countryTranslation = ProductCountryTranslation::find()->where([
-                'country_id' => $countryId,
+                'country_id' => $id,
                 'language_id' => $languageId
             ])->one();
             if (empty($countryTranslation)) {

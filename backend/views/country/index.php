@@ -5,8 +5,8 @@
  * @var $countries ProductCountry
  */
 use bl\cms\shop\common\entities\ProductCountry;
+use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 $this->title = 'Countries list';
@@ -25,50 +25,22 @@ $this->title = 'Countries list';
                     <?php if (!empty($countries)): ?>
                         <thead>
                         <tr>
-                            <th class="col-lg-7"><?= \Yii::t('shop', 'Title'); ?></th>
-                            <?php if (count($languages) > 1): ?>
-                                <th class="col-lg-3"><?= \Yii::t('shop', 'Language'); ?></th>
-                            <?php endif; ?>
-                            <th class="col-lg-1"><?= \Yii::t('shop', 'Edit'); ?></th>
-                            <th class="col-lg-1"><?= \Yii::t('shop', 'Delete'); ?></th>
+                            <th class="col-md-2"><?= \Yii::t('shop', 'Id'); ?></th>
+                            <th class="col-md-8"><?= \Yii::t('shop', 'Title'); ?></th>
+                            <th class="col-md-2"><?= \Yii::t('shop', 'Manage'); ?></th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($countries as $country) : ?>
                             <tr>
                                 <td>
+                                    <?= $country->id; ?>
+                                </td>
+                                <td>
                                     <?= $country->translation->title; ?>
                                 </td>
                                 <td>
-                                    <?php if (count($languages) > 1): ?>
-                                        <?php $translations = ArrayHelper::index($country->translations, 'language_id') ?>
-                                        <?php foreach ($languages as $language): ?>
-                                            <a href="<?= Url::to([
-                                                'save',
-                                                'countryId' => $country->id,
-                                                'languageId' => $language->id
-                                            ]) ?>"
-                                               type="button"
-                                               class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
-                                               ?> btn-xs"><?= $language->name ?></a>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a href="<?= Url::to([
-                                        'save',
-                                        'countryId' => $country->id,
-                                        'languageId' => $country->translation->language_id
-                                    ]) ?>" class="glyphicon glyphicon-edit text-warning btn btn-default btn-sm">
-                                    </a>
-                                </td>
-
-                                <td>
-                                    <a href="<?= Url::to([
-                                        'remove',
-                                        'id' => $country->id
-                                    ]) ?>" class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm">
-                                    </a>
+                                    <?= ManageButtons::widget(['model' => $country]); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
