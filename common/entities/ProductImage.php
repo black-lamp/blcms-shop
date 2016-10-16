@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 
 use Yii;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
 
 /**
@@ -53,35 +54,28 @@ class ProductImage extends ActiveRecord
 
     public function removeImage($id) {
         if(!empty($id)) {
-
             $image = ProductImage::findOne($id);
-            $image->delete();
-            $file_name = $image->file_name;
 
-            $dir = Yii::getAlias('@frontend/web');
-
-            if (!empty($file_name)) {
-                unlink($dir . $this->getBig($file_name));
-                unlink($dir . $this->getThumb($file_name));
-                unlink($dir . $this->getSmall($file_name));
+            if (\Yii::$app->shop_imagable->delete('shop-product', $image->file_name)) {
+                $image->delete();
             }
-
+            else throw new Exception('Files does not exist');
         }
     }
 
-    public function getBig($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-big' . self::$image_extension);
+    public function getBig() {
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big' . self::$image_extension);
     }
 
     public function getThumb($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-thumb' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb' . self::$image_extension);
     }
 
     public function getSmall($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-small' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small' . self::$image_extension);
     }
 
     public function getOriginal($file_name) {
-        return ('/images/' . self::$imageCategory . '/' . $file_name . '-original' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original' . self::$image_extension);
     }
 }
