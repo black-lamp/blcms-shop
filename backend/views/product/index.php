@@ -96,7 +96,7 @@ ProductAsset::register($this);
                     'value' => function ($model) {
                         $content = Html::a(
                             $model->translation->title,
-                            Url::toRoute(['save', 'productId' => $model->id, 'languageId' => Language::getCurrent()->id])
+                            Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
                         );
                         $content .= '<br><small>' . Yii::t('shop', 'Created') . ' ' . $model->creation_time . '</small>';
                         return $content;

@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if (!empty($model->translation->title)) {
                             $content = Html::a(
                                 $model->translation->title,
-                                Url::toRoute(['save', 'categoryId' => $model->id, 'languageId' => Language::getCurrent()->id])
+                                Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
                             );
                         }
                         return $content;
