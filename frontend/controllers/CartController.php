@@ -53,9 +53,7 @@ class CartController extends Controller
                     foreach ($items as $item) {
                         if ($item['id'] == $product->id) {
                             $product->count = $item['count'];
-                            if (!empty($item['priceId'])) {
-                                $product->price = ProductPrice::findOne($item['priceId']);
-                            }
+                            $product->price = (!empty($item['priceId'])) ? ProductPrice::findOne($item['priceId'])->salePrice : $product->price;
                         }
                     }
                 }

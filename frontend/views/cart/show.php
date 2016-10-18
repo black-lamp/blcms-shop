@@ -47,7 +47,9 @@ use yii\helpers\Url;
                             <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
                         </td>
                         <td class="text-center">
-                            <?= $orderProduct->productPrice->salePrice; ?>
+                            <?php if (!empty($orderProduct->price)) : ?>
+                                <?= $orderProduct->price; ?>
+                            <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?= $orderProduct->count; ?>
@@ -55,7 +57,7 @@ use yii\helpers\Url;
                     </tr>
                 <?php endforeach; ?>
 
-            <!--PRODUCT LIST FROM SESSION-->
+                <!--PRODUCT LIST FROM SESSION-->
             <?php elseif (!empty($productsFromSession)) : ?>
                 <?php foreach ($productsFromSession as $product) : ?>
                     <tr>
@@ -66,7 +68,9 @@ use yii\helpers\Url;
                             <?= Html::a($product->translation->title, Url::to(['/shop/product/show', 'id' => $product->id])); ?>
                         </td>
                         <td class="text-center">
-                            <?= (!empty($product->price->price)) ? $product->price->salePrice : $product->price; ?>
+                            <?php if (!empty($orderProduct->price)) : ?>
+                                <?= $product->price; ?>
+                            <?php endif; ?>
                         </td>
                         <td class="text-center">
                             <?= $product->count; ?>
