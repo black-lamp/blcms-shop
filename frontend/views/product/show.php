@@ -137,7 +137,10 @@ use yii\widgets\Breadcrumbs;
 <!--IMAGE-->
 <?php if (!empty($product->images)) : ?>
     <div class="col-md-6">
-        <?= Html::img(ProductImage::getThumb($product->images[0]->file_name)); ?>
+        <?= Html::img($product->image->small, [
+                'class' => 'media-object img-responsive',
+                'alt' => Html::encode($model->image->alt)
+            ]); ?>
     </div>
 <?php endif; ?>
 
