@@ -41,8 +41,7 @@ class ProductController extends Controller
                 'dataProvider' => $dataProvider,
                 'languages' => Language::findAll(['active' => true])
             ]);
-        }
-        else throw new ForbiddenHttpException();
+        } else throw new ForbiddenHttpException();
     }
 
     public function actionSave($id = null, $languageId = null)
@@ -288,24 +287,22 @@ class ProductController extends Controller
                 $image_form->load(Yii::$app->request->post());
                 $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
-                if (!empty($image_form->image) || !empty($image_form->link)) {
-                    if (!empty($image_form->image)) {
-                        $UploadedImageName = $image_form->upload();
-                        $image->file_name = $UploadedImageName;
-                        $image->alt = $image_form->alt;
-                        $image->product_id = $product->id;
-                        if ($image->validate()) {
-                            $image->save();
-                        }
+                if (!empty($image_form->image)) {
+                    $UploadedImageName = $image_form->upload();
+                    $image->file_name = $UploadedImageName;
+                    $image->alt = $image_form->alt2;
+                    $image->product_id = $product->id;
+                    if ($image->validate()) {
+                        $image->save();
                     }
-                    if (!empty($image_form->link)) {
-                        $image_name = $image_form->copy($image_form->link);
-                        $image->file_name = $image_name;
-                        $image->alt = $image_form->alt;
-                        $image->product_id = $product->id;
-                        if ($image->validate()) {
-                            $image->save();
-                        }
+                }
+                if (!empty($image_form->link)) {
+                    $image_name = $image_form->copy($image_form->link);
+                    $image->file_name = $image_name;
+                    $image->alt = $image_form->alt1;
+                    $image->product_id = $product->id;
+                    if ($image->validate()) {
+                        $image->save();
                     }
                 }
             }
@@ -348,12 +345,10 @@ class ProductController extends Controller
                             'product' => $product,
                             'image_form' => new ProductImageForm()
                         ]);
-                    }
-                    else return $this->redirect(\Yii::$app->request->referrer);
+                    } else return $this->redirect(\Yii::$app->request->referrer);
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
-        }
-        else throw new Exception();
+        } else throw new Exception();
 
     }
 
@@ -447,29 +442,29 @@ class ProductController extends Controller
 
     public function actionDeleteVideo($id, $languageId)
     {
-            if (!empty($id)) {
-                $video = ProductVideo::findOne($id);
-                $product = Product::findOne($video->product_id);
+        if (!empty($id)) {
+            $video = ProductVideo::findOne($id);
+            $product = Product::findOne($video->product_id);
 
-                if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
 
-                    if ($video->resource == 'videofile') {
-                        $dir = Yii::getAlias('@frontend/web/video');
-                        unlink($dir . '/' . $video->file_name);
-                    }
-                    ProductVideo::deleteAll(['id' => $id]);
+                if ($video->resource == 'videofile') {
+                    $dir = Yii::getAlias('@frontend/web/video');
+                    unlink($dir . '/' . $video->file_name);
+                }
+                ProductVideo::deleteAll(['id' => $id]);
 
-                    return $this->renderPartial('add-video', [
-                        'product' => $product,
-                        'selectedLanguage' => Language::findOne($languageId),
-                        'video_form' => new ProductVideo(),
-                        'video_form_upload' => new ProductVideoForm(),
-                        'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
-                    ]);
-                } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+                return $this->renderPartial('add-video', [
+                    'product' => $product,
+                    'selectedLanguage' => Language::findOne($languageId),
+                    'video_form' => new ProductVideo(),
+                    'video_form_upload' => new ProductVideoForm(),
+                    'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
+                ]);
+            } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
 
-            }
-            return false;
+        }
+        return false;
     }
 
     public function actionAddPrice($productId, $languageId)

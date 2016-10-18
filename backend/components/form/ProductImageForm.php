@@ -19,7 +19,8 @@ class ProductImageForm extends Model
      */
     public $image;
     public $link;
-    public $alt;
+    public $alt1;
+    public $alt2;
 
     public $extension = '.jpg';
 
@@ -27,7 +28,7 @@ class ProductImageForm extends Model
     {
         return [
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
-            [['link', 'alt'], 'string', 'skipOnEmpty' => true]
+            [['link', 'alt1', 'alt2'], 'string', 'skipOnEmpty' => true]
         ];
     }
 

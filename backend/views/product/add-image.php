@@ -98,7 +98,7 @@ use yii\widgets\ActiveForm;
                 ])->label(false); ?>
             </td>
             <td class="col-md-4">
-                <?= $addImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+                <?= $addImageForm->field($image_form, 'alt1')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -119,7 +119,7 @@ use yii\widgets\ActiveForm;
                 <?= $addImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
             </td>
             <td class="text-center col-md-4">
-                <?= $addImageForm->field($image_form, 'alt')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+                <?= $addImageForm->field($image_form, 'alt2')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
             </td>
             <td class="text-center col-md-2">
                 <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
