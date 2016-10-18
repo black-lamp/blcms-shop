@@ -138,7 +138,7 @@ ProductAsset::register($this);
                         foreach ($model->images as $image) {
                             if (!empty($image)) {
                                 if ($i < $number) {
-                                    $content .= Html::img('/images/shop-product/' . $image->file_name . '-small.jpg', ['class' => 'img-circle']);
+                                    $content .= Html::img($image->small, ['class' => 'img-circle']);
                                     $i++;
                                 }
                             }
