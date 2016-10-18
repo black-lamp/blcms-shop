@@ -77,7 +77,7 @@ class CategoryController extends Controller
                     if ($category_translation->validate()) {
                         $category_translation->save();
                         Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                        return $this->redirect(Url::to(['/shop/category/save', 'categoryId' => $category->id, 'languageId' => $category_translation->language_id]));
+                        return $this->redirect(Url::to(['/shop/category/save', 'id' => $category->id, 'languageId' => $category_translation->language_id]));
                     }
 
                 }
@@ -130,17 +130,17 @@ class CategoryController extends Controller
      * Basic category settings
      *
      * @param integer $languageId
-     * @param integer $categoryId
+     * @param integer $id
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddBasic($languageId = null, $categoryId = null) {
+    public function actionAddBasic($id = null, $languageId = null) {
         if (\Yii::$app->user->can('viewCompleteProductList')) {
 
-            if (!empty($categoryId)) {
-                $category = Category::findOne($categoryId);
+            if (!empty($id)) {
+                $category = Category::findOne($id);
                 $category_translation = CategoryTranslation::find()->where([
-                    'category_id' => $categoryId,
+                    'category_id' => $id,
                     'language_id' => $languageId
                 ])->one();
                 if (empty($category_translation)) $category_translation = new CategoryTranslation();
