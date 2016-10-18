@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $product_id
  * @property string $file_name
+ * @property string $extension
  * @property string $alt
  *
  * @property Product $product
@@ -22,7 +23,6 @@ class ProductImage extends ActiveRecord
 {
 
     public static $imageCategory = 'shop-product';
-    public static $image_extension = '.jpg';
 
     /**
      * @inheritdoc
@@ -39,7 +39,7 @@ class ProductImage extends ActiveRecord
     {
         return [
             [['product_id'], 'integer'],
-            [['file_name', 'alt'], 'string', 'max' => 255],
+            [['file_name', 'extension', 'alt'], 'string', 'max' => 255],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
@@ -64,18 +64,18 @@ class ProductImage extends ActiveRecord
     }
 
     public function getBig() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big.' . $this->extension);
     }
 
     public function getThumb() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb.' . $this->extension);
     }
 
     public function getSmall() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small.' . $this->extension);
     }
 
     public function getOriginal() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original.' . $this->extension);
     }
 }

@@ -5,6 +5,7 @@ use bl\cms\shop\common\entities\Product;
 use Yii;
 use yii\base\Exception;
 use yii\base\Model;
+use yii\helpers\BaseFileHelper;
 use yii\web\UploadedFile;
 use bl\imagable\Imagable;
 
@@ -38,16 +39,17 @@ class ProductImageForm extends Model
             $imagable = \Yii::$app->shop_imagable;
             $dir = $imagable->imagesPath . '/shop-product/';
 
-            /** @var Imagable $this */
             if (!empty($this->image)) {
+                if (!file_exists($dir)) BaseFileHelper::createDirectory($dir);
+                $newFile = $dir . $this->image->name;
 
-                if (!file_exists($dir)) mkdir($dir);
+                $extension = ($this->image->type == 'image/jpeg') ? 'jpg' : 'png';
 
-                $newFile = $dir . $this->image->baseName . $this->extension;
                 if ($this->image->saveAs($newFile)) {
                     $image_name = $imagable->create('shop-product', $newFile);
+
                     unlink($newFile);
-                    return $image_name;
+                    return ['imageName' => $image_name, 'imageExtension' => $extension];
                 }
                 else throw new Exception('Image saving failed.');
 

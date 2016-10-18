@@ -45,12 +45,12 @@ use yii\widgets\ActiveForm;
                 <tr>
                     <td class="text-center col-md-2">
                         <img data-toggle="modal" data-target="#menuItemModal-<?= $image->id ?>"
-                             src="/images/shop-product/<?= $image->file_name . '-small.jpg'; ?>"
+                             src="<?= $image->small; ?>"
                              class="thumb">
                         <!-- Modal -->
                         <div id="menuItemModal-<?= $image->id ?>" class="modal fade" role="dialog">
                             <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-product/<?= $image->file_name . '-thumb.jpg'; ?>">
+                                 src="/images/shop-product/<?= $image->thumb; ?>">
                         </div>
                     </td>
                     <td class="text-center col-md-4">

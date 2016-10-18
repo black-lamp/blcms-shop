@@ -281,17 +281,22 @@ class ProductController extends Controller
             $product = Product::findOne($productId);
             $image_form = new ProductImageForm();
             $image = new ProductImage();
-
+//die(var_dump(Yii::$app->request->post()));
             if (Yii::$app->request->isPost) {
 
                 $image_form->load(Yii::$app->request->post());
                 $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
                 if (!empty($image_form->image)) {
-                    $UploadedImageName = $image_form->upload();
-                    $image->file_name = $UploadedImageName;
+                    $uploadedImage = $image_form->upload();
+                    $uploadedImageName = $uploadedImage['imageName'];
+                    $uploadedImageExtension = $uploadedImage['imageExtension'];
+
+                    $image->file_name = $uploadedImageName;
                     $image->alt = $image_form->alt2;
                     $image->product_id = $product->id;
+                    $image->extension = $uploadedImageExtension;
+
                     if ($image->validate()) {
                         $image->save();
                     }
