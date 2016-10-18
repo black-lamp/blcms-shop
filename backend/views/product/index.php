@@ -158,7 +158,15 @@ ProductAsset::register($this);
                     'value' => function ($model) {
                         switch ($model->status) {
                             case Product::STATUS_ON_MODERATION:
-                                return Html::tag('p', \Yii::t('shop', 'On moderation'), ['class' => 'col-md-12 btn btn-warning btn-xs']);
+                                return
+                                    Html::button(
+                                        Yii::$app->user->can('moderateProductCreation') ?
+                                            Html::a(\Yii::t('shop', 'On moderation'),
+                                                Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id]),
+                                                ['class' => '']) :
+                                            Html::tag('span', \Yii::t('shop', 'On moderation')),
+                                        ['class' => 'col-md-12 btn btn-warning btn-xs']
+                                    );
                                 break;
                             case Product::STATUS_DECLINED:
                                 return Html::tag('p', \Yii::t('shop', 'Declined'), ['class' => 'col-md-12 btn btn-danger btn-xs']);
