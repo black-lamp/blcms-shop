@@ -9,7 +9,6 @@
  */
 use bl\cms\shop\widgets\TreeWidget;
 use yii\helpers\Url;
-
 ?>
 
 <?php if (!empty($categories)) : ?>
