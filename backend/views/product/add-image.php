@@ -54,8 +54,9 @@ use yii\widgets\ActiveForm;
                         </div>
                     </td>
                     <td class="text-center col-md-4">
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-product/' . $image->file_name . '-big.jpg'; ?>">
+                        <input type="text" class="form-control"
+                               value="<?= str_replace(Yii::$app->homeUrl, '', Url::home(true)) .
+                               $image->big; ?>">
                     </td>
                     <td class="text-center col-md-4">
                         <?= $image->alt; ?>
