@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Edit product';
 ?>
 
-<? $form = ActiveForm::begin(['method' => 'post']); ?>
+<?php $form = ActiveForm::begin(['method' => 'post']); ?>
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -35,16 +35,16 @@ $this->title = 'Edit product';
                     <?= 'Product' ?>
                 </div>
                 <div class="panel-body">
-                    <? if (count($languages) > 1): ?>
+                    <?php if (count($languages) > 1): ?>
                         <div class="dropdown">
                             <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <?= $selectedLanguage->name ?>
                                 <span class="caret"></span>
                             </button>
-                            <? if (count($languages) > 1): ?>
+                            <?php if (count($languages) > 1): ?>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <? foreach ($languages as $language): ?>
+                                    <?php foreach ($languages as $language): ?>
                                         <li>
                                             <a href="
                                             <?= Url::to([
@@ -55,11 +55,11 @@ $this->title = 'Edit product';
                                                 <?= $language->name ?>
                                             </a>
                                         </li>
-                                    <? endforeach; ?>
+                                    <?php endforeach; ?>
                                 </ul>
-                            <? endif; ?>
+                            <?php endif; ?>
                         </div>
-                    <? endif; ?>
+                    <?php endif; ?>
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group field-validarticleform-category_id required has-success">
@@ -144,9 +144,9 @@ $this->title = 'Edit product';
                         <div class="col-md-3 text-center">
                             <!--IMAGE-->
                             <h2>Image</h2>
-                            <? if(!empty($product->image_name)): ?>
+                            <?php if(!empty($product->image_name)): ?>
                                 <?= Html::img($product->getThumbImage()) ?>
-                            <? endif; ?>
+                            <?php endif; ?>
 
                             <?= $form->field($product, 'imageFile')->fileInput() ?>
 
@@ -259,7 +259,7 @@ $this->title = 'Edit product';
                     ])->textarea(['rows' => 3])->label('SEO keywords')
                     ?>
 
-                    <? if (!$product->isNewRecord): ?>
+                    <?php if (!$product->isNewRecord): ?>
                         <!--PARAMS-->
                         <hr>
                         <h2>Params</h2>
@@ -296,9 +296,9 @@ $this->title = 'Edit product';
                                                             <?= $param->translation->value ?>
                                                         </td>
                                                         <td class="text-center">
-                                                            <? if (count($languages) > 1): ?>
-                                                                <? $translations = ArrayHelper::index($param->translations, 'language_id') ?>
-                                                                <? foreach ($languages as $language): ?>
+                                                            <?php if (count($languages) > 1): ?>
+                                                                <?php $translations = ArrayHelper::index($param->translations, 'language_id') ?>
+                                                                <?php foreach ($languages as $language): ?>
                                                                     <a href="<?= Url::to([
                                                                         'add-param',
                                                                         'id' => $param->id,
@@ -307,8 +307,8 @@ $this->title = 'Edit product';
                                                                        type="button"
                                                                        class="btn btn-<?= !empty($translations[$language->id]) ? 'primary' : 'danger'
                                                                        ?> btn-xs"><?= $language->name ?></a>
-                                                                <? endforeach; ?>
-                                                            <? endif; ?>
+                                                                <?php endforeach; ?>
+                                                            <?php endif; ?>
                                                         </td>
                                                         <td class="text-center">
                                                             <a href="<?= Url::to([
@@ -329,7 +329,7 @@ $this->title = 'Edit product';
                                                 <?php endforeach; ?>
                                                 </tbody>
                                             </table>
-                                        <? endif; ?>
+                                        <?php endif; ?>
                                         <a href="<?= Url::to([
                                             'add-param',
                                             'productId' => $product->id,
@@ -340,17 +340,17 @@ $this->title = 'Edit product';
                                 </div>
                             </div>
                         </div>
-                    <? endif; ?>
+                    <?php endif; ?>
 
                     <input type="submit" class="btn btn-primary pull-right" value="<?= 'Save' ?>">
                 </div>
             </div>
         </div>
     </div>
-<? ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 <!--PRODUCT PRICES-->
-<? if (!$product->isNewRecord): ?>
+<?php if (!$product->isNewRecord): ?>
     <?= $this->render('/price/add', [
         'priceList' => $product->prices,
         'priceModel' => new ProductPrice(),
@@ -359,4 +359,4 @@ $this->title = 'Edit product';
         'languages' => $languages,
         'selectedLanguage' => $selectedLanguage
     ]) ?>
-<? endif; ?>
+<?php endif; ?>
