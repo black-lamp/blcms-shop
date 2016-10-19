@@ -281,7 +281,7 @@ class ProductController extends Controller
             $product = Product::findOne($productId);
             $image_form = new ProductImageForm();
             $image = new ProductImage();
-//die(var_dump(Yii::$app->request->post()));
+
             if (Yii::$app->request->isPost) {
 
                 $image_form->load(Yii::$app->request->post());

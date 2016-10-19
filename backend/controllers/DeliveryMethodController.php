@@ -5,11 +5,10 @@ use bl\cms\cart\models\DeliveryMethodTranslation;
 use bl\multilang\entities\Language;
 use Yii;
 use bl\cms\cart\models\DeliveryMethod;
-use yii\base\Exception;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * DeliveryMethodController implements the CRUD actions for DeliveryMethod model.
@@ -62,14 +61,24 @@ class DeliveryMethodController extends Controller
         else throw new BadRequestHttpException();
 
 
-        if ($modelTranslation->load(Yii::$app->request->post())) {
-            $model->save();
-            $modelTranslation->delivery_method_id = $model->id;
-            $modelTranslation->language_id = $languageId;
-            if ($modelTranslation->validate()) {
+        if ($model->load(Yii::$app->request->post()) && $modelTranslation->load(Yii::$app->request->post())) {
 
-                $modelTranslation->save();
-                return $this->redirect(['save', 'id' => $model->id, 'languageId' => $languageId]);
+            $model->logo = UploadedFile::getInstance($model, 'logo');
+            if (!empty($model->logo)) {
+
+                $uploadedImageName = $model->upload();
+
+                $model->image_name = $uploadedImageName;
+
+                $model->save(false);
+
+                $modelTranslation->delivery_method_id = $model->id;
+                $modelTranslation->language_id = $languageId;
+                if ($modelTranslation->validate()) {
+
+                    $modelTranslation->save();
+                    return $this->redirect(['save', 'id' => $model->id, 'languageId' => $languageId]);
+                }
             }
         }
         return $this->render('save', [

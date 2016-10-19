@@ -40,6 +40,7 @@ class PartnersController extends Controller
     /**
      * Lists all PartnerRequest models.
      * @return mixed
+     * @throws ForbiddenHttpException
      */
     public function actionIndex()
     {

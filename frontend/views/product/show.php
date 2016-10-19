@@ -3,9 +3,6 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
-use bl\cms\shop\common\entities\ProductImage;
-use bl\cms\shop\frontend\assets\ProductAsset;
-use bl\cms\shop\frontend\models\AddToCartModel;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;use yii\helpers\Html;
 use yii\helpers\Url;
@@ -131,49 +128,14 @@ use yii\widgets\Breadcrumbs;
         <?php endif ?>
     </div>
 
+        <!--IMAGE-->
+        <?php if (!empty($product->images)) : ?>
+            <div class="col-md-6">
+                <?= Html::img($product->image->small, [
+                    'class' => 'media-object img-responsive',
+                    'alt' => Html::encode($product->image->alt)
+                ]); ?>
+            </div>
+        <?php endif; ?>
 </div>
 
-
-<!--IMAGE-->
-<?php if (!empty($product->images)) : ?>
-    <div class="col-md-6">
-        <?= Html::img($product->image->small, [
-                'class' => 'media-object img-responsive',
-                'alt' => Html::encode($model->image->alt)
-            ]); ?>
-    </div>
-<?php endif; ?>
-
-
-<!--RECOMMENDED PRODUCTS-->
-<?php if (!empty($recommendedProducts)) : ?>
-    <div class="row products recommended">
-        <h4><?= Yii::t('frontend/shop/product', 'Рекомендуемые товары') ?></h4>
-        <?php foreach ($recommendedProducts as $recommendedProduct) : ?>
-            <div class="text-center product">
-                <a href="<?= Url::to(['product/show', 'id' => $recommendedProduct->id]) ?>">
-                    <div class="img">
-                        <?= Html::img($recommendedProduct->thumbImage) ?>
-                    </div>
-                    <div class="content">
-                        <div class="cell">
-                        <span class="title">
-                            <?= !empty($recommendedProduct->translation->anchor_name) ? $recommendedProduct->translation->anchor_name : $recommendedProduct->translation->title; ?>
-                        </span>
-                            <span class="price">
-                            <?php if (!empty($recommendedProduct->prices[0]->price)) : ?>
-                                <span class="new"><?= $recommendedProduct->prices[0]->currencySalePrice ?> грн.</span>
-                            <?php endif ?>
-
-                                <?php if (!empty($recommendedProduct->prices[0]->sale)) : ?>
-                                    <strike class="text-muted"><?= $recommendedProduct->prices[0]->currencyPrice ?>
-                                        грн.</strike>
-                                <?php endif ?>
-                        </span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
