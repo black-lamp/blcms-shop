@@ -16,7 +16,7 @@ use yii\widgets\Pjax;
 /* @var Language[] $languages */
 /* @var Language $selectedLanguage */
 ?>
-<? Pjax::begin([
+<?php Pjax::begin([
     'enablePushState' => false,
     'timeout' => 5000,
     'clientOptions' => [
@@ -32,15 +32,15 @@ use yii\widgets\Pjax;
                     <?= 'Product Prices' ?>
                 </div>
                 <div class="panel-body">
-                    <? if(count($languages) > 1): ?>
+                    <?php if(count($languages) > 1): ?>
                         <div class="dropdown">
                             <button class="btn btn-warning btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <?= $selectedLanguage->name ?>
                                 <span class="caret"></span>
                             </button>
-                            <? if(count($languages) > 1): ?>
+                            <?php if(count($languages) > 1): ?>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <? foreach($languages as $language): ?>
+                                    <?php foreach($languages as $language): ?>
                                         <li>
                                             <?= Html::a(
                                                 $language->name,
@@ -51,12 +51,12 @@ use yii\widgets\Pjax;
                                                 ]
                                             ) ?>
                                         </li>
-                                    <? endforeach; ?>
+                                    <?php endforeach; ?>
                                 </ul>
-                            <? endif; ?>
+                            <?php endif; ?>
                         </div>
-                    <? endif; ?>
-                    <? $priceForm = ActiveForm::begin([
+                    <?php endif; ?>
+                    <?php $priceForm = ActiveForm::begin([
                         'action' => [
                             'price/add',
                             'productId' => $product->id,
@@ -91,9 +91,9 @@ use yii\widgets\Pjax;
                             <?= Html::submitButton('Add', ['class' => 'btn btn-primary'])  ?>
                         </div>
                     </div>
-                    <? $priceForm->end() ?>
+                    <?php $priceForm->end() ?>
 
-                    <? if(!empty($priceList)): ?>
+                    <?php if(!empty($priceList)): ?>
                         <table class="table table-bordered">
                             <thead>
                             <tr>
@@ -105,11 +105,11 @@ use yii\widgets\Pjax;
                             </tr>
                             </thead>
                             <tbody>
-                            <? foreach($priceList as $price): ?>
+                            <?php foreach($priceList as $price): ?>
                                 <tr>
-                                    <? if(!empty($price->translation)): ?>
+                                    <?php if(!empty($price->translation)): ?>
                                         <td><?= $price->translation->title ?></td>
-                                    <? endif; ?>
+                                    <?php endif; ?>
                                     <td><?= $price->price ?></td>
                                     <td><?= $price->type->title ?></td>
                                     <td><?= $price->sale ?></td>
@@ -125,10 +125,10 @@ use yii\widgets\Pjax;
                                         ) ?>
                                     </td>
                                 </tr>
-                            <? endforeach; ?>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
-                    <? endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
