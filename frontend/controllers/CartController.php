@@ -4,7 +4,9 @@
  */
 
 namespace bl\cms\shop\frontend\controllers;
+
 use bl\cms\cart\models\CartForm;
+use bl\cms\cart\models\DeliveryMethod;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
 use bl\cms\shop\common\components\user\models\Profile;
@@ -13,9 +15,11 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\frontend\models\Cart;
 use bl\cms\shop\common\entities\Clients;
+use bl\imagable\helpers\FileHelper;
 use Exception;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 
 class CartController extends Controller
@@ -28,8 +32,7 @@ class CartController extends Controller
             if ($model->validate()) {
                 Yii::$app->cart->add($model->productId, $model->count, $model->priceId);
                 \Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'You have successfully added this product to cart'));
-            }
-            else throw new \yii\base\Exception($model->errors);
+            } else throw new \yii\base\Exception($model->errors);
         }
 
         return $this->redirect(Yii::$app->request->referrer);
@@ -61,8 +64,7 @@ class CartController extends Controller
                 return $this->render('show', [
                     'productsFromSession' => $products,
                 ]);
-            }
-            else {
+            } else {
                 $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => $cart::STATUS_INCOMPLETE])->one();
                 if (!empty($order)) {
                     $orderProducts = OrderProduct::find()->where(['order_id' => $order->id])->all();
@@ -79,20 +81,20 @@ class CartController extends Controller
                     ]);
                 }
             }
-        }
-
-        else {
+        } else {
             return $this->render('show');
         }
 
     }
 
-    public function actionRemove($id) {
+    public function actionRemove($id)
+    {
         \Yii::$app->cart->removeItem($id);
         return $this->redirect(\Yii::$app->request->referrer);
     }
 
-    public function actionClear() {
+    public function actionClear()
+    {
         \Yii::$app->cart->clearCart();
         return $this->redirect(\Yii::$app->request->referrer);
     }
@@ -103,20 +105,37 @@ class CartController extends Controller
         $order = \Yii::$app->cart->makeOrder($post);
         if ($order) {
             \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
-        }
-        else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
+        } else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
         return $this->render('show');
     }
 
+    public function actionGetDeliveryMethod($id)
+    {
+        if (\Yii::$app->request->isAjax) {
+
+            $method = DeliveryMethod::find()->asArray()->where(['id' => $id])->with('translations')->one();
+            $method['image_name'] = '/images/delivery/' .
+                FileHelper::getFullName(
+                    \Yii::$app->shop_imagable->get('delivery', 'small', $method['image_name']
+                    ));
+            return json_encode([
+                'method' => $method,
+                'field' => '<input type="text" id="useraddress-zipcode" class="form-control" name="UserAddress[zipcode]">'
+            ]);
+        }
+        else throw new BadRequestHttpException();
+    }
+
     /* TODO: remove next actions */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $cart = new Cart();
         $cart->load(Yii::$app->session->get('cart'));
 
         $client = new Clients();
         $post = Yii::$app->request->post();
-        if($post) {
-            if(!Clients::findOne(['email' => $post['email']])) {
+        if ($post) {
+            if (!Clients::findOne(['email' => $post['email']])) {
                 if ($client->load($post)) {
                     if ($client->validate()) {
                         if ($client->save()) {
@@ -143,8 +162,7 @@ class CartController extends Controller
                 Yii::$app->session->set('client_id', $client->id);
 
                 return $this->redirect(['/shop/cart/order-success']);
-            }
-            catch(Exception $ex) {
+            } catch (Exception $ex) {
                 return $this->render('index', [
                     'cart' => $cart,
                     'errors' => [
