@@ -10,6 +10,7 @@
  * @var $productsFromSession \bl\cms\shop\common\entities\Product
  */
 
+use bl\cms\cart\widgets\Delivery;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -209,8 +210,9 @@ use yii\helpers\Url;
         <?= Html::submitButton(Yii::t('shop', 'Submit'), [
             'class' => ''
         ]); ?>
-
+        <?= Delivery::widget(['model' => $order]); ?>
         <?php $form::end(); ?>
     <?php endif; ?>
 
 </div>
+
