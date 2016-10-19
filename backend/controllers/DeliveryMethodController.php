@@ -69,16 +69,15 @@ class DeliveryMethodController extends Controller
                 $uploadedImageName = $model->upload();
 
                 $model->image_name = $uploadedImageName;
+            }
+            $model->save(false);
 
-                $model->save(false);
+            $modelTranslation->delivery_method_id = $model->id;
+            $modelTranslation->language_id = $languageId;
+            if ($modelTranslation->validate()) {
 
-                $modelTranslation->delivery_method_id = $model->id;
-                $modelTranslation->language_id = $languageId;
-                if ($modelTranslation->validate()) {
-
-                    $modelTranslation->save();
-                    return $this->redirect(['save', 'id' => $model->id, 'languageId' => $languageId]);
-                }
+                $modelTranslation->save();
+                return $this->redirect(['save', 'id' => $model->id, 'languageId' => $languageId]);
             }
         }
         return $this->render('save', [
