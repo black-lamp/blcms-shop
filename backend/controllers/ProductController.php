@@ -288,18 +288,15 @@ class ProductController extends Controller
                 $image_form->image = UploadedFile::getInstance($image_form, 'image');
 
                 if (!empty($image_form->image)) {
-                    $uploadedImage = $image_form->upload();
-                    $uploadedImageName = $uploadedImage['imageName'];
-                    $uploadedImageExtension = $uploadedImage['imageExtension'];
+                    $uploadedImageName = $image_form->upload();
 
                     $image->file_name = $uploadedImageName;
                     $image->alt = $image_form->alt2;
                     $image->product_id = $product->id;
-                    $image->extension = $uploadedImageExtension;
-
                     if ($image->validate()) {
                         $image->save();
                     }
+                    else die(var_dump($image->errors));
                 }
                 if (!empty($image_form->link)) {
                     $image_name = $image_form->copy($image_form->link);

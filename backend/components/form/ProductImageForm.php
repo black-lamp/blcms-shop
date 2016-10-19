@@ -43,13 +43,11 @@ class ProductImageForm extends Model
                 if (!file_exists($dir)) BaseFileHelper::createDirectory($dir);
                 $newFile = $dir . $this->image->name;
 
-                $extension = ($this->image->type == 'image/jpeg') ? 'jpg' : 'png';
-
                 if ($this->image->saveAs($newFile)) {
                     $image_name = $imagable->create('shop-product', $newFile);
 
                     unlink($newFile);
-                    return ['imageName' => $image_name, 'imageExtension' => $extension];
+                    return $image_name;
                 }
                 else throw new Exception('Image saving failed.');
 

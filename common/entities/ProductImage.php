@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
+use bl\imagable\helpers\FileHelper;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
@@ -22,8 +23,6 @@ use yii\db\ActiveRecord;
 class ProductImage extends ActiveRecord
 {
 
-    public static $imageCategory = 'shop-product';
-
     /**
      * @inheritdoc
      */
@@ -39,7 +38,7 @@ class ProductImage extends ActiveRecord
     {
         return [
             [['product_id'], 'integer'],
-            [['file_name', 'extension', 'alt'], 'string', 'max' => 255],
+            [['file_name', 'alt'], 'string', 'max' => 255],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
@@ -63,19 +62,23 @@ class ProductImage extends ActiveRecord
         }
     }
 
+
     public function getBig() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-big.' . $this->extension);
+        $image = $this->getImage('big');
+        return '/images/shop-product/' . FileHelper::getFullName($image);
     }
 
     public function getThumb() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-thumb.' . $this->extension);
+        $image = $this->getImage('thumb');
+        return '/images/shop-product/' . FileHelper::getFullName($image);
     }
 
     public function getSmall() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-small.' . $this->extension);
+        $image = $this->getImage('small');
+        return '/images/shop-product/' . FileHelper::getFullName($image);
     }
 
-    public function getOriginal() {
-        return ('/images/' . self::$imageCategory . '/' . $this->file_name . '-original.' . $this->extension);
+    private function getImage($size) {
+        return \Yii::$app->shop_imagable->get('shop-product', $size, $this->file_name);
     }
 }
