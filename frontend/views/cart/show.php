@@ -186,7 +186,13 @@ use yii\helpers\Url;
         <!--Address selecting-->
         <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
             <?= $form->field($order, 'address_id')
-                ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', 'country'),
+                ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', function($model) {
+                    $address = (!empty($model->city)) ? $model->city . ', ' : '';
+                    $address .= (!empty($model->street)) ? Yii::t('cart','st.') . $model->street . ', ' : '';
+                    $address .= (!empty($model->house)) ? Yii::t('cart','hse.') . $model->house . ' - ' : '';
+                    $address .= (!empty($model->apartment)) ? Yii::t('cart','apt.') . $model->apartment : '';
+                    return $address;
+                }),
                     ['prompt' => \Yii::t('shop', 'Select address')])->label(\Yii::t('shop', 'Select address or enter it at the next fields')); ?>
         <?php endif; ?>
 
