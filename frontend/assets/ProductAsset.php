@@ -12,6 +12,7 @@ class ProductAsset extends AssetBundle
 
     public $css = [
         'css/style.css',
+        'css/shop.css',
     ];
 
     public $js = [

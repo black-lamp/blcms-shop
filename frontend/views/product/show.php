@@ -3,10 +3,13 @@ use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
+use bl\cms\shop\frontend\assets\ProductAsset;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
+
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
@@ -17,7 +20,8 @@ use yii\widgets\Breadcrumbs;
  * @var $params Param
  * @var $recommendedProducts Product
  */
-//ProductAsset::register($this);
+
+ProductAsset::register($this);
 ?>
 
 <!--BREADCRUMBS-->
@@ -48,7 +52,7 @@ use yii\widgets\Breadcrumbs;
 
 <!--ALERT-->
 <div class="col-lg-12">
-    <?php if(Yii::$app->session->hasFlash('alert')): ?>
+    <?php if (Yii::$app->session->hasFlash('alert')): ?>
         <div class="alert alert-success" role="alert">
             <?= Yii::$app->session->getFlash('alert') ?>
         </div>
@@ -58,24 +62,73 @@ use yii\widgets\Breadcrumbs;
 <!--PRODUCT CARD-->
 <div class="row product-page">
 
-    <div class="col-md-6">
-        <h1><?= $product->translation->title ?></h1>
+    <h1 class="col-md-12 text-center"><?= $product->translation->title ?></h1>
+
+    <div class="col-md-4 image">
+        <!--IMAGE-->
+            <?= Html::img(
+                (!empty($product->images)) ? $product->image->thumb : Url::toRoute('/images/default.jpg'),
+                [
+                'class' => 'media-object img-responsive',
+                'alt' => (!empty($product->images)) ? Html::encode($product->image->alt) : $product->translation->title
+            ]); ?>
+
+    </div>
+
+
+    <div class="col-md-8">
+        <!--ARTICULUS-->
+        <?php if (!empty($product->articulus)) : ?>
+            <div class="intro-text">
+                <p>
+                    <strong><?=\Yii::t('shop', 'SKU'); ?></strong>: <?= $product->articulus; ?>
+                </p>
+            </div>
+        <?php endif ?>
+
+        <!--VENDOR-->
+        <?php if (!empty($product->vendor)) : ?>
+            <div class="intro-text">
+                <p>
+                    <strong><?=\Yii::t('shop', 'Vendor'); ?></strong>: <?= $product->vendor->title; ?>
+                </p>
+            </div>
+        <?php endif ?>
+
+        <!--COUNTRY-->
+        <?php if (!empty($product->productCountry)) : ?>
+            <p>
+                <strong><?=\Yii::t('shop', 'Country'); ?></strong>: <?= $product->productCountry->translation->title; ?>
+            </p>
+        <?php endif; ?>
+
+        <!--AVAILABILITY-->
+        <?php if (!empty($product->availability)) : ?>
+            <div class="availability">
+                <p class="">
+                    <strong><?= $product->productAvailability->translation->title; ?></strong>
+                </p>
+                <p>
+                    <?= $product->productAvailability->translation->description; ?>
+                </p>
+            </div>
+        <?php endif; ?>
 
         <!-- DESCRIPTION -->
+        <p class="article-label"><?= Yii::t('shop', 'Description'); ?></p>
         <?php if (!empty($product->translation->description)) : ?>
-            <div class="intro-text">
-                <strong><?= $product->translation->description ?></strong>
+            <div class="description">
+                <?= $product->translation->description ?>
+            </div>
+        <?php endif ?>
+        <!--FULL TEXT -->
+        <?php if (!empty($product->translation->full_text)) : ?>
+            <div class="full-text">
+                <?= $product->translation->full_text ?>
             </div>
         <?php endif ?>
 
 
-        <!--COUNTRY-->
-        <?php if (!empty($country)) : ?>
-            <div class="dose">
-                <h4 class="small"><?= Yii::t('frontend/shop/product', 'Страна производитель'); ?></h4>
-                <?= $country->id; ?>
-            </div>
-        <?php endif; ?>
 
 
         <?php $form = ActiveForm::begin([
@@ -83,59 +136,41 @@ use yii\widgets\Breadcrumbs;
             'action' => ['/shop/cart/add']
         ]); ?>
 
-        <div class="price-wrap">
-            <!-- PRICES -->
-            <?php if (!empty($product->prices)) : ?>
+        <!--PRICES-->
+        <?php if (!empty($product->prices)) : ?>
+            <?= $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-4']])
+                ->dropDownList(ArrayHelper::map($product->prices, 'id',
+                    function ($model) {
+                        $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
+                        return $priceItem;
+                }))
+                ->label(\Yii::t('shop', 'Price'));
+            ?>
+        <?php elseif (!empty($product->price)) : ?>
+            <?= \Yii::$app->formatter->asCurrency($product->price); ?>
+        <?php endif; ?>
 
-                <?= $form->field($cart, 'priceId')->radioList(ArrayHelper::map($product->prices, 'id', function($model) {
-                    return $model->translation->title . \Yii::$app->formatter->asCurrency($model->salePrice) . Html::tag('strike', \Yii::$app->formatter->asCurrency($model->price));
-                })); ?>
-            <?php endif ?>
+        <!--QUANTITY-->
+        <?= $form->field($cart, 'count', ['options' => ['class' => 'col-md-4']])->
+        textInput([
+            'type' => 'number',
+            'min' => '1',
+            'value' => '1',
+            'data-action' => 'text',
+            'class' => 'form-control',
+            'id' => 'count'
+        ])->label(\Yii::t('shop', 'Count'));
+        ?>
+        <!--PRODUCT ID HIDDEN INPUT-->
+        <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id])->label(false); ?>
 
-            <!-- QUANTITY -->
-            <div class="count">
-                <?= $form->field($cart, 'count')->textInput([
-                    'type' => 'number',
-                    'min' => '1',
-                    'value' => '1',
-                    'data-action' => 'text',
-                    'class' => 'form-control',
-                    'id' => 'count'
-                ])->label(Yii::t('frontend/shop/product', 'Количество')) ?>
-                <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id]); ?>
-            </div>
-            <?php if (!empty($product->prices[0]->price)) : ?>
-                <div class="product-price pull-right">
-                    <span class="price-elem">
-                        <?= $product->prices[0]->salePrice ?>
-                    </span> грн
-                </div>
-            <?php endif ?>
+        <?= Html::submitButton(Yii::t('shop', 'Add to cart'),
+            [
+                'class' => 'btn btn-primary'
+            ]); ?>
 
+        <?php $form::end(); ?>
 
-            <!--ADD TO CART-->
-            <input type="submit" value="<?= Yii::t('shop', 'Add to cart') ?>"
-                   class="add-to-cart-button" id="cart_btn" data-id="<?=$product->id; ?>">
-
-        <?php $form->end() ?>
-
-        <!--FULL TEXT -->
-        <?php if (!empty($product->translation->full_text)) : ?>
-            <div class="full-text">
-                <h4 class="small"><?= Yii::t('shop', 'Description'); ?></h4>
-                <?= $product->translation->full_text ?>
-            </div>
-        <?php endif ?>
     </div>
 
-        <!--IMAGE-->
-        <?php if (!empty($product->images)) : ?>
-            <div class="col-md-6">
-                <?= Html::img($product->image->small, [
-                    'class' => 'media-object img-responsive',
-                    'alt' => Html::encode($product->image->alt)
-                ]); ?>
-            </div>
-        <?php endif; ?>
 </div>
-
