@@ -15,11 +15,15 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use bl\cms\shop\frontend\assets\CartAsset;
 
+$this->title = \Yii::t('shop', 'Cart');
+
+CartAsset::register($this);
 ?>
 
-<div class="content">
-    <h1><?= \Yii::t('shop', 'Cart'); ?></h1>
+<div class="content cart">
+    <h1><?= $this->title; ?></h1>
 
     <!--PRODUCTS TABLE-->
     <?php if (empty($productsFromDB) && empty($productsFromSession)) : ?>
@@ -29,12 +33,12 @@ use yii\helpers\Url;
         <div>
             <?= Html::a(\Yii::t('shop', 'Clear cart'), Url::toRoute('/shop/cart/clear'), ['class' => 'btn btn-primary']); ?>
         </div>
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped products-list">
             <tr>
-                <th class="col-md-1 text-center">Id</th>
-                <th class="col-md-7 text-center">Title</th>
-                <th class="col-md-3 text-center">Price</th>
-                <th class="col-md-2 text-center">Count</th>
+                <th class="col-md-4 text-center"><?= Yii::t('cart', 'Title'); ?></th>
+                <th class="col-md-4 text-center"><?= Yii::t('cart', 'Photo'); ?></th>
+                <th class="col-md-2 text-center"><?= Yii::t('cart', 'Price'); ?></th>
+                <th class="col-md-2 text-center"><?= Yii::t('cart', 'Count'); ?></th>
             </tr>
 
             <!--PRODUCT LIST FROM DATABASE-->
@@ -42,10 +46,10 @@ use yii\helpers\Url;
                 <?php foreach ($productsFromDB as $orderProduct) : ?>
                     <tr>
                         <td class="text-center">
-                            <?= $orderProduct->product->id; ?>
+                            <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
                         </td>
                         <td class="text-center">
-                            <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
+                            <?= Html::img($orderProduct->smallLogo); ?>
                         </td>
                         <td class="text-center">
                             <?php if (!empty($orderProduct->price)) : ?>
@@ -185,7 +189,7 @@ use yii\helpers\Url;
 
         <br>
         <!--DELIVERY METHOD-->
-        <?= Delivery::widget(['model' => $order]); ?>
+        <?= Delivery::widget(['form' => $form, 'model' => $order]); ?>
 
         <!--Address selecting-->
         <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
