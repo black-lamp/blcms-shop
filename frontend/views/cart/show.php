@@ -183,6 +183,10 @@ use yii\helpers\Url;
             <?= $form->field($profile, 'phone')->textInput(); ?>
         <?php endif; ?>
 
+        <br>
+        <!--DELIVERY METHOD-->
+        <?= Delivery::widget(['model' => $order]); ?>
+
         <!--Address selecting-->
         <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
             <?= $form->field($order, 'address_id')
@@ -216,7 +220,7 @@ use yii\helpers\Url;
         <?= Html::submitButton(Yii::t('shop', 'Submit'), [
             'class' => ''
         ]); ?>
-        <?= Delivery::widget(['model' => $order]); ?>
+
         <?php $form::end(); ?>
     <?php endif; ?>
 
