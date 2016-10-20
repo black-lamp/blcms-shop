@@ -199,7 +199,9 @@ CartAsset::register($this);
 
         <br>
         <!--DELIVERY METHOD-->
-        <?= Delivery::widget(['form' => $form, 'model' => $order]); ?>
+        <?= Delivery::widget(['form' => $form, 'model' => $order, 'config' => [
+            'addressModel' => $address
+        ]]); ?>
 
         <!--Address selecting-->
         <div class="address">
@@ -226,13 +228,6 @@ CartAsset::register($this);
             <?= $form->field($address, 'house')->textInput(); ?>
             <?= $form->field($address, 'apartment')->textInput(); ?>
             <?= $form->field($address, 'zipcode')->textInput(); ?>
-
-            <?= \bl\cms\shop\widgets\NovaPoshta::widget([
-                'token' => 'b696152fde625f5e9b3c6a7a0318701f',
-                'language' => (\Yii::$app->language == 'ru') ? 'ru' : 'ua',
-                'formModel' => $address,
-                'formAttribute' => 'postoffice'
-            ]); ?>
 
             <?= Html::submitButton(Yii::t('shop', 'Submit'), [
                 'class' => ''
