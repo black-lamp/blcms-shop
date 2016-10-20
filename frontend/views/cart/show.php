@@ -49,7 +49,7 @@ CartAsset::register($this);
                             <?= Html::a($orderProduct->product->translation->title, Url::to(['/shop/product/show', 'id' => $orderProduct->product->id])); ?>
                         </td>
                         <td class="text-center">
-                            <?= Html::img($orderProduct->smallLogo); ?>
+                            <?= Html::img($orderProduct->smallPhoto); ?>
                         </td>
                         <td class="text-center">
                             <?php if (!empty($orderProduct->price)) : ?>
@@ -142,90 +142,105 @@ CartAsset::register($this);
             'action' => ['/shop/cart/make-order']
         ]); ?>
 
-        <!--Name-->
-        <?php if (!empty(Yii::$app->user->identity->profile->name)) : ?>
-            <p>
-                <b><?= Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
-            </p>
-        <?php else : ?>
-            <?= $form->field($profile, 'name')->textInput(); ?>
-        <?php endif; ?>
+        <!--PERSONAL DATA-->
+        <div class="personal-data">
+            <h3><?= Yii::t('cart', 'Your personal data'); ?>:</h3>
 
-        <!--Patronomic-->
-        <?php if (!empty(Yii::$app->user->identity->profile->patronymic)) : ?>
-            <p>
-                <b><?= Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->patronymic; ?>
-            </p>
-        <?php else : ?>
-            <?= $form->field($profile, 'patronymic')->textInput(); ?>
-        <?php endif; ?>
+            <!--Name-->
+            <?php if (!empty(Yii::$app->user->identity->profile->name)) : ?>
+                <p>
+                    <b><?= Yii::t('shop', 'Name') ?>:</b> <?= Yii::$app->user->identity->profile->name; ?>
+                </p>
+            <?php else : ?>
+                <?= $form->field($profile, 'name')->textInput(); ?>
+            <?php endif; ?>
 
-        <!--Surname-->
-        <?php if (!empty(Yii::$app->user->identity->profile->surname)) : ?>
-            <p>
-                <b><?= Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
-            </p>
-        <?php else : ?>
-            <?= $form->field($profile, 'surname')->textInput(); ?>
-        <?php endif; ?>
+            <!--Patronomic-->
+            <?php if (!empty(Yii::$app->user->identity->profile->patronymic)) : ?>
+                <p>
+                    <b><?= Yii::t('shop', 'Patronomic') ?>:</b> <?= Yii::$app->user->identity->profile->patronymic; ?>
+                </p>
+            <?php else : ?>
+                <?= $form->field($profile, 'patronymic')->textInput(); ?>
+            <?php endif; ?>
 
-        <!--Email-->
-        <?php if (!empty(Yii::$app->user->identity->email)) : ?>
-            <p>
-                <b><?= Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
-            </p>
-        <?php else : ?>
-            <?= $form->field($user, 'email')->textInput(); ?>
-        <?php endif; ?>
+            <!--Surname-->
+            <?php if (!empty(Yii::$app->user->identity->profile->surname)) : ?>
+                <p>
+                    <b><?= Yii::t('shop', 'Surname') ?>:</b> <?= Yii::$app->user->identity->profile->surname; ?>
+                </p>
+            <?php else : ?>
+                <?= $form->field($profile, 'surname')->textInput(); ?>
+            <?php endif; ?>
 
-        <!--Phone-->
-        <?php if (!empty(Yii::$app->user->identity->profile->phone)) : ?>
-            <p>
-                <b><?= Yii::t('shop', 'Phone number') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
-            </p>
-        <?php else : ?>
-            <?= $form->field($profile, 'phone')->textInput(); ?>
-        <?php endif; ?>
+            <!--Email-->
+            <?php if (!empty(Yii::$app->user->identity->email)) : ?>
+                <p>
+                    <b><?= Yii::t('shop', 'E-mail') ?>:</b> <?= Yii::$app->user->identity->email; ?>
+                </p>
+            <?php else : ?>
+                <?= $form->field($user, 'email')->textInput(); ?>
+            <?php endif; ?>
+
+            <!--Phone-->
+            <?php if (!empty(Yii::$app->user->identity->profile->phone)) : ?>
+                <p>
+                    <b><?= Yii::t('shop', 'Phone number') ?>:</b> <?= Yii::$app->user->identity->profile->phone; ?>
+                </p>
+            <?php else : ?>
+                <?= $form->field($profile, 'phone')->textInput(); ?>
+            <?php endif; ?>
+
+            <?=Html::a(\Yii::t('cart', 'Change personal data'), Url::toRoute('/user/settings'),
+                [
+                    'class' => 'btn btn-primary'
+                ]); ?>
+        </div>
 
         <br>
         <!--DELIVERY METHOD-->
         <?= Delivery::widget(['form' => $form, 'model' => $order]); ?>
 
         <!--Address selecting-->
-        <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
-            <?= $form->field($order, 'address_id')
-                ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', function($model) {
-                    $address = (!empty($model->city)) ? $model->city . ', ' : '';
-                    $address .= (!empty($model->street)) ? Yii::t('cart','st.') . $model->street . ', ' : '';
-                    $address .= (!empty($model->house)) ? Yii::t('cart','hse.') . $model->house . ' - ' : '';
-                    $address .= (!empty($model->apartment)) ? Yii::t('cart','apt.') . $model->apartment : '';
-                    return $address;
-                }),
-                    ['prompt' => \Yii::t('shop', 'Select address')])->label(\Yii::t('shop', 'Select address or enter it at the next fields')); ?>
-        <?php endif; ?>
+        <div class="address">
+            <h3><?= Yii::t('cart', 'Address'); ?>:</h3>
 
-        <!--Address-->
-        <h4><?= \Yii::t('shop', 'Address'); ?></h4>
-        <?= $form->field($address, 'country')->textInput(); ?>
-        <?= $form->field($address, 'region')->textInput(); ?>
-        <?= $form->field($address, 'city')->textInput(); ?>
-        <?= $form->field($address, 'street')->textInput(); ?>
-        <?= $form->field($address, 'house')->textInput(); ?>
-        <?= $form->field($address, 'apartment')->textInput(); ?>
-        <?= $form->field($address, 'zipcode')->textInput(); ?>
+            <?php if (!empty(\Yii::$app->user->identity->profile->userAddresses)) : ?>
+                <?= $form->field($order, 'address_id')
+                    ->dropDownList(ArrayHelper::map(\Yii::$app->user->identity->profile->userAddresses, 'id', function($model) {
+                        $address = (!empty($model->city)) ? $model->city . ', ' : '';
+                        $address .= (!empty($model->street)) ? Yii::t('cart','st.') . $model->street . ', ' : '';
+                        $address .= (!empty($model->house)) ? Yii::t('cart','hse.') . $model->house . ' - ' : '';
+                        $address .= (!empty($model->apartment)) ? Yii::t('cart','apt.') . $model->apartment : '';
+                        return $address;
+                    }),
+                        ['prompt' => \Yii::t('shop', 'Select address')])->label(\Yii::t('shop', 'Select address or enter it at the next fields')); ?>
+            <?php endif; ?>
 
-        <?= \bl\cms\shop\widgets\NovaPoshta::widget([
-            'token' => 'b696152fde625f5e9b3c6a7a0318701f',
-            'language' => (\Yii::$app->language == 'ru') ? 'ru' : 'ua',
-            'formModel' => $address,
-            'formAttribute' => 'postoffice'
-        ]); ?>
+            <!--Address-->
+            <h4><?= \Yii::t('shop', 'Address'); ?></h4>
+            <?= $form->field($address, 'country')->textInput(); ?>
+            <?= $form->field($address, 'region')->textInput(); ?>
+            <?= $form->field($address, 'city')->textInput(); ?>
+            <?= $form->field($address, 'street')->textInput(); ?>
+            <?= $form->field($address, 'house')->textInput(); ?>
+            <?= $form->field($address, 'apartment')->textInput(); ?>
+            <?= $form->field($address, 'zipcode')->textInput(); ?>
 
-        <?= Html::submitButton(Yii::t('shop', 'Submit'), [
-            'class' => ''
-        ]); ?>
+            <?= \bl\cms\shop\widgets\NovaPoshta::widget([
+                'token' => 'b696152fde625f5e9b3c6a7a0318701f',
+                'language' => (\Yii::$app->language == 'ru') ? 'ru' : 'ua',
+                'formModel' => $address,
+                'formAttribute' => 'postoffice'
+            ]); ?>
 
-        <?php $form::end(); ?>
+            <?= Html::submitButton(Yii::t('shop', 'Submit'), [
+                'class' => ''
+            ]); ?>
+
+            <?php $form::end(); ?>
+        </div>
+
     <?php endif; ?>
 
 </div>
