@@ -1,4 +1,5 @@
 <?php
+use marqu3s\summernote\Summernote;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -59,8 +60,20 @@ $this->title = Yii::t('app', 'Delivery method');
     <div class="panel-body">
 
         <?php $form = ActiveForm::begin(); ?>
-        <?= $form->field($modelTranslation, 'title')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($modelTranslation, 'description')->textArea(['rows' => 7]) ?>
+        <?= $form->field($modelTranslation, 'title')->textInput(['maxlength' => true]); ?>
+        <?= $form->field($modelTranslation, 'description')->widget(Summernote::className()); ?>
+
+        <div class="row">
+            <div class="col-md-9">
+                <?= $form->field($model, 'logo')->fileInput(); ?>
+            </div>
+            <div class="col-md-3">
+                <?php if (!empty($model->smallLogo)) : ?>
+                    <?= Html::img($model->smallLogo); ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
         <div class="form-group">
             <?= Html::a(Yii::t('shop', 'Close'), Url::toRoute('delivery-method/index'), ['class' => 'btn btn-xs btn-danger pull-right']); ?>
             <?= Html::submitButton(Yii::t('shop', 'Save'), ['class' => 'btn btn-xs btn-primary pull-right m-r-xs']); ?>
