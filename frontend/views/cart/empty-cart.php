@@ -14,7 +14,6 @@ CartAsset::register($this);
 <div class="empty-cart">
     <?= Html::a(\Yii::t('shop', 'Go to shop'), Url::toRoute('/shop'), ['class' => 'btn btn-primary text-center']); ?>
     <div>
-        <?= Html::img('/images/dolphins.png'); ?>
+        <?= Html::img('/images/empty-cart-image.png'); ?>
     </div>
-
 </div>

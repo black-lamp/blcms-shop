@@ -5,10 +5,12 @@
 
 namespace bl\cms\shop\frontend\controllers;
 
+use bl\cms\cart\CartComponent;
 use bl\cms\cart\models\CartForm;
 use bl\cms\cart\models\DeliveryMethod;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
+use bl\cms\cart\models\OrderStatus;
 use bl\cms\shop\common\components\user\models\Profile;
 use bl\cms\shop\common\components\user\models\User;
 use bl\cms\shop\common\components\user\models\UserAddress;
@@ -88,7 +90,6 @@ class CartController extends Controller
 
                     $profile = Profile::find()->where(['user_id' => \Yii::$app->user->id])->one();
 
-
                     return $this->render('show', [
                         'order' => new Order(),
                         'profile' => $profile,
@@ -135,12 +136,17 @@ class CartController extends Controller
 
         }
         else {
+            $profile = Profile::find()->where(['user_id' => \Yii::$app->user->id])->one();
+            $user = $profile->user;
+            $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => CartComponent::STATUS_INCOMPLETE])->one();
+            $address = $order->address;
+
             $post = Yii::$app->request->post();
-            $order = \Yii::$app->cart->makeOrder($post);
-            if ($order) {
-                $this->sendMail($order->user->profile, $order->orderProducts);
+            if(\Yii::$app->cart->makeOrder($post)) {
+                $this->sendMail($profile, $products = null, $user, $order, $address);
                 \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
-            } else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
+            }
+            else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
             return $this->render('show');
         }
     }

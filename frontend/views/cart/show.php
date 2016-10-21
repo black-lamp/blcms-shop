@@ -228,14 +228,12 @@ CartAsset::register($this);
             <?= $form->field($address, 'house')->textInput(); ?>
             <?= $form->field($address, 'apartment')->textInput(); ?>
             <?= $form->field($address, 'zipcode')->textInput(); ?>
-
-            <?php $form::end(); ?>
         </div>
 
         <?= Html::submitButton(Yii::t('shop', 'Make order'), [
             'class' => 'btn btn-danger'
         ]); ?>
+        <?php $form::end(); ?>
     <?php endif; ?>
-
 </div>
 
