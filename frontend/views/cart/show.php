@@ -22,7 +22,7 @@ $this->title = \Yii::t('shop', 'Cart');
 CartAsset::register($this);
 ?>
 
-<div class="content cart">
+<div class="content cart col-md-12">
     <h1><?= $this->title; ?></h1>
 
     <!--PRODUCTS TABLE-->
@@ -31,7 +31,7 @@ CartAsset::register($this);
         <?= Html::a(\Yii::t('shop', 'Go to shop'), Url::toRoute('/shop'), ['class' => 'btn btn-primary']); ?>
     <?php else : ?>
         <div>
-            <?= Html::a(\Yii::t('shop', 'Clear cart'), Url::toRoute('/shop/cart/clear'), ['class' => 'btn btn-primary']); ?>
+            <?= Html::a(\Yii::t('shop', 'Clear cart'), Url::toRoute('/shop/cart/clear'), ['class' => 'btn btn-primary pull-right']); ?>
         </div>
         <table class="table table-hover table-striped products-list">
             <tr>
@@ -229,13 +229,12 @@ CartAsset::register($this);
             <?= $form->field($address, 'apartment')->textInput(); ?>
             <?= $form->field($address, 'zipcode')->textInput(); ?>
 
-            <?= Html::submitButton(Yii::t('shop', 'Submit'), [
-                'class' => ''
-            ]); ?>
-
             <?php $form::end(); ?>
         </div>
 
+        <?= Html::submitButton(Yii::t('shop', 'Make order'), [
+            'class' => 'btn btn-danger'
+        ]); ?>
     <?php endif; ?>
 
 </div>

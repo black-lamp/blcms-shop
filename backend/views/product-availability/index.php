@@ -12,7 +12,7 @@ use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
-$this->title = Yii::t('shop', 'Product availability');
+$this->title = Yii::t('shop', 'Product availabilities');
 ?>
 
 <div class="panel panel-default">

@@ -121,15 +121,6 @@ ProductAsset::register($this);
                 <?= $product->translation->description ?>
             </div>
         <?php endif ?>
-        <!--FULL TEXT -->
-        <?php if (!empty($product->translation->full_text)) : ?>
-            <div class="full-text">
-                <?= $product->translation->full_text ?>
-            </div>
-        <?php endif ?>
-
-
-
 
         <?php $form = ActiveForm::begin([
             'method' => 'post',
@@ -173,4 +164,10 @@ ProductAsset::register($this);
 
     </div>
 
+    <!--FULL TEXT -->
+    <?php if (!empty($product->translation->full_text)) : ?>
+        <div class="full-text">
+            <?= $product->translation->full_text ?>
+        </div>
+    <?php endif ?>
 </div>
