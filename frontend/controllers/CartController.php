@@ -10,11 +10,10 @@ use bl\cms\cart\models\DeliveryMethod;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
 use bl\cms\shop\common\components\user\models\Profile;
+use bl\cms\shop\common\components\user\models\User;
 use bl\cms\shop\common\components\user\models\UserAddress;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
-use bl\cms\shop\frontend\models\Cart;
-use bl\cms\shop\common\entities\Clients;
 use bl\imagable\helpers\FileHelper;
 use Exception;
 use Yii;
@@ -47,8 +46,20 @@ class CartController extends Controller
         $cart = \Yii::$app->cart;
         $items = $cart->getOrderItems();
 
-        if (!empty($items)) {
+        /*EMPTY CART*/
+        if (empty($items)) {
+            return $this->render('empty-cart');
+        }
+
+        /*CART IS NOT EMPTY*/
+        else {
+            /*FOR GUEST*/
             if (\Yii::$app->user->isGuest) {
+
+                $order = new Order();
+                $user = new User();
+                $profile = new Profile();
+                $address = new UserAddress();
 
                 $products = Product::find()->where(['in', 'id', ArrayHelper::getColumn($items, 'id')])->all();
 
@@ -61,10 +72,16 @@ class CartController extends Controller
                     }
                 }
 
-                return $this->render('show', [
-                    'productsFromSession' => $products,
+                return $this->render('show-for-guest', [
+                    'products' => $products,
+                    'order' => $order,
+                    'profile' => $profile,
+                    'user' => $user,
+                    'address' => $address,
                 ]);
-            } else {
+            }
+            /*FOR USER*/
+            else {
                 $order = Order::find()->where(['user_id' => \Yii::$app->user->id, 'status' => $cart::STATUS_INCOMPLETE])->one();
                 if (!empty($order)) {
                     $orderProducts = OrderProduct::find()->where(['order_id' => $order->id])->all();
@@ -81,10 +98,7 @@ class CartController extends Controller
                     ]);
                 }
             }
-        } else {
-            return $this->render('show');
         }
-
     }
 
     public function actionRemove($id)
@@ -101,13 +115,34 @@ class CartController extends Controller
 
     public function actionMakeOrder()
     {
-        $post = Yii::$app->request->post();
-        $order = \Yii::$app->cart->makeOrder($post);
-        if ($order) {
-            $this->sendMail($order->user->profile, $order->orderProducts);
-            \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
-        } else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
-        return $this->render('show');
+        if (\Yii::$app->user->isGuest) {
+
+            $profile = new Profile();
+            $user = new User();
+            $order = new Order();
+            $address = new UserAddress();
+
+
+            if ($profile->load(\Yii::$app->request->post()) ||
+                $user->load(\Yii::$app->request->post()) ||
+                $order->load(\Yii::$app->request->post()) ||
+                $address->load(\Yii::$app->request->post())
+            ) {
+                $this->sendMail($profile, $products = null, $user, $order, $address);
+                return $this->render('order-success');
+            }
+
+
+        }
+        else {
+            $post = Yii::$app->request->post();
+            $order = \Yii::$app->cart->makeOrder($post);
+            if ($order) {
+                $this->sendMail($order->user->profile, $order->orderProducts);
+                \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
+            } else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
+            return $this->render('show');
+        }
     }
 
     public function actionGetDeliveryMethod($id)
@@ -128,25 +163,24 @@ class CartController extends Controller
     }
 
     public function actionOrderSuccess() {
-        return $this->render('order-sucess');
+        return $this->render('order-success');
     }
 
-    public function sendMail($profile, $products)
+    public function sendMail($profile = null, $products = null, $user = null, $order = null, $address = null)
     {
         try {
             foreach (\Yii::$app->cart->sendTo as $adminMail) {
                 Yii::$app->mailer->compose('@vendor/black-lamp/blcms-cart/views/mail/new-order',
-                    ['products' => $products, 'profile' => $profile])
+                    ['products' => $products, 'user' => $user, 'profile' => $profile, 'order' => $order, 'address' => $address])
                     ->setFrom(\Yii::$app->cart->sender)
                     ->setTo($adminMail)
                     ->setSubject(Yii::t('cart', 'New order.'))
                     ->send();
             }
-
             Yii::$app->mailer->compose('@vendor/black-lamp/blcms-cart/views/mail/order-success',
-                ['products' => $products, 'profile' => $profile])
+                ['products' => $products, 'user' => $user, 'profile' => $profile, 'order' => $order, 'address' => $address])
                 ->setFrom(\Yii::$app->cart->sender)
-                ->setTo($profile->user->email)
+                ->setTo($user->email)
                 ->setSubject(Yii::t('cart', 'Your order is accepted.'))
                 ->send();
 
