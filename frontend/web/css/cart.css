@@ -24,3 +24,15 @@ div.cart table.products-list tr:not(:first-child):hover {
 div.cart table.products-list tr td img {
     height: 100px;
 }
+
+/*EMPTY CART*/
+div.empty-cart a.btn {
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+}
+div.empty-cart img {
+    display: block;
+    -webkit-filter: opacity(50%);
+    margin: 0 auto;
+}
