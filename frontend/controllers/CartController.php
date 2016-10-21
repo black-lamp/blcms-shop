@@ -104,6 +104,7 @@ class CartController extends Controller
         $post = Yii::$app->request->post();
         $order = \Yii::$app->cart->makeOrder($post);
         if ($order) {
+            $this->sendMail($order->user->profile, $order->orderProducts);
             \Yii::$app->session->setFlash('success', \Yii::t('shop', 'Your order is accepted. Thank you.'));
         } else \Yii::$app->getSession()->setFlash('error', 'Unknown error');
         return $this->render('show');
@@ -126,53 +127,36 @@ class CartController extends Controller
         else throw new BadRequestHttpException();
     }
 
-    /* TODO: remove next actions */
-    public function actionIndex()
+    public function actionOrderSuccess() {
+        return $this->render('order-sucess');
+    }
+
+    public function sendMail($profile, $products)
     {
-        $cart = new Cart();
-        $cart->load(Yii::$app->session->get('cart'));
-
-        $client = new Clients();
-        $post = Yii::$app->request->post();
-        if ($post) {
-            if (!Clients::findOne(['email' => $post['email']])) {
-                if ($client->load($post)) {
-                    if ($client->validate()) {
-                        if ($client->save()) {
-                        }
-                    }
-                }
-            }
-            try {
-                Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/admin',
-                    ['addedProducts' => $cart->items, 'total_sum' => $cart->sum, 'client' => $client])
-                    ->setFrom(Yii::$app->params['adminEmail'])
-                    ->setTo(Yii::$app->params['adminEmail'])
-                    ->setSubject('Новый заказ Pools Gallery')
+        try {
+            foreach (\Yii::$app->cart->sendTo as $adminMail) {
+                Yii::$app->mailer->compose('@vendor/black-lamp/blcms-cart/views/mail/new-order',
+                    ['products' => $products, 'profile' => $profile])
+                    ->setFrom(\Yii::$app->cart->sender)
+                    ->setTo($adminMail)
+                    ->setSubject(Yii::t('cart', 'New order.'))
                     ->send();
-
-                Yii::$app->mailer->compose('@frontend/themes/pools-gallery/modules/blcms-shop/frontend/views/cart/mail/client',
-                    ['addedProducts' => $cart->items, 'total_sum' => $cart->sum])
-                    ->setFrom(Yii::$app->params['adminEmail'])
-                    ->setTo($client->email)
-                    ->setSubject('Интернет-магазин Pools Gallery')
-                    ->send();
-
-                Yii::$app->session->set('cart', '');
-                Yii::$app->session->set('client_id', $client->id);
-
-                return $this->redirect(['/shop/cart/order-success']);
-            } catch (Exception $ex) {
-                return $this->render('index', [
-                    'cart' => $cart,
-                    'errors' => [
-                        Yii::t('frontend/shop/order', 'При оформлении заказа возникла ошибка. Просим прощения за неудобства.')
-                    ]
-                ]);
             }
+
+            Yii::$app->mailer->compose('@vendor/black-lamp/blcms-cart/views/mail/order-success',
+                ['products' => $products, 'profile' => $profile])
+                ->setFrom(\Yii::$app->cart->sender)
+                ->setTo($profile->user->email)
+                ->setSubject(Yii::t('cart', 'Your order is accepted.'))
+                ->send();
+
+            return $this->redirect(['/shop/cart/order-success']);
+        } catch (Exception $ex) {
+            return $this->render('index', [
+                'errors' => [
+                    Yii::t('cart', 'При оформлении заказа возникла ошибка. Просим прощения за неудобства.')
+                ]
+            ]);
         }
-        return $this->render('index', [
-            'cart' => $cart
-        ]);
     }
 }
