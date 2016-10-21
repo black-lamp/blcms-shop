@@ -6,6 +6,7 @@ use Exception;
 use Yii;
 use bl\cms\cart\models\OrderStatus;
 use bl\cms\cart\models\SearchOrderStatus;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,16 +17,32 @@ use yii\filters\VerbFilter;
  */
 class OrderStatusController extends Controller
 {
+
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
+                    'logout' => ['post'],
                 ],
             ],
         ];

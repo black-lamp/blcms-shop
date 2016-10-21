@@ -17,6 +17,8 @@ use bl\cms\shop\common\entities\ProductVideo;
 use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Exception;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -27,6 +29,36 @@ use yii\web\UploadedFile;
  */
 class ProductController extends Controller
 {
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         if (\Yii::$app->user->can('viewCompleteProductList')) {

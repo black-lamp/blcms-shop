@@ -5,6 +5,8 @@ use bl\cms\shop\common\entities\ProductAvailability;
 use bl\cms\shop\common\entities\ProductAvailabilityTranslation;
 use bl\multilang\entities\Language;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -14,6 +16,41 @@ use yii\web\NotFoundHttpException;
  */
 class ProductAvailabilityController extends Controller
 {
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Shows all delivery methods.
+     *
+     * @return mixed
+     */
     public function actionIndex() {
 
         $availabilities = ProductAvailability::find()->with(['translations'])->all();

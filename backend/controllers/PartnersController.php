@@ -6,6 +6,7 @@ use bl\cms\shop\backend\components\events\PartnersEvents;
 use Yii;
 use bl\cms\shop\common\entities\PartnerRequest;
 use bl\cms\shop\common\entities\SearchPartnerRequest;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -28,10 +29,25 @@ class PartnersController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'logout' => ['post'],
                 ],
             ],
         ];

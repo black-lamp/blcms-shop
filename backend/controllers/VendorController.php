@@ -3,6 +3,8 @@ namespace bl\cms\shop\backend\controllers;
 
 use Yii;
 use yii\base\Exception;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use bl\cms\shop\common\entities\Vendor;
@@ -15,6 +17,36 @@ use yii\helpers\Url;
  */
 class VendorController extends Controller
 {
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex() {
         $vendors = Vendor::find()->all();
         $vendor_images = new VendorImage();
