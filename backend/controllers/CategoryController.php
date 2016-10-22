@@ -37,9 +37,8 @@ class CategoryController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'roles' => ['productManager'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                 ],
             ],

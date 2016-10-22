@@ -44,18 +44,36 @@ class ProductController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout',
-                            'index', 'save', 'delete',
+                        'actions' => ['logout'],
+                        'roles' => ['@'],
+                        'allow' => true,
+                    ],
+                    [
+                        'roles' => ['productPartner'],
+                        'actions' => [
+                            'index', 'save',
                             'add-basic',
                             'add-param', 'delete-param',
-                            'up', 'down',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
                             'add-price', 'remove-price',
-                            'change-product-state', 'generate-seo-url'
                         ],
                         'allow' => true,
-                        'roles' => ['@'],
+                    ],
+                    [
+                        'roles' => ['productManager'],
+                        'allow' => true,
+                        'actions' => [
+                            'delete',
+                            'up', 'down',
+                        ]
+                    ],
+                    [
+                        'actions' => [
+                            'change-product-state'
+                        ],
+                        'allow' => true,
+                        'roles' => ['moderationManager'],
                     ],
                 ],
             ],
@@ -68,9 +86,18 @@ class ProductController extends Controller
         ];
     }
 
+    /**
+     * Lists Product models.
+     *
+     * DataProvider sends created by user product models for users which have 'viewProductList' permission
+     * and for users which have 'viewCompleteProductList' permission it sends all product models.
+     *
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionIndex()
     {
-        if (\Yii::$app->user->can('viewCompleteProductList')) {
+        if (\Yii::$app->user->can('viewProductList')) {
             $searchModel = new SearchProduct();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -82,9 +109,23 @@ class ProductController extends Controller
                 'dataProvider' => $dataProvider,
                 'languages' => Language::findAll(['active' => true])
             ]);
-        } else throw new ForbiddenHttpException();
+        }
+        else throw new ForbiddenHttpException();
     }
 
+    /**
+     * Creates or edits product model.
+     *
+     * Users which have 'updateOwnProduct' permission can edit only Product models that have been created by their.
+     * Users which have 'updateProduct' permission can create and editing all Product models.
+     * Users which have 'createProduct' permission can create Product models with status column equal to constant STATUS_ON_MODERATION.
+     * Users which have 'createProductWithoutModeration' permission can create Product models with status column equal to constant STATUS_SUCCESS.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionSave($id = null, $languageId = null)
     {
         $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
@@ -136,6 +177,16 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Deletes product model.
+     *
+     * Users which have 'deleteProduct' permission can delete all Product models.
+     * Users which have 'deleteOwnProduct' permission can delete only Product models that have been created by their.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDelete($id)
     {
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
@@ -144,6 +195,17 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
     }
 
+    /**
+     * Adds basic info for product model.
+     *
+     * Users which have 'updateOwnProduct' permission can add or edit basic info only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can can add or edit basic info for all Product models.
+     *
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddBasic($languageId = null, $productId = null)
     {
         if (!empty($languageId)) {
@@ -226,6 +288,17 @@ class ProductController extends Controller
         }
     }
 
+    /**
+     * Adds params for product model.
+     *
+     * Users which have 'updateOwnProduct' permission can add params only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add params for all Product models.
+     *
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddParam($languageId = null, $productId = null)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
@@ -275,6 +348,17 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Deletes param from product model.
+     *
+     * Users which have 'updateOwnProduct' permission can delete params only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can delete params for all Product models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDeleteParam($id, $languageId)
     {
         $param = Param::findOne($id);
@@ -293,6 +377,16 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Changes product position to up
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all Product models.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionUp($id)
     {
         $product = Product::findOne($id);
@@ -304,6 +398,16 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Changes product position to down
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all Product models.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDown($id)
     {
         $product = Product::findOne($id);
@@ -316,6 +420,15 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can add image only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add image for all Product models.
+     *
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddImage($productId, $languageId)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
@@ -372,6 +485,16 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can delete image only from Product models that have been created by their.
+     * Users which have 'updateProduct' permission can delete image from all Product models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws Exception
+     */
     public function actionDeleteImage($id, $languageId)
     {
         if (!empty($id)) {
@@ -392,9 +515,17 @@ class ProductController extends Controller
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
         } else throw new Exception();
-
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can add video only from Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add video from all Product models.
+     *
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddVideo($productId, $languageId)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
@@ -483,6 +614,15 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can delete video only from Product models that have been created by their.
+     * Users which have 'updateProduct' permission can delete video from all Product models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionDeleteVideo($id, $languageId)
     {
         if (!empty($id)) {
@@ -510,6 +650,15 @@ class ProductController extends Controller
         return false;
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can add price only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add price for all Product models.
+     *
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionAddPrice($productId, $languageId)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
@@ -561,6 +710,16 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Users which have 'updateOwnProduct' permission can delete price only from Product models that have been created by their.
+     * Users which have 'updateProduct' permission can delete price from all Product models.
+     *
+     * @param integer $priceId
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionRemovePrice($priceId, $productId, $languageId)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
@@ -569,6 +728,16 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * Changes product status property by ModerationManager
+     *
+     * Users which have 'moderateProductCreation' permission can change product status.
+     *
+     * @param integer $id
+     * @param integer $status
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
     public function actionChangeProductStatus($id, $status)
     {
         if (Yii::$app->user->can('moderateProductCreation') && !empty($id) && !empty($status)) {
@@ -590,8 +759,17 @@ class ProductController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+    /**
+     * Generates seo Url from title on add-basic page
+     *
+     * @param string $title
+     *
+     * @return string
+     */
     public function actionGenerateSeoUrl($title)
     {
         return Inflector::slug($title);
     }
 }
+
+
