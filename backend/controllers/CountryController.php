@@ -37,6 +37,11 @@ class CountryController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
+                    [
+                        'roles' => ['productManager'],
+                        'allow' => true,
+                    ],
                 ],
             ],
             'verbs' => [

@@ -30,9 +30,13 @@ class CurrencyController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'roles' => ['productManager'],
+                        'allow' => true,
                     ],
                 ],
             ],

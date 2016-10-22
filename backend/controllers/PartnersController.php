@@ -37,9 +37,13 @@ class PartnersController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'roles' => ['partnerManager'],
+                        'allow' => true,
                     ],
                 ],
             ],

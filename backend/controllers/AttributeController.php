@@ -42,7 +42,12 @@ class AttributeController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'roles' => ['adminPanelAccess', 'productManager'],
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'roles' => ['productManager'],
                         'allow' => true,
                     ],
                 ],
