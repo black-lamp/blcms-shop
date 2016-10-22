@@ -44,7 +44,16 @@ class ProductController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout',
+                            'index', 'save', 'delete',
+                            'add-basic',
+                            'add-param', 'delete-param',
+                            'up', 'down',
+                            'add-image', 'delete-image',
+                            'add-video', 'delete-video',
+                            'add-price', 'remove-price',
+                            'change-product-state', 'generate-seo-url'
+                        ],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
