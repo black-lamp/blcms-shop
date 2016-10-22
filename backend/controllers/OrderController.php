@@ -1,13 +1,13 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
-use bl\cms\cart\CartComponent;
 use bl\cms\cart\models\OrderProduct;
 use bl\cms\cart\models\OrderStatus;
 use bl\cms\cart\models\SearchOrderProduct;
 use Yii;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\SearchOrder;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -82,7 +82,6 @@ class OrderController extends Controller
                     \Yii::$app->session->setFlash('success', \Yii::t('shop', 'The record was successfully saved.'));
 
                 } else {
-                    die(var_dump($model->errors));
                     \Yii::$app->session->setFlash('error', \Yii::t('shop', 'An error occurred when saving the record.'));
                 }
                 return $this->redirect(['view', 'id' => $id]);
