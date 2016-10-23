@@ -53,8 +53,8 @@ class m160822_043749_rbac_init extends Migration
         $auth->add($productManager);
 
 
-        $auth->addChild($updateOwnProduct, $updateProduct);
-        $auth->addChild($deleteOwnProduct, $deleteProduct);
+        $auth->addChild($updateProduct, $updateOwnProduct);
+        $auth->addChild($deleteProduct, $deleteOwnProduct);
 
 
         $auth->addChild($productPartner, $createProduct);
