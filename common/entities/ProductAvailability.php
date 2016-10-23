@@ -1,7 +1,6 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
-use bl\cms\shop\common\entities\Product;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
@@ -11,7 +10,7 @@ use yii\db\ActiveRecord;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @property integer $id
- *
+ * @property ProductAvailabilityTranslation $translation
  * @property Product[] $products
  */
 class ProductAvailability extends ActiveRecord

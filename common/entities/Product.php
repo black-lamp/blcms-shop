@@ -31,14 +31,16 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $availability
  *
  * @property OrderProduct[] $orderProducts
- * @property Param[] $shopParams
+ * @property Param[] $params
  * @property Category $category
  * @property ProductCountry $country
  * @property Vendor $vendor
- * @property ProductImage[] $ProductImages
- * @property ProductPrice[] $productPrices
- * @property ProductVideo[] $productVideos
+ * @property ProductImage[] $images
+ * @property ProductImage $image
+ * @property ProductPrice[] $prices
+ * @property ProductVideo[] $videos
  * @property ProductAvailability $productAvailability
+ * @property ProductTranslation $translation
  */
 class Product extends ActiveRecord
 {
