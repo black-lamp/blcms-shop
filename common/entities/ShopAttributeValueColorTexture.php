@@ -12,6 +12,8 @@ use yii\helpers\Html;
  * @property integer $id
  * @property string $color
  * @property string $texture
+ * 
+ * @property ShopAttributeValueTranslation $translation
  */
 class ShopAttributeValueColorTexture extends ActiveRecord
 {

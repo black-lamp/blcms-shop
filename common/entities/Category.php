@@ -22,6 +22,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property CategoryTranslation[] $categoryTranslations
  * @property Filter[] $filters
  * @property Product[] $products
+ * @property CategoryTranslation $translation
  *
  * @method PositionBehavior moveNext
  * @method PositionBehavior movePrev

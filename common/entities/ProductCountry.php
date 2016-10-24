@@ -7,7 +7,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "shop_product_price".
  *
  * @property integer $id
- * 
+ * @property ProductCountryTranslation $translation
  */
 class ProductCountry extends ActiveRecord
 {
