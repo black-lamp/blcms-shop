@@ -11,6 +11,7 @@ use bl\cms\shop\frontend\models\Cart;
 use common\entities\Clients;
 use Exception;
 use Yii;
+use yii\base\DynamicModel;
 use yii\web\Controller;
 
 class CartController extends Controller
@@ -29,17 +30,27 @@ class CartController extends Controller
     }
 
     public function actionIndex() {
+        $model = DynamicModel::validateData(array('licences'), [['licences', 'boolean']]);
         $cart = new Cart();
         $cart->load(Yii::$app->session->get('cart'));
 
         $client = new Clients();
         $post = Yii::$app->request->post();
-        if($post && $post['licences']) {
-            if(!Clients::findOne(['email' => $post['email']])) {
-                if ($client->load($post)) {
-                    if ($client->validate()) {
-                        if ($client->save()) {
-                        }
+        if($post) {
+            if(!$post['DynamicModel']['licences']) {
+                return $this->render('index', [
+                    'cart' => $cart,
+                    'model' => $model,
+                    'errors' => [
+                        Yii::t('frontend/shop/order', 'Вы не подтвердили пользовательское соглашение.')
+                    ]
+                ]);
+            }
+
+            $client->load($post);
+            if(!Clients::findOne(['email' => $client->email])) {
+                if ($client->validate()) {
+                    if ($client->save()) {
                     }
                 }
             }
@@ -66,21 +77,17 @@ class CartController extends Controller
             catch(Exception $ex) {
                 return $this->render('index', [
                     'cart' => $cart,
+                    'model' => $model,
                     'errors' => [
                         Yii::t('frontend/shop/order', 'При оформлении заказа возникла ошибка. Просим прощения за неудобства.')
                     ]
                 ]);
             }
-        } elseif (!$post['licences']){
-            return $this->render('index', [
-                'cart' => $cart,
-                'errors' => [
-                    Yii::t('frontend/shop/order', 'Вы не подтвердили пользовательское соглашение.')
-                ]
-            ]);
         }
+
         return $this->render('index', [
-            'cart' => $cart
+            'cart' => $cart,
+            'model' => $model,
         ]);
     }
 
