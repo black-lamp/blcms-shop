@@ -34,6 +34,7 @@ $this->title = Yii::t('shop', 'Delivery methods');
             <tr>
                 <th class="col-md-2"><?= Yii::t('shop', 'ID'); ?></th>
                 <th class="col-md-8"><?= Yii::t('shop', 'Title'); ?></th>
+                <th class="col-md-3 text-center"><?= Yii::t('shop', 'Logo'); ?></th>
                 <th class="col-md-2"><?= Yii::t('shop', 'Manage'); ?></th>
             </tr>
             <?php foreach ($deliveryMethods as $deliveryMethod) : ?>
@@ -47,6 +48,11 @@ $this->title = Yii::t('shop', 'Delivery methods');
                                 'save',
                                 'id' => $deliveryMethod->id,
                                 'languageId' => Language::getCurrent()->id])); ?>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                        <?php if (!empty($deliveryMethod->image_name)) : ?>
+                            <?= Html::img($deliveryMethod->smallLogo); ?>
                         <?php endif; ?>
                     </td>
                     <td>
