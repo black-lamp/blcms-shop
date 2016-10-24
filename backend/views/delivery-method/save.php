@@ -73,7 +73,7 @@ $this->title = Yii::t('shop', 'Delivery method');
                 <?= $form->field($model, 'logo')->fileInput(); ?>
             </div>
             <div class="col-md-3">
-                <?php if (!empty($model->logo)) : ?>
+                <?php if (!empty($model->image_name)) : ?>
                     <?= Html::img($model->smallLogo); ?>
                 <?php endif; ?>
             </div>
