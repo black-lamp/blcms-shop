@@ -38,27 +38,27 @@ class AttributeController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewAttributeList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['save'],
+                        'roles' => ['saveAttribute'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['remove'],
+                        'roles' => ['deleteAttribute'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['add-value'],
+                        'roles' => ['addAttributeValue'],
                         'allow' => true,
                     ],
                 ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                    'delete' => ['POST'],
-                ],
-            ],
+            ]
         ];
     }
 
@@ -81,6 +81,8 @@ class AttributeController extends Controller
      * Save data action for ShopAttribute.
      * If user has not permissions to do this action, a 403 HTTP exception will be thrown.
      *
+     * @param integer $languageId
+     * @param integer $attrId
      * @return mixed
      * @throws ForbiddenHttpException if user has not permissions
      */
@@ -184,6 +186,13 @@ class AttributeController extends Controller
         }
     }
 
+
+    /**
+     * @param integer $attrId
+     * @param integer $languageId
+     * @return mixed
+     * @throws Exception
+     */
     public function actionAddValue($attrId, $languageId)
     {
 

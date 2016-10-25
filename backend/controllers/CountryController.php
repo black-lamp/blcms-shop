@@ -18,7 +18,6 @@ use yii\web\Controller;
 class CountryController extends Controller
 {
 
-
     /**
      * @inheritdoc
      */
@@ -29,19 +28,20 @@ class CountryController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewCountryList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['save'],
+                        'roles' => ['saveCountry'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
-
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['remove'],
+                        'roles' => ['deleteCountry'],
                         'allow' => true,
-                    ],
+                    ]
                 ],
             ],
             'verbs' => [
