@@ -29,26 +29,22 @@ class DeliveryMethodController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewDeliveryMethodList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['save'],
+                        'roles' => ['saveDeliveryMethod'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['delete'],
+                        'roles' => ['deleteDeliveryMethod'],
                         'allow' => true,
                     ],
                 ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
+            ]
         ];
     }
 

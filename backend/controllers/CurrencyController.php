@@ -26,27 +26,22 @@ class CurrencyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewCurrencyList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['update'],
+                        'roles' => ['updateCurrency'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['remove'],
+                        'roles' => ['deleteCurrency'],
                         'allow' => true,
-                    ],
+                    ]
                 ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                    'logout' => ['post'],
-                ],
-            ],
+            ]
         ];
     }
 
