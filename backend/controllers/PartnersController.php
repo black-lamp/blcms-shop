@@ -33,29 +33,25 @@ class PartnersController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index', 'view'],
+                        'roles' => ['viewPartnerRequest'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['delete'],
+                        'roles' => ['deletePartnerRequest'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['partnerManager'],
+                        'actions' => ['change-partner-status'],
+                        'roles' => ['moderatePartnerRequest'],
                         'allow' => true,
                     ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                    'logout' => ['post'],
                 ],
             ],
         ];
     }
+
 
     /**
      * Lists all PartnerRequest models.
@@ -64,7 +60,6 @@ class PartnersController extends Controller
      */
     public function actionIndex()
     {
-        if (\Yii::$app->user->can('moderatePartnerRequest')) {
             $partners = PartnerRequest::find()->all();
             $searchModel = new SearchPartnerRequest();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -74,8 +69,6 @@ class PartnersController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
-        }
-        else throw new ForbiddenHttpException();
     }
 
     /**
