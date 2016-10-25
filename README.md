@@ -169,3 +169,7 @@ To use the widget, you must have set up relations in the models. For example in 
         return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
     }
 ```
+
+
+**REQUIRES**
+- PHP-extensions: file-info, imagick, intl
