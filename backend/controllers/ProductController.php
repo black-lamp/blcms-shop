@@ -40,47 +40,32 @@ class ProductController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewProductList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
-                        'roles' => ['@'],
-                        'allow' => true,
-                    ],
-                    [
-                        'roles' => ['productPartner'],
                         'actions' => [
-                            'index', 'save',
-                            'add-basic',
+                            'save', 'add-basic',
                             'add-param', 'delete-param',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
                             'add-price', 'remove-price',
+                            'up', 'down', 'generate-seo-url'
                         ],
+                        'roles' => ['createProduct', 'updateOwnProduct'],
                         'allow' => true,
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['delete'],
+                        'roles' => ['deleteOwnProduct'],
                         'allow' => true,
-                        'actions' => [
-                            'delete',
-                            'up', 'down',
-                        ]
                     ],
                     [
-                        'actions' => [
-                            'change-product-state'
-                        ],
+                        'actions' => ['change-product-status'],
+                        'roles' => ['moderateProductCreation'],
                         'allow' => true,
-                        'roles' => ['moderationManager'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
+                    ]
                 ],
             ],
         ];
@@ -97,20 +82,18 @@ class ProductController extends Controller
      */
     public function actionIndex()
     {
-        if (\Yii::$app->user->can('viewProductList')) {
-            $searchModel = new SearchProduct();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new SearchProduct();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-            $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
+        $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
 
-            return $this->render('index', [
-                'notModeratedProductsCount' => $notModeratedProductsCount,
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'languages' => Language::findAll(['active' => true])
-            ]);
-        }
-        else throw new ForbiddenHttpException();
+        return $this->render('index', [
+            'notModeratedProductsCount' => $notModeratedProductsCount,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'languages' => Language::findAll(['active' => true])
+        ]);
+
     }
 
     /**
@@ -449,8 +432,7 @@ class ProductController extends Controller
                     $image->product_id = $product->id;
                     if ($image->validate()) {
                         $image->save();
-                    }
-                    else die(var_dump($image->errors));
+                    } else die(var_dump($image->errors));
                 }
                 if (!empty($image_form->link)) {
                     $image_name = $image_form->copy($image_form->link);
@@ -736,11 +718,10 @@ class ProductController extends Controller
      * @param integer $id
      * @param integer $status
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionChangeProductStatus($id, $status)
     {
-        if (Yii::$app->user->can('moderateProductCreation') && !empty($id) && !empty($status)) {
+        if (!empty($id) && !empty($status)) {
             $product = Product::findOne($id);
             if ($product->status == Product::STATUS_ON_MODERATION) {
 
@@ -763,7 +744,6 @@ class ProductController extends Controller
      * Generates seo Url from title on add-basic page
      *
      * @param string $title
-     *
      * @return string
      */
     public function actionGenerateSeoUrl($title)
