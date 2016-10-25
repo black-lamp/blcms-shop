@@ -196,19 +196,19 @@ class m161025_115253_add_permissions extends Migration
 
 
         /*CategoryController*/
-        $viewCategoryList = $auth->createPermission('viewProductCategoryList');
+        $viewCategoryList = $auth->createPermission('viewShopCategoryList');
         $viewCategoryList->description = 'View list of categories';
         $auth->add($viewCategoryList);
 
-        $saveCategory = $auth->createPermission('saveProductCategory');
+        $saveCategory = $auth->createPermission('saveShopCategory');
         $saveCategory->description = 'Save category';
         $auth->add($saveCategory);
 
-        $deleteCategory = $auth->createPermission('deleteProductCategory');
+        $deleteCategory = $auth->createPermission('deleteShopCategory');
         $deleteCategory->description = 'Delete category';
         $auth->add($deleteCategory);
 
-        $categoryManager = $auth->createRole('categoryManager');
+        $categoryManager = $auth->createRole('shopCategoryManager');
         $categoryManager->description = 'Category manager';
         $auth->add($categoryManager);
 
@@ -263,13 +263,13 @@ class m161025_115253_add_permissions extends Migration
             'saveOrderStatus', 'deleteOrderStatus', 'viewOrderList', 'viewOrder', 'deleteOrder', 'deleteOrderProduct',
             'viewFilterList', 'saveFilter', 'deleteFilter', 'viewDeliveryMethodList', 'saveDeliveryMethod',
             'deleteDeliveryMethod', 'viewCurrencyList', 'updateCurrency', 'deleteCurrency', 'viewCountryList',
-            'saveCountry', 'deleteCountry', 'viewCategoryList', 'saveCategory', 'deleteCategory', 'viewAttributeList',
+            'saveCountry', 'deleteCountry', 'viewShopCategoryList', 'saveShopCategory', 'deleteShopCategory', 'viewAttributeList',
             'saveAttribute', 'deleteAttribute', 'addAttributeValue'
         ];
         $roles = [
             'vendorManager', 'productAvailabilityManager', 'orderStatusManager', 'orderManager',
             'filterManager', 'deliveryMethodManager', 'currencyManager', 'countryManager',
-            'categoryManager', 'attributeManager'
+            'shopCategoryManager', 'attributeManager'
         ];
 
         foreach ($roles as $role) {

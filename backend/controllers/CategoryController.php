@@ -35,18 +35,18 @@ class CategoryController extends Controller
                 'rules' => [
                     [
                         'actions' => ['index'],
-                        'roles' => ['viewProductCategoryList'],
+                        'roles' => ['viewShopCategoryList'],
                         'allow' => true,
                     ],
                     [
                         'actions' => ['save', 'add-basic', 'add-images', 'add-seo', 'delete-image',
                             'select-filters', 'delete-filter', 'up', 'down', 'switch-show'],
-                        'roles' => ['saveProductCategory'],
+                        'roles' => ['saveShopCategory'],
                         'allow' => true,
                     ],
                     [
                         'actions' => ['delete'],
-                        'roles' => ['deleteProductCategory'],
+                        'roles' => ['deleteShopCategory'],
                         'allow' => true,
                     ]
                 ],
