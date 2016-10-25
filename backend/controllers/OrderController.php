@@ -28,27 +28,27 @@ class OrderController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewOrderList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['view'],
+                        'roles' => ['viewOrder'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['delete'],
+                        'roles' => ['deleteOrder'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['deleteProduct'],
+                        'roles' => ['deleteOrderProduct'],
                         'allow' => true,
                     ],
                 ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                    'logout' => ['post'],
-                ],
-            ],
+            ]
         ];
     }
 
