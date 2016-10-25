@@ -26,26 +26,22 @@ class FilterController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewFilterList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['save'],
+                        'roles' => ['saveFilter'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['delete'],
+                        'roles' => ['deleteFilter'],
                         'allow' => true,
                     ],
                 ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
+            ]
         ];
     }
 

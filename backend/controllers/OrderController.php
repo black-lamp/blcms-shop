@@ -43,7 +43,7 @@ class OrderController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['deleteProduct'],
+                        'actions' => ['delete-product'],
                         'roles' => ['deleteOrderProduct'],
                         'allow' => true,
                     ],
