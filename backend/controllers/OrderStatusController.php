@@ -28,18 +28,20 @@ class OrderStatusController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index'],
+                        'roles' => ['viewOrderStatusList'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['save'],
+                        'roles' => ['saveOrderStatus'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
-                        'roles' => ['productManager'],
+                        'actions' => ['delete'],
+                        'roles' => ['deleteOrderStatus'],
                         'allow' => true,
-                    ],
+                    ]
                 ],
             ],
             'verbs' => [
