@@ -254,13 +254,7 @@ class CategoryController extends Controller
                 $category->save();
             }
         }
-        if (\Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-images', [
-                'category' => $category,
-                'image_form' => $image_form,
-                'languageId' => $languageId
-            ]);
-        } else return $this->render('save', [
+        return $this->render('save', [
             'category' => $category,
             'languageId' => $languageId,
             'selectedLanguage' => Language::findOne($languageId),
@@ -309,13 +303,7 @@ class CategoryController extends Controller
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
             }
         }
-        if (\Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-seo', [
-                'category' => $category,
-                'category_translation' => $category_translation,
-                'languageId' => $languageId
-            ]);
-        } else return $this->render('save', [
+        return $this->render('save', [
             'category' => $category,
             'languageId' => $languageId,
             'selectedLanguage' => Language::findOne($languageId),

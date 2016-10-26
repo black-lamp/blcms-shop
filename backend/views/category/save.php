@@ -55,13 +55,16 @@ $this->title = \Yii::t('shop', 'Edit category');
 
             <ul class="tabs">
                 <li>
-                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['save', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['save', 'id' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
                 </li>
                 <li>
                     <?= Html::a(Yii::t('shop', 'SEO data'), Url::to(['add-seo', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
                 </li>
                 <li>
                     <?= Html::a(Yii::t('shop', 'Images'), Url::to(['add-images', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
+                </li>
+                <li>
+                    <?= Html::a(Yii::t('shop', 'Filters'), Url::to(['select-filters', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
                 </li>
             </ul>
 
