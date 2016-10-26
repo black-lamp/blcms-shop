@@ -9,7 +9,7 @@ use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
 use yii\helpers\Url;
 
-$this->title = 'Countries list';
+$this->title = \Yii::t('shop', 'List of countries');
 ?>
 
 <div class="row">
@@ -37,7 +37,9 @@ $this->title = 'Countries list';
                                     <?= $country->id; ?>
                                 </td>
                                 <td>
-                                    <?= $country->translation->title; ?>
+                                    <?php if (!empty($country->translation->title)) : ?>
+                                        <?= $country->translation->title; ?>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <?= ManageButtons::widget(['model' => $country]); ?>
