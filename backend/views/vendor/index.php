@@ -69,12 +69,16 @@ $this->title = Yii::t('shop', 'Product vendors');
                                     </td>
 
                                     <td class="text-center">
-                                        <?= Html::a('', [
-                                            'save',
-                                            'id' => $vendor->id
-                                        ], [
-                                            'class' => 'glyphicon glyphicon-edit text-warning btn btn-warning btn-sm'
-                                        ]); ?>
+                                        <?= Html::a(
+                                            Html::tag('span', '', ['class' => 'glyphicon glyphicon-pencil']),
+                                            [
+                                                'save',
+                                                'id' => $vendor->id
+                                            ],
+                                            [
+                                                'class' => 'btn btn-warning btn-sm'
+                                            ]);
+                                        ?>
                                     </td>
 
                                     <td class="text-center">
