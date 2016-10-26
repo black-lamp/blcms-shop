@@ -17,7 +17,7 @@ $this->title = \Yii::t('shop', 'List of countries');
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-list"></i>
-                <?= 'Countries list' ?>
+                <?= $this->title ?>
             </div>
             <div class="panel-body">
 
@@ -52,7 +52,7 @@ $this->title = \Yii::t('shop', 'List of countries');
 
                 <a href="<?= Url::to(['/shop/country/save', 'languageId' => Language::getCurrent()->id]) ?>"
                    class="btn btn-primary pull-right">
-                    <i class="fa fa-user-plus"></i> <?= 'Add' ?>
+                    <i class="fa fa-user-plus"></i> <?= Yii::t('shop', 'Add country') ?>
                 </a>
             </div>
         </div>
