@@ -171,3 +171,7 @@ ProductAsset::register($this);
         </div>
     <?php endif ?>
 </div>
+
+<?= \bl\cms\shop\widgets\RecommendedProducts::widget([
+    'id' => $product->id
+]); ?>
