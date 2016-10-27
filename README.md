@@ -172,4 +172,91 @@ To use the widget, you must have set up relations in the models. For example in 
 
 
 **REQUIRES**
+
 - PHP-extensions: file-info, imagick, intl
+
+
+**Roles and its permissions:**
+
+_attributeManager_
+- addAttributeValue
+- deleteAttribute
+- saveAttribute
+- viewAttributeList
+
+_countryManager_
+- saveCountry
+- viewCountryList
+- deleteCountry
+
+_currencyManager_
+- updateCurrency
+- viewCurrencyList
+- deleteCurrency
+
+_deliveryMethodManager_
+- saveDeliveryMethod
+- viewDeliveryMethodList
+- deleteDeliveryMethod
+
+_filterManager_
+- deleteFilter
+- saveFilter
+- viewFilterList
+
+
+_orderManager_
+- deleteOrder
+- deleteOrderProduct
+- viewOrder
+- viewOrderList
+
+_orderStatusManager_
+- saveOrderStatus 
+- viewOrderStatusList
+- deleteOrderStatus
+
+_productAvailabilityManager_
+- saveProductAvailability
+- viewProductAvailabilityList
+- deleteProductAvailability
+
+_productManager_
+- createProduct
+- createProductWithoutModeration
+- deleteOwnProduct
+- deleteProduct
+- updateOwnProduct
+- updateProduct
+- viewCompleteProductList
+- viewProductList
+
+_productPartner_
+- accessAdminPanel
+- createProduct
+- createProductWithoutModeration
+- deleteOwnProduct
+- deleteProduct
+- updateOwnProduct
+- updateProduct
+- viewCompleteProductList
+- viewProductList
+
+_shopCategoryManager_
+- saveShopCategory
+- viewShopCategoryList
+
+_vendorManager_
+- saveVendor
+- viewVendorList
+- deleteVendor
+
+_shopAdministrator_
+extends permissions from all managers. 
+
+
+
+
+
+
+
