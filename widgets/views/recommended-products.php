@@ -31,7 +31,9 @@ use yii\helpers\Url;
                                 $recommendedProduct,
                                 'price',
                                 ArrayHelper::map($recommendedProduct->prices, 'id', function($model) {
-                                    return \Yii::$app->formatter->asCurrency($model->price);
+                                    $price = \Yii::$app->formatter->asCurrency($model->salePrice);
+
+                                    return $price;
                                 })
                             ); ?>
                         <?php else : ?>
@@ -39,8 +41,6 @@ use yii\helpers\Url;
                                 <?= \Yii::$app->formatter->asCurrency($recommendedProduct->price); ?>
                             </p>
                         <?php endif; ?>
-
-
                     </div>
                 </a>
             </div>
