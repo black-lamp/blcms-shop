@@ -33,7 +33,7 @@ class CartController extends Controller
             if ($model->validate()) {
                 Yii::$app->cart->add($model->productId, $model->count, $model->priceId);
                 \Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'You have successfully added this product to cart'));
-            } else throw new \yii\base\Exception($model->errors);
+            } else die(var_dump($model->errors));
         }
 
         return $this->redirect(Yii::$app->request->referrer);

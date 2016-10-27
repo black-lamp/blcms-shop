@@ -4,6 +4,7 @@ use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\frontend\assets\ProductAsset;
+use bl\cms\shop\widgets\assets\RecommendedProductsAsset;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -21,40 +22,35 @@ use yii\widgets\Breadcrumbs;
  * @var $recommendedProducts Product
  */
 
+RecommendedProductsAsset::register($this);
 ProductAsset::register($this);
 ?>
 
-    <!--BREADCRUMBS-->
-    <div>
-        <?php
-        $shop = [
-            'label' => Yii::t('frontend/navigation', 'Магазин'),
-            'url' => Url::toRoute(['/shop']),
+<!--BREADCRUMBS-->
+<div>
+    <?php echo Breadcrumbs::widget([
+        'itemTemplate' => "<li><b><span>{link}</span></b></li>\n",
+        'homeLink' => [
+            'label' => Yii::t('frontend/navigation', 'Главная'),
+            'url' => Url::toRoute(['/']),
             'itemprop' => 'url',
-        ];
-        $category = (!empty($category->translation->title)) ?
+        ],
+        'links' => [
             [
-                'label' => (!empty($category->translation->title)),
-                'url' => Url::toRoute(['category/show', 'id' => $category->id]),
-                'itemprop' => 'url',
-            ] : [];
-        $item = (!empty($product->translation->title)) ? $product->translation->title : '';
-
-        $links = (!empty($category)) ? [
-            $shop, $category, $product
-        ] : [$shop, $item];
-
-        echo Breadcrumbs::widget([
-            'itemTemplate' => "<li><b><span>{link}</span></b></li>\n",
-            'homeLink' => [
-                'label' => Yii::t('frontend/navigation', 'Главная'),
-                'url' => Url::toRoute(['/']),
+                'label' => Yii::t('frontend/navigation', 'Магазин'),
+                'url' => Url::toRoute(['/shop']),
                 'itemprop' => 'url',
             ],
-            'links' => $links
-        ]);
-        ?>
-    </div>
+            [
+                'label' => $category->translation->title,
+                'url' => Url::toRoute(['category/show', 'id' => $category->id]),
+                'itemprop' => 'url',
+            ],
+            $product->translation->title,
+        ],
+    ]);
+    ?>
+</div>
 
     <!--ALERT-->
     <div class="col-lg-12">
@@ -182,6 +178,9 @@ ProductAsset::register($this);
         <?php endif ?>
     </div>
 
-<?= \bl\cms\shop\widgets\RecommendedProducts::widget([
-    'id' => $product->id
-]); ?>
+    <!--RECOMMENDED PRODUCTS-->
+    <div class="row">
+        <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
+            'id' => $product->id,
+        ]); ?>
+    </div>

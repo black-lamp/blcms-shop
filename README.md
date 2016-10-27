@@ -255,6 +255,17 @@ _shopAdministrator_
 extends permissions from all managers. 
 
 
+##WIDGETS
+**Recommended products**
+
+_Example:_
+```
+<?= \bl\cms\shop\widgets\RecommendedProducts::widget([
+    'id' => $product->id,
+]); ?>
+```
+Also you may use bl\cms\shop\widgets\assets\RecommendedProductsAsset in your view.
+
 
 
 
