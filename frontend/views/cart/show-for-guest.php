@@ -64,7 +64,7 @@ CartAsset::register($this);
                     </td>
                     <td class="text-center">
                         <?=Html::a(Html::tag('span', '', ['class' => 'glyphicon glyphicon-remove']),
-                            Url::to(['shop/cart/remove', 'id' => $product->id]),
+                            Url::to(['/shop/cart/remove', 'id' => $product->id]),
                             [
                                 'class' => 'btn btn-danger btn-xs',
                                 'title' => \Yii::t('cart', 'Remove')

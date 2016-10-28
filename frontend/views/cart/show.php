@@ -36,9 +36,10 @@ CartAsset::register($this);
         <table class="table table-hover table-striped products-list">
             <tr>
                 <th class="col-md-4 text-center"><?= Yii::t('cart', 'Title'); ?></th>
-                <th class="col-md-4 text-center"><?= Yii::t('cart', 'Photo'); ?></th>
+                <th class="col-md-1 text-center"><?= Yii::t('cart', 'Photo'); ?></th>
                 <th class="col-md-2 text-center"><?= Yii::t('cart', 'Price'); ?></th>
                 <th class="col-md-2 text-center"><?= Yii::t('cart', 'Count'); ?></th>
+                <th class="col-md-1"></th>
             </tr>
 
             <!--PRODUCT LIST FROM DATABASE-->
@@ -58,6 +59,14 @@ CartAsset::register($this);
                         </td>
                         <td class="text-center">
                             <?= $orderProduct->count; ?>
+                        </td>
+                        <td class="text-center">
+                            <?=Html::a(Html::tag('span', '', ['class' => 'glyphicon glyphicon-remove']),
+                                Url::to(['/shop/cart/remove', 'id' => $orderProduct->id]),
+                                [
+                                    'class' => 'btn btn-danger btn-xs',
+                                    'title' => \Yii::t('cart', 'Remove')
+                                ]); ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
