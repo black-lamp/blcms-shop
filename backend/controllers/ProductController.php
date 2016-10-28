@@ -125,7 +125,7 @@ class ProductController extends Controller
 
             $product = Product::findOne($id);
 
-            if (\Yii::$app->user->can('updateOwnProduct', ['productOwner' => $product->owner])) {
+            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
                 $products_translation = ProductTranslation::find()->where([
                     'product_id' => $id,
                     'language_id' => $languageId
@@ -174,7 +174,7 @@ class ProductController extends Controller
      */
     public function actionDelete($id)
     {
-        if (\Yii::$app->user->can('deleteOwnProduct', ['productOwner' => Product::findOne($id)->owner])) {
+        if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
             Product::deleteAll(['id' => $id]);
             return $this->redirect('index');
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
