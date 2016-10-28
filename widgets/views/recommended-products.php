@@ -53,27 +53,29 @@ use yii\helpers\Url;
                         </a>
                     </p>
 
-                    <!--Price-->
-                    <div class="price col-md-6">
-                        <?php if (!empty($recommendedProduct->prices)) : ?>
-                            <?= $form->field($cart, 'priceId', ['options' => ['class' => '']])->dropDownList(ArrayHelper::map($recommendedProduct->prices, 'id', function ($recommendedProduct) {
-                                $priceItem = $recommendedProduct->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($recommendedProduct->price);
-                                return $priceItem;
-                            }))->label(\Yii::t('shop', 'Price')); ?>
-                        <?php else : ?>
-                            <p class="label-price"><?= Yii::t('shop', 'Price'); ?></p>
-                            <p class="standart-price">
-                                <?= \Yii::$app->formatter->asCurrency($recommendedProduct->price); ?>
-                            </p>
-                        <?php endif; ?>
-                        <?= $form->field($cart, 'productId')->hiddenInput(['value' => $recommendedProduct->id])->label(false); ?>
-                    </div>
+                    <div class="price-and-count">
+                        <!--Price-->
+                        <div class="price col-md-6">
+                            <?php if (!empty($recommendedProduct->prices)) : ?>
+                                <?= $form->field($cart, 'priceId', ['options' => ['class' => '']])->dropDownList(ArrayHelper::map($recommendedProduct->prices, 'id', function ($recommendedProduct) {
+                                    $priceItem = $recommendedProduct->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($recommendedProduct->price);
+                                    return $priceItem;
+                                }))->label(\Yii::t('shop', 'Price')); ?>
+                            <?php else : ?>
+                                <p class="label-price"><?= Yii::t('shop', 'Price'); ?></p>
+                                <p class="standart-price">
+                                    <?= \Yii::$app->formatter->asCurrency($recommendedProduct->price); ?>
+                                </p>
+                            <?php endif; ?>
+                            <?= $form->field($cart, 'productId')->hiddenInput(['value' => $recommendedProduct->id])->label(false); ?>
+                        </div>
 
-                    <!--Count-->
-                    <div class="count col-md-6">
-                        <?= $form->field($cart, 'count', ['options' => ['class' => '']])->
-                        textInput(['type' => 'number', 'min' => 1, 'value' => 1])->label(\Yii::t('shop', 'Count'));
-                        ?>
+                        <!--Count-->
+                        <div class="count col-md-6">
+                            <?= $form->field($cart, 'count', ['options' => ['class' => '']])->
+                            textInput(['type' => 'number', 'min' => 1, 'value' => 1])->label(\Yii::t('shop', 'Count'));
+                            ?>
+                        </div>
                     </div>
 
                     <!--Button-->

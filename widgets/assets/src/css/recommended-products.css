@@ -35,7 +35,7 @@
 .recommended-products .product .product-content {
     display: inline-block;
     width: 100%;
-    min-height: 180px;
+    min-height: 165px;
     padding: 10px 0;
     background: rgb(84, 122, 183);
     transition: .2s;
@@ -48,6 +48,10 @@
     color: #fff;
     font-size: 18px;
     text-align: center;
+}
+.recommended-products div.price-and-count {
+    bottom: 10px;
+    position: absolute;
 }
 .recommended-products label, .recommended-products p.label-price {
     color: #f5f5f5;
