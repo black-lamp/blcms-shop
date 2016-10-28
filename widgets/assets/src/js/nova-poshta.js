@@ -1,10 +1,6 @@
 $(document).ready(function () {
-
     var areaRef = getAreaRef();
-    console.log(areaRef);
-
     pastePostOfficeToField();
-
 
 });
 

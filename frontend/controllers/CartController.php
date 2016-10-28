@@ -10,7 +10,6 @@ use bl\cms\cart\models\CartForm;
 use bl\cms\cart\models\DeliveryMethod;
 use bl\cms\cart\models\Order;
 use bl\cms\cart\models\OrderProduct;
-use bl\cms\cart\models\OrderStatus;
 use bl\cms\shop\common\components\user\models\Profile;
 use bl\cms\shop\common\components\user\models\User;
 use bl\cms\shop\common\components\user\models\UserAddress;
@@ -20,7 +19,6 @@ use bl\imagable\helpers\FileHelper;
 use Exception;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 
 class CartController extends Controller
@@ -165,7 +163,6 @@ class CartController extends Controller
                 'field' => '<input type="text" id="useraddress-zipcode" class="form-control" name="UserAddress[zipcode]">'
             ]);
         }
-        else throw new BadRequestHttpException();
     }
 
     public function actionOrderSuccess() {
@@ -220,7 +217,6 @@ class CartController extends Controller
     }
 
 
-
     /**
      * This method is used for Nova Poshta widget.
      *
@@ -229,7 +225,8 @@ class CartController extends Controller
      * @param null $methodProperties
      * @return string
      */
-    private function getResponse($modelName, $calledMethod, $methodProperties = null) {
+    private function getResponse($modelName, $calledMethod, $methodProperties = null)
+    {
 
         $data = [
             'apiKey' => $this->token,
