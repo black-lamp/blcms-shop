@@ -11,6 +11,7 @@ namespace bl\cms\shop\widgets;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
 use yii\base\Widget;
+use yii\helpers\ArrayHelper;
 
 class RecommendedProducts extends Widget
 {
@@ -47,32 +48,9 @@ class RecommendedProducts extends Widget
             $next = Product::find()->where(['>', 'id', $id])
                 ->andWhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
 
-            if (!isset($next[1]) && !empty($next[0])) {
-                $next[1] = Product::find()->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->one();
-            }
-            if (isset($next[0])) {
-                $next = Product::find()->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
-            }
-            if (isset($previous[1]) && !empty($previous[0])) {
-                $previous[1] = Product::find()->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->one();
-            }
-            if (isset($previous[0])) {
-                $previous = Product::find()->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->limit('2')->all();
-            }
-            $recommendedProducts = [];
-            if (isset($previous[1])) {
-                $recommendedProducts[] = $previous[1];
-            }
-            if (isset($previous[0])) {
-                $recommendedProducts[] = $previous[0];
-            }
-            if (isset($next[0])) {
-                $recommendedProducts[] = $next[0];
-            }
-            if (isset($next[1])) {
-                $recommendedProducts[] = $next[1];
-            }
-            return $recommendedProducts;
+            $products = ArrayHelper::merge($previous, $next);
+
+            return $products;
         }
 
         return false;
