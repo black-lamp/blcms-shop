@@ -13,13 +13,13 @@
     width: 21%;
     padding: 0;
     margin: 0 2%;
-    box-shadow: 0 5px 50px -5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 50px -5px rgba(0, 0, 0, .4);
     transition: .2s;
     float: left;
     filter: contrast(95%) brightness(95%);
 }
 .recommended-products .product:hover {
-    box-shadow: 0 5px 50px -5px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 5px 50px -5px rgba(0, 0, 0, 0.5);
     filter: contrast(105%) brightness(105%);
 }
 /*Product image*/
