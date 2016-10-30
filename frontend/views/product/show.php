@@ -130,7 +130,7 @@ ProductAsset::register($this);
 
             <?php $form = ActiveForm::begin([
                 'method' => 'post',
-                'action' => ['/shop/cart/add']
+                'action' => ['/cart/cart/add']
             ]); ?>
 
             <!--PRICES-->
