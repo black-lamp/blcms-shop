@@ -105,13 +105,17 @@ class OrderStatusController extends Controller
     public function actionDelete($id)
     {
         if (!empty($id)) {
-            if ($id != CartComponent::STATUS_INCOMPLETE && $id != CartComponent::STATUS_CONFIRMED) {
-                $this->findModel($id)->delete();
-                return $this->redirect(['index']);
+            if ($id != OrderStatus::STATUS_INCOMPLETE && $id != OrderStatus::STATUS_CONFIRMED) {
+                $status = $this->findModel($id);
+                if (!empty($status)) {
+                    $status->delete();
+                    return $this->redirect(['index']);
+                }
             }
-            else throw new Exception('Removing this status will lead to failure in the Cart component. You can only change title.');
+            else throw new Exception(Yii::t('shop', 'Removing this status can break cart functionality.'));
         }
-        else throw new NotFoundHttpException();
+
+        throw new NotFoundHttpException();
     }
 
     /**

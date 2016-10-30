@@ -12,7 +12,7 @@ use yii\helpers\Url;
 ?>
 
 <?php if (count($languages) > 1): ?>
-    <div class="dropdown pull-right">
+    <div class="dropdown">
         <button class="btn btn-warning btn-xs m-t-xs m-l-xs dropdown-toggle m-r-xs" type="button"
                 id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="true">
