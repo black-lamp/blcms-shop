@@ -86,9 +86,6 @@ class CurrencyController extends Controller
         return $this->redirect(['index']);
     }
 
-
-
-
     /**
      * Updates an existing Currency model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -121,8 +118,6 @@ class CurrencyController extends Controller
             'model' => $model
         ]);
     }
-
-
 
     /**
      * Finds the Currency model based on its primary key value.
