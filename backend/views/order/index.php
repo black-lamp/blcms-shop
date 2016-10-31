@@ -61,7 +61,9 @@ use yii\helpers\Url;
             [
                 'headerOptions' => ['class' => 'text-center col-md-3'],
                 'attribute' => 'status',
-                'filter' => ArrayHelper::map(OrderStatus::find()->all(), 'id', 'title'),
+                'filter' => ArrayHelper::map(OrderStatus::find()->all(), 'id', function($model) {
+                    return $model->translation->title;
+                }),
 
                 'value' => function ($model) {
                     $status = (!empty($model->orderStatus->title)) ? $model->orderStatus->title : '';
