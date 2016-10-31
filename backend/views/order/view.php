@@ -27,7 +27,9 @@ use yii\widgets\DetailView;
             <?= Yii::t('shop', 'Order status'); ?>
         </h2>
         <?php $form = ActiveForm::begin(); ?>
-        <?= $form->field($model, 'status')->dropDownList(ArrayHelper::map($statuses, 'id', 'title'), ['options' => [$model->status => ['selected' => true]]]); ?>
+        <?= $form->field($model, 'status')->dropDownList(ArrayHelper::map($statuses, 'id', function($model) {
+            return $model->translation->title;
+        }), ['options' => [$model->status => ['selected' => true]]]); ?>
         <?= Html::submitButton(Yii::t('shop', 'Change status'), ['class' => 'btn btn-primary']); ?>
         <?= Html::a(Yii::t('shop', 'Close'), Url::toRoute('/shop/order'), ['class' => 'btn btn-danger']) ?>
         <?php $form::end(); ?>
