@@ -76,7 +76,7 @@ use yii\widgets\DetailView;
                 [
                     'label' => 'price',
                     'value' => function($model) {
-                        $price = (empty($model->price_id)) ? $model->product->price : $model->productPrice->salePrice;
+                        $price = $model->price;
                         return $price;
                     }
                 ],
