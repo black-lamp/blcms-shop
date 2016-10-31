@@ -13,6 +13,5 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        \Yii::$app->set('cart', \Yii::createObject(CartComponent::className(), [$this->cartConfig]));
     }
 }
