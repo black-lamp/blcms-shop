@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 
 $form = ActiveForm::begin([
     'method' => 'post',
-    'action' => ['/cart/add'],
+    'action' => ['/cart/cart/add'],
     'options' => [
         '_fields' => [
             'class' => 'col-md-4'
