@@ -49,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'name') ?>
                 <?= $form->field($model, 'surname') ?>
                 <?= $form->field($model, 'patronymic') ?>
-                <?= $form->field($model, 'phone') ?>
+                <?= $form->field($model, 'phone')
+                    ->widget(\yii\widgets\MaskedInput::className(), ['mask' => '(999)-999-99-99']); ?>
 
                 <div class="form-group">
                     <div class="col-lg-offset-3 col-lg-9">
