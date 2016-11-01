@@ -13,22 +13,23 @@ use yii\helpers\ArrayHelper;
 ?>
 
 <div id="nova-poshta">
-<!--    --><?//= Html::activeDropDownList(
-//        $model,
-//        $attribute,
-//        ArrayHelper::map($areas, 'Ref', 'Description'),
-//        [
-//            'id' => 'np-areas'
-//        ]);
-//    ?>
-<!--    --><?//= Html::activeDropDownList(
-//        $model,
-//        $attribute,
-//        ArrayHelper::map($warehouses, 'Number', 'DescriptionRu'),
-//        [
-//            'id' => 'useraddress-postoffice'
-//        ]);
-//    ?>
+    <?php /* echo Html::activeDropDownList(
+        $model,
+        $attribute,
+        ArrayHelper::map($areas, 'Ref', 'Description'),
+        [
+            'id' => 'np-areas'
+        ]);
+    */
+    ?>
+    <?= Html::activeDropDownList(
+        $model,
+        $attribute,
+        ArrayHelper::map($warehouses, 'Number', 'DescriptionRu'),
+        [
+            'id' => 'useraddress-postoffice'
+        ]);
+    ?>
 </div>
 
 

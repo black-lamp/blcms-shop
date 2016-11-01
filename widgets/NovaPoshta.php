@@ -29,12 +29,14 @@ class NovaPoshta extends Widget
     public function run($params = null)
     {
         $areas = json_decode($this->getAreas());
+        $warehouses = json_decode($this->getWarehouses());
 
         return $this->render('nova-poshta', [
             'language' => $this->language,
             'model' => $this->formModel,
             'attribute' => $this->formAttribute,
             'areas' => $areas->data,
+            'warehouses' => $warehouses->data
         ]);
     }
 
@@ -42,6 +44,11 @@ class NovaPoshta extends Widget
     public function getAreas() {
 
         return $this->getResponse('Address', 'getAreas');
+    }
+
+    public function getWarehouses() {
+
+        return $this->getResponse('Address', 'getWarehouses');
     }
 
     private function getResponse($modelName, $calledMethod, $methodProperties = null) {
