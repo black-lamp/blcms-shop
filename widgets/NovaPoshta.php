@@ -31,7 +31,7 @@ class NovaPoshta extends Widget
         $areas = json_decode($this->getAreas());
         $warehouses = json_decode($this->getWarehouses());
 
-        if (!empty($warehouses) && !empty(areas)) {
+        if (!empty($warehouses) && !empty($areas)) {
             return $this->render('nova-poshta', [
                 'language' => $this->language,
                 'model' => $this->formModel,
