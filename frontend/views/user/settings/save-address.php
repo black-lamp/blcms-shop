@@ -2,7 +2,7 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- *  @var \bl\cms\shop\common\components\user\models\UserAddress $address
+ *  @var \bl\cms\cart\common\components\user\models\UserAddress $address
  */
 
 use yii\bootstrap\ActiveForm;

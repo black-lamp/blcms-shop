@@ -1,7 +1,7 @@
 <?php
 namespace bl\cms\shop\frontend\components\user\controllers;
 
-use bl\cms\shop\common\components\user\models\UserAddress;
+use bl\cms\cart\common\components\user\models\UserAddress;
 use dektrium\user\controllers\SettingsController as BaseController;
 use yii\base\Exception;
 use yii\filters\AccessControl;

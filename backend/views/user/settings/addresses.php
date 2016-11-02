@@ -2,7 +2,7 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var \bl\cms\shop\common\components\user\models\UserAddress $addresses
+ * @var \bl\cms\cart\common\components\user\models\UserAddress $addresses
  */
 use yii\bootstrap\Html;
 use yii\helpers\Url;
