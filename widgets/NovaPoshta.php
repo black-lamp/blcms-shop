@@ -31,13 +31,16 @@ class NovaPoshta extends Widget
         $areas = json_decode($this->getAreas());
         $warehouses = json_decode($this->getWarehouses());
 
-        return $this->render('nova-poshta', [
-            'language' => $this->language,
-            'model' => $this->formModel,
-            'attribute' => $this->formAttribute,
-            'areas' => $areas->data,
-            'warehouses' => $warehouses->data
-        ]);
+        if (!empty($warehouses)) {
+            return $this->render('nova-poshta', [
+                'language' => $this->language,
+                'model' => $this->formModel,
+                'attribute' => $this->formAttribute,
+                'areas' => $areas->data,
+                'warehouses' => $warehouses->data
+            ]);
+        }
+        else return false;
     }
 
 
@@ -63,13 +66,26 @@ class NovaPoshta extends Widget
 
         $post = json_encode($data);
 
-        $result = file_get_contents($this->url, null, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-type: application/x-www-form-urlencoded;\r\n",
-                'content' => $post,
-            ]
-        ]));
+//        $result = file_get_contents($this->url, null, stream_context_create([
+//            'http' => [
+//                'method' => 'POST',
+//                'header' => "Content-type: application/x-www-form-urlencoded;\r\n",
+//                'content' => $post,
+//            ]
+//        ]));
+
+        $ch = curl_init($this->url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_PROXY, "101.0.20.222:3128");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_SSLVERSION,3);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
 
         return $result;
     }
