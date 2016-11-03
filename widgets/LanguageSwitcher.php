@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\widgets;
 
+use bl\multilang\entities\Language;
 use yii\base\Widget;
 
 /**
@@ -19,6 +20,9 @@ class LanguageSwitcher extends Widget
      */
     public function run()
     {
+        if (empty($this->languages)) {
+            $this->languages = Language::find()->all();
+        }
         return $this->render('language-switcher', [
             'languages' => $this->languages,
             'selectedLanguage' => $this->selectedLanguage,
