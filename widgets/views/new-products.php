@@ -26,8 +26,8 @@ use yii\helpers\Url;
                 ); ?>
             </td>
             <td>
-                <?= (!empty($product->ownerProfile->name)) ? $product->ownerProfile->name : '' . ' ' .
-                (!empty($product->ownerProfile->surname)) ? $product->ownerProfile->surname : ''; ?>
+                <?= (!empty($product->ownerProfile->name)) ? $product->ownerProfile->name : '';?>
+                <?= (!empty($product->ownerProfile->surname)) ? $product->ownerProfile->surname : ''; ?>
             </td>
             <td>
                 <?= $product->category->translation->title; ?>
