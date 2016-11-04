@@ -21,21 +21,26 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
             </h3>
         </div>
         <div class="panel-body">
+            <?php $items = [
+                ['label' => Yii::t('shop', 'Profile'), 'url' => ['/user/settings/profile']],
+                ['label' => Yii::t('shop', 'Addresses'), 'url' => ['/user/settings/addresses']],
+                ['label' => Yii::t('shop', 'Account'), 'url' => ['/user/settings/account']],
+                [
+                    'label' => Yii::t('user', 'Networks'),
+                    'url' => ['/user/settings/networks'],
+                    'visible' => $networksVisible
+                ],
+            ];
+            if (!Yii::$app->user->can('ProductPartner')) $items[] = ['label' => Yii::t('shop', 'Become a partner'), 'url' => ['/shop/partner-request/send']];
+            ?>
             <?= Menu::widget([
                 'options' => [
                     'class' => 'nav nav-pills nav-stacked',
                 ],
-                'items' => [
-                    ['label' => Yii::t('shop', 'Profile'), 'url' => ['/user/settings/profile']],
-                    ['label' => Yii::t('shop', 'Addresses'), 'url' => ['/user/settings/addresses']],
-                    ['label' => Yii::t('shop', 'Account'), 'url' => ['/user/settings/account']],
-                    [
-                        'label' => Yii::t('user', 'Networks'),
-                        'url' => ['/user/settings/networks'],
-                        'visible' => $networksVisible
-                    ],
-                ],
-            ]) ?>
+                'items' => $items,
+            ]);
+
+            ?>
         </div>
     </div>
 <?= Html::beginForm(['/site/logout'], 'post')
