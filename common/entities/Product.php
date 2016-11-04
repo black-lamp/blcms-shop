@@ -2,6 +2,7 @@
 
 namespace bl\cms\shop\common\entities;
 
+use bl\cms\cart\common\components\user\models\Profile;
 use bl\cms\cart\models\OrderProduct;
 use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
@@ -218,5 +219,9 @@ class Product extends ActiveRecord
     {
         $url = '/' . Yii::$app->controller->module->id . '/product/show';
         return Url::to([$url, 'id' => $this->id]);
+    }
+
+    public function getOwnerProfile() {
+        return $this->hasOne(Profile::className(), ['user_id' => 'owner']);
     }
 }
