@@ -30,7 +30,7 @@ use yii\helpers\Url;
                 <?= (!empty($product->ownerProfile->surname)) ? $product->ownerProfile->surname : ''; ?>
             </td>
             <td>
-                <?= $product->category->translation->title; ?>
+                <?= (!empty($product->category->translation->title)) ? $product->category->translation->title : ''; ?>
             </td>
         </tr>
     <?php endforeach; ?>
