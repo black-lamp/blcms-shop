@@ -74,10 +74,12 @@ class ProductSearch extends Product
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ]
         ]);
 
         if ($this->validate()) {
-
             return $dataProvider;
         }
         else throw new Exception();

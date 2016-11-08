@@ -59,6 +59,9 @@ class SearchProduct extends Product
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pagesize' => 10,
+            ],
         ]);
 
         if (!$this->validate()) {
