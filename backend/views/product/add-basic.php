@@ -43,13 +43,33 @@ use yii\widgets\ActiveForm;
         ]
     ])->label(\Yii::t('shop', 'Name'))
     ?>
-    <!--ARTICULUS-->
-    <?= $form->field($product, 'articulus', [
-        'inputOptions' => [
-            'class' => 'form-control'
-        ]
-    ])->label(\Yii::t('shop', 'Articulus'))
-    ?>
+    <div class="row">
+        <div class="col-md-5">
+            <!--ARTICULUS-->
+            <?= $form->field($product, 'articulus', [
+                'inputOptions' => [
+                    'class' => 'form-control'
+                ]
+            ])->label(\Yii::t('shop', 'Articulus'))
+            ?>
+        </div>
+        <div class="col-md-5">
+            <!--STANDART PRICE-->
+            <?= $form->field($product, 'price', [
+                'inputOptions' => [
+                    'class' => 'form-control'
+                ]
+            ])->textInput(['type' => 'number', 'step' => '0.01'])->label(\Yii::t('shop', 'Price'))
+            ?>
+        </div>
+        <div class="col-md-2">
+            <!--SALE-->
+            <?= $form->field($product, 'sale', [
+                'inputOptions' => [
+                    'class' => 'icheckbox_square-green checked hover active']
+            ])->checkbox(['class' => '']);?>
+        </div>
+    </div>
     <!--CATEGORY-->
     <b><?= \Yii::t('shop', 'Category'); ?></b>
     <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
@@ -57,13 +77,6 @@ use yii\widgets\ActiveForm;
     <?= CategoryTranslation::treeRecoursion($categoriesTree, $product->category_id, 'Product[category_id]'); ?>
     <?= '</ul>'; ?>
 
-    <!--STANDART PRICE-->
-    <?= $form->field($product, 'price', [
-        'inputOptions' => [
-            'class' => 'form-control'
-        ]
-    ])->textInput(['type' => 'number', 'step' => '0.01'])->label(\Yii::t('shop', 'Price'))
-    ?>
     <!--COUNTRY-->
     <?= $form->field($product, 'country_id', [
         'inputOptions' => [

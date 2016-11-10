@@ -30,6 +30,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $status
  * @property integer $owner
  * @property integer $availability
+ * @property boolean $sale
  *
  * @property OrderProduct[] $orderProducts
  * @property Param[] $params
@@ -72,6 +73,7 @@ class Product extends ActiveRecord
     {
         return [
             [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner'], 'integer'],
+            [['sale'], 'boolean'],
             [['price'], 'double'],
             [['articulus'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
@@ -124,6 +126,7 @@ class Product extends ActiveRecord
             'owner' => Yii::t('shop', 'Owner'),
             'status' => Yii::t('shop', 'Status'),
             'availability' => Yii::t('shop', 'Availability'),
+            'sale' => Yii::t('shop', 'Sale')
         ];
     }
 
