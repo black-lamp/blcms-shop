@@ -42,8 +42,8 @@ ProductAsset::register($this);
                 'itemprop' => 'url',
             ],
             [
-                'label' => $category->translation->title,
-                'url' => Url::toRoute(['category/show', 'id' => $category->id]),
+                'label' => (!empty($category->translation->title)) ? $category->translation->title : '',
+                'url' => (!empty($category)) ? Url::toRoute(['category/show', 'id' => $category->id]) : '',
                 'itemprop' => 'url',
             ],
             $product->translation->title,
