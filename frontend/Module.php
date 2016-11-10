@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\frontend;
+use Yii;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -23,5 +24,15 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
+        $this->registerTranslations();
+    }
+
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations['*'] = [
+            'class'          => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath'       => '@vendor/black-lamp/blcms-shop/frontend/messages',
+        ];
     }
 }
