@@ -1,15 +1,19 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
+
+use bl\cms\cart\common\components\user\models\Profile;
+use bl\cms\cart\common\components\user\models\RegistrationForm;
+use bl\cms\cart\common\components\user\models\User;
+use bl\cms\seo\StaticPageBehavior;
 use bl\cms\shop\frontend\components\events\PartnersEvents;
 use bl\cms\shop\common\entities\PartnerRequest;
 use Yii;
-use yii\filters\AccessControl;
+use yii\base\Exception;
 use yii\web\Controller;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
-
 class PartnerRequestController extends Controller
 {
     /**
@@ -18,15 +22,9 @@ class PartnerRequestController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'actions' => ['send'],
-                        'roles' => ['@'],
-                        'allow' => true,
-                    ],
-                ],
+            'staticPage' => [
+                'class' => StaticPageBehavior::className(),
+                'key' => 'partner'
             ]
         ];
     }
@@ -37,26 +35,47 @@ class PartnerRequestController extends Controller
     {
         $partner = new PartnerRequest();
 
+        if (Yii::$app->user->isGuest) {
+            $user = \Yii::createObject(RegistrationForm::className());
+            $profile = \Yii::createObject(Profile::className());
+        } else {
+            $user = User::findOne(Yii::$app->user->id);
+            $profile = Profile::findOne($user->id);
+        }
+
         if (Yii::$app->request->isPost) {
 
-            if (!Yii::$app->user->can('productPartner')) {
-                $partner->load(Yii::$app->request->post());
+            if (Yii::$app->user->isGuest) {
+                if ($user->load(\Yii::$app->request->post())) {
 
-                if ($partner->validate()) {
+                    $profile->user_id = $user->register();
 
-                    $partner->sender_id = Yii::$app->user->id;
-                    $partner->save();
+                    if ($profile->load(Yii::$app->request->post())) {
+                        if ($profile->validate()) {
+                            $profile->save();
 
-                    $this->trigger(self::EVENT_SEND, new PartnersEvents());
+                            $partner->load(Yii::$app->request->post());
+                            if ($partner->validate()) {
 
-                    Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your request was successfully sent.'));
-                }
+                                $partner->sender_id = Yii::$app->user->id;
+                                $partner->save();
+
+                                $this->trigger(self::EVENT_SEND, new PartnersEvents());
+
+                                Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your partner request was successfully sent.'));
+                                return $this->redirect(Yii::$app->request->referrer);
+                            }
+                        }
+                    }
+                } else throw new Exception('Registration is failed.');
             }
         }
 
         return $this->render('send',
             [
-                'partner' => $partner
+                'partner' => $partner,
+                'user' => $user,
+                'profile' => $profile
             ]
         );
     }
