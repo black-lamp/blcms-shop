@@ -12,13 +12,13 @@ use yii\widgets\ActiveForm;
  * @var $this ->context->staticPage \bl\cms\seo\common\entities\StaticPage
  */
 
-$this->title = (!empty($this->context->staticPage->translation->title)) ?
-    $this->context->staticPage->translation->title : Yii::t('shop', 'Partner request');
 ?>
 
 <div class="partner-request-send row">
 
-    <h1 class="text-center"><?= $this->title; ?></h1>
+    <h1 class="text-center"><?= (!empty($this->context->staticPage->translation->title)) ?
+            $this->context->staticPage->translation->title : Yii::t('shop', 'Partner request'); ?>
+    </h1>
 
     <?php if (!empty($this->context->staticPage->translation->text)) : ?>
             <div class="col-md-12">

@@ -72,6 +72,7 @@ class PartnerRequestController extends Controller
                 return $this->redirect(Yii::$app->request->referrer);
             }
         }
+        $this->registerStaticSeoData();
 
         return $this->render('send',
             [
