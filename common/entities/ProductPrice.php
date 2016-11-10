@@ -62,7 +62,7 @@ class ProductPrice extends ActiveRecord
             'id' => 'ID',
             'product_id' => 'Product ID',
             'price' => 'Price',
-            'sale' => 'Sale',
+            'sale' => 'Discount',
             'sale_type_id' => 'Sale Type ID',
         ];
     }
