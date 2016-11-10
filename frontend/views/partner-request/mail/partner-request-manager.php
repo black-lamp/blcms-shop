@@ -35,19 +35,19 @@
         <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= $profile['surname']; ?>
     </p>
     <p>
-        <b><?= Yii::t('shop', 'Phone'); ?></b>: <?= $profile['phone']; ?>
+        <b><?= Yii::t('shop', 'Phone number'); ?></b>: <?= $profile['phone']; ?>
     </p>
 <?php else : ?>
     <p>
-        <b><?= Yii::t('shop', 'Name'); ?></b>: <?= Yii::$app->user->profile->name; ?>
+        <b><?= Yii::t('shop', 'Name'); ?></b>: <?= $profile->name; ?>
     </p>
     <p>
-        <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= Yii::$app->user->profile->surname; ?>
+        <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= $profile->surname; ?>
     </p>
     <p>
-        <b><?= Yii::t('shop', 'Patronymic'); ?></b>: <?= Yii::$app->user->profile->patronomyc; ?>
+        <b><?= Yii::t('shop', 'Patronymic'); ?></b>: <?= $profile->patronymic; ?>
     </p>
     <p>
-        <b><?= Yii::t('shop', 'Phone'); ?></b>: <?= Yii::$app->user->profile->phone; ?>
+        <b><?= Yii::t('shop', 'Phone number'); ?></b>: <?= $profile->phone; ?>
     </p>
 <?php endif; ?>

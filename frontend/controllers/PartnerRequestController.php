@@ -53,21 +53,23 @@ class PartnerRequestController extends Controller
                     if ($profile->load(Yii::$app->request->post())) {
                         if ($profile->validate()) {
                             $profile->save();
-
-                            $partner->load(Yii::$app->request->post());
-                            if ($partner->validate()) {
-
-                                $partner->sender_id = Yii::$app->user->id;
-                                $partner->save();
-
-                                $this->trigger(self::EVENT_SEND, new PartnersEvents());
-
-                                Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your partner request was successfully sent.'));
-                                return $this->redirect(Yii::$app->request->referrer);
-                            }
                         }
                     }
                 } else throw new Exception('Registration is failed.');
+            }
+
+            $partner->load(Yii::$app->request->post());
+            if ($partner->validate()) {
+
+                $partner->sender_id = $profile->user_id;
+                $partner->moderation_status = PartnerRequest::STATUS_ON_MODERATION;
+
+                $partner->save();
+
+                $this->trigger(self::EVENT_SEND, new PartnersEvents());
+
+                Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your partner request was successfully sent.'));
+                return $this->redirect(Yii::$app->request->referrer);
             }
         }
 

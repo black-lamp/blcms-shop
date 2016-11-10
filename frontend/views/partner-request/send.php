@@ -27,8 +27,9 @@ $this->title = (!empty($this->context->staticPage->translation->title)) ?
     <?php endif; ?>
 
     <div class="col-md-12">
-        <?php if (!Yii::$app->user->can('productPartner')) : ?>
-
+        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->getPartnerStatus()) : ?>
+            <h3><?= \Yii::t('shop', 'You have already sent a request.'); ?></h3>
+        <?php else : ?>
             <?php $form = ActiveForm::begin([
                 'method' => 'post',
                 'action' => [
@@ -102,8 +103,6 @@ $this->title = (!empty($this->context->staticPage->translation->title)) ?
 
             <?php ActiveForm::end(); ?>
 
-        <?php else : ?>
-            <h3><?= \Yii::t('shop', 'You are partner already.'); ?></h3>
         <?php endif; ?>
     </div>
 </div>

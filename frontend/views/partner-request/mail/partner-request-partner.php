@@ -16,12 +16,30 @@
 
 <hr>
 
-<p>
-    <b><?= Yii::t('shop', 'Company name'); ?></b>: <?= $partnerRequest['company_name']; ?>
-</p>
-<p>
-    <b><?= Yii::t('shop', 'Website'); ?></b>: <?= $partnerRequest['website']; ?>
-</p>
-<p>
-    <b><?= Yii::t('shop', 'Message'); ?></b>: <?= $partnerRequest['message']; ?>
-</p>
+<?php if (Yii::$app->user->isGuest) : ?>
+    <p>
+        <b><?= Yii::t('shop', 'Name'); ?></b>: <?= $profile['name']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Patronymic'); ?></b>: <?= $profile['patronymic']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= $profile['surname']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Phone'); ?></b>: <?= $profile['phone']; ?>
+    </p>
+<?php else : ?>
+    <p>
+        <b><?= Yii::t('shop', 'Name'); ?></b>: <?= $profile->name; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= $profile->surname; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Patronymic'); ?></b>: <?= $profile->patronymic; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Phone'); ?></b>: <?= $profile->phone; ?>
+    </p>
+<?php endif; ?>
