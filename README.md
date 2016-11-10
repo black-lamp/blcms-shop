@@ -150,6 +150,22 @@ use bl\cms\shop\backend\components\CreateImageImagine;
             ],
             ...
         ],
+        'partnerMailer' => [
+                    'class' => yii\swiftmailer\Mailer::className(),
+                    'useFileTransport' => false,
+                    'messageConfig' => [
+                        'charset' => 'UTF-8',
+                    ],
+                    'viewPath' => '@vendor/black-lamp/blcms-shop/frontend/views/partner-request/mail',
+                    'htmlLayout' => '@vendor/black-lamp/blcms-shop/frontend/views/partner-request/mail/layout',
+                    'transport' => [
+                        'class' => 'Swift_SmtpTransport',
+                        'username' => 'info@mail.com',
+                        'password' => '55555555',
+                        'host' => 'pop.mail.com',
+                        'port' => '587',
+                    ],
+                ],
         ...
     ]
 
