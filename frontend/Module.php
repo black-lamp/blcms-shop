@@ -21,6 +21,18 @@ class Module extends \yii\base\Module
      */
     public $senderEmail;
 
+    /**
+     * @var array
+     * If log is enabled, viewed products will save for users.
+     */
+    public $log = [
+        'enabled' => true,
+        'clear' => [
+            'enabled' => true,
+            'maxProducts' => 10 // Max number of viewed products by one user.
+        ]
+    ];
+
     public function init()
     {
         parent::init();

@@ -9,12 +9,21 @@ use bl\cms\shop\common\entities\ProductTranslation;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use bl\cms\shop\frontend\traits\EventTrait;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 class ProductController extends Controller
 {
+
+    use EventTrait;
+
+    /**
+     * Event is triggered after creating RegistrationForm class.
+     * Triggered with \bl\cms\shop\frontend\traits\EventTrait.
+     */
+    const EVENT_BEFORE_SHOW = 'beforeShow';
 
     public function actionShow($id = null)
     {
@@ -23,6 +32,9 @@ class ProductController extends Controller
         if(empty($product)) {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
+
+        $event = $this->getViewedProductEvent($product->id);
+        $this->trigger(self::EVENT_BEFORE_SHOW, $event);
 
         /*Getting SEO data*/
         $this->view->title = $product->translation->seoTitle;
