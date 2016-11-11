@@ -26,7 +26,7 @@ use yii\helpers\Url;
 
                 <!--Product image-->
                 <div class="img">
-                    <a href="<?= Url::to(['product/show', 'id' => $product->product->id]) ?>">
+                    <a href="<?= Url::to(['/shop/product/show', 'id' => $product->product->id]) ?>">
                         <?php if (!empty($product->product->image)) : ?>
                             <?= Html::img($product->product->image->small) ?>
                         <?php endif; ?>
