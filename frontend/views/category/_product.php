@@ -66,12 +66,28 @@ $productId = $form->field($cart, 'productId')->hiddenInput(['value' => $model->i
 $submitButton = Html::submitButton(Yii::t('shop', 'Add to cart'),
     ['class' => 'btn btn-tight btn-primary']);
 
+/*ADD TO FAVORITE*/
+if (!Yii::$app->user->isGuest) {
+    $addToFavButton = (!$model->isFavorite()) ? Html::a(
+        Yii::t('shop', 'Add to favorites'),
+        Url::to(['/shop/favorite-product/add', 'productId' => $model->id]),
+        ['class' => 'btn btn-primary']
+    ) :
+        Html::a(
+            Yii::t('shop', 'Remove from favorites'),
+            Url::to(['/shop/favorite-product/remove', 'productId' => $model->id]),
+            ['class' => 'btn btn-warning']
+        );
+}
+else $addToFavButton = '';
+
+
 $availability = (!empty($model->productAvailability)) ?
     Html::tag('div', $model->productAvailability->translation->title, ['class' => 'col-md-12']) : '';
 
 
 echo Html::tag('div', $image, ['class' => 'col-md-3']) .
-    Html::tag('div', $title . $description . $articulus . $price . $count . $productId . $submitButton . $availability, ['class' => 'col-md-9']);
+    Html::tag('div', $title . $description . $articulus . $price . $count . $productId . $submitButton . $addToFavButton . $availability, ['class' => 'col-md-9']);
 
 $form::end();
 

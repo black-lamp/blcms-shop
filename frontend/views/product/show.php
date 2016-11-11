@@ -177,7 +177,7 @@ ProductAsset::register($this);
                 <?= Html::a(
                     Yii::t('shop', 'Add to favorites'),
                     Url::to(['/shop/favorite-product/add', 'productId' => $product->id]),
-                    ['class' => 'btn btn-primary']
+                    ['class' => 'btn btn-info']
                 ); ?>
             <?php else : ?>
                 <?= Html::a(
