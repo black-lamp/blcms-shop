@@ -41,6 +41,7 @@ return [
     'I\'m a new user' => 'Я новый пользователь',
     'I already have an account' => 'У меня уже есть аккаунт',
     'Image' => 'Изображение',
+    'Last viewed products' => 'Последние просмотренные товары',
     'Make order' => 'Сделать заказ',
     'Manage' => 'Управление',
     'Message' => 'Сообщение',
