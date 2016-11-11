@@ -26,7 +26,7 @@ use yii\helpers\Url;
 
                 <!--Product image-->
                 <div class="img">
-                    <a href="<?= Url::to(['product/show', 'id' => $recommendedProduct->id]) ?>">
+                    <a href="<?= Url::to(['/shop/product/show', 'id' => $recommendedProduct->id]) ?>">
                         <?php if (!empty($recommendedProduct->image)) : ?>
                             <?= Html::img($recommendedProduct->image->small) ?>
                         <?php endif; ?>
@@ -48,7 +48,7 @@ use yii\helpers\Url;
                 <div class="product-content">
                     <!--Product title-->
                     <p class="product-title">
-                        <a href="<?= Url::to(['product/show', 'id' => $recommendedProduct->id]) ?>">
+                        <a href="<?= Url::to(['/shop/product/show', 'id' => $recommendedProduct->id]) ?>">
                             <?= !empty($recommendedProduct->translation->title) ? $recommendedProduct->translation->title : ''; ?>
                         </a>
                     </p>

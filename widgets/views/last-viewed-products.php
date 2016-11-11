@@ -48,7 +48,7 @@ use yii\helpers\Url;
                 <div class="product-content">
                     <!--Product title-->
                     <p class="product-title">
-                        <a href="<?= Url::to(['product/show', 'id' => $product->product->id]) ?>">
+                        <a href="<?= Url::to(['/shop/product/show', 'id' => $product->product->id]) ?>">
                             <?= !empty($product->product->translation->title) ? $product->product->translation->title : ''; ?>
                         </a>
                     </p>
