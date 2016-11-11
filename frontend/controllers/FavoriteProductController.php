@@ -33,10 +33,20 @@ class FavoriteProductController extends Controller
                 $model->user_id = Yii::$app->user->id;
 
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'You have successfully added this product to favorites.');
+                    if (Yii::$app->request->isAjax) {
+                        return Yii::t('shop', 'You have successfully added this product to favorites.');
+                    }
+                    else {
+                        Yii::$app->session->setFlash('success', Yii::t('shop', 'You have successfully added this product to favorites.'));
+                    }
                 }
                 else {
-                    Yii::$app->session->setFlash('error', 'Error has occurred.');
+                    if (Yii::$app->request->isAjax) {
+                        return Yii::t('shop', 'Error has occurred.');
+                    }
+                    else {
+                        Yii::$app->session->setFlash('error', Yii::t('shop', 'Error has occurred.'));
+                    }
                 }
                 return $this->redirect(Yii::$app->request->referrer);
             }
@@ -60,10 +70,20 @@ class FavoriteProductController extends Controller
                 $model = FavoriteProduct::find()->where(['product_id' => $productId])->one();
                 if (!empty($model)) {
                     $model->delete();
-                    Yii::$app->session->setFlash('success', 'You have successfully deleted this product from favorites.');
+                    if (Yii::$app->request->isAjax) {
+                        return Yii::t('shop', 'You have successfully deleted this product from favorites.');
+                    }
+                    else {
+                        Yii::$app->session->setFlash('success', Yii::t('shop', 'You have successfully deleted this product from favorites.'));
+                    }
                 }
                 else {
-                    Yii::$app->session->setFlash('error', 'Error has occurred.');
+                    if (Yii::$app->request->isAjax) {
+                        return Yii::t('shop', 'Error has occurred.');
+                    }
+                    else {
+                        Yii::$app->session->setFlash('error', Yii::t('shop', 'Error has occurred.'));
+                    }
                 }
                 return $this->redirect(Yii::$app->request->referrer);
             }
