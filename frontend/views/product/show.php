@@ -52,24 +52,26 @@ ProductAsset::register($this);
     ?>
 </div>
 
-    <!--ALERT-->
-    <div class="col-lg-12">
-        <?php if (Yii::$app->session->hasFlash('alert')): ?>
-            <div class="alert alert-success" role="alert">
-                <?= Yii::$app->session->getFlash('alert') ?>
-            </div>
-        <?php endif; ?>
-    </div>
+<!--ALERT-->
+<div class="col-lg-12">
+    <?php if (Yii::$app->session->hasFlash('alert')): ?>
+        <div class="alert alert-success" role="alert">
+            <?= Yii::$app->session->getFlash('alert') ?>
+        </div>
+    <?php endif; ?>
+</div>
 
-    <!--PRODUCT CARD-->
-    <div class="row product-page">
+<!--PRODUCT CARD-->
+<div class="product-page">
 
-        <h1 class="col-md-12 text-center"><?= (!empty($product->translation->title))
-                ? $product->translation->title : '' ?>
-        </h1>
+    <!--TITLE-->
+    <h1 class="col-md-12 text-center"><?= (!empty($product->translation->title))
+            ? $product->translation->title : '' ?>
+    </h1>
 
+    <div class="row">
+        <!--IMAGE-->
         <div class="col-md-4 image">
-            <!--IMAGE-->
             <?= Html::img(
                 (!empty($product->images)) ? $product->image->thumb : Url::toRoute('/images/default.jpg'),
                 [
@@ -78,7 +80,6 @@ ProductAsset::register($this);
                         Html::encode($product->image->alt) :
                         ''
                 ]); ?>
-
         </div>
 
 
@@ -127,60 +128,80 @@ ProductAsset::register($this);
                     <?= $product->translation->description ?>
                 </div>
             <?php endif ?>
+        </div>
+    </div>
 
-            <?php $form = ActiveForm::begin([
-                'method' => 'post',
-                'action' => ['/cart/cart/add']
+    <div class="row">
+        <?php $form = ActiveForm::begin([
+            'method' => 'post',
+            'action' => ['/cart/cart/add']
+        ]); ?>
+
+        <!--PRICES-->
+        <?php if (!empty($product->prices)) : ?>
+            <?= $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-3']])
+                ->dropDownList(ArrayHelper::map($product->prices, 'id',
+                    function ($model) {
+                        $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
+                        return $priceItem;
+                    }))
+                ->label(\Yii::t('shop', 'Price'));
+            ?>
+        <?php elseif (!empty($product->price)) : ?>
+            <?= \Yii::$app->formatter->asCurrency($product->price); ?>
+        <?php endif; ?>
+
+        <!--QUANTITY-->
+        <?= $form->field($cart, 'count', ['options' => ['class' => 'col-md-3']])->
+        textInput([
+            'type' => 'number',
+            'min' => '1',
+            'value' => '1',
+            'data-action' => 'text',
+            'class' => 'form-control',
+            'id' => 'count'
+        ])->label(\Yii::t('shop', 'Count'));
+        ?>
+        <!--PRODUCT ID HIDDEN INPUT-->
+        <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id])->label(false); ?>
+
+        <!--SUBMIT BUTTON-->
+        <?= Html::submitButton(Yii::t('shop', 'Add to cart'),
+            [
+                'class' => 'btn btn-primary'
             ]); ?>
 
-            <!--PRICES-->
-            <?php if (!empty($product->prices)) : ?>
-                <?= $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-4']])
-                    ->dropDownList(ArrayHelper::map($product->prices, 'id',
-                        function ($model) {
-                            $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
-                            return $priceItem;
-                        }))
-                    ->label(\Yii::t('shop', 'Price'));
-                ?>
-            <?php elseif (!empty($product->price)) : ?>
-                <?= \Yii::$app->formatter->asCurrency($product->price); ?>
+        <!--ADD TO FAVORITE-->
+        <?php if (!Yii::$app->user->isGuest) : ?>
+            <?php if (!$product->isFavorite()) : ?>
+                <?= Html::a(
+                    Yii::t('shop', 'Add to favorites'),
+                    Url::to(['/shop/favorite-product/add', 'productId' => $product->id]),
+                    ['class' => 'btn btn-primary']
+                ); ?>
+            <?php else : ?>
+                <?= Html::a(
+                    Yii::t('shop', 'Remove from favorites'),
+                    Url::to(['/shop/favorite-product/remove', 'productId' => $product->id]),
+                    ['class' => 'btn btn-warning']
+                ); ?>
             <?php endif; ?>
+        <?php endif; ?>
 
-            <!--QUANTITY-->
-            <?= $form->field($cart, 'count', ['options' => ['class' => 'col-md-4']])->
-            textInput([
-                'type' => 'number',
-                'min' => '1',
-                'value' => '1',
-                'data-action' => 'text',
-                'class' => 'form-control',
-                'id' => 'count'
-            ])->label(\Yii::t('shop', 'Count'));
-            ?>
-            <!--PRODUCT ID HIDDEN INPUT-->
-            <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id])->label(false); ?>
+        <?php $form::end(); ?>
+    </div>
 
-            <?= Html::submitButton(Yii::t('shop', 'Add to cart'),
-                [
-                    'class' => 'btn btn-primary'
-                ]); ?>
-
-            <?php $form::end(); ?>
-
+    <!--FULL TEXT -->
+    <?php if (!empty($product->translation->full_text)) : ?>
+        <div class="full-text">
+            <?= $product->translation->full_text ?>
         </div>
+    <?php endif ?>
+</div>
 
-        <!--FULL TEXT -->
-        <?php if (!empty($product->translation->full_text)) : ?>
-            <div class="full-text">
-                <?= $product->translation->full_text ?>
-            </div>
-        <?php endif ?>
-    </div>
-
-    <!--RECOMMENDED PRODUCTS-->
-    <div class="row">
-        <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
-            'id' => $product->id,
-        ]); ?>
-    </div>
+<!--RECOMMENDED PRODUCTS-->
+<div class="row">
+    <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
+        'id' => $product->id,
+    ]); ?>
+</div>

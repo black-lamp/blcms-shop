@@ -22,6 +22,7 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
         </div>
         <div class="panel-body">
             <?php $items = [
+                ['label' => Yii::t('shop', 'Favorite products'), 'url' => ['/shop/favorite-product/list']],
                 ['label' => Yii::t('shop', 'Profile'), 'url' => ['/user/settings/profile']],
                 ['label' => Yii::t('shop', 'Addresses'), 'url' => ['/user/settings/addresses']],
                 ['label' => Yii::t('shop', 'Account'), 'url' => ['/user/settings/account']],

@@ -227,4 +227,15 @@ class Product extends ActiveRecord
     public function getOwnerProfile() {
         return $this->hasOne(Profile::className(), ['user_id' => 'owner']);
     }
+
+
+    /**
+     * Return true if product has added to favorites already or false if not.
+     * @return boolean
+     */
+    public function isFavorite() {
+        $favoriteProduct = FavoriteProduct::find()->where(['product_id' => $this->id])->one();
+        if (!empty($favoriteProduct)) return true;
+        else return false;
+    }
 }
