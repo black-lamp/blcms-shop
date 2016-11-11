@@ -12,28 +12,39 @@ trait EventTrait
      */
     protected function getViewedProductEvent($productId)
     {
-        if (!\Yii::$app->user->isGuest) {
+        if ($this->module->log['enabled']) {
+            if (!\Yii::$app->user->isGuest) {
 
-            $viewedProduct = ViewedProduct::find()
-                ->where(['product_id' => $productId, 'user_id' => \Yii::$app->user->id])->one();
+                $viewedProduct = ViewedProduct::find()
+                    ->where(['product_id' => $productId, 'user_id' => \Yii::$app->user->id])->one();
 
-            $ViewedProductsCount = ViewedProduct::find()
-                ->where(['user_id' => \Yii::$app->user->id])->count();
+                $ViewedProductsCount = ViewedProduct::find()
+                    ->where(['user_id' => \Yii::$app->user->id])->count();
 
-            if (empty($viewedProduct->id)) {
+                if (empty($viewedProduct->id)) {
 
-                if ($ViewedProductsCount < $this->module->log['clear']['maxProducts']) {
-                    $viewedProduct = new ViewedProduct([
-                        'product_id' => $productId,
-                        'user_id' => \Yii::$app->user->id
-                    ]);
+                    if ($ViewedProductsCount < $this->module->log['maxProducts']) {
+                        $viewedProduct = new ViewedProduct([
+                            'product_id' => $productId,
+                            'user_id' => \Yii::$app->user->id
+                        ]);
 
-                    $viewedProduct->save();
+                        $viewedProduct->save();
+                    }
+                    else {
+                        $oldViewedProduct = ViewedProduct::find()
+                            ->where(['user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
+                        $oldViewedProduct->delete();
+                        $viewedProduct = new ViewedProduct([
+                            'product_id' => $productId,
+                            'user_id' => \Yii::$app->user->id
+                        ]);
+
+                        $viewedProduct->save();
+                    }
                 }
                 else {
-                    $oldViewedProduct = ViewedProduct::find()
-                        ->where(['user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
-                    $oldViewedProduct->delete();
+                    $viewedProduct->delete();
                     $viewedProduct = new ViewedProduct([
                         'product_id' => $productId,
                         'user_id' => \Yii::$app->user->id
@@ -42,17 +53,8 @@ trait EventTrait
                     $viewedProduct->save();
                 }
             }
-            else {
-                $viewedProduct->delete();
-                $viewedProduct = new ViewedProduct([
-                    'product_id' => $productId,
-                    'user_id' => \Yii::$app->user->id
-                ]);
-
-                $viewedProduct->save();
-            }
         }
-    }
 
+    }
 
 }
