@@ -59,10 +59,10 @@ use yii\helpers\Url;
                             <?php if (!empty($product->product->prices)) : ?>
                                 <?= $form->field($cart, 'priceId', ['options' => ['class' => '']])
                                     ->dropDownList(ArrayHelper::map($product->product->prices, 'id',
-                                        function ($product) {
-                                    $priceItem = $product->product->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($product->product->price);
-                                    return $priceItem;
-                                }))->label(\Yii::t('shop', 'Price')); ?>
+                                        function ($model) {
+                                            $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
+                                            return $priceItem;
+                                        }))->label(\Yii::t('shop', 'Price')); ?>
                             <?php else : ?>
                                 <p class="label-price"><?= Yii::t('shop', 'Price'); ?></p>
                                 <p class="standart-price">
