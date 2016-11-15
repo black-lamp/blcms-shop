@@ -13,6 +13,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 $this->title = Yii::t('shop', 'Product availabilities');
+
+$currentLanguage = Language::getCurrent();
 ?>
 
 <div class="panel panel-default">
@@ -31,26 +33,17 @@ $this->title = Yii::t('shop', 'Product availabilities');
         <?php if (!empty($availabilities)) : ?>
             <table class="table table-hover">
                 <tr>
-                    <th class="col-lg-7"><?= \Yii::t('shop', 'Title'); ?></th>
-                    <th class="col-lg-2"><?= \Yii::t('shop', 'Language'); ?></th>
-                    <th class="col-lg-1"><?= \Yii::t('shop', 'Edit'); ?></th>
-                    <th class="col-lg-2"><?= \Yii::t('shop', 'Delete'); ?></th>
+                    <th class="col-lg-10"><?= \Yii::t('shop', 'Title'); ?></th>
+                    <th class="col-lg-2"><?= \Yii::t('shop', 'Control'); ?></th>
                 </tr>
-                <?php foreach ($availabilities as $availability) : ?>
+                <?php foreach ($availabilities as $availability ) : ?>
                     <tr>
                         <td class="project-title">
-                            <a href="<?= Url::toRoute(['save', 'id' => $availability->id]); ?>">
+                            <a href="<?= Url::toRoute(['save', 'id' => $availability->id, 'languageId' => $currentLanguage->id]); ?>">
                                 <?= $availability->translation->title; ?>
                             </a>
                         </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-
-                        <td>
-                            <?= ManageButtons::widget(['model' => $availability]); ?>
-                        </td>
+                        <td><?= ManageButtons::widget(['model' => $availability]); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </table>
@@ -61,4 +54,5 @@ $this->title = Yii::t('shop', 'Product availabilities');
         </p>
 
     </div>
+</div>
 
