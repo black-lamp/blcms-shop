@@ -129,16 +129,6 @@ class Category extends ActiveRecord
         return $this->hasMany(CategoryTranslation::className(), ['category_id' => 'id']);
     }
 
-    public static function findChilds($parentCategories)
-    {
-        $tree = [];
-        foreach ($parentCategories as $childCategory) {
-            $childs = Category::find()->where(['parent_id' => $childCategory->id])->all();
-            $tree[] = [$childCategory, 'childCategory' => self::findChilds($childs)];
-        }
-        return $tree;
-    }
-
     public static function getBig($category, $imageType) {
         $fileName = $category->$imageType;
         return (Yii::getAlias('@frontend/web/images') . '/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);

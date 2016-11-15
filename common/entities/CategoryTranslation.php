@@ -87,35 +87,4 @@ class CategoryTranslation extends ActiveRecord
     {
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
-
-    public static function treeRecoursion($categoriesTree, $parentCategory = null, $name, $category_id = null)
-    {
-        foreach ($categoriesTree as $oneCategory) {
-            if (!empty($oneCategory['childCategory'])) {
-                echo sprintf('<li class="list-group-item"><input type="radio" %s name="%s" value="%s" id="%s" %s><label for="%s">%s</label>',
-                    $parentCategory == $oneCategory[0]->id ? ' checked ' : '',
-                    $name,
-                    $oneCategory[0]->id,
-                    $oneCategory[0]->id,
-                    $category_id == $oneCategory[0]->id ? 'disabled' : '',
-                    $oneCategory[0]->id,
-                    $oneCategory[0]->translation->title
-                );
-                echo '<ul class="list-group">';
-                self::treeRecoursion($oneCategory['childCategory'], $parentCategory, $name, $category_id);
-                echo '</ul></li>';
-            } else {
-                echo sprintf('<li class="list-group-item"><input type="radio" %s name="%s" value="%s" id="%s" %s><label for="%s">%s</label>',
-                    $parentCategory == $oneCategory[0]->id ? ' checked ' : '',
-                    $name,
-                    $oneCategory[0]->id,
-                    $oneCategory[0]->id,
-                    $category_id == $oneCategory[0]->id ? 'disabled' : '',
-                    $oneCategory[0]->id,
-                    (!empty($oneCategory[0]->translation->title)) ? $oneCategory[0]->translation->title : ''
-                );
-                echo '</li>';
-            }
-        }
-    }
 }
