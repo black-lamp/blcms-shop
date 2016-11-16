@@ -25,8 +25,6 @@
     "black-lamp/yii2-seo": "0.1.*",
     "marqu3s/yii2-summernote": "dev-master",
     "black-lamp/yii2-imagable": "1.*",
-
-    "nirvana-msu/yii2-infinite-scroll": "1.0.*@dev"
   },
   "autoload": {
     "psr-4": {
