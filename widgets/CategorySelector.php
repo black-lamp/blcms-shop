@@ -13,8 +13,8 @@ use yii\base\Widget;
 class CategorySelector extends Widget
 {
     public $categoriesTree;
-    public $category;
-    public $category_translation;
+    public $parentId;
+    public $inputName = 'Category[parent_id]';
 
     /**
      * @inheritdoc
@@ -26,8 +26,8 @@ class CategorySelector extends Widget
 
         return $this->render('category-selector', [
             'categoriesTree' => $categoriesTree,
-            'category' => $this->category,
-            'category_translation' => $this->category_translation
+            'parentId' => $this->parentId,
+            'inputName' => $this->inputName,
         ]);
     }
 

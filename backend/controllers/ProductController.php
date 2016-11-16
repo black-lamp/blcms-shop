@@ -113,8 +113,6 @@ class ProductController extends Controller
      */
     public function actionSave($id = null, $languageId = null)
     {
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-
         if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
         } else {
@@ -156,7 +154,6 @@ class ProductController extends Controller
                 'product' => $product,
                 'products_translation' => $products_translation,
                 'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                 'params_translation' => new ParamTranslation(),
             ]
         ]);
@@ -250,7 +247,6 @@ class ProductController extends Controller
                 'product' => $product,
                 'products_translation' => $products_translation,
                 'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                 'params_translation' => new ParamTranslation(),
             ]);
         } else {
@@ -266,7 +262,6 @@ class ProductController extends Controller
                     'product' => $product,
                     'products_translation' => $products_translation,
                     'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                    'categoriesTree' => Category::findChilds($categoriesWithoutParent),
                     'params_translation' => new ParamTranslation(),
                 ]
             ]);
