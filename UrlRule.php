@@ -164,15 +164,12 @@ class UrlRule extends Object implements UrlRuleInterface
      */
     public function createUrl($manager, $route, $params)
     {
+        $pathInfo = '';
         if($route == $this->categoryRoute && empty($params['id'])) {
-            return $this->prefix;
+            $pathInfo = $this->prefix;
         }
-        if ($route == $this->cartRoute) {
-            return $this->prefix . '/cart';
-        }
-        if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
+        else if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
             $id = $params['id'];
-            $pathInfo = '';
             $parentId = null;
             $language = Language::findOne([
                 'lang_id' => $manager->language
@@ -216,10 +213,13 @@ class UrlRule extends Object implements UrlRuleInterface
             if(!empty($this->prefix)) {
                 $pathInfo = $this->prefix . '/' . $pathInfo;
             }
-
-            return $pathInfo;
+            unset($params['id']);
         }
+        else {
+            return false;
+        }
+        $pathInfo = $manager->createUrl(array_merge([$pathInfo], $params));
+        return substr($pathInfo, 1);
 
-        return false;
     }
 }
