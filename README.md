@@ -283,6 +283,24 @@ _Example:_
 Also you may use bl\cms\shop\widgets\assets\RecommendedProductsAsset in your view.
 
 
+**LOGGING**
+Your application can record how many people watched a particular product.
+To enable logging, you must add the following settings in the frontend configuration file:
+
+```
+public $log = [
+        'enabled' => true,
+        'maxProducts' => 10 // Max number of viewed products by one user.
+    ];
+```
+
+In it, you specify the number of products, which is stored in the table shop_product_views for one user.
+This value can be 'all', ie infinitely.
+
+If the 'maxProducts' property value is "all", the "views" of Product object increases by one for a registered user once.
+Otherwise it will increase by one each time when registered user views product.
+
+
 
 
 
