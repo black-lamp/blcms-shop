@@ -235,7 +235,8 @@ class Product extends ActiveRecord
      * @return boolean
      */
     public function isFavorite() {
-        $favoriteProduct = FavoriteProduct::find()->where(['product_id' => $this->id])->one();
+        $favoriteProduct = FavoriteProduct::find()
+            ->where(['product_id' => $this->id, 'user_id' => \Yii::$app->user->id])->one();
         if (!empty($favoriteProduct)) return true;
         else return false;
     }
