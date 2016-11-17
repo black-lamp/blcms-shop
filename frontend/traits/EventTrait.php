@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\frontend\traits;
+use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ViewedProduct;
+use yii\db\Expression;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -17,44 +19,52 @@ trait EventTrait
 
                 $viewedProduct = ViewedProduct::find()
                     ->where(['product_id' => $productId, 'user_id' => \Yii::$app->user->id])->one();
-
                 $ViewedProductsCount = ViewedProduct::find()
                     ->where(['user_id' => \Yii::$app->user->id])->count();
 
-                if (empty($viewedProduct->id)) {
 
-                    if ($ViewedProductsCount < $this->module->log['maxProducts']) {
-                        $viewedProduct = new ViewedProduct([
-                            'product_id' => $productId,
-                            'user_id' => \Yii::$app->user->id
-                        ]);
-
-                        $viewedProduct->save();
+                if (empty($viewedProduct)) {
+                    if ($this->module->log['maxProducts'] != 'all') {
+                        if ($ViewedProductsCount > $this->module->log['maxProducts']) {
+                            $oldViewedProduct = ViewedProduct::find()
+                                ->where(['user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
+                            $oldViewedProduct->delete();
+                        }
+                        $this->recordProductView($productId);
                     }
                     else {
-                        $oldViewedProduct = ViewedProduct::find()
-                            ->where(['user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
-                        $oldViewedProduct->delete();
-                        $viewedProduct = new ViewedProduct([
-                            'product_id' => $productId,
-                            'user_id' => \Yii::$app->user->id
-                        ]);
-
-                        $viewedProduct->save();
+                        $this->recordProductViewByLoggedUser($productId, $viewedProduct);
                     }
-                }
-                else {
-                    $viewedProduct->delete();
                     $viewedProduct = new ViewedProduct([
                         'product_id' => $productId,
                         'user_id' => \Yii::$app->user->id
                     ]);
 
-                    $viewedProduct->save();
                 }
+                else $viewedProduct->update_time = new Expression('NOW()');
+
+                $viewedProduct->save();
             }
         }
 
+    }
+
+    /* Number of product views */
+    private function recordProductViewByLoggedUser($productId, $viewedProduct = null) {
+        if (!empty($productId)) {
+            if ($this->module->log['maxProducts'] == 0) {
+
+                if (empty($viewedProduct)) {
+                    $this->recordProductView($productId);
+                }
+            }
+        }
+    }
+
+    private function recordProductView($productId) {
+        $product = Product::findOne($productId);
+        $product->views += 1;
+        $product->save();
     }
 
 }

@@ -27,7 +27,7 @@ class Module extends \yii\base\Module
      */
     public $log = [
         'enabled' => true,
-        'maxProducts' => 10 // Max number of viewed products by one user.
+        'maxProducts' => 'all' // Max number of viewed products by one user.
     ];
 
     public function init()
