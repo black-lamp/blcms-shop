@@ -2,7 +2,9 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\common\components\user\models\User;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "shop_viewed_product".
@@ -27,6 +29,20 @@ class ViewedProduct extends ActiveRecord
     public static function tableName()
     {
         return 'shop_viewed_product';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => array(
+                'class' => TimestampBehavior::className(),
+                'attributes' => array(
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ),
+                'value' => new Expression('NOW()'),
+            ),
+        ];
     }
 
     /**
