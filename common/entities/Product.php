@@ -30,6 +30,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $status
  * @property integer $owner
  * @property integer $availability
+ * @property integer $views
  * @property boolean $sale
  *
  * @property OrderProduct[] $orderProducts
@@ -72,7 +73,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner', 'views'], 'integer'],
             [['sale'], 'boolean'],
             [['price'], 'double'],
             [['articulus'], 'string'],
