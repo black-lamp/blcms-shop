@@ -38,7 +38,7 @@ class SearchFavoriteProduct extends FavoriteProduct
      */
     public function search($params)
     {
-        $query = FavoriteProduct::find();
+        $query = FavoriteProduct::find()->where(['user_id' => \Yii::$app->user->id]);
 
         // add conditions that should always apply here
 
