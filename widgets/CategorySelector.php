@@ -66,7 +66,8 @@ class CategorySelector extends Widget
                     $oneCategory[0]->id,
                     $category_id == $oneCategory[0]->id ? 'disabled' : '',
                     $oneCategory[0]->id,
-                    $oneCategory[0]->translations[$languageIndex]->title
+                    (!empty($oneCategory[0]->translations[$languageIndex])) ?
+                        $oneCategory[0]->translations[$languageIndex]->title : $oneCategory[0]->translation->title
                 );
                 echo '<ul class="list-group">';
                 self::treeRecoursion($oneCategory['childCategory'], $parentCategory, $name, $category_id);
