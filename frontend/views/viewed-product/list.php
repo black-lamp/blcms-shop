@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => "",
 
         'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
 
             /*ARTICULUS*/
             [
@@ -44,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             /*TITLE AND INFO*/
             [
-                'headerOptions' => ['class' => 'text-center col-md-7'],
+                'headerOptions' => ['class' => 'text-center col-md-6'],
                 'attribute' => 'product.translation.title',
                 'value' => function ($model) {
                     if (!empty($model->product->translation->title)) {
@@ -99,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             /*BUTTONS*/
             [
-                'headerOptions' => ['class' => 'text-center col-md-2'],
+                'headerOptions' => ['class' => 'text-center col-md-3'],
                 'value' => function ($model) {
                     $deleteButton = Html::a(
                         Yii::t('shop', 'Remove from viewed'),
