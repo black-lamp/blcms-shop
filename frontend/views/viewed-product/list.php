@@ -12,7 +12,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
-$this->title = Yii::t('shop', 'Viewed Products');
+$this->title = Yii::t('shop', 'Viewed products');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="viewed-product-index">

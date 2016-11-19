@@ -71,7 +71,7 @@ return [
     'Surname' => 'Фамилия',
     'Title' => 'Название',
     'The list is empty' => 'Список пуст',
-    'Viewed Products' => 'Просмотренные товары',
+    'Viewed products' => 'Просмотренные товары',
     'Vendor' => 'Производитель',
     'Website' => 'Сайт',
     'You have successfully added this product to cart' => 'Вы успешно добавили этот товар в корзину.',
