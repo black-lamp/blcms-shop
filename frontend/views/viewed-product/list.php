@@ -50,11 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     if (!empty($model->product->translation->title)) {
                         $content = (!empty($model->product->translation->title)) ?
-                            Html::a(
-                                Html::tag('h3', $model->product->translation->title),
+                            Html::tag('h3', Html::a(
+                                $model->product->translation->title,
                                 Url::toRoute(['/shop/product/show',
                                     'id' => $model->product->id, 'languageId' => Language::getCurrent()->id]),
-                                ['class' => "text-success"]) : '';
+                                ['class' => "text-success"])) : '';
+
                         $content .= (!empty($model->product->category->translation->title)) ?
                             Html::tag('p',
                                 Html::tag('small', Yii::t('shop', 'Category') . ': ' .
@@ -66,10 +67,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )),
                                 ['class' => 'text-info'])
                             : '';
-                        $content .= '<br><small>' . Yii::t('shop', 'Last view') . ' ' . $model->update_time . '</small>';
 
                         $content .= (!empty($model->product->translation->description)) ?
                             $model->product->translation->description : '';
+
+                        $content .= Html::tag('footer',
+                            '<small>' . Yii::t('shop', 'Last view') . ' ' . $model->update_time . '</small>');
                         return $content;
                     }
                     return '';
