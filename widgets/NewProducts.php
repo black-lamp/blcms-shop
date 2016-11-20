@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\widgets;
 
+use bl\cms\cart\CartComponent;
 use bl\cms\shop\common\entities\Product;
 use yii\base\Widget;
 
@@ -23,12 +24,21 @@ class NewProducts extends Widget
      */
     public $num = 10;
 
+    /**
+     * @var CartComponent
+     */
+    private $cart;
+
     public function run()
     {
-        $products = Product::find()->orderBy('id DESC')->limit($this->num)->all();
+        $this->cart = \Yii::$app->cart;
+
+        $products = Product::find()->orderBy(['id' => SORT_DESC])->limit($this->num)->all();
+        $showOwners = $this->cart->saveToDataBase;
 
         return $this->render('new-products', [
             'products' => $products,
+            'showOwners' => $showOwners
         ]);
     }
 
