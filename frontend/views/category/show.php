@@ -19,6 +19,7 @@ use bl\cms\shop\common\entities\Filter;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\frontend\assets\CategoryAsset;
 use bl\cms\shop\widgets\ProductFilter;
+use bl\cms\shop\widgets\ProductSort;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use yii\widgets\ListView;
@@ -58,6 +59,8 @@ $shop = (!empty($category->translation->title)) ?
 <?php Pjax::begin([
     'linkSelector' => '.pjax'
 ]); ?>
+
+<?= ProductSort::widget(); ?>
 
 <!--PRODUCTS-->
 <div class="col-md-<?= (!empty($category)) ? '9' : '12'; ?>">
