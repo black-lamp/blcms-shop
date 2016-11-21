@@ -183,13 +183,14 @@ class ProductController extends Controller
      * Users which have 'updateOwnProduct' permission can add or edit basic info only for Product models that have been created by their.
      * Users which have 'updateProduct' permission can can add or edit basic info for all Product models.
      *
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
     public function actionAddBasic(int $id, int $languageId)
     {
+
         if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
         } else {
