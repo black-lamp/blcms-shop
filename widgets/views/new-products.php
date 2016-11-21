@@ -31,7 +31,7 @@ use yii\helpers\Url;
     <tbody>
 
     <tr>
-        <td <?= ($showOwners) ? 'colspan="4"' : 'colspan="5"'; ?> class="text-center small">
+        <td <?= ($showOwners) ? 'colspan="5"' : 'colspan="4"'; ?> class="text-center small">
             <?= Html::a('<i class="fa fa-plus m-r-xs"></i>' . Yii::t('shop', 'Add'), [
                 '/shop/product/save', 'languageId' => Language::getCurrent()->id
             ]) ?>
