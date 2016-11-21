@@ -21,6 +21,11 @@ class ProductSort extends Widget
      */
     public $currentSort = 'new';
 
+    /**
+     * @var array
+     */
+    public $options = [];
+
     public function init()
     {
         $this->sortMethods = [
@@ -41,7 +46,8 @@ class ProductSort extends Widget
 
         return $this->render('product-sort', [
             'sortMethods' => $this->sortMethods,
-            'currentSort' => $this->currentSort
+            'currentSort' => $this->currentSort,
+            'options' => $this->options
         ]);
     }
 }
