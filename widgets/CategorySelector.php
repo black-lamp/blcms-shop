@@ -2,6 +2,7 @@
 namespace bl\cms\shop\widgets;
 
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\multilang\entities\Language;
 use yii\base\Widget;
 
@@ -31,17 +32,6 @@ class CategorySelector extends Widget
         ]);
     }
 
-    private static function getLanguageIndex() {
-        $languages = Language::find()->asArray()->all();
-
-        foreach ($languages as $key => $language) {
-            if ($language['id'] == $_GET['languageId']) {
-                return $key;
-            }
-        }
-
-        return '1';
-    }
     private static function findChildren($parentCategories)
     {
         $tree = [];
@@ -55,9 +45,15 @@ class CategorySelector extends Widget
 
     public static function treeRecoursion($categoriesTree, $parentCategory = null, $name, $category_id = null)
     {
-        $languageIndex = self::getLanguageIndex();
-
+        /**
+         * @var Category[] $oneCategory
+         * @var CategoryTranslation $oneCategoryTranslation
+         */
         foreach ($categoriesTree as $oneCategory) {
+            $oneCategoryTranslation = (!empty($oneCategory[0]->getTranslation($_GET['languageId']))) ?
+                $oneCategory[0]->getTranslation($_GET['languageId']) :
+                $oneCategory[0]->getTranslation(Language::getCurrent()->id);
+
             if (!empty($oneCategory['childCategory'])) {
                 echo sprintf('<li class="list-group-item"><input type="radio" %s name="%s" value="%s" id="%s" %s><label for="%s">%s</label>',
                     $parentCategory == $oneCategory[0]->id ? ' checked ' : '',
@@ -66,8 +62,7 @@ class CategorySelector extends Widget
                     $oneCategory[0]->id,
                     $category_id == $oneCategory[0]->id ? 'disabled' : '',
                     $oneCategory[0]->id,
-                    (!empty($oneCategory[0]->translations[$languageIndex])) ?
-                        $oneCategory[0]->translations[$languageIndex]->title : $oneCategory[0]->translation->title
+                    $oneCategoryTranslation->title
                 );
                 echo '<ul class="list-group">';
                 self::treeRecoursion($oneCategory['childCategory'], $parentCategory, $name, $category_id);
@@ -80,7 +75,7 @@ class CategorySelector extends Widget
                     $oneCategory[0]->id,
                     $category_id == $oneCategory[0]->id ? 'disabled' : '',
                     $oneCategory[0]->id,
-                    (!empty($oneCategory[0]->translations[$languageIndex]->title)) ? $oneCategory[0]->translations[$languageIndex]->title : ''
+                    $oneCategoryTranslation->title
                 );
                 echo '</li>';
             }
