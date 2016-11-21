@@ -26,14 +26,17 @@ class ProductSort extends Widget
      */
     public $options = [];
 
+
     public function init()
     {
-        $this->sortMethods = [
-            'cheap' => \Yii::t('shop', 'From cheap to expensive'),
-            'expensive' => \Yii::t('shop', 'From expensive to cheap'),
-            'new' => \Yii::t('shop', 'From new to old'),
-            'old' => \Yii::t('shop', 'From old to new'),
-        ];
+       if (empty($this->sortMethods)) {
+           $this->sortMethods = [
+               'cheap' => \Yii::t('shop', 'From cheap to expensive'),
+               'expensive' => \Yii::t('shop', 'From expensive to cheap'),
+               'new' => \Yii::t('shop', 'From new to old'),
+               'old' => \Yii::t('shop', 'From old to new'),
+           ];
+       }
     }
 
     /**
