@@ -188,7 +188,7 @@ class ProductController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddBasic($languageId = null, $productId = null)
+    public function actionAddBasic(int $id, int $languageId)
     {
         if (!empty($languageId)) {
             $selectedLanguage = Language::findOne($languageId);
@@ -196,12 +196,12 @@ class ProductController extends Controller
             $selectedLanguage = Language::getCurrent();
         }
 
-        if (!empty($productId)) {
-            $product = Product::findOne($productId);
+        if (!empty($id)) {
+            $product = Product::findOne($id);
 
             if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
                 $products_translation = ProductTranslation::find()->where([
-                    'product_id' => $productId,
+                    'product_id' => $id,
                     'language_id' => $languageId
                 ])->one();
                 if (empty($products_translation)) {
@@ -215,8 +215,6 @@ class ProductController extends Controller
                 $products_translation = new ProductTranslation();
             } else throw new ForbiddenHttpException();
         }
-
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
 
         if (Yii::$app->request->isPost) {
             $product->owner = Yii::$app->user->id;
@@ -246,7 +244,6 @@ class ProductController extends Controller
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
                 'products_translation' => $products_translation,
-                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
                 'params_translation' => new ParamTranslation(),
             ]);
         } else {
