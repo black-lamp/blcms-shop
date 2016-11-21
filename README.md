@@ -301,6 +301,20 @@ If the 'maxProducts' property value is "all", the "views" of Product object incr
 Otherwise it will increase by one each time when registered user views product.
 
 
+**TRANSLATIONS**
+The module has translations on several languages. If there is not your language or if you would like change its on your own, you can configure it in backend or frontend configuration file:
+```
+'i18n' => [
+            'translations' => [
+                'shop' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@backend/messages',
+                    'sourceLanguage' => 'en-us',
+                ]
+            ],
+        ],
+```
+
 
 
 
