@@ -174,21 +174,10 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     ],
 ```
 
-### Filtration widget
-To use the widget, you must have set up relations in the models. For example in model Product:
-```php
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProductCountry()
-    {
-        return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
-    }
-```
-
 
 **REQUIRES**
 
+- PHP-version: 7.0 or later
 - PHP-extensions: file-info, imagick, intl
 
 
@@ -271,9 +260,8 @@ _shopAdministrator_
 extends permissions from all managers. 
 
 
-##WIDGETS
-**Recommended products**
-
+**WIDGETS**
+*Recommended products*
 _Example:_
 ```
 <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
@@ -283,10 +271,23 @@ _Example:_
 Also you may use bl\cms\shop\widgets\assets\RecommendedProductsAsset in your view.
 
 
+*Filtration widget*
+To use the widget, you must have set up relations in the models. For example in model Product:
+```php
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductCountry()
+    {
+        return $this->hasOne(ProductCountry::className(), ['id' => 'country_id']);
+    }
+```
+
+
 **LOGGING**
+
 Your application can record how many people watched a particular product.
 To enable logging, you must add the following settings in the frontend configuration file:
-
 ```
 public $log = [
         'enabled' => true,
@@ -301,7 +302,9 @@ If the 'maxProducts' property value is "all", the "views" of Product object incr
 Otherwise it will increase by one each time when registered user views product.
 
 
+
 **TRANSLATIONS**
+
 The module has translations on several languages. If there is not your language or if you would like change its on your own, you can configure it in backend or frontend configuration file:
 ```
 'i18n' => [
