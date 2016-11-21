@@ -18,7 +18,8 @@ class ProductOwnerRule extends Rule
      */
     public function execute($userId, $productOwner, $params)
     {
-        return isset($params) ? $params['productOwner'] == $userId : false;
+        if (\Yii::$app->user->isGuest) return false;
+        else return isset($params) ? $params['productOwner'] == $userId : false;
     }
 }
 
