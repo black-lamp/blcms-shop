@@ -81,7 +81,7 @@ class CategoryController extends Controller
             if (!empty($level)) {
                 $categories = Category::find()->where(['parent_id' => $parentId])->all();
 
-                return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/categories-ajax', [
+                return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax', [
                     'categories' => $categories,
                     'level' => $level,
                     'currentCategoryId' => $currentCategoryId,
