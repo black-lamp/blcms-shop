@@ -19,6 +19,15 @@ class ProductSearch extends Product
 //    public $country_id;
 
     /**
+     * Sorting methods.
+     */
+    CONST SORT_CHEAP = 'cheap';
+    CONST SORT_EXPENSIVE = 'expensive';
+    CONST SORT_NEW = 'new';
+    CONST SORT_OLD = 'old';
+
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -62,15 +71,33 @@ class ProductSearch extends Product
 
             $query->joinWith($getMethodName);
 
-
             $tableName = $className::tableName();
             $column = $filterType->column;
-
 
             $query->andFilterWhere([$tableName . '.' . 'id' => $this->$column]);
         }
 
-        $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
+        if (isset($params['sort'])) {
+            switch ($params['sort']) {
+                case self::SORT_CHEAP:
+                    $query->orderBy(['price' => SORT_ASC]);
+                    break;
+
+                case self::SORT_EXPENSIVE:
+                    $query->orderBy(['price' => SORT_DESC]);
+                    break;
+
+                case self::SORT_OLD:
+                    $query->orderBy(['creation_time' => SORT_ASC]);
+                    break;
+
+                case self::SORT_NEW:
+                    $query->orderBy(['creation_time' => SORT_DESC]);
+                    break;
+            }
+        } else {
+            $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
