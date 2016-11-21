@@ -261,7 +261,9 @@ extends permissions from all managers.
 
 
 **WIDGETS**
+
 *Recommended products*
+
 _Example:_
 ```
 <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
@@ -272,6 +274,7 @@ Also you may use bl\cms\shop\widgets\assets\RecommendedProductsAsset in your vie
 
 
 *Filtration widget*
+
 To use the widget, you must have set up relations in the models. For example in model Product:
 ```php
     /**
