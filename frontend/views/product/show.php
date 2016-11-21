@@ -15,11 +15,7 @@ use yii\widgets\Breadcrumbs;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $product Product
- * @var $categories Category
- * @var $category Category
- * @var $country ProductCountry
- * @var $params Param
- * @var $recommendedProducts Product
+ * @var $cart \bl\cms\cart\models\CartForm
  */
 
 RecommendedProductsAsset::register($this);
@@ -42,8 +38,8 @@ ProductAsset::register($this);
                 'itemprop' => 'url',
             ],
             [
-                'label' => (!empty($category->translation->title)) ? $category->translation->title : '',
-                'url' => (!empty($category)) ? Url::toRoute(['category/show', 'id' => $category->id]) : '',
+                'label' => (!empty($product->category->translation->title)) ? $product->category->translation->title : '',
+                'url' => (!empty($product->category)) ? Url::toRoute(['category/show', 'id' => $product->category->id]) : '',
                 'itemprop' => 'url',
             ],
             $product->translation->title,

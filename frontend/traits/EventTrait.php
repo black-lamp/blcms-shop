@@ -1,7 +1,8 @@
 <?php
 namespace bl\cms\shop\frontend\traits;
-use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ViewedProduct;
+
+use bl\cms\shop\common\entities\{Product, ViewedProduct};
+use yii\base\Event;
 use yii\db\Expression;
 
 /**
@@ -11,6 +12,7 @@ trait EventTrait
 {
     /**
      * @param $productId integer
+     * @return Event
      */
     protected function getViewedProductEvent($productId)
     {

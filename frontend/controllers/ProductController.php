@@ -1,15 +1,16 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
-use bl\cms\cart\models\CartForm;
-use bl\cms\shop\common\entities\Category;
-use bl\cms\shop\common\entities\Param;
-use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductCountry;
-use bl\cms\shop\common\entities\ProductTranslation;
+
 use Yii;
+use yii\httpclient\Exception;
+use yii\web\Response;
 use yii\web\Controller;
+use bl\cms\cart\models\CartForm;
 use yii\web\NotFoundHttpException;
 use bl\cms\shop\frontend\traits\EventTrait;
+use bl\cms\shop\common\entities\{
+    Category, Product, ProductTranslation
+};
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -20,53 +21,50 @@ class ProductController extends Controller
     use EventTrait;
 
     /**
-     * Event is triggered after creating RegistrationForm class.
+     * Event is triggered before.
      * Triggered with \bl\cms\shop\frontend\traits\EventTrait.
      */
     const EVENT_BEFORE_SHOW = 'beforeShow';
 
-    public function actionShow($id = null)
+    /**
+     * Event is triggered after creating RegistrationForm class.
+     * Triggered with \bl\cms\shop\frontend\traits\EventTrait.
+     */
+    const EVENT_AFTER_SHOW = 'afterShow';
+
+    /**
+     * Shows Product model
+     *
+     * @param integer $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionShow(int $id)
     {
+
+        $this->trigger(self::EVENT_BEFORE_SHOW, $this->getViewedProductEvent($id));
+
         $product = Product::findOne($id);
 
-        if(empty($product)) {
-            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
-        }
+        if (!empty($product)) {
 
-        $event = $this->getViewedProductEvent($product->id);
-        $this->trigger(self::EVENT_BEFORE_SHOW, $event);
+            $this->setSeoData($product);
 
-        /*Getting SEO data*/
-        $this->view->title = $product->translation->seoTitle;
-        $this->view->registerMetaTag([
-            'name' => 'description',
-            'content' => html_entity_decode($product->translation->seoDescription)
-        ]);
-        $this->view->registerMetaTag([
-            'name' => 'keywords',
-            'content' => html_entity_decode($product->translation->seoKeywords)
-        ]);
+            $this->trigger(self::EVENT_AFTER_SHOW);
 
-        $country = ProductCountry::find()
-            ->with(['translations'])
-            ->where(['id' => $product->country_id])
-            ->one();
-
-        return $this->render('show', [
-            'categories' => Category::find()->with(['translations'])->all(),
-            'country' => $country,
-            'product' => $product,
-            'category' => Category::find()->where(['id' => $product->category_id])->one(),
-            'params' => Param::find()->where([
-                'product_id' => $id
-                ])->all(),
-            'cart' => new CartForm()
-        ]);
+            return $this->render('show', [
+                'product' => $product,
+                'cart' => new CartForm()
+            ]);
+        } else throw new NotFoundHttpException();
     }
 
+    /**
+     * @return mixed
+     */
     public function actionXml()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');
 
@@ -77,9 +75,12 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * @return mixed
+     */
     public function actionHlxml()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');
 
@@ -87,6 +88,23 @@ class ProductController extends Controller
             'categories' => Category::find()->all(),
             'products' => Product::findAll(['export' => true]),
             'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
+        ]);
+    }
+
+    /**
+     * Sets page title, meta-description and meta-keywords.
+     * @param $model
+     */
+    private function setSeoData($model)
+    {
+        $this->view->title = $model->translation->seoTitle;
+        $this->view->registerMetaTag([
+            'name' => 'description',
+            'content' => strip_tags($model->translation->seoDescription)
+        ]);
+        $this->view->registerMetaTag([
+            'name' => 'keywords',
+            'content' => strip_tags($model->translation->seoKeywords)
         ]);
     }
 }
