@@ -322,6 +322,9 @@ The module has translations on several languages. If there is not your language 
 ```
 
 
+**REPORTS**
 
+- "Class 'Imagick' not found"
 
+If you use OpenServer with PHP 7, you must install Imagick extension like here http://open-server.ru/forum/viewtopic.php?f=4&t=2897&hilit=imagick
 
