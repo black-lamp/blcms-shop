@@ -10,7 +10,6 @@
  * @var $languageId integer
  */
 use yii\bootstrap\Html;
-
 ?>
 
 <ul class="input-tree-ul">
@@ -23,6 +22,8 @@ use yii\bootstrap\Html;
             )->input('radio', [
                 ($object->id == $model->$attribute ? 'checked' : '') =>
                     ($object->id == $model->$attribute ? 'checked' : ''),
+
+                (get_class($object) == get_class($model) && $object->id == $model->id) ? 'disabled' : '' => true,
                 'value' => $object->id,
                 'class' => 'radio',
                 'id' => $model::className() . '-category_id-' . $object->id,
