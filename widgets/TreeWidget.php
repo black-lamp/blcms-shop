@@ -47,7 +47,7 @@ class TreeWidget extends Widget
                 }
             }
 
-            return $this->render('tree', [
+            return $this->render('tree/tree', [
                 'categories' => $categories,
                 'currentCategoryId' => $currentCategoryId,
                 'level' => 0,

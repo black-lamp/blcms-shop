@@ -14,7 +14,7 @@
 
 <div id="widget-menu" data-current-category-id="<?=$currentCategoryId; ?>">
     <?= $this->render(
-        '@vendor/black-lamp/blcms-shop/widgets/views/categories-ajax',
+        '@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax',
         [
             'categories' => $categories,
             'currentCategoryId' => $currentCategoryId,
