@@ -112,8 +112,6 @@ class CategoryController extends Controller
             }
         }
 
-
-
         $maxPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one();
         $maxPosition = (!empty($maxPositionCategory)) ? $maxPositionCategory->position : 0;
         $minPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one();
@@ -185,29 +183,24 @@ class CategoryController extends Controller
             }
         }
 
-        $categoriesWithoutParent = Category::find()->where(['parent_id' => null])->all();
-        if (\Yii::$app->request->isPjax) {
-            return $this->renderPartial('add-basic', [
-                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
+        $maxPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one();
+        $maxPosition = (!empty($maxPositionCategory)) ? $maxPositionCategory->position : 0;
+        $minPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one();
+        $minPosition = (!empty($minPositionCategory)) ? $minPositionCategory->position : 0;
+
+        return $this->render('save', [
+            'category' => $category,
+            'languageId' => $languageId,
+            'languages' => Language::findAll(['active' => true]),
+            'viewName' => 'add-basic',
+            'selectedLanguage' => Language::findOne($languageId),
+            'params' => [
                 'category' => $category,
                 'category_translation' => $category_translation,
                 'languageId' => $languageId,
                 'selectedLanguage' => Language::findOne($languageId),
-                'categoriesWithoutParent' => $categoriesWithoutParent
-            ]);
-        } else return $this->render('save', [
-            'category' => $category,
-            'languageId' => $languageId,
-            'categoriesTree' => Category::findChilds($categoriesWithoutParent),
-            'selectedLanguage' => Language::findOne($languageId),
-            'languages' => Language::findAll(['active' => true]),
-            'viewName' => 'add-basic',
-            'params' => [
-                'categoriesTree' => Category::findChilds($categoriesWithoutParent),
-                'category' => $category,
-                'category_translation' => $category_translation,
-                'languageId' => $languageId,
-                'categoriesWithoutParent' => $categoriesWithoutParent
+                'maxPosition' => $maxPosition,
+                'minPosition' => $minPosition,
             ]
         ]);
     }
