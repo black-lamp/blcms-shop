@@ -9,9 +9,10 @@
  * @var $attribute string
  * @var $languageId integer
  */
+//die(var_dump($model));
 ?>
 
-<div id="input-tree" data-current-category="<?=$model->$attribute; ?>">
+<div id="input-tree" data-current-category="<?=$model->$attribute ?? 0; ?>">
     <?= $this->render(
         '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
         [
