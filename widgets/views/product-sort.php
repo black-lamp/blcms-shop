@@ -8,13 +8,14 @@ use yii\helpers\Html;
  * @var \yii\web\View $this
  * @var array $sortMethods
  * @var string $currentSort
+ * @var array $options
  */
 
 $moduleId = Yii::$app->controller->module->uniqueId;
 ?>
-<div class="pull-right">
-    <small class="text-center"><?= Yii::t('shop', 'Sorting') ?></small>
-    <div class="dropdown">
+<div class="pull-right text-center">
+    <small><?= Yii::t('shop', 'Sorting') ?></small>
+    <div class="dropdown <?= $options['class'] ?>">
         <button class="btn btn-default dropdown-toggle" type="button" id="productSortDropdown" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="true">
             <?= ArrayHelper::getValue($sortMethods, $currentSort) ?>

@@ -21,14 +21,22 @@ class ProductSort extends Widget
      */
     public $currentSort = 'new';
 
+    /**
+     * @var array
+     */
+    public $options = [];
+
+
     public function init()
     {
-        $this->sortMethods = [
-            'cheap' => \Yii::t('shop', 'From cheap to expensive'),
-            'expensive' => \Yii::t('shop', 'From expensive to cheap'),
-            'new' => \Yii::t('shop', 'From new to old'),
-            'old' => \Yii::t('shop', 'From old to new'),
-        ];
+       if (empty($this->sortMethods)) {
+           $this->sortMethods = [
+               'cheap' => \Yii::t('shop', 'From cheap to expensive'),
+               'expensive' => \Yii::t('shop', 'From expensive to cheap'),
+               'new' => \Yii::t('shop', 'From new to old'),
+               'old' => \Yii::t('shop', 'From old to new'),
+           ];
+       }
     }
 
     /**
@@ -41,7 +49,8 @@ class ProductSort extends Widget
 
         return $this->render('product-sort', [
             'sortMethods' => $this->sortMethods,
-            'currentSort' => $this->currentSort
+            'currentSort' => $this->currentSort,
+            'options' => $this->options
         ]);
     }
 }
