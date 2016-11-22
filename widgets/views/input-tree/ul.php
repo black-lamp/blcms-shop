@@ -21,8 +21,8 @@ use yii\bootstrap\Html;
             <?= $form->field($model, $attribute,
                 ['template' => "{input}\n{label}"]
             )->input('radio', [
-                ($object->id == $model->category_id ? 'checked' : '') =>
-                    ($object->id == $model->category_id ? 'checked' : ''),
+                ($object->id == $model->$attribute ? 'checked' : '') =>
+                    ($object->id == $model->$attribute ? 'checked' : ''),
                 'value' => $object->id,
                 'class' => 'radio',
                 'id' => $model::className() . '-category_id-' . $object->id,

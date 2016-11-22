@@ -11,7 +11,7 @@
  */
 ?>
 
-<div id="input-tree" data-current-category="<?=$model->category_id; ?>">
+<div id="input-tree" data-current-category="<?=$model->$attribute; ?>">
     <?= $this->render(
         '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
         [
