@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 
     /*OPEN ON CLICK*/
-    widget.on('click', '.category-toggle.fa-toggle-down', (function () {
+    widget.on('click', '.category-toggle.glyphicon-chevron-down', (function () {
         var element = this;
         var id = element.id;
         var aHeight = $($(element).parent().children('a')).height(); // This is 'a' tag height
@@ -23,8 +23,8 @@ $(document).ready(function () {
             data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
 
             success: function (data) {
-                $(element).removeClass('fa-toggle-down');
-                $(element).addClass('fa-toggle-up');
+                $(element).removeClass('glyphicon-chevron-down');
+                $(element).addClass('glyphicon-chevron-up');
 
                 $(data).height($(data).children().length * aHeight * .7).slideDown(300).insertAfter($('#' + id));
             }
@@ -34,11 +34,11 @@ $(document).ready(function () {
     }));
 
     /*CLOSE ON CLICK*/
-    widget.on('click', '.category-toggle.fa-toggle-up', (function () {
+    widget.on('click', '.category-toggle.glyphicon-chevron-up', (function () {
         var element = this;
 
-        $(element).removeClass('fa-toggle-up');
-        $(element).addClass('fa-toggle-down');
+        $(element).removeClass('glyphicon-chevron-up');
+        $(element).addClass('glyphicon-chevron-down');
 
         var ul = $(element).nextAll();
         $(ul).slideUp(300);
@@ -57,8 +57,8 @@ function autoOpen(openedTreeItem, currentCategoryId) {
             var ul = $(this).parent().parent();
             var level = $(ul).attr("data-level");
 
-            $(this).removeClass('fa-toggle-down');
-            $(this).addClass('fa-toggle-up');
+            $(this).removeClass('glyphicon-chevron-down');
+            $(this).addClass('glyphicon-chevron-up');
 
             $.ajax({
                 type: "GET",

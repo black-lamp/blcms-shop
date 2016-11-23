@@ -28,10 +28,11 @@ use yii\helpers\Url;
                     <?php endif; ?>
                 </a>
                 <?php if (!empty($category->children)) : ?>
-
-                    <i class="fa fa-toggle-down pull-right category-toggle"
-                       id="<?= $category->id; ?>" data-opened="true">
-                    </i>
+                    <span class="glyphicon glyphicon-chevron-down pull-right category-toggle"
+                       id="<?= $category->id; ?>" data-opened="<?= (!empty($category->id)) ?
+                        TreeWidget::isOpened($category->id, $currentCategoryId) :
+                        '';?>">
+                    </span>
                 <?php endif; ?>
             </li>
         <?php endforeach; ?>

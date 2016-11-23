@@ -37,28 +37,28 @@ div#widget-menu ul[data-level="1"] > li > a span {
     font-size: 14px;
 }
 
-div#widget-menu ul li i.category-toggle {
+div#widget-menu ul li span.category-toggle {
     position: absolute;
     line-height: 27px;
     top: 0;
     right: 10px;
 }
-div#widget-menu ul li i.category-toggle:hover {
+div#widget-menu ul li span.category-toggle:hover {
     right: 8px;
     color: #4285f4;
     transition: 0.15s;
 }
 
-div#widget-menu ul[data-level="1"] > li > a + i.category-toggle {
+div#widget-menu ul[data-level="1"] > li > a + span.category-toggle {
     font-size: 16px;
     line-height: 40px;
 }
-div#widget-menu ul[data-level="1"] > li > a + i.category-toggle:hover {
+div#widget-menu ul[data-level="1"] > li > a + span.category-toggle:hover {
     font-size: 21px;
     line-height: 40px;
     transition: .15s;
 }
 
-div#widget-menu ul li i.category-toggle.fa-toggle-down, div#widget-menu ul li i.category-toggle.fa-toggle-up {
+div#widget-menu ul li span.category-toggle.fa-toggle-down, div#widget-menu ul li span.category-toggle.fa-toggle-up {
     cursor: pointer;
 }
