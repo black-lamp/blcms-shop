@@ -195,7 +195,7 @@ class ProductController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddBasic(int $id, int $languageId)
+    public function actionAddBasic($id = null, int $languageId)
     {
 
         if (!empty($languageId)) {
