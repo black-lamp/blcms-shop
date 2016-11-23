@@ -22,10 +22,10 @@ class PartnersBootstrap implements BootstrapInterface
     }
 
     public function apply($event) {
-        die(var_dump($event));
+
     }
     public function decline($event) {
-        die(var_dump($event));
+
     }
 
 }
