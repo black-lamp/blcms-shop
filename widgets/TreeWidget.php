@@ -24,6 +24,8 @@ class TreeWidget extends Widget
 {
     public $className;
 
+    public $currentCategoryId;
+
     public function init()
     {
         TreeWidgetAsset::register($this->getView());
@@ -38,6 +40,7 @@ class TreeWidget extends Widget
             $categories = $class::find()->where(['parent_id' => null, 'show' => 1])->all();
 
             $currentCategoryId = '';
+
             if (Yii::$app->controller->module->id == 'shop') {
                 if (Yii::$app->controller->id == 'category') {
                     $currentCategoryId = \Yii::$app->request->get('id');
