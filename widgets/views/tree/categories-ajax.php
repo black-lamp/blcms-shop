@@ -30,9 +30,7 @@ use yii\helpers\Url;
                 <?php if (!empty($category->children)) : ?>
 
                     <i class="fa fa-toggle-down pull-right category-toggle"
-                       id="<?= $category->id; ?>" data-opened="<?= (!empty($category->id)) ?
-                        TreeWidget::isOpened($category->id, $currentCategoryId) :
-                        '';?>">
+                       id="<?= $category->id; ?>" data-opened="true">
                     </i>
                 <?php endif; ?>
             </li>
