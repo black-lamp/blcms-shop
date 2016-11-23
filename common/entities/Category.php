@@ -132,22 +132,22 @@ class Category extends ActiveRecord
 
     public static function getBig($category, $imageType) {
         $fileName = $category->$imageType;
-        return (Yii::getAlias('@frontend/web/images') . '/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
+        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
     }
 
     public static function getThumb($category, $imageType) {
         $fileName = $category->$imageType;
-        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-thumb' . self::$image_extension);
+        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-thumb' . self::$image_extension);
     }
 
     public static function getSmall($category, $imageType) {
         $fileName = $category->$imageType;
-        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-small' . self::$image_extension);
+        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-small' . self::$image_extension);
     }
 
     public static function getOriginal($category, $imageType) {
         $fileName = $category->$imageType;
-        return (Yii::getAlias('@frontend/web/images/') . '/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-original' . self::$image_extension);
+        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-original' . self::$image_extension);
     }
 
     /**
