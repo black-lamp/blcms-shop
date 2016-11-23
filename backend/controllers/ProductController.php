@@ -3,7 +3,7 @@ namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\backend\components\form\ProductImageForm;
 use bl\cms\shop\backend\components\form\ProductVideoForm;
-use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\backend\events\ProductEvent;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
@@ -18,7 +18,6 @@ use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Exception;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -29,6 +28,12 @@ use yii\web\UploadedFile;
  */
 class ProductController extends Controller
 {
+
+    /**
+     * Event is triggered before creating new user.
+     * Triggered with \dektrium\user\events\UserEvent.
+     */
+    const EVENT_BEFORE_CREATE = 'beforeCreate';
 
     /**
      * @inheritdoc
@@ -137,6 +142,8 @@ class ProductController extends Controller
         } else {
 
             if (\Yii::$app->user->can('createProduct')) {
+
+                $this->trigger(self::EVENT_BEFORE_CREATE, new ProductEvent());
 
                 $product = new Product();
                 $products_translation = new ProductTranslation();

@@ -35,7 +35,7 @@ class TreeWidget extends Widget
 
         if (!empty($this->className)) {
             $class = \Yii::createObject($this->className);
-            $categories = $class::find()->where(['parent_id' => null])->all();
+            $categories = $class::find()->where(['parent_id' => null, 'show' => 1])->all();
 
             $currentCategoryId = '';
             if (Yii::$app->controller->module->id == 'shop') {
