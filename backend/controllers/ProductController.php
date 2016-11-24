@@ -21,6 +21,7 @@ use yii\filters\AccessControl;
 use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -53,7 +54,7 @@ class ProductController extends Controller
                     [
                         'actions' => [
                             'save', 'add-basic',
-                            'add-param', 'delete-param',
+                            'add-param', 'delete-param', 'update-param',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
                             'add-price', 'remove-price',
@@ -284,12 +285,13 @@ class ProductController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddParam($languageId = null, $id = null)
+    public function actionAddParam($id = null, $languageId = null)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $param = new Param();
             $param->product_id = $id;
             $param_translation = new ParamTranslation();
+            $param_translation->language_id = $languageId;
 
             if (Yii::$app->request->isPost) {
 
@@ -305,16 +307,15 @@ class ProductController extends Controller
                     Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
             }
 
-            if (Yii::$app->request->isPjax) {
-                return $this->renderPartial('add-param', [
-                    'product' => Product::findOne($id),
-                    'param' => new Param(),
-                    'param_translation' => new ParamTranslation(),
-                    'selectedLanguage' => Language::findOne($languageId),
-                    'products' => Product::find()->with('translations')->all(),
-                    'id' => $id
-                ]);
+            $languages = Language::find()->all();
+            $languageIndex = 0;
+            foreach ($languages as $key => $language) {
+                if ($language->id == $languageId)  {
+                    $languageIndex = $key;
+                    break;
+                }
             }
+
             return $this->render('save', [
                 'viewName' => 'add-param',
                 'selectedLanguage' => Language::findOne($languageId),
@@ -322,12 +323,13 @@ class ProductController extends Controller
                 'languages' => Language::find()->all(),
 
                 'params' => [
-                    'product' => Product::findOne($id),
-                    'param' => new Param(),
+                    'params' => Param::find()->where([
+                        'product_id' => $id,
+                    ])->all(),
                     'param_translation' => new ParamTranslation(),
-                    'selectedLanguage' => Language::findOne($languageId),
-                    'products' => Product::find()->with('translations')->all(),
-                    'id' => $id
+                    'productId' => $id,
+                    'languageId' => $languageId,
+                    'languageIndex' => $languageIndex
                 ]
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -340,26 +342,55 @@ class ProductController extends Controller
      * Users which have 'updateProduct' permission can delete params for all Product models.
      *
      * @param integer $id
-     * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionDeleteParam($id, $languageId)
+    public function actionDeleteParam($id)
     {
         $param = Param::findOne($id);
-        $product = Product::findOne($param->product_id);
+        $param->delete();
+        return $this->redirect(Yii::$app->request->referrer);
+    }
 
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-            Param::deleteAll(['id' => $id]);
-            return $this->renderPartial('add-param', [
-                'product' => $product,
-                'param' => new Param(),
-                'param_translation' => new ParamTranslation(),
-                'selectedLanguage' => Language::findOne($languageId),
-                'products' => Product::find()->with('translations')->all(),
-                'id' => $product->id
+    /**
+     * Update param translation.
+     * Users which have 'updateOwnProduct' permission can update params only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can update params for all Product models.
+     *
+     * @param int $id
+     * @param int $languageId
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateParam(int $id, int $languageId) {
+        if (!empty($id) && !empty($languageId)) {
+            $paramTranslation = ParamTranslation::find()
+                ->where(['param_id' => $id, 'language_id' => $languageId])->one();
+
+            if (empty($paramTranslation)) {
+                $paramTranslation = new ParamTranslation();
+                $paramTranslation->param_id = $id;
+                $paramTranslation->language_id = $languageId;
+            }
+
+            if (Yii::$app->request->isPost) {
+                $paramTranslation->load(Yii::$app->request->post());
+                if ($paramTranslation->validate()) {
+                    $paramTranslation->save();
+                    Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                } else {
+                    Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
+                }
+
+                return $this->redirect(['add-param', 'id' => $paramTranslation->param->product_id, 'languageId' => $languageId,]);
+            }
+
+            return $this->renderPartial('update-param', [
+                'paramTranslation' => $paramTranslation,
+                'languageId' => $languageId
             ]);
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+        }
+        else throw new NotFoundHttpException();
     }
 
     /**

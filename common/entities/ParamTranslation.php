@@ -37,4 +37,12 @@ class ParamTranslation extends ActiveRecord
     {
         return 'shop_param_translation';
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParam()
+    {
+        return $this->hasOne(Param::className(), ['id' => 'param_id']);
+    }
 }
