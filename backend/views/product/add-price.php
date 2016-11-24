@@ -24,7 +24,7 @@ use yii\widgets\Pjax;
 <?php $form = ActiveForm::begin([
     'action' => [
         'add-price',
-        'productId' => $product->id,
+        'id' => $product->id,
         'languageId' => $language->id
     ],
     'method' => 'post',
@@ -65,7 +65,7 @@ use yii\widgets\Pjax;
                     <?= Html::a('', [
                         'remove-price',
                         'priceId' => $price->id,
-                        'productId' => $product->id,
+                        'id' => $product->id,
                         'languageId' => $language->id
                     ],
                         [

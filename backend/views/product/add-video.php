@@ -84,7 +84,7 @@ use yii\widgets\ActiveForm;
 <?php $addVideoForm = ActiveForm::begin([
     'action' => [
         'product/add-video',
-        'productId' => $product->id,
+        'id' => $product->id,
         'languageId' => $selectedLanguage->id
     ],
     'method' => 'post',

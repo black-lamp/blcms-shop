@@ -17,7 +17,7 @@ use yii\widgets\Pjax;
  * @var $param_translation ParamTranslation
  * @var $selectedLanguage Language[]
  * @var $products Product
- * @var $productId Product
+ * @var $id Product
  * @var $product Product
  */
 
@@ -26,7 +26,7 @@ use yii\widgets\Pjax;
 <?php $form = ActiveForm::begin([
     'action' => [
         'product/add-param',
-        'productId' => $productId,
+        'id' => $id,
         'languageId' => $selectedLanguage->id
     ],
     'method' => 'post',

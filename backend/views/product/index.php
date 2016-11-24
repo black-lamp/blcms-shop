@@ -143,7 +143,7 @@ ProductAsset::register($this);
                                 }
                             }
                         }
-                        return Html::a($content, Url::toRoute(['add-image', 'productId' => $model->id, 'languageId' => Language::getCurrent()->id]));
+                        return Html::a($content, Url::toRoute(['add-image', 'id' => $model->id, 'languageId' => Language::getCurrent()->id]));
                     },
                     'label' => Yii::t('shop', 'Images'),
                     'format' => 'html',

@@ -279,16 +279,16 @@ class ProductController extends Controller
      * Users which have 'updateOwnProduct' permission can add params only for Product models that have been created by their.
      * Users which have 'updateProduct' permission can add params for all Product models.
      *
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddParam($languageId = null, $productId = null)
+    public function actionAddParam($languageId = null, $id = null)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $param = new Param();
-            $param->product_id = $productId;
+            $param->product_id = $id;
             $param_translation = new ParamTranslation();
 
             if (Yii::$app->request->isPost) {
@@ -307,27 +307,27 @@ class ProductController extends Controller
 
             if (Yii::$app->request->isPjax) {
                 return $this->renderPartial('add-param', [
-                    'product' => Product::findOne($productId),
+                    'product' => Product::findOne($id),
                     'param' => new Param(),
                     'param_translation' => new ParamTranslation(),
                     'selectedLanguage' => Language::findOne($languageId),
                     'products' => Product::find()->with('translations')->all(),
-                    'productId' => $productId
+                    'id' => $id
                 ]);
             }
             return $this->render('save', [
                 'viewName' => 'add-param',
                 'selectedLanguage' => Language::findOne($languageId),
-                'product' => Product::findOne($productId),
+                'product' => Product::findOne($id),
                 'languages' => Language::find()->all(),
 
                 'params' => [
-                    'product' => Product::findOne($productId),
+                    'product' => Product::findOne($id),
                     'param' => new Param(),
                     'param_translation' => new ParamTranslation(),
                     'selectedLanguage' => Language::findOne($languageId),
                     'products' => Product::find()->with('translations')->all(),
-                    'productId' => $productId
+                    'id' => $id
                 ]
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -357,7 +357,7 @@ class ProductController extends Controller
                 'param_translation' => new ParamTranslation(),
                 'selectedLanguage' => Language::findOne($languageId),
                 'products' => Product::find()->with('translations')->all(),
-                'productId' => $product->id
+                'id' => $product->id
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
@@ -409,15 +409,15 @@ class ProductController extends Controller
      * Users which have 'updateOwnProduct' permission can add image only for Product models that have been created by their.
      * Users which have 'updateProduct' permission can add image for all Product models.
      *
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddImage($productId, $languageId)
+    public function actionAddImage($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
-            $product = Product::findOne($productId);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            $product = Product::findOne($id);
             $image_form = new ProductImageForm();
             $image = new ProductImage();
 
@@ -505,15 +505,15 @@ class ProductController extends Controller
      * Users which have 'updateOwnProduct' permission can add video only from Product models that have been created by their.
      * Users which have 'updateProduct' permission can add video from all Product models.
      *
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddVideo($productId, $languageId)
+    public function actionAddVideo($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
-            $product = Product::findOne($productId);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            $product = Product::findOne($id);
             $video = new ProductVideo();
             $videoForm = new ProductVideoForm();
 
@@ -526,7 +526,7 @@ class ProductController extends Controller
                 if ($fileName = $videoForm->upload()) {
                     $video->file_name = $fileName;
                     $video->resource = 'videofile';
-                    $video->product_id = $productId;
+                    $video->product_id = $id;
                     $video->save();
                 }
 
@@ -638,18 +638,18 @@ class ProductController extends Controller
      * Users which have 'updateOwnProduct' permission can add price only for Product models that have been created by their.
      * Users which have 'updateProduct' permission can add price for all Product models.
      *
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddPrice($productId, $languageId)
+    public function actionAddPrice($id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $price = new ProductPrice();
             $priceTranslation = new ProductPriceTranslation();
 
-            $product = Product::findOne($productId);
+            $product = Product::findOne($id);
             $selectedLanguage = Language::findOne($languageId);
 
             if (\Yii::$app->request->isPost) {
@@ -699,16 +699,16 @@ class ProductController extends Controller
      * Users which have 'updateProduct' permission can delete price from all Product models.
      *
      * @param integer $priceId
-     * @param integer $productId
+     * @param integer $id
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionRemovePrice($priceId, $productId, $languageId)
+    public function actionRemovePrice($priceId, $id, $languageId)
     {
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             ProductPrice::deleteAll(['id' => $priceId]);
-            return $this->actionAddPrice($productId, $languageId);
+            return $this->actionAddPrice($id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 

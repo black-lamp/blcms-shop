@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
     'method' => 'post',
     'action' => [
         'product/add-basic',
-        'productId' => $product->id,
+        'id' => $product->id,
         'languageId' => $selectedLanguage->id
     ]]);
 ?>

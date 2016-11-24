@@ -66,7 +66,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                                     <a href="
                                         <?= Url::to([
                                         'save',
-                                        'productId' => $product->id,
+                                        'id' => $product->id,
                                         'languageId' => $language->id]) ?>
                                                 ">
                                         <?= $language->name ?>
@@ -91,7 +91,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
 
             <ul class="nav nav-tabs">
                 <li class="<?= Yii::$app->controller->action->id == 'add-basic' || Yii::$app->controller->action->id == 'save' ? 'tab active' : 'tab'; ?>">
-                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                    <?= Html::a(\Yii::t('shop', 'Basic'), Url::to(['add-basic', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                         [
                             'aria-expanded' => 'true'
                         ]); ?>
@@ -101,7 +101,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                     <?=
                     ($product->isNewRecord) ?
                         '<a>' . \Yii::t('shop', 'Photo') . '</a>' :
-                        Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                        Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                             [
                                 'aria-expanded' => 'true'
                             ]); ?>
@@ -111,7 +111,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                     ($product->isNewRecord) ?
                         '<a>' . \Yii::t('shop', 'Video') . '</a>' :
 
-                        Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                        Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                             [
                                 'aria-expanded' => 'true'
                             ]); ?>
@@ -120,7 +120,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                     <?=
                     ($product->isNewRecord) ?
                         '<a>' . \Yii::t('shop', 'Prices') . '</a>' :
-                        Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                        Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                             [
                                 'aria-expanded' => 'true'
                             ]); ?>
@@ -129,7 +129,7 @@ $newProductMessage = Yii::t('shop', 'You must save new product before this actio
                     <?=
                     ($product->isNewRecord) ?
                         '<a>' . \Yii::t('shop', 'Params') . '</a>' :
-                        Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                        Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                             [
                                 'aria-expanded' => 'true'
                             ]); ?>

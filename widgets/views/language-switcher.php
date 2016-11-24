@@ -24,7 +24,7 @@ use yii\helpers\Url;
                     <li>
                         <a href="
                             <?= Url::to([
-                            'save',
+                            '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id,
                             'id' => $model->id,
                             'languageId' => $language->id]); ?>
                         ">
