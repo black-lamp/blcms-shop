@@ -28,7 +28,6 @@ class UrlRule extends Object implements UrlRuleInterface
 
     private $productRoute = 'shop/product/show';
     private $categoryRoute = 'shop/category/show';
-    private $cartRoute = 'shop/cart/index';
 
     /**
      * Parses the given request and returns the corresponding route and parameters.
@@ -218,8 +217,7 @@ class UrlRule extends Object implements UrlRuleInterface
         else {
             return false;
         }
-        $pathInfo = $manager->createUrl(array_merge([$pathInfo], $params));
-        return substr($pathInfo, 1);
 
+        return array_merge([$pathInfo], $params)[0];
     }
 }
