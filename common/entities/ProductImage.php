@@ -38,7 +38,8 @@ class ProductImage extends ActiveRecord
     {
         return [
             [['product_id'], 'integer'],
-            [['file_name', 'alt'], 'string', 'max' => 255],
+            [['alt'], 'string', 'max' => 255],
+            [['file_name'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
