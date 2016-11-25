@@ -28,7 +28,7 @@ class ProductImageForm extends Model
     public function rules()
     {
         return [
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize'=>'5000000'],
             [['link', 'alt1', 'alt2'], 'string', 'skipOnEmpty' => true]
         ];
     }
