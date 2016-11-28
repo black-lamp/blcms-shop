@@ -30,6 +30,13 @@ class Module extends \yii\base\Module
         'maxProducts' => 'all' // Max number of viewed products by one user.
     ];
 
+    /**
+     * @var bool
+     * It enables the conversion of prices by the currency
+     */
+    public $enableCurrencyConversion = false;
+
+
     public function init()
     {
         parent::init();

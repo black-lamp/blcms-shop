@@ -117,7 +117,8 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     'modules' => [
     	...
         'shop' => [
-            'class' => 'bl\cms\shop\backend\Module'
+            'class' => 'bl\cms\shop\backend\Module',
+            'enableCurrencyConversion' => true
         ],
         ...
     ],
@@ -132,7 +133,8 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     'modules' => [
     	...
         'shop' => [
-            'class' => 'bl\cms\shop\frontend\Module'
+            'class' => 'bl\cms\shop\frontend\Module',
+            'enableCurrencyConversion' => true
         ],
         ...
     ],

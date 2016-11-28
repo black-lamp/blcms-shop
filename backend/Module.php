@@ -9,7 +9,6 @@ class Module extends \yii\base\Module
 {
     public $controllerNamespace = 'bl\cms\shop\backend\controllers';
     public $defaultRoute = 'shop';
-    public $cartConfig;
 
     public function init()
     {

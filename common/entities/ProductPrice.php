@@ -91,16 +91,22 @@ class ProductPrice extends ActiveRecord
         return $this->hasMany(ProductPriceTranslation::className(), ['price_id' => 'id']);
     }
 
-    public function getCurrencyPrice() {
-        $price = Currency::currentCurrency() * $this->price;
-        return floor($price);
+    /**
+     * @return float|int
+     * Gets price
+     */
+    public function getPrice() {
+        $price = $this->price;
+        if (\Yii::$app->controller->module->enableCurrencyConversion) {
+            $price = floor($price * Currency::currentCurrency());
+        }
+        return $price;
     }
 
-    public function getCurrencySalePrice() {
-        $price = Currency::currentCurrency() * $this->salePrice;
-        return floor($price);
-    }
-
+    /**
+     * @return float|int
+     * Gets discount price
+     */
     public function getSalePrice() {
         $price = $this->price;
 
@@ -113,6 +119,10 @@ class ProductPrice extends ActiveRecord
                     $price = $this->price - ($this->price / 100) * $this->sale;
                 }
             }
+        }
+
+        if (\Yii::$app->controller->module->enableCurrencyConversion) {
+            $price = floor($price * Currency::currentCurrency());
         }
 
         return $price;
