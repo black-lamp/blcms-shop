@@ -8,16 +8,15 @@ div#widget-menu ul {
 div#widget-menu ul li {
     position: relative;
     list-style: none;
+    margin-top: 2px;
 }
 div#widget-menu ul li:hover {
 }
 div#widget-menu ul li a {
     display: block;
-    height: 27px;
-    line-height: 27px;
     padding-left: 15px;
 }
-div#widget-menu ul[data-level="1"] > li > a {
+div#widget-menu ul[data-level="1"] li > a {
     height: 40px;
     line-height: 40px;
 }
@@ -54,8 +53,8 @@ div#widget-menu ul[data-level="1"] > li > a + span.category-toggle {
     line-height: 40px;
 }
 div#widget-menu ul[data-level="1"] > li > a + span.category-toggle:hover {
-    font-size: 21px;
-    line-height: 40px;
+    font-size: 19px;
+    margin-top: -1px;
     transition: .15s;
 }
 

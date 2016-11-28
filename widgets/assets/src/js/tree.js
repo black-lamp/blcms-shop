@@ -10,10 +10,9 @@ $(document).ready(function () {
 
 
     /*OPEN ON CLICK*/
-    widget.on('click', '.category-toggle.glyphicon-chevron-down', (function () {
+    widget.on('click', '.category-toggle.glyphicon-plus', (function () {
         var element = this;
         var id = element.id;
-        var aHeight = $($(element).parent().children('a')).height(); // This is 'a' tag height
         var ul = $(element).parent().parent();
         var level = $(ul).attr("data-level");
 
@@ -23,10 +22,10 @@ $(document).ready(function () {
             data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
 
             success: function (data) {
-                $(element).removeClass('glyphicon-chevron-down');
-                $(element).addClass('glyphicon-chevron-up');
+                $(element).removeClass('glyphicon-plus');
+                $(element).addClass('glyphicon-minus');
 
-                $(data).height($(data).children().length * aHeight * .7).slideDown(300).insertAfter($('#' + id));
+                $(data).height('100%').slideDown(300).insertAfter($('#' + id));
             }
         });
 
@@ -34,11 +33,11 @@ $(document).ready(function () {
     }));
 
     /*CLOSE ON CLICK*/
-    widget.on('click', '.category-toggle.glyphicon-chevron-up', (function () {
+    widget.on('click', '.category-toggle.glyphicon-minus', (function () {
         var element = this;
 
-        $(element).removeClass('glyphicon-chevron-up');
-        $(element).addClass('glyphicon-chevron-down');
+        $(element).removeClass('glyphicon-minus');
+        $(element).addClass('glyphicon-plus');
 
         var ul = $(element).nextAll();
         $(ul).slideUp(300);
@@ -57,8 +56,8 @@ function autoOpen(openedTreeItem, currentCategoryId) {
             var ul = $(this).parent().parent();
             var level = $(ul).attr("data-level");
 
-            $(this).removeClass('glyphicon-chevron-down');
-            $(this).addClass('glyphicon-chevron-up');
+            $(this).removeClass('glyphicon-plus');
+            $(this).addClass('glyphicon-minus');
 
             $.ajax({
                 type: "GET",

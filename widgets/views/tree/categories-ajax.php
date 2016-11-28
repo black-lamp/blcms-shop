@@ -17,7 +17,6 @@ use yii\helpers\Url;
             <li class="<?= ($category->id == $currentCategoryId) ? 'current' : '';?>">
                 <a href="<?= Url::toRoute(['/shop/category/show', 'id' => $category->id]); ?>">
                     <?php if (!$level == 1) : ?>
-                        <i class="category-icon"></i>
                         <span>
                             <?= $category->translation->title; ?>
                         </span>
@@ -28,7 +27,7 @@ use yii\helpers\Url;
                     <?php endif; ?>
                 </a>
                 <?php if (!empty($category->children)) : ?>
-                    <span class="glyphicon glyphicon-chevron-down pull-right category-toggle"
+                    <span class="glyphicon glyphicon-plus pull-right category-toggle"
                        id="<?= $category->id; ?>" data-opened="<?= (!empty($category->id)) ?
                         TreeWidget::isOpened($category->id, $currentCategoryId) :
                         '';?>">
