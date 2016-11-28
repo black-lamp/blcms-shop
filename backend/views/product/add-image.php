@@ -1,17 +1,18 @@
 <?php
+use bl\cms\shop\backend\components\form\ProductImageForm;
+use bl\cms\shop\common\entities\Product;
+use bl\multilang\entities\Language;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $product Product
  * @var $image_form ProductImageForm
+ * @var Language $selectedLanguage
  */
-
-use bl\cms\shop\backend\components\form\ProductImageForm;
-use bl\cms\shop\common\entities\Product;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-
 ?>
 
     <br>
@@ -62,7 +63,7 @@ use yii\widgets\ActiveForm;
                         <?= $image->alt; ?>
                     </td>
                     <td class="text-center col-md-2">
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id]); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id, 'languageId' => $selectedLanguage->id]); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     </td>
                 </tr>

@@ -23,6 +23,15 @@ EditProductAsset::register($this);
 
 $this->title = \Yii::t('shop', 'Edit product');
 $newProductMessage = Yii::t('shop', 'You must save new product before this action');
+
+$this->params['breadcrumbs'] = [
+    Yii::t('shop', 'Shop'), [
+        'label' => Yii::t('shop', 'Products'),
+        'url' => ['/shop/product'],
+        'itemprop' => 'url'
+    ]
+];
+$this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->translation->title : Yii::t('shop', 'New product');;
 ?>
 
 <div class="col-md-12">

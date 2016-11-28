@@ -22,6 +22,10 @@ use yii\widgets\Pjax;
  */
 
 $this->title = \Yii::t('shop', 'Product list');
+$this->params['breadcrumbs'] = [
+    Yii::t('shop', 'Shop'),
+    Yii::t('shop', 'Products')
+];
 ProductAsset::register($this);
 ?>
 

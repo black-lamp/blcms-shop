@@ -104,6 +104,7 @@ return [
     'Moderation status' => 'Статус модерации',
     'Name' => 'Название',
     'New products' => 'Новые товары',
+    'New product' => 'Новый товар',
     'No image' => 'Нет изображения',
     'Off' => 'Выкл',
     'On' => 'Вкл',

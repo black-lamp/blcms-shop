@@ -65,6 +65,7 @@ return [
     'Moderation status' => 'Статус модерації',
     'Name' => 'Назва',
     'New products' => 'Нові товари',
+    'New product' => 'Новий товар',
     'No image' => 'Немає зображення',
     'Off' => 'Викл',
     'On' => 'Вкл',
