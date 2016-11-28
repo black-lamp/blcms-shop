@@ -28,7 +28,7 @@ class Currency extends ActiveRecord
     {
         return [
             [['value'], 'required'],
-            [['value'], 'integer'],
+            [['value'], 'double'],
             [['date'], 'safe'],
         ];
     }

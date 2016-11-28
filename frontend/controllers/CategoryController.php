@@ -79,7 +79,7 @@ class CategoryController extends Controller
         if (\Yii::$app->request->isAjax) {
 
             if (!empty($level)) {
-                $categories = Category::find()->where(['parent_id' => $parentId])->all();
+                $categories = Category::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
 
                 return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax', [
                     'categories' => $categories,
