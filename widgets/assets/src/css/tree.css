@@ -27,7 +27,7 @@ div#widget-menu ul li.current a {
     border-left: 3px solid #4285f4;
 }
 div#widget-menu ul li a span {
-    color: #142d3a;
+    color: #505050;
     font-weight: 600;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -50,6 +50,7 @@ div#widget-menu ul li span.category-toggle:hover {
 
 div#widget-menu ul[data-level="1"] > li > a + span.category-toggle {
     font-size: 16px;
+    color: #505050;
     line-height: 40px;
 }
 div#widget-menu ul[data-level="1"] > li > a + span.category-toggle:hover {
