@@ -121,7 +121,7 @@ class ProductPrice extends ActiveRecord
             }
         }
 
-        if (\Yii::$app->controller->module->enableCurrencyConversion) {
+        if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
             $price = floor($price * Currency::currentCurrency());
         }
 
