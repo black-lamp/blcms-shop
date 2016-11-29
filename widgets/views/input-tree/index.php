@@ -27,15 +27,17 @@
                 'for' => $model::className() . '-category_id-' . '-category_id-null',
             ]); ?>
         </li>
+        <li>
+            <?= $this->render(
+                '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
+                [
+                    'parents' => $parents,
+                    'form' => $form,
+                    'model' => $model,
+                    'attribute' => $attribute,
+                    'languageId' => $languageId
+                ]);
+            ?>
+        </li>
     </ul>
-    <?= $this->render(
-        '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
-        [
-            'parents' => $parents,
-            'form' => $form,
-            'model' => $model,
-            'attribute' => $attribute,
-            'languageId' => $languageId
-        ]);
-    ?>
 </div>
