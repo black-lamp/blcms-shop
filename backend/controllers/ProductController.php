@@ -50,6 +50,16 @@ class ProductController extends Controller
      * Triggered with bl\cms\shop\backend\events\ProductEvent.
      */
     const EVENT_AFTER_EDIT_PRODUCT = 'afterEditProduct';
+    /**
+     * Event is triggered before deleting product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_BEFORE_DELETE_PRODUCT = 'beforeDeleteProduct';
+    /**
+     * Event is triggered after deleting product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_AFTER_DELETE_PRODUCT = 'afterDeleteProduct';
 
     /**
      * @inheritdoc
@@ -193,7 +203,15 @@ class ProductController extends Controller
     public function actionDelete($id)
     {
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT, new ProductEvent([
+                'productId' => $id,
+                'userId' => Yii::$app->user->id,
+            ]));
             Product::deleteAll(['id' => $id]);
+            $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent([
+                'productId' => $id,
+                'userId' => Yii::$app->user->id,
+            ]));
             return $this->redirect('index');
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
     }
@@ -254,7 +272,7 @@ class ProductController extends Controller
                     $this->trigger(self::EVENT_AFTER_CREATE_PRODUCT, new ProductEvent([
                         'productId' => $product->id,
                         'userId' => Yii::$app->user->id,
-                        'creationTime' => $product->creation_time
+                        'time' => $product->creation_time
                     ]));
                 }
             }
@@ -262,7 +280,7 @@ class ProductController extends Controller
             $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT, new ProductEvent([
                 'productId' => $product->id,
                 'userId' => Yii::$app->user->id,
-                'creationTime' => $products_translation->update_time
+                'time' => $products_translation->update_time
             ]));
             $products_translation->load(Yii::$app->request->post());
 
@@ -279,7 +297,7 @@ class ProductController extends Controller
                 $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
                     'productId' => $product->id,
                     'userId' => Yii::$app->user->id,
-                    'creationTime' => $products_translation->update_time
+                    'time' => $products_translation->update_time
                 ]));
             }
         }
