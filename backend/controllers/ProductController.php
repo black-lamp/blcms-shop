@@ -31,10 +31,25 @@ class ProductController extends Controller
 {
 
     /**
-     * Event is triggered before creating new user.
-     * Triggered with \dektrium\user\events\UserEvent.
+     * Event is triggered before creating new product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
      */
-    const EVENT_BEFORE_CREATE = 'beforeCreate';
+    const EVENT_BEFORE_CREATE_PRODUCT = 'beforeCreateProduct';
+    /**
+     * Event is triggered after creating new product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_AFTER_CREATE_PRODUCT = 'afterCreateProduct';
+    /**
+     * Event is triggered after editing product translation.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_BEFORE_EDIT_PRODUCT= 'beforeEditProduct';
+    /**
+     * Event is triggered before editing product translation.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_AFTER_EDIT_PRODUCT = 'afterEditProduct';
 
     /**
      * @inheritdoc
@@ -144,8 +159,6 @@ class ProductController extends Controller
 
             if (\Yii::$app->user->can('createProduct')) {
 
-                $this->trigger(self::EVENT_BEFORE_CREATE, new ProductEvent());
-
                 $product = new Product();
                 $products_translation = new ProductTranslation();
             } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to create new product.'));
@@ -220,30 +233,54 @@ class ProductController extends Controller
 
         } else {
             if (\Yii::$app->user->can('createProduct')) {
+
+                $this->trigger(self::EVENT_BEFORE_CREATE_PRODUCT);
+
                 $product = new Product();
                 $products_translation = new ProductTranslation();
             } else throw new ForbiddenHttpException();
         }
 
         if (Yii::$app->request->isPost) {
-            $product->owner = Yii::$app->user->id;
-            if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                $product->status = Product::STATUS_SUCCESS;
+
+            if ($product->isNewRecord) {
+                $product->owner = Yii::$app->user->id;
+                if (\Yii::$app->user->can('createProductWithoutModeration')) {
+                    $product->status = Product::STATUS_SUCCESS;
+                }
+                if ($product->validate()) {
+                    $product->save();
+
+                    $this->trigger(self::EVENT_AFTER_CREATE_PRODUCT, new ProductEvent([
+                        'productId' => $product->id,
+                        'userId' => Yii::$app->user->id,
+                        'creationTime' => $product->creation_time
+                    ]));
+                }
             }
 
-            $product->load(Yii::$app->request->post());
+            $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT, new ProductEvent([
+                'productId' => $product->id,
+                'userId' => Yii::$app->user->id,
+                'creationTime' => $products_translation->update_time
+            ]));
             $products_translation->load(Yii::$app->request->post());
 
-            if ($product->validate() && $products_translation->validate()) {
+            if ($products_translation->validate()) {
 
                 if (empty($products_translation->seoUrl)) {
                     $products_translation->seoUrl = Inflector::slug($products_translation->title);
                 }
 
-                $product->save();
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $selectedLanguage->id;
                 $products_translation->save();
+
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'productId' => $product->id,
+                    'userId' => Yii::$app->user->id,
+                    'creationTime' => $products_translation->update_time
+                ]));
             }
         }
 
