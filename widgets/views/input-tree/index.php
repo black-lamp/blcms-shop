@@ -13,6 +13,21 @@
 ?>
 
 <div id="input-tree" data-current-category="<?=$model->$attribute ?? 0; ?>">
+    <ul class="input-tree-ul">
+        <li>
+            <?= $form->field($model, $attribute,
+                ['template' => "{input}\n{label}"]
+            )->input('radio', [
+                (!$model->$attribute ? 'checked' : '') =>
+                    (!$model->$attribute ? 'checked' : ''),
+                'value' => false,
+                'class' => 'radio',
+                'id' => $model::className() . '-category_id-null',
+            ])->label(Yii::t('shop', 'Without category'), [
+                'for' => $model::className() . '-category_id-' . '-category_id-null',
+            ]); ?>
+        </li>
+    </ul>
     <?= $this->render(
         '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
         [
