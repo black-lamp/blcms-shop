@@ -20,15 +20,12 @@ use yii\web\UrlRuleInterface;
 class UrlRule extends Object implements UrlRuleInterface
 {
     public $prefix = '';
-
     private $pathInfo;
     private $routes;
     private $routesCount;
     private $currentLanguage;
-
     private $productRoute = 'shop/product/show';
     private $categoryRoute = 'shop/category/show';
-
     /**
      * Parses the given request and returns the corresponding route and parameters.
      * @param UrlManager $manager the URL manager
@@ -59,14 +56,10 @@ class UrlRule extends Object implements UrlRuleInterface
                 return false;
             }
         }
-
-
         $this->initRoutes($this->pathInfo);
-
         if(!empty($this->prefix) && $this->routesCount == 1) {
             return [$this->categoryRoute, []];
         }
-
         $categoryId = null;
         for($i = 1; $i < $this->routesCount; $i++) {
             if($i === $this->routesCount - 1) {
@@ -97,22 +90,18 @@ class UrlRule extends Object implements UrlRuleInterface
                 }
             }
         }
-
         return false;
     }
-
     private function initRoutes($pathInfo) {
         $this->routes = explode('/', $pathInfo);
         $this->routesCount = count($this->routes);
     }
-
     private function findProductBySeoUrl($seoUrl, $categoryId, $options = []) {
         $productsSeoData = SeoData::find()
             ->where([
                 'entity_name' => ProductTranslation::className(),
                 'seo_url' => $seoUrl
             ])->all();
-
         if($productsSeoData) {
             foreach($productsSeoData as $productSeoData) {
                 if($product = Product::find()
@@ -128,15 +117,12 @@ class UrlRule extends Object implements UrlRuleInterface
         }
         return null;
     }
-
     private function findCategoryBySeoUrl($seoUrl, $parentId, $options = []) {
-
         $categoriesSeoData = SeoData::find()
             ->where([
                 'entity_name' => CategoryTranslation::className(),
                 'seo_url' => $seoUrl
             ])->all();
-
         if($categoriesSeoData) {
             foreach($categoriesSeoData as $categorySeoData) {
                 if($category = Category::find()
@@ -150,10 +136,8 @@ class UrlRule extends Object implements UrlRuleInterface
                 }
             }
         }
-
         return null;
     }
-
     /**
      * Creates a URL according to the given route and parameters.
      * @param UrlManager $manager the URL manager
@@ -173,7 +157,6 @@ class UrlRule extends Object implements UrlRuleInterface
             $language = Language::findOne([
                 'lang_id' => $manager->language
             ]);
-
             if($route == $this->productRoute) {
                 $product = Product::findOne($id);
                 if(empty($product)) {
@@ -197,7 +180,6 @@ class UrlRule extends Object implements UrlRuleInterface
                     return false;
                 }
             }
-
             while($parentId != null) {
                 $category = Category::findOne($parentId);
                 if($category->getTranslation($language->id) && $category->getTranslation($language->id)->seoUrl) {
@@ -208,7 +190,6 @@ class UrlRule extends Object implements UrlRuleInterface
                     return false;
                 }
             }
-
             if(!empty($this->prefix)) {
                 $pathInfo = $this->prefix . '/' . $pathInfo;
             }
@@ -218,6 +199,6 @@ class UrlRule extends Object implements UrlRuleInterface
             return false;
         }
 
-        return array_merge([$pathInfo], $params)[0];
+        return $pathInfo . '?' . http_build_query($params);
     }
 }
