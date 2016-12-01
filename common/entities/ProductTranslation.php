@@ -50,6 +50,7 @@ class ProductTranslation extends ActiveRecord
     public function rules()
     {
         return [
+            [['title'], 'required'],
             [['product_id', 'language_id'], 'integer'],
             [['description', 'full_text'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
