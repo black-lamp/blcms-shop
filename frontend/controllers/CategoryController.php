@@ -53,10 +53,15 @@ class CategoryController extends Controller
 
 
         }
-        $filters = Filter::find()->where(['category_id' => $category->id])->all();
-        $cart = new CartForm();
-        $searchModel = new ProductSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategories ?? null);
+        if ($this->module->showChildCategoriesProducts || empty($childCategories)) {
+
+            $filters = (!empty($category)) ?
+                Filter::find()->where(['category_id' => $category->id])->all() : null;
+
+            $cart = new CartForm();
+            $searchModel = new ProductSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategories ?? null);
+        }
 
         return $this->render('show', [
             'category' => $category ?? null,
