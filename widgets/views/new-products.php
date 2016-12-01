@@ -42,7 +42,7 @@ use yii\helpers\Url;
 
         <tr>
             <td class="text-center" style="padding: 5px;">
-                <a href="<?= Url::to(['/shop/product/add-image', 'productId' => $product->id, 'languageId' => Language::getCurrent()->id]); ?>">
+                <a href="<?= Url::to(['/shop/product/add-image', 'id' => $product->id, 'languageId' => Language::getCurrent()->id]); ?>">
                     <?php if (!empty($product->image->small)): ?>
                         <div style="background-image: url(<?= $productImage ?>); background-size: cover; background-position: center;
                             width: 64px;
