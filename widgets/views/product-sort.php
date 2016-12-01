@@ -24,11 +24,9 @@ $moduleId = Yii::$app->controller->module->uniqueId;
         <?php if (!empty($sortMethods)): ?>
             <ul class="dropdown-menu" aria-labelledby="productSortDropdown">
                 <?php foreach ($sortMethods as $sort => $sortName): ?>
-                    <?php if ($sort != $currentSort): ?>
-                        <li>
-                            <?= Html::a($sortName, ["/{$moduleId}/", 'sort' => $sort]) ?>
-                        </li>
-                    <?php endif ?>
+                    <li class="<?= ($sort == $currentSort) ? 'active' : '' ?>">
+                        <?= Html::a($sortName, ["/{$moduleId}/", 'sort' => $sort]) ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif ?>
