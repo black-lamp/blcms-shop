@@ -124,6 +124,8 @@ class CategoryController extends Controller
             'languages' => Language::findAll(['active' => true]),
 
             'params' => [
+                'languages' => Language::findAll(['active' => true]),
+
                 'maxPosition' => $maxPosition,
                 'minPosition' => $minPosition,
                 'category' => $category,

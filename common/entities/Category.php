@@ -120,8 +120,9 @@ class Category extends ActiveRecord
      */
     public function getChildren($parent_id = null)
     {
-        return (!empty($parent_id)) ? $this::find()->where(['parent_id' => $parent_id])->all() :
-            $this->hasMany(Category::className(), ['parent_id' => 'id']);
+        $parent_id = $parent_id ?? $this->id;
+        $children = $this::find()->where(['parent_id' => $parent_id, 'show' => true])->all();
+        return $children;
     }
 
     /**
@@ -156,8 +157,8 @@ class Category extends ActiveRecord
     }
 
     public static function getBig($category, $imageType) {
-        $fileName = $category->$imageType;
-        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
+//        $fileName = $category->$imageType;
+//        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
     }
 
     public static function getThumb($category, $imageType) {

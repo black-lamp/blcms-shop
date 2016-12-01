@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
 
         if (is_null($id)) {
-            $childCategories = Category::find()->where(['parent_id' => null])->all();
+            $childCategories = Category::find()->where(['parent_id' => null, 'show' => true])->all();
             $this->registerStaticSeoData();
         } else {
             $category = Category::findOne($id);
