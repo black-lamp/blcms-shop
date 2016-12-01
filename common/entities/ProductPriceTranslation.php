@@ -30,6 +30,7 @@ class ProductPriceTranslation extends ActiveRecord
     public function rules()
     {
         return [
+            [['title'], 'required'],
             [['price_id', 'language_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
