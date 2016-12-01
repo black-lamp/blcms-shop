@@ -8,6 +8,11 @@ use yii\base\Event;
  */
 class ProductEvent extends Event
 {
+
+    public $productId;
+    public $userId;
+    public $time;
+
     public function __construct(array $config = null)
     {
         parent::__construct($config);

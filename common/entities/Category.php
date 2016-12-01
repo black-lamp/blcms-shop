@@ -115,11 +115,36 @@ class Category extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @param $parent_id integer
+     * @return \yii\db\ActiveQuery|array
      */
-    public function getChildren()
+    public function getChildren($parent_id = null)
     {
-        return $this->hasMany(Category::className(), ['parent_id' => 'id']);
+        return (!empty($parent_id)) ? $this::find()->where(['parent_id' => $parent_id])->all() :
+            $this->hasMany(Category::className(), ['parent_id' => 'id']);
+    }
+
+    /**
+     * @param Category $category
+     * @return array
+     *
+     * Gets children of category and its children.
+     */
+    public function getDescendants($category) {
+        $children = $category->getChildren($category->id);
+
+        if (!empty($children)) {
+            foreach ($children as $child) {
+
+                $grandChildren = $this->getDescendants($child);
+                if (!empty($grandChildren)) {
+
+                    $children = array_merge($children, $grandChildren);
+                }
+
+            }
+        }
+        return $children;
     }
 
     /**
@@ -157,5 +182,23 @@ class Category extends ActiveRecord
     {
         $url = '/' . Yii::$app->controller->module->id . '/category/show';
         return Url::to([$url, 'id' => $this->id]);
+    }
+
+    /**
+     * Adds title, meta-description and meta-keywords to category page using bl\cms\seo\StaticPageBehavior.
+     */
+    public function registerMetaData() {
+        $currentView = Yii::$app->controller->view;
+
+        $currentView->title = html_entity_decode($this->translation->seoTitle) ??
+            html_entity_decode($this->translation->title);
+        $currentView->registerMetaTag([
+            'name' => 'description',
+            'content' => html_entity_decode($this->translation->seoDescription)
+        ]);
+        $currentView->registerMetaTag([
+            'name' => 'keywords',
+            'content' => html_entity_decode($this->translation->seoKeywords)
+        ]);
     }
 }

@@ -36,6 +36,12 @@ class Module extends \yii\base\Module
      */
     public $enableCurrencyConversion = false;
 
+    /**
+     * @var bool
+     * If true category products will be shown with child categories products.
+     */
+    public $showChildCategoriesProducts = false;
+
 
     public function init()
     {

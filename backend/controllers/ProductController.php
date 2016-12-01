@@ -261,6 +261,8 @@ class ProductController extends Controller
 
         if (Yii::$app->request->isPost) {
 
+            $product->load(Yii::$app->request->post());
+
             if ($product->isNewRecord) {
                 $product->owner = Yii::$app->user->id;
                 if (\Yii::$app->user->can('createProductWithoutModeration')) {
@@ -284,7 +286,7 @@ class ProductController extends Controller
             ]));
             $products_translation->load(Yii::$app->request->post());
 
-            if ($products_translation->validate()) {
+            if ($product->validate() && $products_translation->validate()) {
 
                 if (empty($products_translation->seoUrl)) {
                     $products_translation->seoUrl = Inflector::slug($products_translation->title);
@@ -293,6 +295,7 @@ class ProductController extends Controller
                 $products_translation->product_id = $product->id;
                 $products_translation->language_id = $selectedLanguage->id;
                 $products_translation->save();
+                $product->save();
 
                 $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
                     'productId' => $product->id,

@@ -55,7 +55,7 @@ use yii\helpers\Url;
             </td>
             <td style="vertical-align: middle;">
                 <?= Html::a(
-                    $product->translation->title,
+                    $product->translation->title ?? '',
                     Url::toRoute(['/shop/product/save', 'id' => $product->id, 'languageId' => Language::getCurrent()->id])
                 ); ?>
             </td>

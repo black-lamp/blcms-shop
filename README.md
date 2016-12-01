@@ -133,9 +133,12 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     'modules' => [
     	...
         'shop' => [
-            'class' => 'bl\cms\shop\frontend\Module',
-            'enableCurrencyConversion' => true
-        ],
+                    'class' => bl\cms\shop\frontend\Module::className(),
+                    'enableCurrencyConversion' => true,
+                    'partnerManagerEmail' => $params['partnerManagerEmail'],
+                    'senderEmail' => $params['senderEmail'],
+                    'showChildCategoriesProducts' => false
+                ],
         ...
     ],
     
@@ -330,3 +333,8 @@ The module has translations on several languages. If there is not your language 
 
 If you use OpenServer with PHP 7, you must install Imagick extension like here http://open-server.ru/forum/viewtopic.php?f=4&t=2897&hilit=imagick
 
+
+**Products displaying**
+
+You can select one of two modes: showing products of current category and its children or only current category.
+Use property $showChildCategoriesProducts in frontend Module class configuration.

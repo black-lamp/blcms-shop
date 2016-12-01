@@ -3,20 +3,17 @@
 namespace bl\cms\shop\frontend\components;
 
 use bl\cms\shop\common\entities\FilterType;
-use Yii;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use bl\cms\shop\common\entities\Product;
+use yii\helpers\ArrayHelper;
 
 /**
  * ProductSearch represents the model behind the search form about `bl\cms\shop\common\entities\Product`.
  */
 class ProductSearch extends Product
 {
-
-//    public $vendor_id;
-//    public $country_id;
 
     /**
      * Sorting methods.
@@ -52,14 +49,25 @@ class ProductSearch extends Product
      * @return ActiveDataProvider
      * @throws Exception if search is not validated
      */
-    public function search($params)
+    public function search($params, $descendantCategories)
     {
+
         $this->load($params, '');
         $query = Product::find();
 
-        if (!empty($params['id'])) {
-            $query->where(['category_id' => $params['id']]);
+        if (\Yii::$app->controller->module->showChildCategoriesProducts) {
+
+            if (!empty($params['id'])) {
+                $query->where(['in', 'category_id', ArrayHelper::map($descendantCategories, 'id', 'id')]);
+            }
+
         }
+        else {
+            if (!empty($params['id'])) {
+                $query->where(['category_id' => $params['id']]);
+            }
+        }
+
 
         $filterTypes = FilterType::find()->all();
         foreach ($filterTypes as $filterType) {

@@ -1,21 +1,26 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
-use bl\cms\cart\models\CartForm;
-use bl\cms\seo\StaticPageBehavior;
-use bl\cms\shop\common\entities\Category;
-use bl\cms\shop\common\entities\Filter;
-use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\frontend\components\ProductSearch;
+
 use Yii;
 use yii\base\Exception;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use bl\cms\cart\models\CartForm;
+use bl\cms\seo\StaticPageBehavior;
+use yii\web\{
+    BadRequestHttpException, Controller
+};
+use bl\cms\shop\frontend\components\ProductSearch;
+use bl\cms\shop\common\entities\{
+    Category, Filter
+};
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 class CategoryController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -26,56 +31,60 @@ class CategoryController extends Controller
         ];
     }
 
-    public function actionShow($id = null) {
+    /**
+     * @param null|integer $id
+     * @return string
+     *
+     * Shows parent categories and products of this category if category has not children categories.
+     */
+    public function actionShow($id = null)
+    {
 
-        $category = null;
-        $productsQuery = Product::find();
-
-        if(!empty($id)) {
-            $category = Category::findOne($id);
-            if(!empty($category->translation->seoTitle)) {
-                $this->view->title = $category->translation->seoTitle;
-            }
-            else {
-                $this->view->title = $category->translation->title;
-            }
-            $this->view->registerMetaTag([
-                'name' => 'description',
-                'content' => html_entity_decode($category->translation->seoDescription)
-            ]);
-            $this->view->registerMetaTag([
-                'name' => 'keywords',
-                'content' => html_entity_decode($category->translation->seoKeywords)
-            ]);
-
-            $productsQuery->where([
-                'category_id' => $id
-            ]);
-        }
-        else {
+        if (is_null($id)) {
+            $descendantCategories = Category::find()->all();
             $this->registerStaticSeoData();
+        } else {
+            $category = Category::findOne($id);
+            $category->registerMetaData();
+
+            $descendantCategories = $category->getDescendants($category);
+
+            if (empty($descendantCategories)) {
+
+                $filters = Filter::find()->where(['category_id' => $category->id])->all();
+                $cart = new CartForm();
+            }
         }
 
         $searchModel = new ProductSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $filters = (!empty($category->id)) ? Filter::find()->where(['category_id' => $category->id])->all() :
-            null;
-        $cart = new CartForm();
+        $descendantCategoriesWithParent = $descendantCategories;
+        if (!empty($category)) {
+            array_push($descendantCategoriesWithParent, $category);
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategoriesWithParent);
 
         return $this->render('show', [
-            'category' => $category,
-            'menuItems' => Category::find()->orderBy(['position' => SORT_ASC])->with(['translations'])->all(),
-            'filters' => $filters,
-            'products' => Product::find()->all(),
-            'cart' => $cart,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'category' => $category ?? null,
+            'descendantCategories' => $descendantCategories,
+            'filters' => $filters ?? null,
+            'cart' => $cart ?? null,
+            'dataProvider' => $dataProvider ?? null,
         ]);
-        
+
     }
 
-    public function actionGetCategories($parentId = null, $level, $currentCategoryId) {
+    /**
+     * @param null|integer $parentId
+     * @param integer $level
+     * @param integer $currentCategoryId
+     * @return mixed
+     * @throws BadRequestHttpException
+     * @throws Exception
+     *
+     * This action is used by Tree wiget
+     */
+    public function actionGetCategories($parentId = null, $level, $currentCategoryId)
+    {
         if (\Yii::$app->request->isAjax) {
 
             if (!empty($level)) {
@@ -86,10 +95,7 @@ class CategoryController extends Controller
                     'level' => $level,
                     'currentCategoryId' => $currentCategoryId,
                 ]);
-            }
-
-            else throw new Exception();
-        }
-        else throw new BadRequestHttpException();
+            } else throw new Exception();
+        } else throw new BadRequestHttpException();
     }
 }
