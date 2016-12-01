@@ -97,14 +97,14 @@ class ProductController extends Controller
      */
     private function setSeoData($model)
     {
-        $this->view->title = $model->translation->seoTitle;
+        $this->view->title = $model->translation->seoTitle ?? $model->translation->title ?? '';
         $this->view->registerMetaTag([
             'name' => 'description',
-            'content' => strip_tags($model->translation->seoDescription)
+            'content' => strip_tags($model->translation->seoDescription) ?? ''
         ]);
         $this->view->registerMetaTag([
             'name' => 'keywords',
-            'content' => strip_tags($model->translation->seoKeywords)
+            'content' => strip_tags($model->translation->seoKeywords) ?? ''
         ]);
     }
 }
