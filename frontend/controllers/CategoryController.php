@@ -41,31 +41,26 @@ class CategoryController extends Controller
     {
 
         if (is_null($id)) {
-            $descendantCategories = Category::find()->all();
+            $childCategories = Category::find()->where(['parent_id' => null])->all();
             $this->registerStaticSeoData();
         } else {
             $category = Category::findOne($id);
             $category->registerMetaData();
 
+            $childCategories = $category->getChildren();
             $descendantCategories = $category->getDescendants($category);
+            array_push($descendantCategories, $category);
 
-            if (empty($descendantCategories)) {
 
-                $filters = Filter::find()->where(['category_id' => $category->id])->all();
-                $cart = new CartForm();
-            }
         }
-
+        $filters = Filter::find()->where(['category_id' => $category->id])->all();
+        $cart = new CartForm();
         $searchModel = new ProductSearch();
-        $descendantCategoriesWithParent = $descendantCategories;
-        if (!empty($category)) {
-            array_push($descendantCategoriesWithParent, $category);
-        }
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategoriesWithParent);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategories ?? null);
 
         return $this->render('show', [
             'category' => $category ?? null,
-            'descendantCategories' => $descendantCategories,
+            'childCategories' => $childCategories,
             'filters' => $filters ?? null,
             'cart' => $cart ?? null,
             'dataProvider' => $dataProvider ?? null,
