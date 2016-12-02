@@ -130,11 +130,12 @@ ProductAsset::register($this);
                 <h4><?= Yii::t('shop', 'Files'); ?>:</h4>
                 <div class="list-group">
                     <?php foreach ($product->files as $file): ?>
-                        <a href="<?= $file->getFile() ?>" class="list-group-item">
+                        <a href="<?= $file->getFile() ?>" class="list-group-item" target="_blank">
                             <h4 class="list-group-item-heading">
                                 <i class="glyphicon glyphicon-file"></i>
                                 <?= $file->file ?>
                             </h4>
+                            <b><?= $file->translation->type ?></b>
                             <p class="list-group-item-text"><?= $file->translation->description ?></p>
                         </a>
                     <?php endforeach; ?>
