@@ -35,12 +35,7 @@ $this->title = Yii::t('shop', 'Product availabilities');
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <?php foreach ($languages as $language): ?>
                             <li>
-                                <a href="
-                                        <?= Url::to([
-                                    'save',
-                                    'id' => $model->id,
-                                    'languageId' => $language->id]) ?>
-                                                ">
+                                <a href="<?= Url::to(['save', 'id' => $model->id, 'languageId' => $language->id]) ?>">
                                     <?= $language->name ?>
                                 </a>
                             </li>

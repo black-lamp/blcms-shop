@@ -5,6 +5,7 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\frontend\assets\ProductAsset;
 use bl\cms\shop\widgets\assets\RecommendedProductsAsset;
+use bl\cms\shop\widgets\RecommendedProducts;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -193,11 +194,28 @@ ProductAsset::register($this);
             <?= $product->translation->full_text ?>
         </div>
     <?php endif ?>
+
+    <?php if (!empty($product->params)) : ?>
+        <h4 class="text-center"><?= Yii::t('shop', 'Params'); ?>:</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                <?php foreach ($product->params as $param): ?>
+                    <tr>
+                        <td class="text-right text-uppercase col-md-4"><?= $param->translation->name; ?></td>
+                        <td class="col-md-8"><?= $param->translation->value; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
 </div>
 
 <!--RECOMMENDED PRODUCTS-->
 <div class="row">
-    <?= \bl\cms\shop\widgets\RecommendedProducts::widget([
+    <?= RecommendedProducts::widget([
         'id' => $product->id,
     ]); ?>
 </div>
