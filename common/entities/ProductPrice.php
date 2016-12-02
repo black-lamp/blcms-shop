@@ -2,6 +2,8 @@
 namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
+use yii2tech\ar\position\PositionBehavior;
+
 /**
  * This is the model class for table "shop_product_price".
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -12,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer $salePrice
  * @property integer $sale
  * @property integer $sale_type_id
+ * @property integer $position
  *
  * @property SaleType $type
  * @property Product $product
@@ -27,6 +30,10 @@ class ProductPrice extends ActiveRecord
                 'class' => TranslationBehavior::className(),
                 'translationClass' => ProductPriceTranslation::className(),
                 'relationColumn' => 'price_id'
+            ],
+            'positionBehavior' => [
+                'class' => PositionBehavior::className(),
+                'positionAttribute' => 'position',
             ],
         ];
     }

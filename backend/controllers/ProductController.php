@@ -595,6 +595,52 @@ class ProductController extends Controller
     }
 
     /**
+     * Changes ProductImage position to down
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for ProductImage models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all ProductImage models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionImageDown($id, $languageId)
+    {
+        $productImage = ProductImage::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productImage->product_id)->owner])) {
+
+            if ($productImage) {
+                $productImage->moveNext();
+            }
+            return $this->actionAddImage($productImage->product_id, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Changes ProductImage position to up
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for ProductImage models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all ProductImage models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionImageUp($id, $languageId)
+    {
+        $productImage = ProductImage::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productImage->product_id)->owner])) {
+
+            if ($productImage) {
+                $productImage->movePrev();
+            }
+            return $this->actionAddImage($productImage->product_id, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
      * Users which have 'updateOwnProduct' permission can add video only from Product models that have been created by their.
      * Users which have 'updateProduct' permission can add video from all Product models.
      *
@@ -802,6 +848,53 @@ class ProductController extends Controller
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             ProductPrice::deleteAll(['id' => $priceId]);
             return $this->actionAddPrice($id, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+
+    /**
+     * Changes ProductPrice position to down
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for ProductPrice models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all ProductPrice models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionPriceDown($id, $languageId)
+    {
+        $productPrice = ProductPrice::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productPrice->product_id)->owner])) {
+
+            if ($productPrice) {
+                $productPrice->moveNext();
+            }
+            return $this->actionAddPrice($productPrice->product_id, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Changes ProductPrice position to up
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for ProductPrice models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all ProductPrice models.
+     *
+     * @param integer $id
+     * @param $languageId $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionPriceUp($id, $languageId)
+    {
+        $productPrice = ProductPrice::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productPrice->product_id)->owner])) {
+
+            if ($productPrice) {
+                $productPrice->movePrev();
+            }
+            return $this->actionAddPrice($productPrice->product_id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 

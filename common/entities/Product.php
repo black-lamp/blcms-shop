@@ -171,7 +171,7 @@ class Product extends ActiveRecord
      */
     public function getPrices()
     {
-        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
     /**
@@ -187,7 +187,7 @@ class Product extends ActiveRecord
      */
     public function getImages()
     {
-        return $this->hasMany(ProductImage::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductImage::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
     public function getImage() {
