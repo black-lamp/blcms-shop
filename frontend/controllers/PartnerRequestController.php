@@ -69,15 +69,16 @@ class PartnerRequestController extends Controller
                 $this->trigger(self::EVENT_SEND, new PartnersEvents());
 
                 Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your partner request was successfully sent.'));
-                return $this->redirect(Yii::$app->request->referrer);
+                return $this->render('success');
             }
+            else throw new Exception();
         }
         $this->registerStaticSeoData();
 
         return $this->render('send',
             [
                 'partner' => $partner,
-                'user' => $user,
+                'user' => \Yii::createObject(\dektrium\user\models\RegistrationForm::className()),
                 'profile' => $profile
             ]
         );
