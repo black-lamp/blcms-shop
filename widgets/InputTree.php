@@ -60,7 +60,7 @@ class InputTree extends Widget
      * @return array
      */
     public static function findChildren($model, $parentId) {
-        return $children = $model::find()->where(['parent_id' => $parentId])->all();
+        return $children = $model::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
     }
 
 }
