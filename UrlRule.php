@@ -199,6 +199,7 @@ class UrlRule extends Object implements UrlRuleInterface
             return false;
         }
 
-        return $pathInfo . '?' . http_build_query($params);
+        $queryParams = (!empty(http_build_query($params))) ? '?' . http_build_query($params) : '';
+        return $pathInfo . $queryParams;
     }
 }
