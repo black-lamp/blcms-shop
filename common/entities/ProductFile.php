@@ -15,7 +15,7 @@ use yii\db\Expression;
  * @property integer $product_id
  *
  * @property Product $product
- * @property ProductFileTranslation[] $shopProductFileTranslations
+ * @property ProductFileTranslation $translation
  */
 class ProductFile extends ActiveRecord
 {
@@ -87,4 +87,8 @@ class ProductFile extends ActiveRecord
         return $this->hasMany(ProductFileTranslation::className(), ['product_file_id' => 'id']);
     }
 
+    public function getFile()
+    {
+        return '/files/' . $this->file;
+    }
 }
