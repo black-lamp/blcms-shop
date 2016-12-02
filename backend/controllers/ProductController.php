@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\form\ProductFileForm;
 use bl\cms\shop\backend\components\form\ProductImageForm;
 use bl\cms\shop\backend\components\form\ProductVideoForm;
 use bl\cms\shop\backend\events\ProductEvent;
@@ -8,6 +9,8 @@ use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductFile;
+use bl\cms\shop\common\entities\ProductFileTranslation;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
@@ -44,7 +47,7 @@ class ProductController extends Controller
      * Event is triggered after editing product translation.
      * Triggered with bl\cms\shop\backend\events\ProductEvent.
      */
-    const EVENT_BEFORE_EDIT_PRODUCT= 'beforeEditProduct';
+    const EVENT_BEFORE_EDIT_PRODUCT = 'beforeEditProduct';
     /**
      * Event is triggered before editing product translation.
      * Triggered with bl\cms\shop\backend\events\ProductEvent.
@@ -83,6 +86,7 @@ class ProductController extends Controller
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
                             'add-price', 'remove-price',
+                            'add-file', 'remove-file',
                             'up', 'down', 'generate-seo-url'
                         ],
                         'roles' => ['createProduct', 'createProductWithoutModeration',
@@ -368,7 +372,7 @@ class ProductController extends Controller
             $languages = Language::find()->all();
             $languageIndex = 0;
             foreach ($languages as $key => $language) {
-                if ($language->id == $languageId)  {
+                if ($language->id == $languageId) {
                     $languageIndex = $key;
                     break;
                 }
@@ -420,7 +424,8 @@ class ProductController extends Controller
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionUpdateParam(int $id, int $languageId) {
+    public function actionUpdateParam(int $id, int $languageId)
+    {
         if (!empty($id) && !empty($languageId)) {
             $paramTranslation = ParamTranslation::find()
                 ->where(['param_id' => $id, 'language_id' => $languageId])->one();
@@ -447,8 +452,7 @@ class ProductController extends Controller
                 'paramTranslation' => $paramTranslation,
                 'languageId' => $languageId
             ]);
-        }
-        else throw new NotFoundHttpException();
+        } else throw new NotFoundHttpException();
     }
 
     /**
@@ -798,6 +802,98 @@ class ProductController extends Controller
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             ProductPrice::deleteAll(['id' => $priceId]);
             return $this->actionAddPrice($id, $languageId);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Users which have 'updateOwnProduct' permission can add file only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add file for all Product models.
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionAddFile($id, $languageId)
+    {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+            $file = new ProductFile();
+            $fileTranslation = new ProductFileTranslation();
+            $fileForm = new ProductFileForm();
+
+            $product = Product::findOne($id);
+            $selectedLanguage = Language::findOne($languageId);
+
+            if (\Yii::$app->request->isPost) {
+                $post = \Yii::$app->request->post();
+
+                if ($fileForm->load($post) && $fileTranslation->load($post)) {
+
+                    $file->product_id = $product->id;
+
+
+                    $fileForm->file = UploadedFile::getInstance($fileForm, 'file');
+
+                    $fileName = $fileForm->upload();
+
+                    $file->file = $fileName;
+
+                    if ($file->save()) {
+                        $fileTranslation->product_file_id = $file->id;
+                        $fileTranslation->language_id = $selectedLanguage->id;
+
+                        if ($fileTranslation->save()) {
+//                            $file = new ProductFile();
+//                            $fileTranslation = new ProductFileTranslation();
+                        } else die(var_dump($fileTranslation->errors));
+                    }
+
+
+                }
+            }
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('add-file', [
+                    'fileList' => $product->files,
+                    'fileModel' => $fileForm,
+                    'fileTranslationModel' => $fileTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]);
+            }
+            return $this->render('save', [
+                'viewName' => 'add-file',
+                'selectedLanguage' => Language::findOne($languageId),
+                'product' => $product,
+                'languages' => Language::find()->all(),
+
+                'params' => [
+                    'fileList' => $product->files,
+                    'fileModel' => $fileForm,
+                    'fileTranslationModel' => $fileTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]
+            ]);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Users which have 'updateOwnProduct' permission can delete file only from Product models that have been created by their.
+     * Users which have 'updateProduct' permission can delete file from all Product models.
+     *
+     * @param integer $fileId
+     * @param integer $productId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionRemoveFile($fileId, $productId, $languageId)
+    {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+            ProductFile::deleteAll(['id' => $fileId]);
+            return $this->actionAddFile($productId, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 

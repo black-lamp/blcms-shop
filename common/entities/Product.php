@@ -43,6 +43,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property ProductImage $image
  * @property ProductPrice[] $prices
  * @property ProductVideo[] $videos
+ * @property ProductFile[] $files
  * @property ProductAvailability $productAvailability
  * @property ProductTranslation $translation
  */
@@ -199,6 +200,14 @@ class Product extends ActiveRecord
     public function getVideos()
     {
         return $this->hasMany(ProductVideo::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFiles()
+    {
+        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
     }
 
     public static function generateImageName($baseName)
