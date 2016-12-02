@@ -813,6 +813,7 @@ class ProductController extends Controller
      * @param integer $languageId
      * @return mixed
      * @throws ForbiddenHttpException
+     * @throws Exception
      */
     public function actionAddFile($id, $languageId)
     {
@@ -829,26 +830,20 @@ class ProductController extends Controller
 
                 if ($fileForm->load($post) && $fileTranslation->load($post)) {
 
-                    $file->product_id = $product->id;
-
-
                     $fileForm->file = UploadedFile::getInstance($fileForm, 'file');
 
                     $fileName = $fileForm->upload();
 
                     $file->file = $fileName;
+                    $file->product_id = $product->id;
 
                     if ($file->save()) {
                         $fileTranslation->product_file_id = $file->id;
                         $fileTranslation->language_id = $selectedLanguage->id;
 
-                        if ($fileTranslation->save()) {
-//                            $file = new ProductFile();
-//                            $fileTranslation = new ProductFileTranslation();
-                        } else die(var_dump($fileTranslation->errors));
+                        if (!$fileTranslation->save())
+                            throw new Exception(var_dump($fileTranslation->errors));
                     }
-
-
                 }
             }
             if (Yii::$app->request->isPjax) {
