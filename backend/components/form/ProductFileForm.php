@@ -16,7 +16,8 @@ class ProductFileForm extends Model
     public function rules()
     {
         return [
-            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize'=>'3000000'],
+            [['file'], 'file', 'skipOnEmpty' => true,
+                'extensions' => 'png, jpg, jpg, jpeg, jpe, gif, png, bmp, tif, tiff, txt, csv, html, mp3, wav, pdf, doc, docx, tar, zip, gz, gzip', 'maxSize'=>'3000000'],
         ];
     }
 
