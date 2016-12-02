@@ -58,6 +58,7 @@ return [
     'No more items.' => 'Більше товарів немає.',
     'Partner request' => 'Запит на партнерство',
     'Patronymic' => 'батькові',
+    'Params' => 'Характеристики',
     'Phone number' => 'Номер телефону',
     'Post office' => 'Поштове відділення',
     'Price' => 'Ціна',
