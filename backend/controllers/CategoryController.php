@@ -281,6 +281,13 @@ class CategoryController extends Controller
             throw new Exception('Category id and language id can not be empty');
         }
 
+        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+            new CategoryEvent([
+                'categoryId' => $categoryId,
+                'userId' => \Yii::$app->user->id,
+            ])
+        );
+
         $category = Category::findOne($categoryId);
         $image_form = new CategoryImageForm();
 
@@ -298,6 +305,12 @@ class CategoryController extends Controller
             }
             if ($category->validate()) {
                 $category->save();
+                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                    new CategoryEvent([
+                        'categoryId' => $categoryId,
+                        'userId' => \Yii::$app->user->id,
+                    ])
+                );
                 Yii::$app->getSession()->setFlash('success', 'The images have successfully uploaded.');
             }
             Yii::$app->getSession()->setFlash('error', 'Error loading image.');
@@ -324,12 +337,24 @@ class CategoryController extends Controller
      */
     public function actionDeleteImage($id, $imageType)
     {
+        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+            new CategoryEvent([
+                'categoryId' => $id,
+                'userId' => \Yii::$app->user->id,
+            ])
+        );
         $category = Category::findOne($id);
 
         if (\Yii::$app->shop_imagable->delete('shop-category/' . $imageType, $category->$imageType)) {
             $category->$imageType = null;
             $category->save();
             Yii::$app->getSession()->setFlash('success', 'The image has been successfully deleted.');
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
         }
         else Yii::$app->getSession()->setFlash('error', 'Error deleting image.');
 
@@ -403,7 +428,19 @@ class CategoryController extends Controller
     public function actionUp($id)
     {
         if ($category = Category::findOne($id)) {
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
             $category->movePrev();
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
         }
         return $this->actionIndex();
     }
@@ -417,7 +454,19 @@ class CategoryController extends Controller
     public function actionDown($id)
     {
         if ($category = Category::findOne($id)) {
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
             $category->moveNext();
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
         }
         return $this->actionIndex();
     }
@@ -433,8 +482,20 @@ class CategoryController extends Controller
     {
         $category = Category::findOne($id);
         if (!empty($category)) {
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
             $category->show = !$category->show;
             $category->save();
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
             return $this->actionIndex();
         } else throw new NotFoundHttpException();
     }
