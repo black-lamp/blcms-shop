@@ -1,31 +1,17 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
-use bl\cms\shop\backend\components\form\ProductFileForm;
-use bl\cms\shop\backend\components\form\ProductImageForm;
-use bl\cms\shop\backend\components\form\ProductVideoForm;
-use bl\cms\shop\backend\events\ProductEvent;
-use bl\cms\shop\common\entities\CategoryTranslation;
-use bl\cms\shop\common\entities\Param;
-use bl\cms\shop\common\entities\ParamTranslation;
-use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductFile;
-use bl\cms\shop\common\entities\ProductFileTranslation;
-use bl\cms\shop\common\entities\ProductImage;
-use bl\cms\shop\common\entities\ProductPrice;
-use bl\cms\shop\common\entities\ProductPriceTranslation;
-use bl\cms\shop\common\entities\SearchProduct;
-use bl\cms\shop\common\entities\ProductTranslation;
-use bl\cms\shop\common\entities\ProductVideo;
-use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Exception;
-use yii\filters\AccessControl;
 use yii\helpers\Inflector;
-use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
-use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
+use yii\filters\AccessControl;
+use bl\multilang\entities\Language;
+use bl\cms\shop\backend\events\ProductEvent;
+use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile};
+use bl\cms\shop\backend\components\form\{ProductFileForm, ProductImageForm, ProductVideoForm};
+use bl\cms\shop\common\entities\{CategoryTranslation, Param, ParamTranslation, Product, ProductFile,
+    ProductFileTranslation, ProductImage, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation,
+    ProductVideo};
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -208,13 +194,11 @@ class ProductController extends Controller
     {
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT, new ProductEvent([
-                'productId' => $id,
-                'userId' => Yii::$app->user->id,
+                'productId' => $id
             ]));
             Product::deleteAll(['id' => $id]);
             $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent([
-                'productId' => $id,
-                'userId' => Yii::$app->user->id,
+                'productId' => $id
             ]));
             return $this->redirect('index');
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
@@ -276,17 +260,13 @@ class ProductController extends Controller
                     $product->save();
 
                     $this->trigger(self::EVENT_AFTER_CREATE_PRODUCT, new ProductEvent([
-                        'productId' => $product->id,
-                        'userId' => Yii::$app->user->id,
-                        'time' => $product->creation_time
+                        'productId' => $product->id
                     ]));
                 }
             }
 
             $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT, new ProductEvent([
                 'productId' => $product->id,
-                'userId' => Yii::$app->user->id,
-                'time' => $products_translation->update_time
             ]));
             $products_translation->load(Yii::$app->request->post());
 
@@ -302,9 +282,7 @@ class ProductController extends Controller
                 $product->save();
 
                 $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
-                    'productId' => $product->id,
-                    'userId' => Yii::$app->user->id,
-                    'time' => $products_translation->update_time
+                    'productId' => $product->id
                 ]));
             }
         }

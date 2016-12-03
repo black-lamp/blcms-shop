@@ -105,8 +105,7 @@ class CategoryController extends Controller
     {
         $this->trigger(self::EVENT_BEFORE_DELETE_CATEGORY,
             new CategoryEvent([
-                'categoryId' => $id,
-                'userId' => \Yii::$app->user->id,
+                'categoryId' => $id
             ])
         );
         $category = Category::findOne($id);
@@ -114,8 +113,7 @@ class CategoryController extends Controller
             Yii::$app->getSession()->setFlash('success', 'The category has been successfully removed');
             $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
         } else {
@@ -182,15 +180,13 @@ class CategoryController extends Controller
             if ($category->isNewRecord) {
                 $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY,
                     new CategoryEvent([
-                        'categoryId' => $id,
-                        'userId' => \Yii::$app->user->id,
+                        'categoryId' => $id
                     ])
                 );
             } else {
                 $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
                     new CategoryEvent([
-                        'categoryId' => $id,
-                        'userId' => \Yii::$app->user->id,
+                        'categoryId' => $id
                     ])
                 );
             }
@@ -211,15 +207,13 @@ class CategoryController extends Controller
                     if ($category->isNewRecord) {
                         $this->trigger(self::EVENT_AFTER_CREATE_CATEGORY,
                             new CategoryEvent([
-                                'categoryId' => $id,
-                                'userId' => \Yii::$app->user->id,
+                                'categoryId' => $id
                             ])
                         );
                     } else {
                         $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                             new CategoryEvent([
-                                'categoryId' => $id,
-                                'userId' => \Yii::$app->user->id,
+                                'categoryId' => $id
                             ])
                         );
                     }
@@ -283,8 +277,7 @@ class CategoryController extends Controller
 
         $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
             new CategoryEvent([
-                'categoryId' => $categoryId,
-                'userId' => \Yii::$app->user->id,
+                'categoryId' => $categoryId
             ])
         );
 
@@ -307,8 +300,7 @@ class CategoryController extends Controller
                 $category->save();
                 $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                     new CategoryEvent([
-                        'categoryId' => $categoryId,
-                        'userId' => \Yii::$app->user->id,
+                        'categoryId' => $categoryId
                     ])
                 );
                 Yii::$app->getSession()->setFlash('success', 'The images have successfully uploaded.');
@@ -339,8 +331,7 @@ class CategoryController extends Controller
     {
         $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
             new CategoryEvent([
-                'categoryId' => $id,
-                'userId' => \Yii::$app->user->id,
+                'categoryId' => $id
             ])
         );
         $category = Category::findOne($id);
@@ -351,8 +342,7 @@ class CategoryController extends Controller
             Yii::$app->getSession()->setFlash('success', 'The image has been successfully deleted.');
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
         }
@@ -430,15 +420,13 @@ class CategoryController extends Controller
         if ($category = Category::findOne($id)) {
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
             $category->movePrev();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
         }
@@ -456,15 +444,13 @@ class CategoryController extends Controller
         if ($category = Category::findOne($id)) {
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
             $category->moveNext();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
         }
@@ -484,16 +470,14 @@ class CategoryController extends Controller
         if (!empty($category)) {
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
             $category->show = !$category->show;
             $category->save();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id,
-                    'userId' => \Yii::$app->user->id,
+                    'categoryId' => $id
                 ])
             );
             return $this->actionIndex();
