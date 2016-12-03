@@ -1,21 +1,15 @@
 <?php
-
 namespace bl\cms\shop\backend\controllers;
 
-use bl\cms\shop\backend\components\form\CategoryImageForm;
-use bl\cms\shop\common\entities\Filter;
-use bl\cms\shop\common\entities\SearchCategory;
 use Yii;
 use yii\base\Exception;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
-use yii\helpers\Url;
 use yii\web\Controller;
-use bl\cms\shop\common\entities\Category;
-use bl\cms\shop\common\entities\CategoryTranslation;
+use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
-use yii\web\ForbiddenHttpException;
-use yii\web\UploadedFile;
+use bl\cms\shop\backend\events\CategoryEvent;
+use bl\cms\shop\backend\components\form\CategoryImageForm;
+use yii\web\{ForbiddenHttpException, NotFoundHttpException, UploadedFile};
+use bl\cms\shop\common\entities\{Category, CategoryTranslation, Filter, SearchCategory};
 
 /**
  * CategoryController implements the CRUD actions for Category model.
@@ -23,6 +17,37 @@ use yii\web\UploadedFile;
  */
 class CategoryController extends Controller
 {
+
+    /**
+     * Event is triggered before creating new product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_BEFORE_CREATE_CATEGORY = 'beforeCreateCategory';
+    /**
+     * Event is triggered after creating new category.
+     * Triggered with bl\cms\shop\backend\events\CategoryEvent.
+     */
+    const EVENT_AFTER_CREATE_CATEGORY = 'afterCreateCategory';
+    /**
+     * Event is triggered after editing category translation.
+     * Triggered with bl\cms\shop\backend\events\CategoryEvent.
+     */
+    const EVENT_BEFORE_EDIT_CATEGORY = 'beforeEditCategory';
+    /**
+     * Event is triggered before editing category translation.
+     * Triggered with bl\cms\shop\backend\events\CategoryEvent.
+     */
+    const EVENT_AFTER_EDIT_CATEGORY = 'afterEditCategory';
+    /**
+     * Event is triggered before deleting category.
+     * Triggered with bl\cms\shop\backend\events\CategoryEvent.
+     */
+    const EVENT_BEFORE_DELETE_CATEGORY = 'beforeDeleteCategory';
+    /**
+     * Event is triggered after deleting category.
+     * Triggered with bl\cms\shop\backend\events\CategoryEvent.
+     */
+    const EVENT_AFTER_DELETE_CATEGORY = 'afterDeleteCategory';
 
     /**
      * @inheritdoc
@@ -55,10 +80,9 @@ class CategoryController extends Controller
     }
 
     /**
-     * Lists all Category models.
+     * Renders list of all Category models.
      *
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionIndex()
     {
@@ -72,62 +96,56 @@ class CategoryController extends Controller
     }
 
     /**
+     * Deletes one category by id
+     *
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->trigger(self::EVENT_BEFORE_DELETE_CATEGORY,
+            new CategoryEvent([
+                'categoryId' => $id,
+                'userId' => \Yii::$app->user->id,
+            ])
+        );
+        $category = Category::findOne($id);
+        if (($category->delete())) {
+            Yii::$app->getSession()->setFlash('success', 'The category has been successfully removed');
+            $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY,
+                new CategoryEvent([
+                    'categoryId' => $id,
+                    'userId' => \Yii::$app->user->id,
+                ])
+            );
+        } else {
+            Yii::$app->getSession()->setFlash('error', 'Error deleting category');
+        }
+
+        if (\Yii::$app->request->isPjax) {
+            return $this->actionIndex();
+        } else return $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    /**
      * @param integer $languageId
      * @param integer $id
      *
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionSave($id = null, $languageId = null)
     {
-
-        if (!empty($id)) {
-            $category = Category::findOne($id);
-            $category_translation = CategoryTranslation::find()->where([
-                'category_id' => $id,
-                'language_id' => $languageId
-            ])->one();
-            if (empty($category_translation)) $category_translation = new CategoryTranslation();
-        } else {
-            $category = new Category();
-            $category_translation = new CategoryTranslation();
-        }
-
-        if (Yii::$app->request->isPost) {
-
-            $category->load(Yii::$app->request->post());
-            $category_translation->load(Yii::$app->request->post());
-
-            if ($category->validate()) {
-
-                $category->save();
-                $category_translation->category_id = $category->id;
-                $category_translation->language_id = $languageId;
-                if ($category_translation->validate()) {
-                    $category_translation->save();
-                    Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                    return $this->redirect(Url::to(['/shop/category/save', 'id' => $category->id, 'languageId' => $category_translation->language_id]));
-                }
-
-            }
-        }
-
-        $maxPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one();
-        $maxPosition = (!empty($maxPositionCategory)) ? $maxPositionCategory->position : 0;
-        $minPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one();
-        $minPosition = (!empty($minPositionCategory)) ? $minPositionCategory->position : 0;
+        $category = (!empty($id)) ? Category::findOne($id) : new Category();
+        $category_translation = (!empty($id)) ? CategoryTranslation::find()->where([
+            'category_id' => $id,
+            'language_id' => $languageId
+        ])->one() : new CategoryTranslation();
 
         return $this->render('save', [
             'viewName' => 'add-basic',
-            'selectedLanguage' => Language::findOne($languageId),
-            'category' => $category,
-            'languages' => Language::findAll(['active' => true]),
-
             'params' => [
                 'languages' => Language::findAll(['active' => true]),
-
-                'maxPosition' => $maxPosition,
-                'minPosition' => $minPosition,
+                'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') ?? 1,
                 'category' => $category,
                 'category_translation' => $category_translation,
                 'categories' => Category::find()->with('translations')->all(),
@@ -137,16 +155,103 @@ class CategoryController extends Controller
     }
 
     /**
-     * Deletes one category by id
+     * @param null|integer $id
+     * @param null|integer $languageId
+     * @param string $viewName
+     * @param boolean $argumentsCanBeEmpty
+     * @return mixed
+     * @throws Exception
+     *
+     * Loads data from post.
+     */
+    private function loadCategory($id = null, $languageId = null, $viewName, $argumentsCanBeEmpty)
+    {
+        if (!$argumentsCanBeEmpty) {
+            if (empty($id) || empty($languageId)) {
+                throw new Exception('Category id and language id can not be empty');
+            }
+        }
+
+        $category = (!empty($id)) ? Category::findOne($id) : new Category();
+        $category_translation = (!empty($id)) ? CategoryTranslation::find()->where([
+            'category_id' => $id,
+            'language_id' => $languageId
+        ])->one() : new CategoryTranslation();
+
+        if (Yii::$app->request->isPost) {
+            if ($category->isNewRecord) {
+                $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY,
+                    new CategoryEvent([
+                        'categoryId' => $id,
+                        'userId' => \Yii::$app->user->id,
+                    ])
+                );
+            } else {
+                $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
+                    new CategoryEvent([
+                        'categoryId' => $id,
+                        'userId' => \Yii::$app->user->id,
+                    ])
+                );
+            }
+
+            $category->load(Yii::$app->request->post());
+            $category_translation->load(Yii::$app->request->post());
+
+            if ($category->validate()) {
+                $category->save();
+
+                $category_translation->category_id = $category->id;
+                $category_translation->language_id = $languageId;
+
+                if ($category_translation->validate()) {
+
+                    $category_translation->save();
+
+                    if ($category->isNewRecord) {
+                        $this->trigger(self::EVENT_AFTER_CREATE_CATEGORY,
+                            new CategoryEvent([
+                                'categoryId' => $id,
+                                'userId' => \Yii::$app->user->id,
+                            ])
+                        );
+                    } else {
+                        $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                            new CategoryEvent([
+                                'categoryId' => $id,
+                                'userId' => \Yii::$app->user->id,
+                            ])
+                        );
+                    }
+
+                    Yii::$app->getSession()->setFlash('success', 'The category has been successfully modified.');
+                    return $this->redirect([$viewName, 'id' => $category->id, 'languageId' => $languageId]);
+                }
+            }
+        }
+        return $this->render('save', [
+            'viewName' => $viewName,
+            'params' => [
+                'languages' => Language::findAll(['active' => true]),
+                'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') ?? 1,
+                'category' => $category,
+                'category_translation' => $category_translation,
+                'categories' => Category::find()->with('translations')->all(),
+                'selectedLanguage' => Language::findOne($languageId),
+            ]
+        ]);
+    }
+
+    /**
+     * Adds category SEO data
      *
      * @param integer $id
+     * @param integer $languageId
      * @return mixed
-     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionAddSeo($id, $languageId)
     {
-        Category::deleteAll(['id' => $id]);
-        return $this->actionIndex();
+        return $this->loadCategory($id, $languageId, 'add-seo', false);
     }
 
     /**
@@ -155,57 +260,12 @@ class CategoryController extends Controller
      * @param integer $languageId
      * @param integer $id
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionAddBasic($id = null, $languageId = null)
     {
-        if (!empty($id)) {
-            $category = Category::findOne($id);
-            $category_translation = CategoryTranslation::find()->where([
-                'category_id' => $id,
-                'language_id' => $languageId
-            ])->one();
-            if (empty($category_translation)) $category_translation = new CategoryTranslation();
-        } else {
-            $category = new Category();
-            $category_translation = new CategoryTranslation();
-        }
-
-        if (Yii::$app->request->isPost) {
-
-            $category->load(Yii::$app->request->post());
-            $category_translation->load(Yii::$app->request->post());
-
-            if ($category->validate() && $category_translation->validate()) {
-                $category->save();
-                $category_translation->category_id = $category->id;
-                $category_translation->language_id = $languageId;
-                $category_translation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-            }
-        }
-
-        $maxPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_DESC])->one();
-        $maxPosition = (!empty($maxPositionCategory)) ? $maxPositionCategory->position : 0;
-        $minPositionCategory = Category::find()->where(['parent_id' => $category->parent_id])->orderBy(['position' => SORT_ASC])->one();
-        $minPosition = (!empty($minPositionCategory)) ? $minPositionCategory->position : 0;
-
-        return $this->render('save', [
-            'category' => $category,
-            'languageId' => $languageId,
-            'languages' => Language::findAll(['active' => true]),
-            'viewName' => 'add-basic',
-            'selectedLanguage' => Language::findOne($languageId),
-            'params' => [
-                'category' => $category,
-                'category_translation' => $category_translation,
-                'languageId' => $languageId,
-                'selectedLanguage' => Language::findOne($languageId),
-                'maxPosition' => $maxPosition,
-                'minPosition' => $minPosition,
-            ]
-        ]);
+        return $this->loadCategory($id, $languageId, 'add-basic', true);
     }
+
 
     /**
      * Adds category images
@@ -213,101 +273,44 @@ class CategoryController extends Controller
      * @param integer $languageId
      * @param integer $categoryId
      * @return mixed
-     * @throws ForbiddenHttpException
+     * @throws Exception
      */
     public function actionAddImages($categoryId, $languageId)
     {
-
-        if (!empty($categoryId)) {
-            $category = Category::findOne($categoryId);
-        } else {
-            $category = new Category();
+        if (empty($categoryId) || empty($languageId)) {
+            throw new Exception('Category id and language id can not be empty');
         }
 
+        $category = Category::findOne($categoryId);
         $image_form = new CategoryImageForm();
 
         if (Yii::$app->request->isPost) {
-
             $image_form->cover = UploadedFile::getInstance($image_form, 'cover');
             $image_form->thumbnail = UploadedFile::getInstance($image_form, 'thumbnail');
             $image_form->menu_item = UploadedFile::getInstance($image_form, 'menu_item');
 
             if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
                 $image_name = $image_form->upload();
-                if (!empty($image_form->cover)) {
-                    $category->cover = $image_name['cover'];
-                }
-                if (!empty($image_form->thumbnail)) {
-                    $category->thumbnail = $image_name['thumbnail'];
-                }
-                if (!empty($image_form->menu_item)) {
-                    $category->menu_item = $image_name['menu_item'];
-                }
+
+                $category->cover = (!empty($image_form->cover)) ? $image_name['cover'] : null;
+                $category->thumbnail = (!empty($image_form->thumbnail)) ? $image_name['thumbnail'] : null;
+                $category->menu_item = (!empty($image_form->menu_item)) ? $image_name['menu_item'] : null;
             }
             if ($category->validate()) {
                 $category->save();
+                Yii::$app->getSession()->setFlash('success', 'The images have successfully uploaded.');
             }
+            Yii::$app->getSession()->setFlash('error', 'Error loading image.');
         }
+
         return $this->render('save', [
-            'category' => $category,
-            'languageId' => $languageId,
-            'selectedLanguage' => Language::findOne($languageId),
-            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'add-images',
             'params' => [
+                'languages' => Language::findAll(['active' => true]),
                 'category' => $category,
                 'image_form' => $image_form,
-                'languageId' => $languageId
-            ]
-        ]);
-    }
-
-    /**
-     * Adds category SEO data
-     *
-     * @param integer $languageId
-     * @param integer $categoryId
-     * @return mixed
-     * @throws ForbiddenHttpException
-     */
-    public function actionAddSeo($languageId = null, $categoryId = null)
-    {
-        if (!empty($categoryId)) {
-            $category = Category::findOne($categoryId);
-            $category_translation = CategoryTranslation::find()->where([
-                'category_id' => $categoryId,
-                'language_id' => $languageId
-            ])->one();
-            if (empty($category_translation)) $category_translation = new CategoryTranslation();
-        } else {
-            $category = new Category();
-            $category_translation = new CategoryTranslation();
-        }
-
-        if (Yii::$app->request->isPost) {
-
-            $category->load(Yii::$app->request->post());
-            $category_translation->load(Yii::$app->request->post());
-
-            if ($category->validate() && $category_translation->validate()) {
-                $category->save();
-                $category_translation->category_id = $category->id;
-                $category_translation->language_id = $languageId;
-                $category_translation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-            }
-        }
-        return $this->render('save', [
-            'category' => $category,
-            'languageId' => $languageId,
-            'selectedLanguage' => Language::findOne($languageId),
-            'languages' => Language::findAll(['active' => true]),
-            'viewName' => 'add-seo',
-            'params' => [
-                'category' => $category,
-                'category_translation' => $category_translation,
-                'languageId' => $languageId
-            ]
+                'selectedLanguage' => Language::findOne($languageId),
+            ],
         ]);
     }
 
@@ -321,16 +324,15 @@ class CategoryController extends Controller
      */
     public function actionDeleteImage($id, $imageType)
     {
-        if (!empty($id) && !empty($imageType)) {
-            $category = Category::findOne($id);
+        $category = Category::findOne($id);
 
-            unlink(Category::getBig($category, $imageType));
-            unlink(Category::getSmall($category, $imageType));
-            unlink(Category::getThumb($category, $imageType));
-
-            $category->$imageType = '';
+        if (\Yii::$app->shop_imagable->delete('shop-category/' . $imageType, $category->$imageType)) {
+            $category->$imageType = null;
             $category->save();
+            Yii::$app->getSession()->setFlash('success', 'The image has been successfully deleted.');
         }
+        else Yii::$app->getSession()->setFlash('error', 'Error deleting image.');
+
         return $this->redirect(Yii::$app->request->referrer);
     }
 
@@ -342,11 +344,9 @@ class CategoryController extends Controller
      * @param integer $categoryId
      * @return mixed
      * @throws Exception
-     * @throws ForbiddenHttpException
      */
     public function actionSelectFilters($id = null, $languageId = null, $categoryId = null)
     {
-
         if (!empty($categoryId)) {
             $category = Category::findOne($categoryId);
             $filters = Filter::find()->where(['category_id' => $category->id])->all();
@@ -368,17 +368,14 @@ class CategoryController extends Controller
         }
 
         return $this->render('save', [
-            'category' => $category,
-            'languageId' => $languageId,
-            'selectedLanguage' => Language::findOne($languageId),
-            'languages' => Language::findAll(['active' => true]),
             'viewName' => 'select-filters',
             'params' => [
+                'languages' => Language::findAll(['active' => true]),
                 'category' => $category,
+                'selectedLanguage' => Language::findOne($languageId),
                 'filters' => $filters,
                 'newFilter' => new Filter(),
-                'languageId' => $languageId
-            ]
+            ],
         ]);
     }
 
@@ -387,14 +384,12 @@ class CategoryController extends Controller
      *
      * @param integer $id
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionDeleteFilter($id)
     {
         if (!empty($id)) {
             $filter = Filter::findOne($id);
             $filter->delete();
-
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
@@ -404,14 +399,12 @@ class CategoryController extends Controller
      *
      * @param integer $id
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionUp($id)
     {
         if ($category = Category::findOne($id)) {
             $category->movePrev();
         }
-
         return $this->actionIndex();
     }
 
@@ -420,14 +413,12 @@ class CategoryController extends Controller
      *
      * @param integer $id
      * @return mixed
-     * @throws ForbiddenHttpException
      */
     public function actionDown($id)
     {
         if ($category = Category::findOne($id)) {
             $category->moveNext();
         }
-
         return $this->actionIndex();
     }
 
@@ -436,7 +427,7 @@ class CategoryController extends Controller
      *
      * @param integer $id
      * @return mixed
-     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionSwitchShow($id)
     {
@@ -444,8 +435,7 @@ class CategoryController extends Controller
         if (!empty($category)) {
             $category->show = !$category->show;
             $category->save();
-        }
-        return $this->actionIndex();
+            return $this->actionIndex();
+        } else throw new NotFoundHttpException();
     }
-
 }
