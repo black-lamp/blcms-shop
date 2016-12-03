@@ -42,6 +42,9 @@ class ProductImage extends ActiveRecord
             'positionBehavior' => [
                 'class' => PositionBehavior::className(),
                 'positionAttribute' => 'position',
+                'groupAttributes' => [
+                    'product_id'
+                ],
             ],
         ];
     }
