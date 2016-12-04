@@ -49,7 +49,7 @@ class CategoryTranslation extends ActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'language_id'], 'required'],
+            [['category_id', 'language_id', 'title'], 'required'],
             [['category_id', 'language_id'], 'integer'],
             [['description'], 'string'],
             [['title'], 'string', 'max' => 255],
