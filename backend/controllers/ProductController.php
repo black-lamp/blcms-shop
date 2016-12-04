@@ -6,7 +6,7 @@ use yii\base\Exception;
 use yii\helpers\Inflector;
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
-use bl\cms\shop\backend\events\ProductEvent;
+use bl\cms\shop\backend\components\events\ProductEvent;
 use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile};
 use bl\cms\shop\backend\components\form\{ProductFileForm, ProductImageForm, ProductVideoForm};
 use bl\cms\shop\common\entities\{CategoryTranslation, Param, ParamTranslation, Product, ProductFile,
@@ -193,12 +193,10 @@ class ProductController extends Controller
     public function actionDelete($id)
     {
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
-            $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT, new ProductEvent([
-                'productId' => $id
-            ]));
+            $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT);
             Product::deleteAll(['id' => $id]);
             $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent([
-                'productId' => $id
+                'id' => $id
             ]));
             return $this->redirect('index');
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
@@ -252,22 +250,23 @@ class ProductController extends Controller
             $product->load(Yii::$app->request->post());
 
             if ($product->isNewRecord) {
+
+                $eventName = self::EVENT_AFTER_CREATE_PRODUCT;
+
                 $product->owner = Yii::$app->user->id;
                 if (\Yii::$app->user->can('createProductWithoutModeration')) {
                     $product->status = Product::STATUS_SUCCESS;
                 }
                 if ($product->validate()) {
                     $product->save();
-
-                    $this->trigger(self::EVENT_AFTER_CREATE_PRODUCT, new ProductEvent([
-                        'productId' => $product->id
-                    ]));
                 }
             }
+            else {
+                $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
+            }
 
-            $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT, new ProductEvent([
-                'productId' => $product->id,
-            ]));
+            $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT);
+
             $products_translation->load(Yii::$app->request->post());
 
             if ($product->validate() && $products_translation->validate()) {
@@ -281,8 +280,8 @@ class ProductController extends Controller
                 $products_translation->save();
                 $product->save();
 
-                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
-                    'productId' => $product->id
+                $this->trigger($eventName, new ProductEvent([
+                    'id' => $product->id
                 ]));
             }
         }
@@ -342,6 +341,11 @@ class ProductController extends Controller
                     $param_translation->param_id = $param->id;
                     $param_translation->language_id = $languageId;
                     $param_translation->save();
+
+                    $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                        'id' => $param->product_id
+                    ]));
+
                     Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
                 } else
                     Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
@@ -389,6 +393,9 @@ class ProductController extends Controller
     {
         $param = Param::findOne($id);
         $param->delete();
+        $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+            'id' => $param->product_id
+        ]));
         return $this->redirect(Yii::$app->request->referrer);
     }
 
@@ -418,6 +425,11 @@ class ProductController extends Controller
                 $paramTranslation->load(Yii::$app->request->post());
                 if ($paramTranslation->validate()) {
                     $paramTranslation->save();
+
+                    $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                        'id' => $paramTranslation->param->product_id
+                    ]));
+
                     Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
                 } else {
                     Yii::$app->getSession()->setFlash('danger', 'Failed to change the record.');
@@ -449,6 +461,9 @@ class ProductController extends Controller
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
             if (!empty($product)) {
                 $product->movePrev();
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $id
+                ]));
             }
             return $this->actionIndex();
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -471,6 +486,9 @@ class ProductController extends Controller
 
             if ($product) {
                 $product->moveNext();
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $id
+                ]));
             }
             return $this->actionIndex();
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -516,6 +534,9 @@ class ProductController extends Controller
                         $image->save();
                     }
                 }
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $id
+                ]));
             }
 
             if (Yii::$app->request->isPjax) {
@@ -560,6 +581,10 @@ class ProductController extends Controller
                     $product_image = new ProductImage();
                     $product_image->removeImage($id);
 
+                    $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                        'id' => $image->product_id
+                    ]));
+
                     if (\Yii::$app->request->isPjax) {
                         return $this->renderPartial('add-image', [
                             'selectedLanguage' => Language::findOne($languageId),
@@ -590,6 +615,9 @@ class ProductController extends Controller
 
             if ($productImage) {
                 $productImage->moveNext();
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $productImage->product_id
+                ]));
             }
             return $this->actionAddImage($productImage->product_id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -613,6 +641,10 @@ class ProductController extends Controller
 
             if ($productImage) {
                 $productImage->movePrev();
+
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $productImage->product_id
+                ]));
             }
             return $this->actionAddImage($productImage->product_id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -686,6 +718,9 @@ class ProductController extends Controller
                         \Yii::$app->session->setFlash('error', \Yii::t('shop', 'Sorry, this format is not supported'));
                     }
                 }
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $id
+                ]));
             }
 
             if (Yii::$app->request->isPjax) {
@@ -738,6 +773,10 @@ class ProductController extends Controller
                 }
                 ProductVideo::deleteAll(['id' => $id]);
 
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $video->product_id
+                ]));
+
                 return $this->renderPartial('add-video', [
                     'product' => $product,
                     'selectedLanguage' => Language::findOne($languageId),
@@ -777,8 +816,9 @@ class ProductController extends Controller
                         $priceTranslation->price_id = $price->id;
                         $priceTranslation->language_id = $selectedLanguage->id;
                         if ($priceTranslation->save()) {
-                            $price = new ProductPrice();
-                            $priceTranslation = new ProductPriceTranslation();
+                            $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                                'id' => $price->product_id
+                            ]));
                         }
                     }
                 }
@@ -825,6 +865,11 @@ class ProductController extends Controller
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
             ProductPrice::deleteAll(['id' => $priceId]);
+
+            $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                'id' => $id
+            ]));
+
             return $this->actionAddPrice($id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
@@ -848,6 +893,10 @@ class ProductController extends Controller
 
             if ($productPrice) {
                 $productPrice->moveNext();
+
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $productPrice->product_id
+                ]));
             }
             return $this->actionAddPrice($productPrice->product_id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -871,6 +920,10 @@ class ProductController extends Controller
 
             if ($productPrice) {
                 $productPrice->movePrev();
+
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $productPrice->product_id
+                ]));
             }
             return $this->actionAddPrice($productPrice->product_id, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -914,6 +967,9 @@ class ProductController extends Controller
 
                         if (!$fileTranslation->save())
                             throw new Exception(var_dump($fileTranslation->errors));
+                        $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                            'id' => $file->product_id
+                        ]));
                     }
                 }
             }
@@ -959,6 +1015,9 @@ class ProductController extends Controller
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
             ProductFile::deleteAll(['id' => $fileId]);
+            $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                'id' => $file->product_id
+            ]));
             return $this->actionAddFile($productId, $languageId);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
@@ -988,6 +1047,10 @@ class ProductController extends Controller
                         $product->save();
                         break;
                 }
+
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                    'id' => $id
+                ]));
             }
         }
         return $this->redirect(Yii::$app->request->referrer);

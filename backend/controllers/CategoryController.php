@@ -6,7 +6,7 @@ use yii\base\Exception;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
-use bl\cms\shop\backend\events\CategoryEvent;
+use bl\cms\shop\backend\components\events\CategoryEvent;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
 use yii\web\{ForbiddenHttpException, NotFoundHttpException, UploadedFile};
 use bl\cms\shop\common\entities\{Category, CategoryTranslation, Filter, SearchCategory};
@@ -103,17 +103,14 @@ class CategoryController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->trigger(self::EVENT_BEFORE_DELETE_CATEGORY,
-            new CategoryEvent([
-                'categoryId' => $id
-            ])
-        );
+        $this->trigger(self::EVENT_BEFORE_DELETE_CATEGORY);
+
         $category = Category::findOne($id);
         if (($category->delete())) {
             Yii::$app->getSession()->setFlash('success', 'The category has been successfully removed');
             $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id
+                    'id' => $id
                 ])
             );
         } else {
@@ -178,23 +175,17 @@ class CategoryController extends Controller
 
         if (Yii::$app->request->isPost) {
             if ($category->isNewRecord) {
-                $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY,
-                    new CategoryEvent([
-                        'categoryId' => $id
-                    ])
-                );
+                $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY);
             } else {
-                $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-                    new CategoryEvent([
-                        'categoryId' => $id
-                    ])
-                );
+                $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
             }
 
             $category->load(Yii::$app->request->post());
             $category_translation->load(Yii::$app->request->post());
 
             if ($category->validate()) {
+                $eventName = $category->isNewRecord ? self::EVENT_AFTER_CREATE_CATEGORY : self::EVENT_AFTER_EDIT_CATEGORY;
+
                 $category->save();
 
                 $category_translation->category_id = $category->id;
@@ -204,19 +195,11 @@ class CategoryController extends Controller
 
                     $category_translation->save();
 
-                    if ($category->isNewRecord) {
-                        $this->trigger(self::EVENT_AFTER_CREATE_CATEGORY,
-                            new CategoryEvent([
-                                'categoryId' => $id
-                            ])
-                        );
-                    } else {
-                        $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                            new CategoryEvent([
-                                'categoryId' => $id
-                            ])
-                        );
-                    }
+                    $this->trigger($eventName,
+                        new CategoryEvent([
+                            'id' => $category->id
+                        ])
+                    );
 
                     Yii::$app->getSession()->setFlash('success', 'The category has been successfully modified.');
                     return $this->redirect([$viewName, 'id' => $category->id, 'languageId' => $languageId]);
@@ -275,11 +258,7 @@ class CategoryController extends Controller
             throw new Exception('Category id and language id can not be empty');
         }
 
-        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-            new CategoryEvent([
-                'categoryId' => $categoryId
-            ])
-        );
+        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
 
         $category = Category::findOne($categoryId);
         $image_form = new CategoryImageForm();
@@ -300,7 +279,7 @@ class CategoryController extends Controller
                 $category->save();
                 $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                     new CategoryEvent([
-                        'categoryId' => $categoryId
+                        'id' => $categoryId
                     ])
                 );
                 Yii::$app->getSession()->setFlash('success', 'The images have successfully uploaded.');
@@ -330,10 +309,8 @@ class CategoryController extends Controller
     public function actionDeleteImage($id, $imageType)
     {
         $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-            new CategoryEvent([
-                'categoryId' => $id
-            ])
-        );
+            new CategoryEvent());
+
         $category = Category::findOne($id);
 
         if (\Yii::$app->shop_imagable->delete('shop-category/' . $imageType, $category->$imageType)) {
@@ -342,7 +319,7 @@ class CategoryController extends Controller
             Yii::$app->getSession()->setFlash('success', 'The image has been successfully deleted.');
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id
+                    'id' => $id
                 ])
             );
         }
@@ -377,6 +354,12 @@ class CategoryController extends Controller
                 $filter->category_id = $category->id;
                 $filter->save();
 
+                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                    new CategoryEvent([
+                        'id' => $category->id
+                    ])
+                );
+
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
                 return $this->redirect(Yii::$app->request->referrer);
             }
@@ -405,6 +388,11 @@ class CategoryController extends Controller
         if (!empty($id)) {
             $filter = Filter::findOne($id);
             $filter->delete();
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                new CategoryEvent([
+                    'id' => $filter->category_id
+                ])
+            );
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
@@ -418,15 +406,12 @@ class CategoryController extends Controller
     public function actionUp($id)
     {
         if ($category = Category::findOne($id)) {
-            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'categoryId' => $id
-                ])
-            );
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
+
             $category->movePrev();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id
+                    'id' => $id
                 ])
             );
         }
@@ -442,15 +427,11 @@ class CategoryController extends Controller
     public function actionDown($id)
     {
         if ($category = Category::findOne($id)) {
-            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'categoryId' => $id
-                ])
-            );
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
             $category->moveNext();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id
+                    'id' => $id
                 ])
             );
         }
@@ -468,16 +449,12 @@ class CategoryController extends Controller
     {
         $category = Category::findOne($id);
         if (!empty($category)) {
-            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'categoryId' => $id
-                ])
-            );
+            $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
             $category->show = !$category->show;
             $category->save();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent([
-                    'categoryId' => $id
+                    'id' => $id
                 ])
             );
             return $this->actionIndex();

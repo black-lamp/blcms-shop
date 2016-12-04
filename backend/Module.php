@@ -10,6 +10,12 @@ class Module extends \yii\base\Module
     public $controllerNamespace = 'bl\cms\shop\backend\controllers';
     public $defaultRoute = 'shop';
 
+    /**
+     * @var bool
+     * Enables logging in admin panel
+     */
+    public $enableLog = false;
+
     public function init()
     {
         parent::init();
