@@ -338,3 +338,54 @@ If you use OpenServer with PHP 7, you must install Imagick extension like here h
 
 You can select one of two modes: showing products of current category and its children or only current category.
 Use property $showChildCategoriesProducts in frontend Module class configuration.
+migration:
+
+**Logging**
+This configuration is for Shop module and Cart module.
+
+For enable logging add log component to your common configuration file:
+
+```
+'components' => [
+        'log' => [
+            'targets' => [
+                [
+                    'logTable' => 'shop_log',
+                    'class' => 'yii\log\DbTarget',
+                    'levels' => ['info'],
+                    'categories' => [
+                        'afterCreateProduct', 'afterDeleteProduct', 'afterEditProduct',
+                        'afterCreateCategory', 'afterEditCategory', 'afterDeleteCategory',
+                    ],
+                ],
+                [
+                    'logTable' => 'cart_log',
+                    'class' => 'yii\log\DbTarget',
+                    'levels' => ['info'],
+                    'categories' => [
+                        'afterChangeOrderStatus'
+                    ],
+                ],
+                [
+                    'logTable' => 'user_log',
+                    'class' => 'yii\log\DbTarget',
+                    'levels' => ['info'],
+                    'categories' => [
+                        'afterRegister', 'afterConfirm'
+                    ],
+                ],
+            ],
+        ],
+```
+
+Then apply migration, but only after you will configure your app.
+The migration will create tables for log targets, which are listed in configuration.
+
+```
+php yii migrate --migrationPath=@yii/log/migrations/
+```
+
+In backend and frontend configuration of your module add
+```
+'enableLog' => true,
+```
