@@ -30,7 +30,6 @@ class ShopLogBootstrap implements BootstrapInterface
     }
 
     public function addLogRecord($event) {
-        die(var_dump());
 
         $userId = \Yii::$app->user->id;
         $message = "ID: $event->id, userId: $userId";
