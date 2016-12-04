@@ -7,11 +7,12 @@ use yii\helpers\Inflector;
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
 use bl\cms\shop\backend\components\events\ProductEvent;
+use yii\helpers\Url;
 use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile};
 use bl\cms\shop\backend\components\form\{ProductFileForm, ProductImageForm, ProductVideoForm};
-use bl\cms\shop\common\entities\{CategoryTranslation, Param, ParamTranslation, Product, ProductFile,
-    ProductFileTranslation, ProductImage, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation,
-    ProductVideo};
+use bl\cms\shop\common\entities\{
+    CategoryTranslation, Param, ParamTranslation, Product, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation, ProductVideo
+};
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -213,7 +214,7 @@ class ProductController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionAddBasic($id = null, int $languageId)
+    public function actionAddBasic($id = null, $languageId = null)
     {
 
         if (!empty($languageId)) {
@@ -506,9 +507,9 @@ class ProductController extends Controller
     public function actionAddImage($id, $languageId)
     {
         if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
-            $product = Product::findOne($id);
             $image_form = new ProductImageForm();
             $image = new ProductImage();
+            $imageTranslation = new ProductImageTranslation();
 
             if (Yii::$app->request->isPost) {
 
@@ -519,19 +520,29 @@ class ProductController extends Controller
                     $uploadedImageName = $image_form->upload();
 
                     $image->file_name = $uploadedImageName;
-                    $image->alt = $image_form->alt2;
-                    $image->product_id = $product->id;
+                    $imageTranslation->alt = $image_form->alt2;
+                    $image->product_id = $id;
                     if ($image->validate()) {
                         $image->save();
+                        $imageTranslation->image_id = $image->id;
+                        $imageTranslation->language_id = $languageId;
+                        if ($imageTranslation->validate()) {
+                            $imageTranslation->save();
+                        }
                     } else die(var_dump($image->errors));
                 }
                 if (!empty($image_form->link)) {
                     $image_name = $image_form->copy($image_form->link);
                     $image->file_name = $image_name;
-                    $image->alt = $image_form->alt1;
-                    $image->product_id = $product->id;
+                    $imageTranslation->alt = $image_form->alt1;
+                    $image->product_id = $id;
                     if ($image->validate()) {
                         $image->save();
+                        $imageTranslation->image_id = $image->id;
+                        $imageTranslation->language_id = $languageId;
+                        if ($imageTranslation->validate()) {
+                            $imageTranslation->save();
+                        }
                     }
                 }
                 $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
@@ -542,23 +553,76 @@ class ProductController extends Controller
             if (Yii::$app->request->isPjax) {
                 return $this->renderPartial('add-image', [
                     'selectedLanguage' => Language::findOne($languageId),
-                    'product' => $product,
-                    'image_form' => new ProductImageForm()
+                    'productId' => $id,
+                    'image_form' => new ProductImageForm(),
                 ]);
             }
             return $this->render('save', [
                 'languages' => Language::find()->all(),
                 'viewName' => 'add-image',
                 'selectedLanguage' => Language::findOne($languageId),
-                'product' => $product,
+                'productId' => $id,
+                'product' => Product::findOne($id),
 
                 'params' => [
                     'selectedLanguage' => Language::findOne($languageId),
-                    'product' => $product,
-                    'image_form' => new ProductImageForm()
+                    'productId' => $id,
+                    'image_form' => new ProductImageForm(),
+                    'images' => ProductImage::find()->all(),
                 ]
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    public function actionEditImage($id, $languageId) {
+        $image = ProductImage::findOne($id);
+        $imageTranslation = ProductImageTranslation::find()->where([
+            'image_id' => $id,
+            'language_id' => $languageId
+        ])->one();
+        if (empty($imageTranslation)) {
+            $imageTranslation = new ProductImageTranslation();
+        }
+
+        if (Yii::$app->request->isPost) {
+
+            $imageTranslation->load(Yii::$app->request->post());
+            $imageTranslation->image_id = $id;
+            $imageTranslation->language_id = $languageId;
+
+            if ($imageTranslation->validate()) {
+                $imageTranslation->save();
+
+
+                return $this->redirect(Url::to(['add-image',
+                    'id' => $image->product_id,
+                    'languageId' => $languageId
+                ]));
+            }
+            else die(var_dump($imageTranslation->errors));
+        }
+
+//        if (Yii::$app->request->isPjax) {
+//            return $this->renderPartial('edit-image', [
+//                'selectedLanguage' => Language::findOne($languageId),
+//                'imageTranslation' => $imageTranslation,
+//                'image' => $image
+//            ]);
+//        }
+
+        return $this->render('save', [
+            'languages' => Language::find()->all(),
+            'viewName' => 'edit-image',
+            'selectedLanguage' => Language::findOne($languageId),
+            'productId' => $image->product_id,
+            'product' => Product::findOne($image->product_id),
+
+            'params' => [
+                'selectedLanguage' => Language::findOne($languageId),
+                'imageTranslation' => $imageTranslation,
+                'image' => $image
+            ]
+        ]);
     }
 
     /**

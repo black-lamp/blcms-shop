@@ -2,14 +2,14 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\imagable\helpers\FileHelper;
-use Yii;
+use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii2tech\ar\position\PositionBehavior;
 
 /**
  * This is the model class for table "shop_product_image".
- *
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @property integer $id
@@ -17,7 +17,6 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $position
  * @property string $file_name
  * @property string $extension
- * @property string $alt
  *
  * @property Product $product
  */
@@ -39,6 +38,11 @@ class ProductImage extends ActiveRecord
     public function behaviors()
     {
         return [
+            'translation' => [
+                'class' => TranslationBehavior::className(),
+                'translationClass' => ProductImageTranslation::className(),
+                'relationColumn' => 'image_id'
+            ],
             'positionBehavior' => [
                 'class' => PositionBehavior::className(),
                 'positionAttribute' => 'position',
@@ -56,7 +60,6 @@ class ProductImage extends ActiveRecord
     {
         return [
             [['product_id', 'position'], 'integer'],
-            [['alt'], 'string', 'max' => 255],
             [['file_name'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize'=>'3000000'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
@@ -81,6 +84,13 @@ class ProductImage extends ActiveRecord
         }
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslations()
+    {
+        return $this->hasMany(ProductImageTranslation::className(), ['image_id' => 'id']);
+    }
 
     public function getBig() {
         $image = $this->getImage('big');
