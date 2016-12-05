@@ -555,6 +555,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'productId' => $id,
                     'image_form' => new ProductImageForm(),
+                    'images' => ProductImage::find()->where(['product_id' => $id])->all(),
                 ]);
             }
             return $this->render('save', [
@@ -568,7 +569,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'productId' => $id,
                     'image_form' => new ProductImageForm(),
-                    'images' => ProductImage::find()->all(),
+                    'images' => ProductImage::find()->where(['product_id' => $id])->all(),
                 ]
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
@@ -602,13 +603,13 @@ class ProductController extends Controller
             else die(var_dump($imageTranslation->errors));
         }
 
-//        if (Yii::$app->request->isPjax) {
-//            return $this->renderPartial('edit-image', [
-//                'selectedLanguage' => Language::findOne($languageId),
-//                'imageTranslation' => $imageTranslation,
-//                'image' => $image
-//            ]);
-//        }
+        if (Yii::$app->request->isPjax) {
+            return $this->renderPartial('edit-image', [
+                'selectedLanguage' => Language::findOne($languageId),
+                'imageTranslation' => $imageTranslation,
+                'image' => $image
+            ]);
+        }
 
         return $this->render('save', [
             'languages' => Language::find()->all(),
