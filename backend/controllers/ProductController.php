@@ -555,7 +555,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'productId' => $id,
                     'image_form' => new ProductImageForm(),
-                    'images' => ProductImage::find()->where(['product_id' => $id])->all(),
+                    'images' => ProductImage::find()->where(['product_id' => $id])->orderBy('position')->all(),
                 ]);
             }
             return $this->render('save', [
@@ -569,7 +569,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'productId' => $id,
                     'image_form' => new ProductImageForm(),
-                    'images' => ProductImage::find()->where(['product_id' => $id])->all(),
+                    'images' => ProductImage::find()->where(['product_id' => $id])->orderBy('position')->all(),
                 ]
             ]);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
