@@ -95,7 +95,6 @@ return [
     'Link to video' => 'Ссылка на видео',
     'List of countries' => 'Список стран',
     'Logo' => 'Логотип',
-    'Manage' => 'Управление',
     'Menu item' => 'Пункт меню',
     'Message' => 'Сообщение',
     'Moderated at' => 'Когда отмодерировано',
