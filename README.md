@@ -124,7 +124,9 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     ],
     
     'bootstrap' => [
-        'bl\cms\shop\backend\components\events\PartnersEvents'
+        //'bl\cms\shop\backend\components\events\PartnersBootstrap',
+        'bl\cms\shop\backend\components\events\ShopLogBootstrap',
+        'bl\cms\cart\backend\components\events\CartBootstrap',
     ],
 ```
 
@@ -175,7 +177,8 @@ use bl\cms\shop\backend\components\CreateImageImagine;
     ]
 
     'bootstrap' => [
-        'bl\cms\shop\frontend\components\events\PartnersEvents'
+        'bl\cms\shop\frontend\components\events\PartnersBootstrap',
+        'bl\cms\cart\frontend\components\events\UserRegistrationBootstrap'
     ],
 ```
 
