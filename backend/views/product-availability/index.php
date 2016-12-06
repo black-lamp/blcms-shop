@@ -27,7 +27,7 @@ $currentLanguage = Language::getCurrent();
     <div class="panel-body">
 
         <p>
-            <?= Html::a(Yii::t('shop', 'Add'), ['save', 'languageId' => $currentLanguage->id ], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
+            <?= Html::a(Yii::t('shop', 'Add'), ['save', 'languageId' => $currentLanguage->id], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
         </p>
 
         <?php if (!empty($availabilities)) : ?>
@@ -50,7 +50,7 @@ $currentLanguage = Language::getCurrent();
         <?php endif; ?>
 
         <p>
-            <?= Html::a(Yii::t('shop', 'Add'), ['save'], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
+            <?= Html::a(Yii::t('shop', 'Add'), ['save', 'languageId' => $currentLanguage->id], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
         </p>
 
     </div>
