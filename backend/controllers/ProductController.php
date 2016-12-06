@@ -652,13 +652,14 @@ class ProductController extends Controller
                         'id' => $image->product_id
                     ]));
 
-                    if (\Yii::$app->request->isPjax) {
+                    if (Yii::$app->request->isPjax) {
                         return $this->renderPartial('add-image', [
                             'selectedLanguage' => Language::findOne($languageId),
-                            'product' => $product,
-                            'image_form' => new ProductImageForm()
+                            'productId' => $product->id,
+                            'image_form' => new ProductImageForm(),
+                            'images' => ProductImage::find()->where(['product_id' => $id])->orderBy('position')->all(),
                         ]);
-                    } else return $this->redirect(\Yii::$app->request->referrer);
+                    }else return $this->redirect(\Yii::$app->request->referrer);
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
         } else throw new Exception();
