@@ -38,7 +38,7 @@ class AttributeController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'get-attribute-values'],
                         'roles' => ['viewAttributeList'],
                         'allow' => true,
                     ],
@@ -242,19 +242,41 @@ class AttributeController extends Controller
                                     'valueModelTranslation' => new ShopAttributeValueTranslation(),
                                     'attributeTextureModel' => $attributeTextureModel
                                 ]);
-                            }
-                            else {
+                            } else {
                                 return $this->redirect(Url::toRoute(['save', 'attrId' => $attrId, 'languageId' => $languageId]));
 
                             }
                         }
-                    }
-                    else throw new Exception($model->errors);
+                    } else throw new Exception($model->errors);
                 }
             } else {
 
                 return $this->render(Url::toRoute(['add-value', 'attrId' => $attrId, 'languageId' => $languageId]));
             }
         }
+    }
+
+    /**
+     * Return attribute values by ajax request.
+     *
+     * @param $attributeId
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionGetAttributeValues($attributeId)
+    {
+        if (\Yii::$app->request->isAjax) {
+            $attributeValues = ShopAttributeValue::find()
+                ->where(['attribute_id' => $attributeId])->all();
+
+            $attributeValuesArray = ArrayHelper::toArray($attributeValues, [
+                'bl\cms\shop\common\entities\ShopAttributeValue' => [
+                    'id',
+                    'attribute_id',
+                    'translation' => 'translation'
+                ]
+            ]);
+            return json_encode($attributeValuesArray);
+        } else throw new NotFoundHttpException();
     }
 }

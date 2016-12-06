@@ -3,6 +3,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -70,4 +71,5 @@ class ShopAttributeValue extends ActiveRecord
     {
         return $this->hasMany(ShopAttributeValueTranslation::className(), ['value_id' => 'id']);
     }
+
 }

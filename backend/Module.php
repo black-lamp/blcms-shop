@@ -16,6 +16,12 @@ class Module extends \yii\base\Module
      */
     public $enableLog = false;
 
+    /**
+     * @var bool
+     * It enables the conversion of prices by the currency
+     */
+    public $enableCurrencyConversion = false;
+
     public function init()
     {
         parent::init();
