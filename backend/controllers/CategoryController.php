@@ -273,9 +273,15 @@ class CategoryController extends Controller
             if (!empty($image_form->cover) || !empty($image_form->thumbnail) || !empty($image_form->menu_item)) {
                 $image_name = $image_form->upload();
 
-                $category->cover = (!empty($image_form->cover)) ? $image_name['cover'] : null;
-                $category->thumbnail = (!empty($image_form->thumbnail)) ? $image_name['thumbnail'] : null;
-                $category->menu_item = (!empty($image_form->menu_item)) ? $image_name['menu_item'] : null;
+                if (!empty($image_form->cover)) {
+                    $category->cover = $image_name['cover'];
+                }
+                if (!empty($image_form->thumbnail)) {
+                    $category->thumbnail = $image_name['thumbnail'];
+                }
+                if (!empty($image_form->menu_item)) {
+                    $category->menu_item = $image_name['menu_item'];
+                }
             }
             if ($category->validate()) {
                 $category->save();
