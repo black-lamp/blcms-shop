@@ -284,6 +284,8 @@ class ProductController extends Controller
                 $this->trigger($eventName, new ProductEvent([
                     'id' => $product->id
                 ]));
+
+                return $this->redirect(Url::to(['add-basic', 'id' => $product->id, 'languageId' => $selectedLanguage->id]));
             }
         }
 
