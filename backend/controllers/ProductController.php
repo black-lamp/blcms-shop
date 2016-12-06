@@ -1168,6 +1168,7 @@ class ProductController extends Controller
                 'combination' => $combination,
                 'productId' => $productId,
                 'languageId' => $languageId,
+                'combinationAttribute' => new ProductCombinationAttribute(),
             ]
         ]);
     }
