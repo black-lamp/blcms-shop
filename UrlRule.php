@@ -172,6 +172,9 @@ class UrlRule extends Object implements UrlRuleInterface
             }
             else if($route == $this->categoryRoute) {
                 $category = Category::findOne($id);
+                if(empty($category)) {
+                    return false;
+                }
                 if($category->getTranslation($language->id) && $category->getTranslation($language->id)->seoUrl) {
                     $pathInfo = $category->getTranslation($language->id)->seoUrl;
                     $parentId = $category->parent_id;
