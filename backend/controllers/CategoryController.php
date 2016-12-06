@@ -173,6 +173,8 @@ class CategoryController extends Controller
             'language_id' => $languageId
         ])->one() : new CategoryTranslation();
 
+        $category_translation = $category_translation ?? new CategoryTranslation();
+
         if (Yii::$app->request->isPost) {
             if ($category->isNewRecord) {
                 $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY);
