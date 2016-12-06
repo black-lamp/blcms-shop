@@ -157,8 +157,8 @@ class Category extends ActiveRecord
     }
 
     public static function getBig($category, $imageType) {
-//        $fileName = $category->$imageType;
-//        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
+        $fileName = $category->$imageType;
+        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
     }
 
     public static function getThumb($category, $imageType) {
