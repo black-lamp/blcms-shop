@@ -80,7 +80,6 @@ class ProductImage extends ActiveRecord
             if (\Yii::$app->shop_imagable->delete('shop-product', $image->file_name)) {
                 $image->delete();
             }
-            else throw new Exception('Files does not exist');
         }
     }
 
