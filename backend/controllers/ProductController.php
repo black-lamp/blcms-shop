@@ -8,8 +8,12 @@ use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
 use bl\cms\shop\backend\components\events\ProductEvent;
 use yii\helpers\Url;
-use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile};
-use bl\cms\shop\backend\components\form\{ProductFileForm, ProductImageForm, ProductVideoForm};
+use yii\web\{
+    Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile
+};
+use bl\cms\shop\backend\components\form\{
+    CombinationAttributeForm, ProductFileForm, ProductImageForm, ProductVideoForm
+};
 use bl\cms\shop\common\entities\{
     CategoryTranslation, Param, ParamTranslation, Product, ProductCombination, ProductCombinationAttribute, ProductCombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation, ProductVideo, ShopAttribute
 };
@@ -261,8 +265,7 @@ class ProductController extends Controller
                 if ($product->validate()) {
                     $product->save();
                 }
-            }
-            else {
+            } else {
                 $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
             }
 
@@ -577,7 +580,8 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
-    public function actionEditImage($id, $languageId) {
+    public function actionEditImage($id, $languageId)
+    {
         $image = ProductImage::findOne($id);
         $imageTranslation = ProductImageTranslation::find()->where([
             'image_id' => $id,
@@ -601,8 +605,7 @@ class ProductController extends Controller
                     'id' => $image->product_id,
                     'languageId' => $languageId
                 ]));
-            }
-            else die(var_dump($imageTranslation->errors));
+            } else die(var_dump($imageTranslation->errors));
         }
 
         if (Yii::$app->request->isPjax) {
@@ -659,7 +662,7 @@ class ProductController extends Controller
                             'image_form' => new ProductImageForm(),
                             'images' => ProductImage::find()->where(['product_id' => $id])->orderBy('position')->all(),
                         ]);
-                    }else return $this->redirect(\Yii::$app->request->referrer);
+                    } else return $this->redirect(\Yii::$app->request->referrer);
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
         } else throw new Exception();
@@ -1132,28 +1135,49 @@ class ProductController extends Controller
      *
      * @return mixed
      */
-    public function actionAddCombination(int $productId, int $languageId) {
+    public function actionAddCombination(int $productId, int $languageId)
+    {
 
         $combinationsList = ProductCombination::find()->where(['product_id' => $productId])->all();
+
+        $combinationAttribute = new ProductCombinationAttribute();
+        $combinationAttributeForm = new CombinationAttributeForm();
 
         $combination = new ProductCombination();
 
         if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
+
             if ($combination->load($post)) {
                 $combination->product_id = $productId;
+
                 if ($combination->validate()) $combination->save();
 
-                $this->redirect(['edit-combination',
-                    'combinationId' => $combination->id,
+                if ($combinationAttributeForm->load($post)) {
+
+                    if ($combinationAttributeForm->validate()) {
+
+                        foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
+
+                            if (!empty($attributeId)) {
+                                $combinationAttribute->combination_id = $combination->id;
+                                $combinationAttribute->attribute_id = (int)$attributeId;
+                                $combinationAttribute->attribute_value_id =
+                                    (int)$combinationAttributeForm->attribute_value_id[$key];
+
+                                if ($combinationAttribute->validate()) {
+                                    $combinationAttribute->save();
+                                    $combinationAttribute = new ProductCombinationAttribute();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $this->redirect(['add-combination',
+                    'productId' => $productId,
                     'languageId' => $languageId
                 ]);
-
-//                return $this->redirect(['add-combination',
-//                    'productId' => $productId,
-//                    'languageId' => $languageId
-//                ]);
-
             }
         }
 
@@ -1168,7 +1192,8 @@ class ProductController extends Controller
                 'combination' => $combination,
                 'productId' => $productId,
                 'languageId' => $languageId,
-                'combinationAttribute' => new ProductCombinationAttribute(),
+                'combinationAttribute' => $combinationAttribute,
+                'combinationAttributeForm' => $combinationAttributeForm
             ]
         ]);
     }
@@ -1180,7 +1205,8 @@ class ProductController extends Controller
      * @param int $languageId
      * @return string
      */
-    public function actionEditCombination(int $combinationId, int $languageId) {
+    public function actionEditCombination(int $combinationId, int $languageId)
+    {
         $combination = ProductCombination::findOne($combinationId);
         $attributes = ShopAttribute::find()->all();
         $combinationAttribute = new ProductCombinationAttribute();
@@ -1213,13 +1239,13 @@ class ProductController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException
      */
-    public function actionRemoveCombination(int $combinationId) {
+    public function actionRemoveCombination(int $combinationId)
+    {
         $combination = ProductCombination::findOne($combinationId);
 
         if (!empty($combination)) {
             $combination->delete();
-        }
-        else throw new NotFoundHttpException();
+        } else throw new NotFoundHttpException();
 
         return $this->redirect(\Yii::$app->request->referrer);
     }

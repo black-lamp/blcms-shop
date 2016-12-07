@@ -10,7 +10,6 @@ use bl\imagable\Imagable;
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
-
 class CategoryImageForm extends Model
 {
     /**

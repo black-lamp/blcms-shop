@@ -4,21 +4,23 @@
  * Gets attribute values by attribute id
  */
 
-$(document).ready(function() {
+$(document).ready(function () {
     getAttributeValues();
 
     var addButton = $('#add-attribute-value');
-    addButton.click(function(e){
+    addButton.click(function (e) {
         e.preventDefault();
         addToInputs();
     });
+
+
 });
 
 /*GETS ATTRIBUTE VALUES BY AJAX WHEN OPTION HAS SELECTED*/
 function getAttributeValues() {
 
-    $('#productcombinationattribute').change(function() {
-        var selectedAttributeId = $( "#productcombinationattribute option:selected" ).attr('value');
+    $('#productcombinationattribute').change(function () {
+        var selectedAttributeId = $("#productcombinationattribute option:selected").attr('value');
 
         $.ajax({
             type: "GET",
@@ -28,7 +30,7 @@ function getAttributeValues() {
             },
             success: function (result) {
                 var attributeValues = JSON.parse(result);
-                $.each(attributeValues, function(i, value) {
+                $.each(attributeValues, function (i, value) {
                     $(new Option(value['translation']['title'], value['id'])).appendTo('#productcombinationvalue');
                 });
             },
@@ -45,18 +47,26 @@ function addToInputs() {
     var attributeInput = $('.hidden-attribute').last();
     var valueInput = $('.hidden-value').last();
 
-    var selectedAttributeId = $( "#productcombinationattribute option:selected" ).attr('value');
-    var selectedValueId = $( "#productcombinationvalue option:selected" ).attr('value');
+    var selectedAttribute = $("#productcombinationattribute option:selected");
+    var selectedValue = $("#productcombinationvalue option:selected");
+
+    var selectedAttributeId = $(selectedAttribute).attr('value');
+    var selectedValueId = $(selectedValue).attr('value');
 
     if (selectedAttributeId && selectedValueId) {
 
         $(attributeInput).clone().appendTo("#attribute-inputs");
         $(valueInput).clone().appendTo("#value-inputs");
 
+        $key = $('.hidden-attribute').length - 1;
         $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId);
         $(valueInput[valueInput.length - 1]).val(selectedValueId);
 
-        addToTable($( "#productcombinationattribute option:selected" ).text(), $( "#productcombinationvalue option:selected" ).text());
+        addToTable(
+            $(selectedAttribute).text(),
+            $(selectedValue).text(),
+            $key
+        );
     }
     else {
         alert('You must fill in all fields');
@@ -68,12 +78,29 @@ function addToInputs() {
     }
 }
 
-function addToTable(attributeTdText, valueTdText) {
+function addToTable(attributeTdText, valueTdText, removeTdText) {
     var lastTr = $('#attributes-list tr').last();
     var attributeTd = $(lastTr).children()[0];
     var valueTd = $(lastTr).children()[1];
-    lastTr.clone().appendTo('#attributes-list');
+
+    var removeButton = $($(lastTr).children()[2]).children();
+    $(removeButton).attr('data-key', removeTdText);
+    $(removeButton).click(function () {
+        var key = $(this).attr('data-key');
+
+        $($('.hidden-attribute')[key - 1]).remove();
+        $($('.hidden-value')[key - 1]).remove();
+
+        // $('.hidden-attribute')[key].remove();
+        // $('.hidden-value')[key].remove();
+        $('#attributes-list tr')[key].remove();
+    });
+
+    $(lastTr).show();
+    lastTr.clone().appendTo('#attributes-list').hide();
 
     $(attributeTd).text(attributeTdText);
     $(valueTd).text(valueTdText);
+
 }
+
