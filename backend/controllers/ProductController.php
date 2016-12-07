@@ -1136,6 +1136,7 @@ class ProductController extends Controller
 
         $combinationAttribute = new ProductCombinationAttribute();
         $combinationAttributeForm = new CombinationAttributeForm();
+        $combinationImages = new ProductCombinationImage();
         $imageForm = new CombinationImageForm();
 
         $combination = new ProductCombination();
@@ -1171,8 +1172,15 @@ class ProductController extends Controller
 
                 if ($imageForm->load($post)) {
                     if ($imageForm->validate()) {
-                        foreach ($imageForm as $image) {
+                        foreach ($imageForm->product_image_id as $image) {
 
+                            $combinationImages->combination_id = (int)$combination->id;
+                            $combinationImages->product_image_id = (int)$image;
+                            if ($combinationImages->validate()) {
+                                $combinationImages->save();
+                                $combinationImages = new ProductCombinationImage();
+                            }
+                            else die(var_dump($combinationImages));
                         }
                     }
                 }

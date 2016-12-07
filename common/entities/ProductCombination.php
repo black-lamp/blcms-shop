@@ -12,13 +12,12 @@ use yii\db\ActiveRecord;
  * @property double $price
  * @property double $sale
  * @property integer $sale_type_id
- * @property string $image_name
  * @property integer $default
  *
  * @property Product $product
  * @property SaleType $saleType
  * @property ProductCombinationAttribute[] $shopProductCombinationAttributes
- * @property ProductCombinationImage[] $shopProductCombinationImages
+ * @property ProductCombinationImage[] $images
  */
 class ProductCombination extends ActiveRecord
 {
@@ -38,7 +37,6 @@ class ProductCombination extends ActiveRecord
         return [
             [['product_id', 'sale_type_id', 'default'], 'integer'],
             [['price', 'sale'], 'number'],
-            [['image_name'], 'string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
         ];
@@ -74,6 +72,14 @@ class ProductCombination extends ActiveRecord
     public function getSaleType()
     {
         return $this->hasOne(SaleType::className(), ['id' => 'sale_type_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImages()
+    {
+        return $this->hasMany(ProductCombinationImage::className(), ['combination_id' => 'id']);
     }
 
     /**
