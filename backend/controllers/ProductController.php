@@ -12,7 +12,7 @@ use yii\web\{
     Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
 use bl\cms\shop\backend\components\form\{
-    CombinationAttributeForm, ProductFileForm, ProductImageForm, ProductVideoForm
+    CombinationAttributeForm, CombinationImageForm, ProductFileForm, ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
     CategoryTranslation, Param, ParamTranslation, Product, ProductCombination, ProductCombinationAttribute, ProductCombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation, ProductVideo, ShopAttribute
@@ -655,14 +655,8 @@ class ProductController extends Controller
                         'id' => $image->product_id
                     ]));
 
-                    if (Yii::$app->request->isPjax) {
-                        return $this->renderPartial('add-image', [
-                            'selectedLanguage' => Language::findOne($languageId),
-                            'productId' => $product->id,
-                            'image_form' => new ProductImageForm(),
-                            'images' => ProductImage::find()->where(['product_id' => $id])->orderBy('position')->all(),
-                        ]);
-                    } else return $this->redirect(\Yii::$app->request->referrer);
+                    return $this->redirect(['add-image', 'id' => $image->product_id, 'languageId' => $languageId]);
+
                 } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
             }
         } else throw new Exception();
@@ -1142,6 +1136,7 @@ class ProductController extends Controller
 
         $combinationAttribute = new ProductCombinationAttribute();
         $combinationAttributeForm = new CombinationAttributeForm();
+        $imageForm = new CombinationImageForm();
 
         $combination = new ProductCombination();
 
@@ -1174,6 +1169,14 @@ class ProductController extends Controller
                     }
                 }
 
+                if ($imageForm->load($post)) {
+                    if ($imageForm->validate()) {
+                        foreach ($imageForm as $image) {
+
+                        }
+                    }
+                }
+
                 $this->redirect(['add-combination',
                     'productId' => $productId,
                     'languageId' => $languageId
@@ -1190,7 +1193,8 @@ class ProductController extends Controller
             'params' => [
                 'combinations' => $combinationsList,
                 'combination' => $combination,
-                'productId' => $productId,
+                'product' => Product::findOne($productId),
+                'image_form' => $imageForm,
                 'languageId' => $languageId,
                 'combinationAttribute' => $combinationAttribute,
                 'combinationAttributeForm' => $combinationAttributeForm
