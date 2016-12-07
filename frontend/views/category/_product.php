@@ -29,7 +29,7 @@ $image = (!empty($model->image)) ?
     Html::a(
         Html::img($model->image->small, [
             'class' => 'media-object img-responsive',
-            'alt' => Html::encode($model->image->alt)
+            'alt' => Html::encode($model->image->translation->alt)
         ]),
         $link) :
     '';

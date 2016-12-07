@@ -74,7 +74,7 @@ ProductAsset::register($this);
                 [
                     'class' => 'media-object img-responsive',
                     'alt' => (!empty($product->images)) ?
-                        Html::encode($product->image->alt) :
+                        Html::encode($product->image->translation->alt) :
                         ''
                 ]); ?>
         </div>

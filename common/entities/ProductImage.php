@@ -3,7 +3,6 @@ namespace bl\cms\shop\common\entities;
 
 use bl\imagable\helpers\FileHelper;
 use bl\multilang\behaviors\TranslationBehavior;
-use bl\multilang\entities\Language;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii2tech\ar\position\PositionBehavior;
@@ -19,6 +18,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $extension
  *
  * @property Product $product
+ * @property ProductImageTranslation $translation
  */
 
 class ProductImage extends ActiveRecord
