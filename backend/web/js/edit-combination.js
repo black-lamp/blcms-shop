@@ -30,6 +30,9 @@ function getAttributeValues() {
             },
             success: function (result) {
                 var attributeValues = JSON.parse(result);
+
+                $('#productcombinationvalue').children().remove();
+
                 $.each(attributeValues, function (i, value) {
                     $(new Option(value['translation']['title'], value['id'])).appendTo('#productcombinationvalue');
                 });
