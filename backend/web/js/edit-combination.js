@@ -61,14 +61,14 @@ function addToInputs() {
         $(attributeInput).clone().appendTo("#attribute-inputs");
         $(valueInput).clone().appendTo("#value-inputs");
 
-        $key = $('.hidden-attribute').length - 1;
-        $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId);
-        $(valueInput[valueInput.length - 1]).val(selectedValueId);
+        var key = $('.hidden-attribute').length - 1;
+        $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId).attr('data-key', key);;
+        $(valueInput[valueInput.length - 1]).val(selectedValueId).attr('data-key', key);;
 
         addToTable(
             $(selectedAttribute).text(),
             $(selectedValue).text(),
-            $key
+            key
         );
     }
     else {
@@ -91,8 +91,8 @@ function addToTable(attributeTdText, valueTdText, removeTdText) {
     $(removeButton).click(function () {
         var key = $(this).attr('data-key');
 
-        $($('.hidden-attribute')[key - 1]).remove();
-        $($('.hidden-value')[key - 1]).remove();
+        console.log($('input[data-key="' + (key) + ']"'));
+        $('input[data-key="' + (key) + '"]').remove();
 
         $(this).parent().parent().remove();
     });
