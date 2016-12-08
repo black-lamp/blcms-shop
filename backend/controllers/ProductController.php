@@ -1163,6 +1163,7 @@ class ProductController extends Controller
 
                                 if ($combinationAttribute->validate()) {
                                     $combinationAttribute->save();
+
                                     $combinationAttribute = new ProductCombinationAttribute();
                                 }
                             }
@@ -1184,6 +1185,11 @@ class ProductController extends Controller
                         }
                     }
                 }
+
+                $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
+                $this->trigger($eventName, new ProductEvent([
+                    'id' => $combination->product_id
+                ]));
 
                 $this->redirect(['add-combination',
                     'productId' => $productId,
@@ -1272,6 +1278,11 @@ class ProductController extends Controller
                     }
                 }
 
+                $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
+                $this->trigger($eventName, new ProductEvent([
+                    'id' => $combination->product_id
+                ]));
+
                 $this->redirect(['add-combination',
                     'productId' => $combination->product_id,
                     'languageId' => $languageId
@@ -1301,6 +1312,12 @@ class ProductController extends Controller
 
         if (!empty($combination)) {
             $combination->delete();
+
+            $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
+            $this->trigger($eventName, new ProductEvent([
+                'id' => $combination->product_id
+            ]));
+
         } else throw new NotFoundHttpException();
 
         return $this->redirect(\Yii::$app->request->referrer);
@@ -1316,6 +1333,12 @@ class ProductController extends Controller
         if (empty($combinationAttribute)) throw new NotFoundHttpException();
 
         $combinationAttribute->delete();
+
+        $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
+        $this->trigger($eventName, new ProductEvent([
+            'id' => $combinationAttribute->combination->product_id
+        ]));
+
         return $this->redirect(\Yii::$app->request->referrer);
     }
 
