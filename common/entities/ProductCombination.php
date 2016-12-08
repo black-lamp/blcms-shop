@@ -51,8 +51,8 @@ class ProductCombination extends ActiveRecord
             'id' => Yii::t('shop', 'ID'),
             'product_id' => Yii::t('shop', 'Product ID'),
             'price' => Yii::t('shop', 'Price'),
-            'sale' => Yii::t('shop', 'Sale'),
-            'sale_type_id' => Yii::t('shop', 'Sale Type ID'),
+            'sale' => Yii::t('shop', 'Discount'),
+            'sale_type_id' => Yii::t('shop', 'Discount type'),
             'image_name' => Yii::t('shop', 'Image'),
             'default' => Yii::t('shop', 'Default'),
         ];
