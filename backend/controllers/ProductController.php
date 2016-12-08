@@ -648,8 +648,7 @@ class ProductController extends Controller
             if (!empty($image)) {
                 $product = Product::findOne($image->product_id);
                 if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-                    $product_image = new ProductImage();
-                    $product_image->removeImage($id);
+                    $image->removeImage($id);
 
                     $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
                         'id' => $image->product_id

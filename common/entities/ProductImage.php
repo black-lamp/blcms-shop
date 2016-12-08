@@ -73,14 +73,11 @@ class ProductImage extends ActiveRecord
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
-    public function removeImage($id) {
-        if(!empty($id)) {
-            $image = ProductImage::findOne($id);
-
-            if (\Yii::$app->shop_imagable->delete('shop-product', $image->file_name)) {
-                $image->delete();
-            }
-        }
+    /**
+     */
+    public function removeImage() {
+        $this->delete();
+        \Yii::$app->shop_imagable->delete('shop-product', $this->file_name);
     }
 
     /**
