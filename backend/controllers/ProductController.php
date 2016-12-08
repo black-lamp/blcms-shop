@@ -1172,16 +1172,18 @@ class ProductController extends Controller
                 }
 
                 if ($imageForm->load($post)) {
-                    if ($imageForm->validate()) {
-                        foreach ($imageForm->product_image_id as $image) {
+                    if (!empty($imageForm->product_image_id)) {
+                        if ($imageForm->validate()) {
+                            foreach ($imageForm->product_image_id as $image) {
 
-                            $combinationImages->combination_id = (int)$combination->id;
-                            $combinationImages->product_image_id = (int)$image;
-                            if ($combinationImages->validate()) {
-                                $combinationImages->save();
-                                $combinationImages = new ProductCombinationImage();
+                                $combinationImages->combination_id = (int)$combination->id;
+                                $combinationImages->product_image_id = (int)$image;
+                                if ($combinationImages->validate()) {
+                                    $combinationImages->save();
+                                    $combinationImages = new ProductCombinationImage();
+                                }
+                                else die(var_dump($combinationImages));
                             }
-                            else die(var_dump($combinationImages));
                         }
                     }
                 }

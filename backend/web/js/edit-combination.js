@@ -94,9 +94,7 @@ function addToTable(attributeTdText, valueTdText, removeTdText) {
         $($('.hidden-attribute')[key - 1]).remove();
         $($('.hidden-value')[key - 1]).remove();
 
-        // $('.hidden-attribute')[key].remove();
-        // $('.hidden-value')[key].remove();
-        $('#attributes-list tr')[key].remove();
+        $(this).parent().parent().remove();
     });
 
     $(lastTr).show();

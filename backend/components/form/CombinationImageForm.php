@@ -16,4 +16,14 @@ class CombinationImageForm extends Model
             [['product_image_id'], 'safe'],
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'product_image_id' => \Yii::t('shop', 'Image'),
+        ];
+    }
 }
