@@ -1215,22 +1215,65 @@ class ProductController extends Controller
      *
      * @param int $combinationId
      * @param int $languageId
+     * @throws NotFoundHttpException
      * @return string
      */
     public function actionEditCombination(int $combinationId, int $languageId)
     {
         $combination = ProductCombination::findOne($combinationId);
-        $attributes = ShopAttribute::find()->all();
+        if (empty($combination)) throw new NotFoundHttpException();
+
+        $combinationAttributeForm = new CombinationAttributeForm();
         $combinationAttribute = new ProductCombinationAttribute();
+        $combinationAttributes = ProductCombinationAttribute::find()
+            ->where(['combination_id' => $combination->id])->all();
+        $combinationImages = new ProductCombinationImage();
+        $imageForm = new CombinationImageForm();
 
         if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
-            if ($combinationAttribute->load($post)) {
-                $combinationAttribute->combination_id = $combinationId;
-                if ($combinationAttribute->validate()) $combinationAttribute->save();
 
-                $this->redirect(['edit-combination',
-                    'combinationId' => $combination->id,
+            if ($combination->load($post)) {
+                if ($combination->validate()) $combination->save();
+
+                if ($combinationAttributeForm->load($post)) {
+
+                    if ($combinationAttributeForm->validate()) {
+
+                        foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
+
+                            if (!empty($attributeId)) {
+                                $combinationAttribute->combination_id = $combination->id;
+                                $combinationAttribute->attribute_id = (int)$attributeId;
+                                $combinationAttribute->attribute_value_id =
+                                    (int)$combinationAttributeForm->attribute_value_id[$key];
+
+                                if ($combinationAttribute->validate()) {
+                                    $combinationAttribute->save();
+                                    $combinationAttribute = new ProductCombinationAttribute();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($imageForm->load($post)) {
+                    if ($imageForm->validate()) {
+                        foreach ($imageForm->product_image_id as $image) {
+
+                            $combinationImages->combination_id = (int)$combination->id;
+                            $combinationImages->product_image_id = (int)$image;
+                            if ($combinationImages->validate()) {
+                                $combinationImages->save();
+                                $combinationImages = new ProductCombinationImage();
+                            }
+                            else die(var_dump($combinationImages));
+                        }
+                    }
+                }
+
+                $this->redirect(['add-combination',
+                    'productId' => $combination->product_id,
                     'languageId' => $languageId
                 ]);
             }
@@ -1238,8 +1281,9 @@ class ProductController extends Controller
 
         return $this->render('edit-combination', [
             'combination' => $combination,
-            'attributes' => $attributes,
+            'combinationAttributeForm' => $combinationAttributeForm,
             'combinationAttribute' => $combinationAttribute,
+            'combinationAttributes' => $combinationAttributes,
             'languageId' => $languageId,
         ]);
     }
@@ -1263,6 +1307,19 @@ class ProductController extends Controller
     }
 
     /**
+     * @param int $combinationAttributeId
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionRemoveCombinationAttribute(int $combinationAttributeId) {
+        $combinationAttribute = ProductCombinationAttribute::findOne($combinationAttributeId);
+        if (empty($combinationAttribute)) throw new NotFoundHttpException();
+
+        $combinationAttribute->delete();
+        return $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    /**
      * Generates seo Url from title on add-basic page
      *
      * @param string $title
@@ -1273,5 +1330,3 @@ class ProductController extends Controller
         return Inflector::slug($title);
     }
 }
-
-
