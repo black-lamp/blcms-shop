@@ -12,6 +12,8 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property ProductAvailabilityTranslation $translation
  * @property Product[] $products
+ *
+ * @method ProductAvailabilityTranslation getTranslation($languageId = null)
  */
 class ProductAvailability extends ActiveRecord
 {

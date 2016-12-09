@@ -19,6 +19,8 @@ use yii2tech\ar\position\PositionBehavior;
  *
  * @property Product $product
  * @property ProductImageTranslation $translation
+ *
+ * @method ProductImageTranslation getTranslation($languageId = null)
  */
 
 class ProductImage extends ActiveRecord

@@ -11,6 +11,8 @@ use yii\db\ActiveRecord;
  * @property Product $product
  * @property ParamTranslation $translation
  * @property ParamTranslation[] $translations
+ *
+ * @method ParamTranslation getTranslation($languageId = null)
  */
 
 
