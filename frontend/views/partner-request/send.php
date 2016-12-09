@@ -46,25 +46,25 @@ use yii\widgets\ActiveForm;
                 </h2>
                 <div class="row">
                     <div class="col-md-4">
-                        <?= $form->field($profile, 'name')->textInput(); ?>
+                        <?= $form->field($profile, 'name')->textInput()->label(\Yii::t('shop', 'Name')); ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($profile, 'patronymic')->textInput(); ?>
+                        <?= $form->field($profile, 'patronymic')->textInput()->label(\Yii::t('shop', 'Patronymic')); ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($profile, 'surname')->textInput(); ?>
+                        <?= $form->field($profile, 'surname')->textInput()->label(\Yii::t('shop', 'Surname')); ?>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
-                        <?= $form->field($user, 'email') ?>
+                        <?= $form->field($user, 'email')->label(\Yii::t('shop', 'E-mail')) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($user, 'username') ?>
+                        <?= $form->field($user, 'username')->label(\Yii::t('shop', 'Login')) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($user, 'password')->passwordInput() ?>
+                        <?= $form->field($user, 'password')->passwordInput()->label(\Yii::t('shop', 'Password')) ?>
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@ use yii\widgets\ActiveForm;
                     <div class="col-md-4">
                         <?= $form->field($profile, 'phone')->widget(\yii\widgets\MaskedInput::className(), [
                             'mask' => '(999)-999-99-99',
-                        ]); ?>
+                        ])->label(\Yii::t('shop', 'Phone number')); ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -98,7 +98,7 @@ use yii\widgets\ActiveForm;
             </div>
 
             <div class="form-group">
-                <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+                <?= Html::submitButton(Yii::t('shop', 'Send'), ['class' => 'btn btn-primary']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
