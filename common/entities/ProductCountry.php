@@ -8,6 +8,8 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property ProductCountryTranslation $translation
+ *
+ * @method ProductCountryTranslation getTranslation($languageId = null)
  */
 class ProductCountry extends ActiveRecord
 {

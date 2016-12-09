@@ -16,6 +16,8 @@ use yii\db\Expression;
  *
  * @property Product $product
  * @property ProductFileTranslation $translation
+ *
+ * @method ProductFileTranslation getTranslation($languageId = null)
  */
 class ProductFile extends ActiveRecord
 {

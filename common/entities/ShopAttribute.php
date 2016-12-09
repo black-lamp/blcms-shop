@@ -19,6 +19,8 @@ use yii\db\Expression;
  * @property ShopAttributeType $type
  * @property ShopAttributeValue[] $shopAttributeValues
  * @property ShopAttributeTranslation $translation
+ *
+ * @method ShopAttributeTranslation getTranslation($languageId = null)
  */
 class ShopAttribute extends ActiveRecord
 {

@@ -46,6 +46,8 @@ use yii2tech\ar\position\PositionBehavior;
  * @property ProductFile[] $files
  * @property ProductAvailability $productAvailability
  * @property ProductTranslation $translation
+ *
+ * @method ProductTranslation getTranslation($languageId = null)
  */
 class Product extends ActiveRecord
 {

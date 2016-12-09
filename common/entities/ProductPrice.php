@@ -20,6 +20,8 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Product $product
  * @property ProductPriceTranslation[] $translations
  * @property ProductPriceTranslation $translation
+ *
+ * @method ProductPriceTranslation getTranslation($languageId = null)
  */
 class ProductPrice extends ActiveRecord
 {
