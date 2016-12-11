@@ -1,10 +1,9 @@
 <?php
-
 namespace bl\cms\shop\backend\components\form;
-use Yii;
+
 use yii\base\Model;
+use yii\base\Security;
 use yii\web\UploadedFile;
-use bl\imagable\Imagable;
 
 
 /**
@@ -32,38 +31,47 @@ class CategoryImageForm extends Model
         ];
     }
 
+    /**
+     * @return array|bool
+     */
     public function upload()
     {
         if ($this->validate()) {
-            $dir = Yii::getAlias('@frontend/web/images/shop-category');
 
-            $imagable = \Yii::$app->shop_imagable;
-            $imagable->imagesPath = Yii::getAlias('@frontend/web/images/shop-category');
             $image_name = [];
 
-            /** @var Imagable $this */
             if (!empty($this->cover)) {
-                $this->cover->saveAs($dir . $this->cover->baseName . '.jpg');
-                $image_name['cover'] = $imagable->create('cover', $dir . $this->cover->baseName . '.jpg');
-                unlink($dir . $this->cover->baseName . '.jpg');
+                $image_name['cover'] = $this->generateImages('cover');
             }
 
-            /** @var Imagable $this */
             if (!empty($this->thumbnail)) {
-                $this->thumbnail->saveAs($dir . $this->thumbnail->baseName . '.jpg');
-                $image_name['thumbnail'] = $imagable->create('thumbnail', $dir . $this->thumbnail->baseName . '.jpg');
-                unlink($dir . $this->thumbnail->baseName . '.jpg');
+                $image_name['thumbnail'] = $this->generateImages('thumbnail');
             }
-            
-            /** @var Imagable $this */
+
             if (!empty($this->menu_item)) {
-                $this->menu_item->saveAs($dir . $this->menu_item->baseName . '.jpg');
-                $image_name['menu_item'] = $imagable->create('menu_item', $dir . $this->menu_item->baseName . '.jpg');
-                unlink($dir . $this->menu_item->baseName . '.jpg');
+                $image_name['menu_item'] = $this->generateImages('menu_item');
             }
             return $image_name;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Generates images from uploaded image using Imagable component
+     *
+     * @param $type
+     * @return mixed
+     */
+    private function generateImages($type) {
+        $imagable = \Yii::$app->shop_imagable;
+
+        $nameFile = (new Security())->generateRandomString();
+        $this->$type->saveAs($imagable->imagesPath . '/' . $nameFile . '.' . $this->$type->extension);
+        $image_name = $imagable->create('shop-category/' . $type,
+            $imagable->imagesPath . '/' . $nameFile . '.' . $this->$type->extension);
+        unlink($imagable->imagesPath . '/' . $nameFile . '.' . $this->$type->extension);
+
+        return $image_name;
     }
 }
