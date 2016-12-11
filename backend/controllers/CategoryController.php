@@ -8,8 +8,12 @@ use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
 use bl\cms\shop\backend\components\events\CategoryEvent;
 use bl\cms\shop\backend\components\form\CategoryImageForm;
-use yii\web\{ForbiddenHttpException, NotFoundHttpException, UploadedFile};
-use bl\cms\shop\common\entities\{Category, CategoryTranslation, Filter, SearchCategory};
+use yii\web\{
+    ForbiddenHttpException, NotFoundHttpException, UploadedFile
+};
+use bl\cms\shop\common\entities\{
+    Category, CategoryTranslation, Filter, SearchCategory
+};
 
 /**
  * CategoryController implements the CRUD actions for Category model.
@@ -108,18 +112,12 @@ class CategoryController extends Controller
         $category = Category::findOne($id);
         if (($category->delete())) {
             Yii::$app->getSession()->setFlash('success', 'The category has been successfully removed');
-            $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY,
-                new CategoryEvent([
-                    'id' => $id
-                ])
-            );
+            $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY, new CategoryEvent(['id' => $id]));
         } else {
             Yii::$app->getSession()->setFlash('error', 'Error deleting category');
         }
 
-        if (\Yii::$app->request->isPjax) {
-            return $this->actionIndex();
-        } else return $this->redirect(\Yii::$app->request->referrer);
+        return $this->actionIndex();
     }
 
     /**
@@ -153,55 +151,41 @@ class CategoryController extends Controller
      * @param null|integer $id
      * @param null|integer $languageId
      * @param string $viewName
-     * @param boolean $argumentsCanBeEmpty
      * @return mixed
      * @throws Exception
      *
      * Loads data from post.
      */
-    private function loadCategory($id = null, $languageId = null, $viewName, $argumentsCanBeEmpty)
+    private function loadCategory($id = null, $languageId = null, $viewName)
     {
-        if (!$argumentsCanBeEmpty) {
-            if (empty($id) || empty($languageId)) {
-                throw new Exception('Category id and language id can not be empty');
-            }
-        }
-
         $category = (!empty($id)) ? Category::findOne($id) : new Category();
-        $category_translation = (!empty($id)) ? CategoryTranslation::find()->where([
+        $categoryTranslation = (!empty($id)) ? CategoryTranslation::find()->where([
             'category_id' => $id,
             'language_id' => $languageId
         ])->one() : new CategoryTranslation();
 
-        $category_translation = $category_translation ?? new CategoryTranslation();
+        $categoryTranslation = $categoryTranslation ?? new CategoryTranslation();
 
         if (Yii::$app->request->isPost) {
-            if ($category->isNewRecord) {
-                $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY);
-            } else {
+            ($category->isNewRecord) ? $this->trigger(self::EVENT_BEFORE_CREATE_CATEGORY) :
                 $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
-            }
 
-            $category->load(Yii::$app->request->post());
-            $category_translation->load(Yii::$app->request->post());
+            $post = Yii::$app->request->post();
+            $category->load($post);
+            $categoryTranslation->load($post);
 
             if ($category->validate()) {
                 $eventName = $category->isNewRecord ? self::EVENT_AFTER_CREATE_CATEGORY : self::EVENT_AFTER_EDIT_CATEGORY;
 
                 $category->save();
 
-                $category_translation->category_id = $category->id;
-                $category_translation->language_id = $languageId;
+                $categoryTranslation->category_id = $category->id;
+                $categoryTranslation->language_id = $languageId;
 
-                if ($category_translation->validate()) {
+                if ($categoryTranslation->validate()) {
+                    $categoryTranslation->save();
 
-                    $category_translation->save();
-
-                    $this->trigger($eventName,
-                        new CategoryEvent([
-                            'id' => $category->id
-                        ])
-                    );
+                    $this->trigger($eventName, new CategoryEvent(['id' => $category->id]));
 
                     Yii::$app->getSession()->setFlash('success', 'The category has been successfully modified.');
                     return $this->redirect([$viewName, 'id' => $category->id, 'languageId' => $languageId]);
@@ -214,23 +198,11 @@ class CategoryController extends Controller
                 'languages' => Language::findAll(['active' => true]),
                 'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') ?? 1,
                 'category' => $category,
-                'category_translation' => $category_translation,
+                'categoryTranslation' => $categoryTranslation,
                 'categories' => Category::find()->with('translations')->all(),
                 'selectedLanguage' => Language::findOne($languageId),
             ]
         ]);
-    }
-
-    /**
-     * Adds category SEO data
-     *
-     * @param integer $id
-     * @param integer $languageId
-     * @return mixed
-     */
-    public function actionAddSeo($id, $languageId)
-    {
-        return $this->loadCategory($id, $languageId, 'add-seo', false);
     }
 
     /**
@@ -242,9 +214,20 @@ class CategoryController extends Controller
      */
     public function actionAddBasic($id = null, $languageId = null)
     {
-        return $this->loadCategory($id, $languageId, 'add-basic', true);
+        return $this->loadCategory($id, $languageId, 'add-basic');
     }
 
+    /**
+     * Adds category SEO data
+     *
+     * @param integer $id
+     * @param integer $languageId
+     * @return mixed
+     */
+    public function actionAddSeo(int $id, int $languageId)
+    {
+        return $this->loadCategory($id, $languageId, 'add-seo');
+    }
 
     /**
      * Adds category images
@@ -254,12 +237,8 @@ class CategoryController extends Controller
      * @return mixed
      * @throws Exception
      */
-    public function actionAddImages($categoryId, $languageId)
+    public function actionAddImages(int $categoryId, int $languageId)
     {
-        if (empty($categoryId) || empty($languageId)) {
-            throw new Exception('Category id and language id can not be empty');
-        }
-
         $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
 
         $category = Category::findOne($categoryId);
@@ -285,14 +264,9 @@ class CategoryController extends Controller
             }
             if ($category->validate()) {
                 $category->save();
-                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                    new CategoryEvent([
-                        'id' => $categoryId
-                    ])
-                );
+                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY, new CategoryEvent(['id' => $categoryId]));
                 Yii::$app->getSession()->setFlash('success', 'The images have successfully uploaded.');
-            }
-            Yii::$app->getSession()->setFlash('error', 'Error loading image.');
+            } else Yii::$app->getSession()->setFlash('error', 'Error loading image.');
         }
 
         return $this->render('save', [
@@ -314,10 +288,9 @@ class CategoryController extends Controller
      * @return mixed
      * @throws ForbiddenHttpException
      */
-    public function actionDeleteImage($id, $imageType)
+    public function actionDeleteImage(int $id, string $imageType)
     {
-        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY,
-            new CategoryEvent());
+        $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY, new CategoryEvent());
 
         $category = Category::findOne($id);
 
@@ -325,13 +298,8 @@ class CategoryController extends Controller
             $category->$imageType = null;
             $category->save();
             Yii::$app->getSession()->setFlash('success', 'The image has been successfully deleted.');
-            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'id' => $id
-                ])
-            );
-        }
-        else Yii::$app->getSession()->setFlash('error', 'Error deleting image.');
+            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY, new CategoryEvent(['id' => $id]));
+        } else Yii::$app->getSession()->setFlash('error', 'Error deleting image.');
 
         return $this->redirect(Yii::$app->request->referrer);
     }
@@ -345,17 +313,14 @@ class CategoryController extends Controller
      * @return mixed
      * @throws Exception
      */
-    public function actionSelectFilters($id = null, $languageId = null, $categoryId = null)
+    public function actionSelectFilters(int $categoryId, int $languageId, $id = null)
     {
-        if (!empty($categoryId)) {
-            $category = Category::findOne($categoryId);
-            $filters = Filter::find()->where(['category_id' => $category->id])->all();
-
-            $filter = (!empty($id)) ? Filter::findOne($id) : new Filter();
-        } else throw new Exception('You can not add filter before saving category.');
+        $category = Category::findOne($categoryId);
+        if (empty($category)) throw new NotFoundHttpException();
+        $filters = Filter::find()->where(['category_id' => $category->id])->all();
+        $filter = (!empty($id)) ? Filter::findOne($id) : new Filter();
 
         if (Yii::$app->request->isPost) {
-
             $filter->load(Yii::$app->request->post());
 
             if ($filter->validate()) {
@@ -363,10 +328,7 @@ class CategoryController extends Controller
                 $filter->save();
 
                 $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                    new CategoryEvent([
-                        'id' => $category->id
-                    ])
-                );
+                    new CategoryEvent(['id' => $category->id]));
 
                 Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
                 return $this->redirect(Yii::$app->request->referrer);
@@ -391,17 +353,12 @@ class CategoryController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDeleteFilter($id)
+    public function actionDeleteFilter(int $id)
     {
-        if (!empty($id)) {
-            $filter = Filter::findOne($id);
-            $filter->delete();
-            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'id' => $filter->category_id
-                ])
-            );
-        }
+        $filter = Filter::findOne($id);
+        $filter->delete();
+        $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+            new CategoryEvent(['id' => $filter->category_id]));
         return $this->redirect(Yii::$app->request->referrer);
     }
 
@@ -409,6 +366,7 @@ class CategoryController extends Controller
      * Changes category position to up
      *
      * @param integer $id
+     * @throws NotFoundHttpException
      * @return mixed
      */
     public function actionUp($id)
@@ -418,11 +376,8 @@ class CategoryController extends Controller
 
             $category->movePrev();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'id' => $id
-                ])
-            );
-        }
+                new CategoryEvent(['id' => $id]));
+        } else throw new NotFoundHttpException();
         return $this->actionIndex();
     }
 
@@ -430,6 +385,7 @@ class CategoryController extends Controller
      * Changes category position to down
      *
      * @param integer $id
+     * @throws NotFoundHttpException
      * @return mixed
      */
     public function actionDown($id)
@@ -438,11 +394,8 @@ class CategoryController extends Controller
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
             $category->moveNext();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'id' => $id
-                ])
-            );
-        }
+                new CategoryEvent(['id' => $id]));
+        } else throw new NotFoundHttpException();
         return $this->actionIndex();
     }
 
@@ -461,10 +414,7 @@ class CategoryController extends Controller
             $category->show = !$category->show;
             $category->save();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent([
-                    'id' => $id
-                ])
-            );
+                new CategoryEvent(['id' => $id]));
             return $this->actionIndex();
         } else throw new NotFoundHttpException();
     }
