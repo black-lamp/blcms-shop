@@ -31,9 +31,6 @@ use yii2tech\ar\position\PositionBehavior;
 class Category extends ActiveRecord
 {
 
-    private static $imageCategory = 'shop-category';
-    private static $image_extension = '.jpg';
-
     /**
      * @inheritdoc
      */
@@ -131,7 +128,8 @@ class Category extends ActiveRecord
      *
      * Gets children of category and its children.
      */
-    public function getDescendants($category) {
+    public function getDescendants($category)
+    {
         $children = $category->getChildren($category->id);
 
         if (!empty($children)) {
@@ -142,7 +140,6 @@ class Category extends ActiveRecord
 
                     $children = array_merge($children, $grandChildren);
                 }
-
             }
         }
         return $children;
@@ -161,7 +158,8 @@ class Category extends ActiveRecord
      * @param $size
      * @return mixed|string
      */
-    public function getImage($imagableCategory, $size) {
+    public function getImage($imagableCategory, $size)
+    {
         $imageNameProperty = str_replace('shop-category/', '', $imagableCategory);
         $imageName = $this->$imageNameProperty;
         if (!empty($imageName)) {
@@ -170,8 +168,7 @@ class Category extends ActiveRecord
             $path = str_replace('backend', '', Yii::$app->basePath);
             return str_replace($path . 'frontend/web', '', $fullPath);
 
-        }
-        else return '';
+        } else return '';
     }
 
     /**
@@ -186,7 +183,8 @@ class Category extends ActiveRecord
     /**
      * Adds title, meta-description and meta-keywords to category page using bl\cms\seo\StaticPageBehavior.
      */
-    public function registerMetaData() {
+    public function registerMetaData()
+    {
         $currentView = Yii::$app->controller->view;
 
         $currentView->title = html_entity_decode($this->translation->seoTitle) ??
