@@ -8,8 +8,9 @@ use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\db\Expression;
+use yii\db\{
+    ActiveRecord, Expression
+};
 use yii\helpers\Url;
 use yii2tech\ar\position\PositionBehavior;
 
@@ -192,7 +193,8 @@ class Product extends ActiveRecord
         return $this->hasMany(ProductImage::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
-    public function getImage() {
+    public function getImage()
+    {
         return $this->hasOne(ProductImage::className(), ['product_id' => 'id']);
     }
 
@@ -238,16 +240,22 @@ class Product extends ActiveRecord
         return Url::to([$url, 'id' => $this->id]);
     }
 
-    public function getOwnerProfile() {
+    /**
+     * Gets user profile, which created product.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOwnerProfile()
+    {
         return $this->hasOne(Profile::className(), ['user_id' => 'owner']);
     }
-
 
     /**
      * Return true if product has added to favorites already or false if not.
      * @return boolean
      */
-    public function isFavorite() {
+    public function isFavorite()
+    {
         $favoriteProduct = FavoriteProduct::find()
             ->where(['product_id' => $this->id, 'user_id' => \Yii::$app->user->id])->one();
         if (!empty($favoriteProduct)) return true;

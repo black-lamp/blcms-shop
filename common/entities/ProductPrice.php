@@ -110,8 +110,12 @@ class ProductPrice extends ActiveRecord
     public function getPrice() {
         $price = $this->price;
         if (\Yii::$app->controller->module->enableCurrencyConversion) {
-            $price = floor($price * Currency::currentCurrency());
+            $price = $price * Currency::currentCurrency();
         }
+        if (\Yii::$app->controller->module->enablePriceRounding) {
+            $price = floor($price);
+        }
+
         return $price;
     }
 
@@ -133,8 +137,11 @@ class ProductPrice extends ActiveRecord
             }
         }
 
-        if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
-            $price = floor($price * Currency::currentCurrency());
+        if (\Yii::$app->controller->module->enableCurrencyConversion) {
+            $price = $price * Currency::currentCurrency();
+        }
+        if (\Yii::$app->controller->module->enablePriceRounding) {
+            $price = floor($price);
         }
 
         return $price;

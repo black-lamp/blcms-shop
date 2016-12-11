@@ -37,10 +37,16 @@ class Module extends \yii\base\Module
     public $enableCurrencyConversion = false;
 
     /**
-     * @var bool
      * If true category products will be shown with child categories products.
+     * @var bool
      */
     public $showChildCategoriesProducts = false;
+
+    /**
+     * Enables rounding in ProductPrice's model getPrice() and getSalePrice() methods
+     * @var bool
+     */
+    public $enablePriceRounding = true;
 
 
     public function init()
