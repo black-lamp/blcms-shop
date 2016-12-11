@@ -156,24 +156,22 @@ class Category extends ActiveRecord
         return $this->hasMany(CategoryTranslation::className(), ['category_id' => 'id']);
     }
 
-    public static function getBig($category, $imageType) {
-        $fileName = $category->$imageType;
-        return ('/images/' . self::$imageCategory . '/' . $imageType . '/' . $fileName . '-big' . self::$image_extension);
-    }
+    /**
+     * @param $imagableCategory
+     * @param $size
+     * @return mixed|string
+     */
+    public function getImage($imagableCategory, $size) {
+        $imageNameProperty = str_replace('shop-category/', '', $imagableCategory);
+        $imageName = $this->$imageNameProperty;
+        if (!empty($imageName)) {
+            $fullPath = \Yii::$app->shop_imagable
+                ->get($imagableCategory, $size, $imageName);
+            $path = str_replace('backend', '', Yii::$app->basePath);
+            return str_replace($path . 'frontend/web', '', $fullPath);
 
-    public static function getThumb($category, $imageType) {
-        $fileName = $category->$imageType;
-        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-thumb' . self::$image_extension);
-    }
-
-    public static function getSmall($category, $imageType) {
-        $fileName = $category->$imageType;
-        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-small' . self::$image_extension);
-    }
-
-    public static function getOriginal($category, $imageType) {
-        $fileName = $category->$imageType;
-        return ('/images/' . self::$imageCategory .  '/' . $imageType . '/' . $fileName . '-original' . self::$image_extension);
+        }
+        else return '';
     }
 
     /**
