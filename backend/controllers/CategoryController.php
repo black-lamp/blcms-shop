@@ -129,10 +129,10 @@ class CategoryController extends Controller
     public function actionSave($id = null, $languageId = null)
     {
         $category = (!empty($id)) ? Category::findOne($id) : new Category();
-        $categoryTranslation = (!empty($id)) ? CategoryTranslation::find()->where([
+        $categoryTranslation = ((!empty($id)) ? CategoryTranslation::find()->where([
             'category_id' => $id,
             'language_id' => $languageId
-        ])->one() : new CategoryTranslation();
+        ])->one() : new CategoryTranslation()) ?? new CategoryTranslation();;
 
         return $this->render('save', [
             'viewName' => 'add-basic',
