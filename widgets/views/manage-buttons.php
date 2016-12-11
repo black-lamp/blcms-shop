@@ -13,7 +13,7 @@ $item = $model;
 
 echo
     Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete', 'id' => $GLOBALS['item']->id]),
-        ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right btn-xs']) .
+        ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right btn-xs pjax']) .
 
     Html::tag('div',
         Html::a(
