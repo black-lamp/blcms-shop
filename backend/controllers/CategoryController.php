@@ -129,7 +129,7 @@ class CategoryController extends Controller
     public function actionSave($id = null, $languageId = null)
     {
         $category = (!empty($id)) ? Category::findOne($id) : new Category();
-        $category_translation = (!empty($id)) ? CategoryTranslation::find()->where([
+        $categoryTranslation = (!empty($id)) ? CategoryTranslation::find()->where([
             'category_id' => $id,
             'language_id' => $languageId
         ])->one() : new CategoryTranslation();
@@ -140,7 +140,7 @@ class CategoryController extends Controller
                 'languages' => Language::findAll(['active' => true]),
                 'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') ?? 1,
                 'category' => $category,
-                'category_translation' => $category_translation,
+                'categoryTranslation' => $categoryTranslation,
                 'categories' => Category::find()->with('translations')->all(),
                 'selectedLanguage' => Language::findOne($languageId),
             ]
@@ -301,7 +301,7 @@ class CategoryController extends Controller
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY, new CategoryEvent(['id' => $id]));
         } else Yii::$app->getSession()->setFlash('error', 'Error deleting image.');
 
-        return $this->redirect(Yii::$app->request->referrer);
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     /**
