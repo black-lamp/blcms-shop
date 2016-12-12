@@ -9,7 +9,9 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 global $item;
+global $to;
 $item = $model;
+$to = $action;
 
 echo
     Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete', 'id' => $GLOBALS['item']->id]),
@@ -18,13 +20,13 @@ echo
     Html::tag('div',
         Html::a(
             Html::tag('span', ' ' . \Yii::t('shop', 'Edit'),['class' => 'glyphicon glyphicon-pencil']),
-            Url::toRoute(['save', 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
+            Url::toRoute([$GLOBALS['to'], 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
                 'class' => 'btn btn-primary btn-xs',
             ]) .
         Html::a(
             '<span class="caret"></span>',
-            Url::toRoute(['save', 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
+            Url::toRoute([$GLOBALS['to'], 'id' => $GLOBALS['item']->id, "languageId" => Language::getCurrent()->id]),
             [
                 'class' => 'btn btn-primary btn-xs dropdown-toggle',
                 'type' => 'button', 'id' => 'dropdownMenu1',
@@ -38,7 +40,7 @@ echo
 
                     return Html::tag('li',
                         Html::a(
-                            $item, Url::toRoute(['save', 'id' => $GLOBALS['item']->id, "languageId" => $index]))
+                            $item, Url::toRoute([$GLOBALS['to'], 'id' => $GLOBALS['item']->id, "languageId" => $index]))
                     );
                 },
                 'class' => 'dropdown-menu', 'aria-labelledby' => 'dropdownMenu1']),

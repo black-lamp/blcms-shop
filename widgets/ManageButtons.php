@@ -12,13 +12,16 @@ class ManageButtons extends Widget
 {
     public $model;
 
+    public $action = 'save';
+
     /**
      * @inheritdoc
      */
     public function run()
     {
         return $this->render('manage-buttons', [
-            'model' => $this->model
+            'model' => $this->model,
+            'action' => $this->action
         ]);
     }
 }
