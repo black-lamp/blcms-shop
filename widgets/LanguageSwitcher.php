@@ -13,7 +13,6 @@ class LanguageSwitcher extends Widget
 {
     public $languages;
     public $selectedLanguage;
-    public $model;
 
     /**
      * @inheritdoc
@@ -26,7 +25,6 @@ class LanguageSwitcher extends Widget
         return $this->render('language-switcher', [
             'languages' => $this->languages,
             'selectedLanguage' => $this->selectedLanguage,
-            'model' => $this->model
         ]);
     }
 }

@@ -25,7 +25,7 @@ use yii\helpers\Url;
                         <a href="
                             <?= Url::to([
                             '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id,
-                            'id' => $model->id,
+                            'id' => Yii::$app->request->get('id'),
                             'languageId' => $language->id]); ?>
                         ">
                             <?= $language->name ?>
