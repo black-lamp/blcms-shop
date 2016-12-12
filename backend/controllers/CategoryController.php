@@ -3,6 +3,7 @@ namespace bl\cms\shop\backend\controllers;
 
 use Yii;
 use yii\base\Exception;
+use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
@@ -178,6 +179,8 @@ class CategoryController extends Controller
                 $eventName = $category->isNewRecord ? self::EVENT_AFTER_CREATE_CATEGORY : self::EVENT_AFTER_EDIT_CATEGORY;
 
                 $category->save();
+
+                if (empty($categoryTranslation->seoUrl)) $categoryTranslation->seoUrl = Inflector::slug($categoryTranslation->title);
 
                 $categoryTranslation->category_id = $category->id;
                 $categoryTranslation->language_id = $languageId;
