@@ -165,8 +165,9 @@ class Category extends ActiveRecord
         if (!empty($imageName)) {
             $fullPath = \Yii::$app->shop_imagable
                 ->get($imagableCategory, $size, $imageName);
-            $path = str_replace('backend', '', Yii::$app->basePath);
-            return str_replace($path . '/web', '', $fullPath);
+            $path = str_replace('frontend', '', Yii::$app->basePath);
+            $path = str_replace('backend', '', $path);
+            return str_replace($path . 'frontend/web', '', $fullPath);
 
         } else return '';
     }
