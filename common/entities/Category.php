@@ -106,6 +106,14 @@ class Category extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProductAttributes()
+    {
+        return $this->hasMany(ShopAttribute::className(), ['relation_category_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getParent()
     {
         return $this->hasOne(Category::className(), ['id' => 'parent_id']);
