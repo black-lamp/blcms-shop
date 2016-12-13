@@ -12,7 +12,6 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $attribute_id
- * @property string $value
  *
  * @property ShopAttribute $attribute
  * @property ShopAttributeValueTranslation[] $shopAttributeValueTranslations
