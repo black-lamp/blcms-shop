@@ -20,7 +20,7 @@ use yii\widgets\Pjax;
     'dataProvider' => $dataProvider,
     'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
     'options' => [
-        'class' => 'project-list'
+        'class' => 'table table-hover table-striped table-bordered'
     ],
     'tableOptions' => [
         'id' => 'my-grid',
@@ -30,10 +30,6 @@ use yii\widgets\Pjax;
 
     'columns' => [
         'id',
-        [
-            'label' => \Yii::t('shop', 'Title'),
-            'value' => 'translation.title',
-        ],
         [
             'attribute' => 'value',
             'value' => function($model) {
@@ -70,16 +66,18 @@ use yii\widgets\Pjax;
     ]); ?>
 
     <?php if ($attribute->type_id == 3) : ?>
-        <?= $valueForm->field($attributeTextureModel, 'color')->input('color', ['class' => ""]); ?>
+        <?= $valueForm->field($attributeTextureModel, 'color')->input('color', ['class' => "col-md-10"])->label(false); ?>
 
     <?php elseif ($attribute->type_id == 4) : ?>
-        <?= $valueForm->field($attributeTextureModel, 'imageFile')->fileInput(); ?>
+        <?= $valueForm->field($attributeTextureModel, 'imageFile')->fileInput(['class' => "col-md-10"])->label(false); ?>
     <?php else : ?>
-        <?= $valueForm->field($valueModelTranslation, 'value')->textInput(['maxlength' => true]) ?>
+        <?= $valueForm->field($valueModelTranslation, 'value')
+            ->textInput(['maxlength' => true, 'class' => "form-control col-md-10"])->label(false) ?>
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton($valueModel->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => 'pjax']) ?>
+        <?= Html::submitButton($valueModel->isNewRecord ?
+            Yii::t('shop', 'Add') : Yii::t('shop', 'Update'), ['class' => 'pjax btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

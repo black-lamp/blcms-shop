@@ -83,15 +83,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if (!$attribute->isNewRecord) : ?>
         <div class="panel-body">
 
-            <?= $this->render('add-value', [
-                'dataProvider' => $dataProvider,
-                'attribute' => $attribute,
-                'selectedLanguage' => $selectedLanguage,
-                'valueModelTranslation' => $valueModelTranslation,
-                'valueModel' => $valueModel,
-                'attributeTextureModel' => $attributeTextureModel
-            ]); ?>
-
+            <div class="col-md-6">
+                <?= $this->render('add-value', [
+                    'dataProvider' => $dataProvider,
+                    'attribute' => $attribute,
+                    'selectedLanguage' => $selectedLanguage,
+                    'valueModelTranslation' => $valueModelTranslation,
+                    'valueModel' => $valueModel,
+                    'attributeTextureModel' => $attributeTextureModel
+                ]); ?>
+            </div>
         </div>
     <?php endif; ?>
 </div>
