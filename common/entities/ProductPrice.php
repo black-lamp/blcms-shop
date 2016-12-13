@@ -15,6 +15,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $sale
  * @property integer $sale_type_id
  * @property integer $position
+ * @property string $articulus
  *
  * @property SaleType $type
  * @property Product $product
@@ -60,6 +61,7 @@ class ProductPrice extends ActiveRecord
             [['product_id', 'price'], 'required'],
             [['price', 'sale'], 'double'],
             [['product_id', 'sale_type_id'], 'integer'],
+            [['articulus'], 'string'],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];

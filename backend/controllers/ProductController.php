@@ -915,6 +915,60 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    public function actionEditPrice($id, $languageId)
+    {
+        $price = ProductPrice::findOne($id);
+        $priceTranslation = ProductPriceTranslation::find()->where([
+            'price_id' => $id,
+            'language_id' => $languageId
+        ])->one();
+        if (empty($priceTranslation)) {
+            $priceTranslation = new ProductPriceTranslation();
+        }
+
+        if (Yii::$app->request->isPost) {
+
+            $post = Yii::$app->request->post();
+            $price->load($post);
+            $priceTranslation->load($post);
+            $priceTranslation->price_id = $id;
+            $priceTranslation->language_id = $languageId;
+
+            if ($price->validate() && $priceTranslation->validate()) {
+                $price->save();
+                $priceTranslation->save();
+
+
+                return $this->redirect(Url::to(['add-price',
+                    'id' => $price->product_id,
+                    'languageId' => $languageId
+                ]));
+            } else die(var_dump($priceTranslation->errors));
+        }
+
+        if (Yii::$app->request->isPjax) {
+            return $this->renderPartial('edit-price', [
+                'selectedLanguage' => Language::findOne($languageId),
+                'priceTranslation' => $priceTranslation,
+                'price' => $price
+            ]);
+        }
+
+        return $this->render('save', [
+            'languages' => Language::find()->all(),
+            'viewName' => 'edit-price',
+            'selectedLanguage' => Language::findOne($languageId),
+            'productId' => $price->product_id,
+            'product' => Product::findOne($price->product_id),
+
+            'params' => [
+                'selectedLanguage' => Language::findOne($languageId),
+                'priceTranslation' => $priceTranslation,
+                'price' => $price
+            ]
+        ]);
+    }
+
     /**
      * Users which have 'updateOwnProduct' permission can delete price only from Product models that have been created by their.
      * Users which have 'updateProduct' permission can delete price from all Product models.
