@@ -2,7 +2,6 @@
 
 namespace bl\cms\shop\common\entities;
 
-use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -10,11 +9,17 @@ use yii\db\ActiveRecord;
  * This is the model class for table "shop_attribute_type".
  *
  * @property integer $id
+ * @property string $title
  *
  * @property ShopAttribute[] $shopAttributes
  */
 class ShopAttributeType extends ActiveRecord
 {
+
+    const TYPE_DROP_DOWN_LIST = 1;
+    const TYPE_RADIO_BUTTON = 2;
+    const TYPE_COLOR = 3;
+    const TYPE_TEXTURE = 4;
 
     /**
      * @inheritdoc
@@ -30,7 +35,7 @@ class ShopAttributeType extends ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'string', 'max' => 255],
+            [['title', 'type'], 'string', 'max' => 255],
         ];
     }
 
@@ -41,6 +46,7 @@ class ShopAttributeType extends ActiveRecord
     {
         return [
             'id' => Yii::t('shop', 'id'),
+            'title' => Yii::t('shop', 'Title'),
         ];
     }
 
@@ -52,11 +58,4 @@ class ShopAttributeType extends ActiveRecord
         return $this->hasMany(ShopAttribute::className(), ['type_id' => 'id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShopAttributeTypeTranslations()
-    {
-        return $this->hasMany(ShopAttributeTypeTranslation::className(), ['type_id' => 'id']);
-    }
 }

@@ -261,4 +261,13 @@ class Product extends ActiveRecord
         if (!empty($favoriteProduct)) return true;
         else return false;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinations()
+    {
+        return $this->hasMany(ProductCombination::className(), ['product_id' => 'id']);
+    }
+
 }
