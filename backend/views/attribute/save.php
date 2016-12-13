@@ -9,17 +9,16 @@
  * @var $form yii\widgets\ActiveForm
  * @var $languages Language
  * @var $selectedLanguage Language
- * @var valueModel ShopAttributeValue
- * @var valueModelTranslation ShopAttributeValueTranslation
+ * @var $valueModel ShopAttributeValue
+ * @var $valueModelTranslation ShopAttributeValueTranslation
  */
 
+use bl\cms\shop\common\entities\Category;
 use bl\multilang\entities\Language;
-use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
 
 $this->title = Yii::t('shop', 'Create Shop Attribute');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('shop', 'Shop Attributes'), 'url' => ['index']];
@@ -64,8 +63,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($attributeTranslation, 'title')->textInput() ?>
 
+        <!--ATTRIBUTE TYPE-->
         <?php $options = (!$attribute->isNewRecord) ? ["disabled" => "disabled"] : [] ?>
         <?= $form->field($attribute, 'type_id')->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
+
+        <!--RELATION CATEGORY-->
+        <?= $form->field($attribute, 'relation_category_id')
+            ->dropDownList(ArrayHelper::map(Category::find()->all(), 'id', 'translation.title'), []); ?>
 
         <div class="form-group">
             <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
