@@ -69,8 +69,6 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
 
-    <?= $valueForm->field($valueModelTranslation, 'title')->textInput(['maxlength' => true]) ?>
-
     <?php if ($attribute->type_id == 3) : ?>
         <?= $valueForm->field($attributeTextureModel, 'color')->input('color', ['class' => ""]); ?>
 

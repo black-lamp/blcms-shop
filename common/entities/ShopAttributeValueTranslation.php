@@ -34,8 +34,7 @@ class ShopAttributeValueTranslation extends ActiveRecord
     {
         return [
             [['value_id', 'language_id'], 'integer'],
-            [['title'], 'string', 'max' => 255],
-            [['value'], 'safe'],
+            [['value'], 'string', 'max' => 255],
 
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
             [['value_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttributeValue::className(), 'targetAttribute' => ['value_id' => 'id']],
@@ -49,7 +48,7 @@ class ShopAttributeValueTranslation extends ActiveRecord
     {
         return [
             'id' => Yii::t('shop', 'Id'),
-            'title' => Yii::t('shop', 'Title')
+            'value' => Yii::t('shop', 'Value')
         ];
     }
 
