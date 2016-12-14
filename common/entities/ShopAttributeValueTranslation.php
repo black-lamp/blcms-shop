@@ -11,11 +11,10 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $value_id
- * @property string $title
+ * @property string $value
  * @property integer $language_id
  *
  * @property Language $language
- * @property ShopAttributeValue $value
  */
 class ShopAttributeValueTranslation extends ActiveRecord
 {
@@ -60,11 +59,4 @@ class ShopAttributeValueTranslation extends ActiveRecord
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getValue()
-    {
-        return $this->hasOne(ShopAttributeValue::className(), ['id' => 'value_id']);
-    }
 }
