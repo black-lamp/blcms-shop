@@ -34,7 +34,7 @@ function getAttributeValues() {
                 $('#productcombinationvalue').children().remove();
 
                 $.each(attributeValues, function (i, value) {
-                    $(new Option(value['translation']['title'], value['id'])).appendTo('#productcombinationvalue');
+                    $(new Option(value['translation']['value'], value['id'])).appendTo('#productcombinationvalue');
                 });
             },
             error: function () {

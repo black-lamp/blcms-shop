@@ -1351,6 +1351,8 @@ class ProductController extends Controller
             'combinationAttribute' => $combinationAttribute,
             'combinationAttributes' => $combinationAttributes,
             'languageId' => $languageId,
+            'image_form' => $imageForm,
+            'product' => Product::findOne($combination->product_id),
         ]);
     }
 
