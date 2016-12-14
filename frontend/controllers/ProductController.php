@@ -2,7 +2,7 @@
 namespace bl\cms\shop\frontend\controllers;
 
 use Yii;
-use yii\httpclient\Exception;
+use yii\helpers\Json;
 use yii\web\Response;
 use yii\web\Controller;
 use bl\cms\cart\models\CartForm;
@@ -106,5 +106,21 @@ class ProductController extends Controller
             'name' => 'keywords',
             'content' => strip_tags($model->translation->seoKeywords) ?? ''
         ]);
+    }
+
+
+
+    public function actionGetProductCombination($values, $productId) {
+        $values = Json::decode($values);
+        $combination = \Yii::$app->cart->getCombination($values, $productId);
+        if (!empty($combination)) {
+            $array = [
+                'image' => $combination->images[0]->productImage->thumb,
+                'price' => Yii::$app->formatter->asCurrency($combination->salePrice)
+            ];
+//            $price = Yii::$app->formatter->asCurrency($combination->salePrice);
+        }
+        else return 0;
+        return Json::encode($array);
     }
 }
