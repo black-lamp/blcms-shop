@@ -26,6 +26,18 @@ class TreeWidget extends Widget
 
     public $currentCategoryId;
 
+    /**
+     * Sets css-class for span tag when category is closed
+     * @var string
+     */
+    public $upIconClass = 'glyphicon glyphicon-minus';
+
+    /**
+     * Sets css-class for span tag when category is opened
+     * @var string
+     */
+    public $downIconClass = 'glyphicon glyphicon-plus';
+
     public function init()
     {
         TreeWidgetAsset::register($this->getView());
@@ -54,7 +66,9 @@ class TreeWidget extends Widget
                 'categories' => $categories,
                 'currentCategoryId' => $currentCategoryId,
                 'level' => 0,
-                'context' => $this
+                'context' => $this,
+                'upIconClass' => $this->upIconClass,
+                'downIconClass' => $this->downIconClass
             ]);
         } else return false;
 

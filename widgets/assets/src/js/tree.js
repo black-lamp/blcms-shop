@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    downIconClass = downIconClass.replace(/ /g,".")
+    upIconClass = upIconClass.replace(/ /g,".")
 
     /*FIND WIDGET*/
     var widget = $('#widget-menu');
@@ -10,7 +12,7 @@ $(document).ready(function () {
 
 
     /*OPEN ON CLICK*/
-    widget.on('click', '.category-toggle.glyphicon-plus', (function () {
+    widget.on('click', '.category-toggle.' + downIconClass, (function () {
         var element = this;
         var id = element.id;
         var ul = $(element).parent().parent();
@@ -22,8 +24,12 @@ $(document).ready(function () {
             data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
 
             success: function (data) {
-                $(element).removeClass('glyphicon-plus');
-                $(element).addClass('glyphicon-minus');
+                var downClasses = downIconClass.split('.');
+                var upClasses = upIconClass.split('.');
+                for (var i = 0; i < downClasses.length; i++) {
+                    $(element).removeClass(downClasses[i]);
+                    $(element).addClass(upClasses[i]);
+                }
 
                 $(data).height('100%').slideDown(300).insertAfter($('#' + id));
             }
@@ -33,11 +39,15 @@ $(document).ready(function () {
     }));
 
     /*CLOSE ON CLICK*/
-    widget.on('click', '.category-toggle.glyphicon-minus', (function () {
+    widget.on('click', '.category-toggle.' + upIconClass, (function () {
         var element = this;
 
-        $(element).removeClass('glyphicon-minus');
-        $(element).addClass('glyphicon-plus');
+        var downClasses = downIconClass.split('.');
+        var upClasses = upIconClass.split('.');
+        for (var i = 0; i < downClasses.length; i++) {
+            $(element).removeClass(upClasses[i]);
+            $(element).addClass(downClasses[i]);
+        }
 
         var ul = $(element).nextAll();
         $(ul).slideUp(300);
@@ -56,8 +66,8 @@ function autoOpen(openedTreeItem, currentCategoryId) {
             var ul = $(this).parent().parent();
             var level = $(ul).attr("data-level");
 
-            $(this).removeClass('glyphicon-plus');
-            $(this).addClass('glyphicon-minus');
+            $(this).removeClass(downIconClass);
+            $(this).addClass(upIconClass);
 
             $.ajax({
                 type: "GET",
