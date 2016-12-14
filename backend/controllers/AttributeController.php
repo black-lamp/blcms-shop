@@ -43,7 +43,7 @@ class AttributeController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['save'],
+                        'actions' => ['save', 'remove-attribute-value'],
                         'roles' => ['saveAttribute'],
                         'allow' => true,
                     ],
@@ -195,45 +195,46 @@ class AttributeController extends Controller
      */
     public function actionAddValue($attrId, $languageId)
     {
-
         if (!empty($attrId)) {
             $languageId = empty($languageId) ? Language::getCurrent()->id : $languageId;
-            $model = new ShopAttributeValue();
-            $modelTranslation = new ShopAttributeValueTranslation();
+            $attributeValue = new ShopAttributeValue();
+            $attributeValueTranslation = new ShopAttributeValueTranslation();
             $attributeTextureModel = new AttributeTextureForm();
 
-            if (Yii::$app->request->post()) {
+            $searchAttributeValueModel = new SearchAttributeValue();
+            $dataProviderAttributeValue = $searchAttributeValueModel->search(Yii::$app->request->queryParams);
 
-                if ($modelTranslation->load(Yii::$app->request->post())) {
+            if (Yii::$app->request->isPost) {
+                $post = Yii::$app->request->post();
+                if ($attributeValueTranslation->load($post) || $attributeTextureModel->load($post)) {
 
-                    $model->attribute_id = $attrId;
+                    $attributeValue->attribute_id = $attrId;
+                    $shopAttribute = ShopAttribute::findOne($attrId);
 
-                    if (ShopAttribute::findOne($attrId)->type_id == 3 || ShopAttribute::findOne($attrId)->type_id == 4) {
+                    if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                         $colorTexture = new ShopAttributeValueColorTexture();
-                        if (ShopAttribute::findOne($attrId)->type_id == 3) {
-                            if ($attributeTextureModel->load(Yii::$app->request->post())) {
-                                $colorTexture->color = $attributeTextureModel->color;
-                            }
-                        } elseif (ShopAttribute::findOne($attrId)->type_id == 4) {
-
-                            if ($attributeTextureModel->load(Yii::$app->request->post())) {
-                                $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
-                                $colorTexture->texture = $attributeTextureModel->upload();
-                            }
+                        if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+                            $colorTexture->color = $attributeTextureModel->color;
+                        } elseif ($shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                            $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
+                            $colorTexture->texture = $attributeTextureModel->upload();
                         }
-
-                        $colorTexture->save();
-                        $modelTranslation->value = $colorTexture->id;
+                        if ($colorTexture->validate()) {
+                            $colorTexture->save();
+                            $attributeValueTranslation->value = (string) $colorTexture->id;
+                        }
+                        else throw new Exception('Color or texture saving error');
                     }
 
-                    if ($model->save()) {
-                        $modelTranslation->value_id = $model->id;
-                        $modelTranslation->language_id = $languageId;
+                    if ($attributeValue->validate()) {
+                        $attributeValue->save();
 
-                        if ($modelTranslation->save()) {
+                        $attributeValueTranslation->value_id = $attributeValue->id;
+                        $attributeValueTranslation->language_id = $languageId;
+
+                        if ($attributeValueTranslation->validate()) {
+                            $attributeValueTranslation->save();
                             if (\Yii::$app->request->isPjax) {
-                                $searchAttributeValueModel = new SearchAttributeValue();
-                                $dataProviderAttributeValue = $searchAttributeValueModel->search(Yii::$app->request->queryParams);
                                 return $this->renderPartial('add-value', [
                                     'dataProvider' => $dataProviderAttributeValue,
                                     'attribute' => ShopAttribute::findOne($attrId),
@@ -244,16 +245,32 @@ class AttributeController extends Controller
                                 ]);
                             } else {
                                 return $this->redirect(Url::toRoute(['save', 'attrId' => $attrId, 'languageId' => $languageId]));
-
                             }
                         }
-                    } else throw new Exception($model->errors);
+                    }
                 }
-            } else {
-
-                return $this->render(Url::toRoute(['add-value', 'attrId' => $attrId, 'languageId' => $languageId]));
             }
         }
+        throw new NotFoundHttpException();
+    }
+
+    public function actionRemoveAttributeValue($attributeValueId) {
+        $attributeValue = ShopAttributeValue::findOne($attributeValueId);
+
+        if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE ||
+            $attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+
+            if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                $path = Yii::getAlias('@frontend/web/images/shop/attribute-texture/') .
+                    $attributeValue->translation->colorTexture->texture;
+                unlink($path);
+            }
+
+            $colorTexture = ShopAttributeValueColorTexture::findOne($attributeValue->translation->value);
+            $colorTexture->delete();
+        }
+        $attributeValue->delete();
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     /**

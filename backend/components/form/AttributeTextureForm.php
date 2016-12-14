@@ -25,6 +25,16 @@ class AttributeTextureForm extends Model
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'imageFile' => Yii::t('shop', 'Texture')
+        ];
+    }
+
     public function upload()
     {
         $dir = Yii::getAlias('@frontend/web/images/shop/attribute-texture/');

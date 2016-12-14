@@ -25,6 +25,15 @@ use yii\db\Expression;
  */
 class ShopAttribute extends ActiveRecord
 {
+
+    /**
+     * Attribute types
+     */
+    const TYPE_DROP_DOWN_LIST = 1;
+    const TYPE_RADIO_BUTTON = 2;
+    const TYPE_COLOR = 3;
+    const TYPE_TEXTURE = 4;
+
     /**
      * @inheritdoc
      */

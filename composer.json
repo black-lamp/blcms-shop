@@ -19,6 +19,7 @@
     "yiisoft/yii2-bootstrap": "*",
     "2amigos/yii2-tinymce-widget": "*",
     "black-lamp/blcms-staticpage": "0.*",
+    "kartik-v/yii2-widgets": "*",
 
     "yii2tech/ar-position": "*",
 

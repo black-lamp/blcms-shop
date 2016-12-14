@@ -59,4 +59,22 @@ class ShopAttributeValueTranslation extends ActiveRecord
         return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShopAttributeValue() {
+        return $this->hasOne(ShopAttributeValue::className(), ['id' => 'value_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery|boolean
+     */
+    public function getColorTexture() {
+        if ($this->shopAttributeValue
+                ->shopAttribute->type_id == ShopAttributeType::TYPE_TEXTURE) {
+            return $this->hasOne(ShopAttributeValueColorTexture::className(), ['id' => 'value']);
+        }
+        else return false;
+    }
+
 }

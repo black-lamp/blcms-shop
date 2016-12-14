@@ -68,6 +68,13 @@ class ShopAttributeValue extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getShopAttribute() {
+        return $this->hasOne(ShopAttribute::className(), ['id' => 'attribute_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getShopAttributeValueTranslations()
     {
         return $this->hasMany(ShopAttributeValueTranslation::className(), ['value_id' => 'id']);

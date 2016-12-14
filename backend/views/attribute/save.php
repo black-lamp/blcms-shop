@@ -56,7 +56,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <h1><?= Html::encode($this->title) ?></h1>
     </div>
 
-
     <div class="panel-body">
 
         <?php $form = ActiveForm::begin(); ?>
@@ -82,17 +81,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (!$attribute->isNewRecord) : ?>
         <div class="panel-body">
-
-            <div class="col-md-6">
-                <?= $this->render('add-value', [
-                    'dataProvider' => $dataProvider,
-                    'attribute' => $attribute,
-                    'selectedLanguage' => $selectedLanguage,
-                    'valueModelTranslation' => $valueModelTranslation,
-                    'valueModel' => $valueModel,
-                    'attributeTextureModel' => $attributeTextureModel
-                ]); ?>
-            </div>
+            <?= $this->render('add-value', [
+                'dataProvider' => $dataProvider,
+                'attribute' => $attribute,
+                'selectedLanguage' => $selectedLanguage,
+                'valueModelTranslation' => $valueModelTranslation,
+                'valueModel' => $valueModel,
+                'attributeTextureModel' => $attributeTextureModel
+            ]); ?>
         </div>
     <?php endif; ?>
 </div>
