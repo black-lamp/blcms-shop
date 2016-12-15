@@ -3,6 +3,7 @@ namespace bl\cms\shop\frontend\widgets;
 
 use bl\cms\cart\models\CartForm;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductCombination;
 use bl\cms\shop\frontend\widgets\assets\ProductPricesAsset;
 use yii\base\Widget;
 use yii\widgets\ActiveForm;
@@ -28,6 +29,13 @@ class ProductPrices extends Widget
      */
     public $cart;
 
+    /**
+     * @var ProductCombination
+     */
+    public $defaultCombination;
+
+    public $notAvailableText = 'Not available';
+
     public function init()
     {
         ProductPricesAsset::register($this->getView());
@@ -41,7 +49,9 @@ class ProductPrices extends Widget
             [
                 'product' => $this->product,
                 'form' => $this->form,
-                'cart' => $this->cart
+                'cart' => $this->cart,
+                'defaultCombination' => $this->defaultCombination,
+                'notAvailableText' => $this->notAvailableText
             ]);
 
     }

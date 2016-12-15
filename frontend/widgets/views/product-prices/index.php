@@ -5,6 +5,15 @@
  * @var $product \bl\cms\shop\common\entities\Product
  * @var $form \yii\widgets\ActiveForm
  * @var $cart \bl\cms\cart\models\CartForm
+ * @var $defaultCombination \bl\cms\shop\common\entities\ProductCombination
+ * @var $notAvailableText string
+ *
+ * Ex.: echo \bl\cms\shop\frontend\widgets\ProductPrices::widget([
+ *  'product' => $product,
+ *  'form' => $form,
+ *  'cart' => $cart,
+ *  'defaultCombination' => $defaultCombination
+ * ]);
  */
 use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
@@ -21,7 +30,7 @@ use yii\helpers\ArrayHelper;
             <?php $combinationsIds = ArrayHelper::getColumn($product->combinations, 'id'); ?>
             <?php $combinationsAttributes = $productAttribute->getProductCombinationAttributes($combinationsIds); ?>
 
-            <?= $form->field($cart, 'attribute_value_id[]')->radioList(
+            <?= $form->field($cart, 'attribute_value_id[]', [])->radioList(
                 \yii\helpers\ArrayHelper::map($combinationsAttributes,
                     function ($model) {
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
@@ -36,13 +45,26 @@ use yii\helpers\ArrayHelper;
                         }
                         return $model->attributeValue->translation->value;
                     }),
-                ['name' => 'CartForm[attribute_value_id][' . $productAttribute->id . ']', 'encode' => false]
+                [
+                    'name' => 'CartForm[attribute_value_id][' . $productAttribute->id . ']',
+                    'encode' => false,
+                    'item' => function ($index, $label, $name, $checked, $value) {
+                        return '<label class="' . ($checked ? ' active' : '') . '">' .
+                        Html::radio($name, function($model) {
+                            return ($model->combination_id == $defaultCombination->id) ? 'checked' : false;
+                        }, [
+                            'value' => $value, 'class' => 'project-status-btn'
+                        ]) . $label . '</label>';
+                    },
+                ]
             )->label(false); ?>
         <?php endforeach; ?>
         <?php $language = \bl\multilang\entities\Language::getCurrent(); ?>
         <p>
             <span class="price-title"><?= \Yii::t('shop', 'Price'); ?></span>:
-            <span id="price" data-language-prefix="<?= $language->lang_id; ?>"></span>
+            <span id="price" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
+                <?= \Yii::$app->formatter->asCurrency((!empty($defaultCombination) ? $defaultCombination->salePrice : 0)); ?>
+            </span>
         </p>
     </div>
 <?php else : ?>
