@@ -61,7 +61,6 @@ class ShopAttributeValue extends ActiveRecord
     {
         return [
             'Id' => Yii::t('shop', 'Id'),
-            'value' => Yii::t('shop', 'Value')
         ];
     }
 

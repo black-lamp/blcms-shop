@@ -114,4 +114,14 @@ class ShopAttribute extends ActiveRecord
     {
         return $this->hasMany(ShopAttributeValue::className(), ['attribute_id' => 'id']);
     }
+
+    /**
+     * @param $combinationsIds
+     * @return array
+     */
+    public function getProductCombinationAttributes($combinationsIds) {
+        $productCombinationAttributes = ProductCombinationAttribute::find()->where(['attribute_id' => $this->id])
+            ->andWhere(['combination_id' => $combinationsIds])->all();
+        return $productCombinationAttributes;
+    }
 }

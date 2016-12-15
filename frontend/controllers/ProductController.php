@@ -118,7 +118,6 @@ class ProductController extends Controller
                 'image' => $combination->images[0]->productImage->thumb,
                 'price' => Yii::$app->formatter->asCurrency($combination->salePrice)
             ];
-//            $price = Yii::$app->formatter->asCurrency($combination->salePrice);
         }
         else return 0;
         return Json::encode($array);

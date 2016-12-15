@@ -4,6 +4,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\common\components\user\models\Profile;
 use bl\cms\cart\models\OrderProduct;
+use bl\cms\shop\helpers\ShopArrayHelper;
 use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
 use Yii;
@@ -268,6 +269,23 @@ class Product extends ActiveRecord
     public function getCombinations()
     {
         return $this->hasMany(ProductCombination::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * Gets attributes, which used in product combinations
+     * @return array|mixed
+     */
+    public function getProductAttributes() {
+        $attributes = [];
+        foreach ($this->combinations as $combination) {
+            foreach ($combination->shopProductCombinationAttributes as $combinationAttribute) {
+                $attributes[] = $combinationAttribute->productAttribute;
+            }
+        }
+
+        $attributes = ShopArrayHelper::removeDuplicatedArrayElements($attributes);
+
+        return $attributes;
     }
 
 }
