@@ -22,7 +22,7 @@ global $globalDefaultCombination;
 $globalDefaultCombination = $defaultCombination;
 ?>
 
-<?php if (\Yii::$app->cart->enableGetPricesFromCombinations) : ?>
+<?php if (\Yii::$app->cart->enableGetPricesFromCombinations && !empty($product->productAttributes)) : ?>
     <div id="combinations-values">
         <?php foreach ($product->productAttributes as $productAttribute) : ?>
             <p class="attribute-title">
@@ -54,11 +54,13 @@ $globalDefaultCombination = $defaultCombination;
                     'encode' => false,
                     'item' => function ($index, $label, $name, $checked, $value) {
 
-                        foreach ($GLOBALS['globalDefaultCombination']->shopProductCombinationAttributes as $attribute) {
-                            $serialized = \yii\helpers\Json::encode([
-                                'attributeId' => $attribute->attribute_id,
-                                'valueId' => $attribute->attribute_value_id]);
-                            if ($serialized == $value) $checked = true;
+                        if (!empty($GLOBALS['globalDefaultCombination'])) {
+                            foreach ($GLOBALS['globalDefaultCombination']->shopProductCombinationAttributes as $attribute) {
+                                $serialized = \yii\helpers\Json::encode([
+                                    'attributeId' => $attribute->attribute_id,
+                                    'valueId' => $attribute->attribute_value_id]);
+                                if ($serialized == $value) $checked = true;
+                            }
                         }
 
                         return '<label class="' . ($checked ? ' active' : '') . '">' .
