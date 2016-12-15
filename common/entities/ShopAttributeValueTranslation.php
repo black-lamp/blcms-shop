@@ -71,7 +71,9 @@ class ShopAttributeValueTranslation extends ActiveRecord
      */
     public function getColorTexture() {
         if ($this->shopAttributeValue
-                ->shopAttribute->type_id == ShopAttributeType::TYPE_TEXTURE) {
+                ->shopAttribute->type_id == ShopAttributeType::TYPE_TEXTURE ||
+            $this->shopAttributeValue
+                ->shopAttribute->type_id == ShopAttributeType::TYPE_COLOR) {
             return $this->hasOne(ShopAttributeValueColorTexture::className(), ['id' => 'value']);
         }
         else return false;

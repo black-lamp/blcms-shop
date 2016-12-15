@@ -109,7 +109,6 @@ class ProductController extends Controller
     }
 
 
-
     public function actionGetProductCombination($values, $productId) {
         $values = Json::decode($values);
         $combination = \Yii::$app->cart->getCombination($values, $productId);

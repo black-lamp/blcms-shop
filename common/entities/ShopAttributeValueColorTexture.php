@@ -47,7 +47,7 @@ class ShopAttributeValueColorTexture extends ActiveRecord
         ];
     }
 
-    public static function getTexture($id) {
-        return Html::img('/images/shop/attribute-texture/' . self::findOne($id)->texture, ['height' => '100']);
+    public function getAttributeTexture() {
+        return Html::img('/images/shop/attribute-texture/' . self::findOne($this->id)->texture, ['class' => 'texture']);
     }
 }

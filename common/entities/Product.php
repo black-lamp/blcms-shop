@@ -126,7 +126,7 @@ class Product extends ActiveRecord
         return [
             'id' => Yii::t('shop', 'ID'),
             'position' => Yii::t('shop', 'Position'),
-            'price' => Yii::t('shop', 'Price'),
+            'price' => Yii::t('shop', 'Base price'),
             'articulus' => Yii::t('shop', 'Articulus'),
             'creation_time' => Yii::t('shop', 'Creation Time'),
             'update_time' => Yii::t('shop', 'Update Time'),
