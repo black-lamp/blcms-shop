@@ -1,0 +1,15 @@
+div#combinations-values p.attribute-title {
+    font-weight: bold;
+}
+div#combinations-values img.texture {
+    width: 75px;
+    height: 75px;
+}
+div#combinations-values div.attribute-color {
+    width: 50px;
+    height: 50px;
+}
+div#combinations-values span.price-title {
+    font-weight: bold;
+    font-size: 18px;
+}
