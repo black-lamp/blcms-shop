@@ -32,6 +32,8 @@ $(document).ready(function() {
 
                 success: function (data) {
                     data = JSON.parse(data);
+                    if(!data) $('#add-to-cart-button').attr('disabled','disabled');
+                    else $('#add-to-cart-button').removeAttr('disabled');
 
                     var price = (data.price) ? data.price : priceTag.data('default-value');
                     priceTag.text(price);
@@ -39,6 +41,7 @@ $(document).ready(function() {
                     $('img.zoomImg').attr('src', data.image);
                 },
                 error: function (data) {
+                    alert('sdfg');
                     priceTag.text('Нет в наличии');
                 }
             });
