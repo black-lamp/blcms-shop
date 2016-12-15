@@ -20,7 +20,7 @@ class LanguageSwitcher extends Widget
     public function run()
     {
         if (empty($this->languages)) {
-            $this->languages = Language::find()->all();
+            $this->languages = Language::find()->where(['active' => true])->all();
         }
         return $this->render('language-switcher', [
             'languages' => $this->languages,

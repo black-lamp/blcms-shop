@@ -70,7 +70,7 @@ class CategoryController extends Controller
                     ],
                     [
                         'actions' => ['save', 'add-basic', 'add-images', 'add-seo', 'delete-image',
-                            'select-filters', 'delete-filter', 'up', 'down', 'switch-show'],
+                            'select-filters', 'delete-filter', 'up', 'down', 'switch-show', 'get-seo-url'],
                         'roles' => ['saveShopCategory'],
                         'allow' => true,
                     ],
@@ -131,9 +131,9 @@ class CategoryController extends Controller
     {
         $category = (!empty($id)) ? Category::findOne($id) : new Category();
         $categoryTranslation = ((!empty($id)) ? CategoryTranslation::find()->where([
-            'category_id' => $id,
-            'language_id' => $languageId
-        ])->one() : new CategoryTranslation()) ?? new CategoryTranslation();;
+                'category_id' => $id,
+                'language_id' => $languageId
+            ])->one() : new CategoryTranslation()) ?? new CategoryTranslation();;
 
         return $this->render('save', [
             'viewName' => 'add-basic',
@@ -420,5 +420,20 @@ class CategoryController extends Controller
                 new CategoryEvent(['id' => $id]));
             return $this->actionIndex();
         } else throw new NotFoundHttpException();
+    }
+
+    /**
+     * @param $categoryId
+     * @param $languageId
+     * @return bool|string
+     */
+    public function actionGetSeoUrl($categoryId, $languageId)
+    {
+        $categoryTranslation = CategoryTranslation::find()
+            ->where(['category_id' => $categoryId, 'language_id' => $languageId])->one();
+        if (!empty($categoryTranslation)) {
+            return Inflector::slug($categoryTranslation->title);
+        }
+        else return false;
     }
 }

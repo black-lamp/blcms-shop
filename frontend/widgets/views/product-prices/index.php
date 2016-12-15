@@ -18,9 +18,11 @@
 use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
 
+global $globalDefaultCombination;
+$globalDefaultCombination = $defaultCombination;
 ?>
 
-<?php if (\Yii::$app->cart->enableGetPricesFromCombinations) : ?>
+<?php if (\Yii::$app->cart->enableGetPricesFromCombinations && !empty($product->productAttributes)) : ?>
     <div id="combinations-values">
         <?php foreach ($product->productAttributes as $productAttribute) : ?>
             <p class="attribute-title">
@@ -30,17 +32,19 @@ use yii\helpers\ArrayHelper;
             <?php $combinationsIds = ArrayHelper::getColumn($product->combinations, 'id'); ?>
             <?php $combinationsAttributes = $productAttribute->getProductCombinationAttributes($combinationsIds); ?>
 
-            <?= $form->field($cart, 'attribute_value_id[]', [])->radioList(
+            <?php $checked = true;
+            echo $form->field($cart, 'attribute_value_id[]', [])->radioList(
                 \yii\helpers\ArrayHelper::map($combinationsAttributes,
                     function ($model) {
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
                     }, function ($model) {
+
                         if ($model->productAttribute->type->id == \bl\cms\shop\common\entities\ShopAttributeType::TYPE_TEXTURE) {
                             return $model->attributeValue->translation->colorTexture->attributeTexture;
                         } else if ($model->productAttribute->type->id == \bl\cms\shop\common\entities\ShopAttributeType::TYPE_COLOR) {
                             return Html::tag('div', '', [
                                 'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
-                                'class' => 'attribute-color'
+                                'class' => 'attribute-color',
                             ]);
                         }
                         return $model->attributeValue->translation->value;
@@ -49,11 +53,20 @@ use yii\helpers\ArrayHelper;
                     'name' => 'CartForm[attribute_value_id][' . $productAttribute->id . ']',
                     'encode' => false,
                     'item' => function ($index, $label, $name, $checked, $value) {
+
+                        if (!empty($GLOBALS['globalDefaultCombination'])) {
+                            foreach ($GLOBALS['globalDefaultCombination']->shopProductCombinationAttributes as $attribute) {
+                                $serialized = \yii\helpers\Json::encode([
+                                    'attributeId' => $attribute->attribute_id,
+                                    'valueId' => $attribute->attribute_value_id]);
+                                if ($serialized == $value) $checked = true;
+                            }
+                        }
+
                         return '<label class="' . ($checked ? ' active' : '') . '">' .
-                        Html::radio($name, function($model) {
-                            return ($model->combination_id == $defaultCombination->id) ? 'checked' : false;
-                        }, [
-                            'value' => $value, 'class' => 'project-status-btn'
+                        Html::radio($name, $checked, [
+                            'value' => $value,
+                            'class' => 'project-status-btn'
                         ]) . $label . '</label>';
                     },
                 ]
