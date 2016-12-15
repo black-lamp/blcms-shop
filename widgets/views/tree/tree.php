@@ -8,13 +8,14 @@
  * @var $level integer
  * @var $upIconClass string
  * @var $downIconClass string
+ * @var $langId string
  */
 
 //die(var_dump(\Yii::$app->view->context->id));
 //die(var_dump(\Yii::$app->view->context));
 ?>
 
-<div id="widget-menu" data-current-category-id="<?=$currentCategoryId; ?>">
+<div id="widget-menu" data-current-category-id="<?=$currentCategoryId; ?>" data-language="<?=$langId; ?>">
     <?= $this->render(
         '@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax',
         [
@@ -22,7 +23,7 @@
             'currentCategoryId' => $currentCategoryId,
             'level' => $level,
             'upIconClass' => $upIconClass,
-            'downIconClass' => $downIconClass
+            'downIconClass' => $downIconClass,
         ]);
     ?>
 </div>

@@ -4,6 +4,7 @@ namespace bl\cms\shop\widgets;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\widgets\assets\TreeWidgetAsset;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Widget;
 
@@ -47,6 +48,12 @@ class TreeWidget extends Widget
     {
         parent::run();
 
+        $currentLanguage = Language::getCurrent();
+        $defaultLanguage = Language::getDefault();
+        if ($currentLanguage->id != $defaultLanguage->id) {
+            $langId = $currentLanguage->lang_id;
+        }
+
         if (!empty($this->className)) {
             $class = \Yii::createObject($this->className);
             $categories = $class::find()->where(['parent_id' => null, 'show' => 1])->orderBy('position')->all();
@@ -68,7 +75,8 @@ class TreeWidget extends Widget
                 'level' => 0,
                 'context' => $this,
                 'upIconClass' => $this->upIconClass,
-                'downIconClass' => $this->downIconClass
+                'downIconClass' => $this->downIconClass,
+                'langId' => $langId ?? ''
             ]);
         } else return false;
 

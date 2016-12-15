@@ -4,6 +4,7 @@ $(document).ready(function () {
 
     /*FIND WIDGET*/
     var widget = $('#widget-menu');
+    var languagePrefix = widget.data('language');
     var currentCategoryId = widget.attr('data-current-category-id');
 
     /*FIND TREE ITEMS WHICH MUST BE OPENED USING DATA ATTRIBUTE AND OPEN ITS*/
@@ -18,9 +19,11 @@ $(document).ready(function () {
         var ul = $(element).parent().parent();
         var level = $(ul).attr("data-level");
 
+        var url = (languagePrefix) ? '/' + languagePrefix + '/shop/category/get-categories' :
+            '/shop/category/get-categories';
         $.ajax({
             type: "GET",
-            url: '/shop/category/get-categories',
+            url: url,
             data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
 
             success: function (data) {
