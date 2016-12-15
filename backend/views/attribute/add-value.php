@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
                         return Html::tag('div', '', ['style' => 'width: 50px; height: 50px; background-color:' . $color]);
                     }
                     if (ShopAttribute::findOne($model->attribute_id)->type_id == ShopAttribute::TYPE_TEXTURE) {
-                        return ShopAttributeValueColorTexture::getTexture($model->translation->value);
+                        return ShopAttributeValueColorTexture::findOne($model->translation->value)->getAttributeTexture();
                     }
                     return $model->translation->value;
                 },
