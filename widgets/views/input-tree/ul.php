@@ -14,7 +14,12 @@ use yii\bootstrap\Html;
 
 <ul class="input-tree-ul">
     <?php foreach ($parents as $object): ?>
-        <?php $children = \bl\cms\shop\widgets\InputTree::findChildren($object, $object->id); ?>
+        <?php
+        $children = \bl\cms\shop\widgets\InputTree::findChildren($object, $object->id);
+        $label = (!empty($object->getTranslation($languageId)->title))
+            ? $object->getTranslation($languageId)->title
+            : (!empty($object->translation->title)) ? $object->translation->title : '';
+        ?>
         <li>
             <?= (!empty($children)) ? Html::tag('p', '', ['class' => 'category-toggle fa fa-plus']) : ''; ?>
             <?= $form->field($model, $attribute,
@@ -27,9 +32,7 @@ use yii\bootstrap\Html;
                 'value' => $object->id,
                 'class' => 'radio',
                 'id' => $model::className() . '-category_id-' . $object->id,
-            ])->label($object->translations[$languageId]->title ?? $object->translation->title, [
-                'for' => $model::className() . '-category_id-' . $object->id,
-            ]); ?>
+            ])->label($label, ['for' => $model::className() . '-category_id-' . $object->id,]); ?>
 
             <?= $this->render(
                 '@vendor/black-lamp/blcms-shop/widgets/views/input-tree/ul',
