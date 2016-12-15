@@ -15,7 +15,7 @@ $moduleId = Yii::$app->controller->module->uniqueId;
 ?>
 <div class="pull-right text-center">
     <small><?= Yii::t('shop', 'Sorting') ?></small>
-    <div class="dropdown <?= $options['class'] ?>">
+    <div class="dropdown <?= ArrayHelper::getValue($options, 'class') ?>">
         <button class="btn btn-default dropdown-toggle" type="button" id="productSortDropdown" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="true">
             <?= ArrayHelper::getValue($sortMethods, $currentSort) ?>
