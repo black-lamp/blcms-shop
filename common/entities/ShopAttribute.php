@@ -15,7 +15,6 @@ use yii\db\Expression;
  * @property integer $type_id
  * @property string $created_at
  * @property string $updated_at
- * @property integer $relation_category_id
  *
  * @property ShopAttributeType $type
  * @property ShopAttributeValue[] $shopAttributeValues
@@ -70,9 +69,8 @@ class ShopAttribute extends ActiveRecord
     public function rules()
     {
         return [
-            [['type_id', 'relation_category_id'], 'integer'],
+            [['type_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['relation_category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['relation_category_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttributeType::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
     }
@@ -87,7 +85,6 @@ class ShopAttribute extends ActiveRecord
             'type' => Yii::t('shop', 'Type'),
             'created_at' => Yii::t('shop', 'Created at'),
             'updated_at' => Yii::t('shop', 'Updated at'),
-            'relation_category_id' => Yii::t('relation_category_id', 'Category'),
         ];
     }
 
@@ -97,14 +94,6 @@ class ShopAttribute extends ActiveRecord
     public function getType()
     {
         return $this->hasOne(ShopAttributeType::className(), ['id' => 'type_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCategory()
-    {
-        return $this->hasOne(Category::className(), ['id' => 'relation_category_id']);
     }
 
     /**

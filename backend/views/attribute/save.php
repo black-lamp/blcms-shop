@@ -66,10 +66,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php $options = (!$attribute->isNewRecord) ? ["disabled" => "disabled"] : [] ?>
         <?= $form->field($attribute, 'type_id')->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
 
-        <!--RELATION CATEGORY-->
-        <?= $form->field($attribute, 'relation_category_id')
-            ->dropDownList(ArrayHelper::map(Category::find()->all(), 'id', 'translation.title'), []); ?>
-
         <div class="form-group">
             <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
