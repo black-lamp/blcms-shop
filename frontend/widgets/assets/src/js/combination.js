@@ -33,7 +33,7 @@ $(document).ready(function() {
                 success: function (data) {
                     data = JSON.parse(data);
 
-                    var price = (data.price) ? data.price : 0;
+                    var price = (data.price) ? data.price : priceTag.data('default-value');
                     priceTag.text(price);
                     $('#main-image').attr('src', data.image);
                     $('img.zoomImg').attr('src', data.image);

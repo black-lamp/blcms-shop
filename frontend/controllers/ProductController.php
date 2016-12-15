@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
 
+use bl\cms\shop\common\entities\ProductCombination;
 use Yii;
 use yii\helpers\Json;
 use yii\web\Response;
@@ -54,7 +55,11 @@ class ProductController extends Controller
 
             return $this->render('show', [
                 'product' => $product,
-                'cart' => new CartForm()
+                'cart' => new CartForm(),
+                'defaultCombination' => ProductCombination::find()->where([
+                    'product_id' => $id,
+                    'default' => true
+                ])->one()
             ]);
         } else throw new NotFoundHttpException();
     }
