@@ -61,9 +61,10 @@ class Product extends ActiveRecord
     const STATUS_SUCCESS = 10;
 
     /**
-     * This property is used for the Cart component.
+     * This properties are used for the Cart component.
      */
     public $count;
+    public $combinationIds;
 
     /**
      * @inheritdoc
