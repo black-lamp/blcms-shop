@@ -45,6 +45,9 @@ class Category extends ActiveRecord
             'positionBehavior' => [
                 'class' => PositionBehavior::className(),
                 'positionAttribute' => 'position',
+                'groupAttributes' => [
+                    'parent_id'
+                ],
             ],
         ];
     }
