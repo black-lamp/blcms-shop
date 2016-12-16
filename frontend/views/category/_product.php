@@ -34,10 +34,10 @@ $modelUrl = Url::to(['/shop/product/show',
 
     <div class="caption">
         <a href="<?= $modelUrl ?>">
-            <p class="h4"><?= $model->translation->title ?></p>
+            <p class="h4"><?= StringHelper::truncate($model->translation->title, 40) ?></p>
         </a>
 
-        <small class="text-muted"><?= StringHelper::truncate($model->translation->description, 120) ?></small>
+        <small class="text-muted"><?= StringHelper::truncate(strip_tags($model->translation->description), 130); ?></small>
 
         <div class="row">
             <div class="col-md-12">
