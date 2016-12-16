@@ -195,11 +195,12 @@ class CategoryController extends Controller
                 }
             }
         }
+
         return $this->render('save', [
             'viewName' => $viewName,
             'params' => [
                 'languages' => Language::findAll(['active' => true]),
-                'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') ?? 1,
+                'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') + 1 ?? 1,
                 'category' => $category,
                 'categoryTranslation' => $categoryTranslation,
                 'categories' => Category::find()->with('translations')->all(),

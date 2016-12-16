@@ -20,7 +20,7 @@
             )->input('radio', [
                 (!$model->$attribute ? 'checked' : '') =>
                     (!$model->$attribute ? 'checked' : ''),
-                'value' => false,
+                'value' => 0,
                 'class' => 'radio',
                 'id' => $model::className() . '-category_id-null',
             ])->label(Yii::t('shop', 'Without category'), [

@@ -35,7 +35,7 @@ class InputTree extends Widget
     {
         parent::run();
 
-        $parents = self::findChildren($this->className, null);
+        $parents = self::findChildren($this->className, 0);
 
         return $this->render('input-tree/index',
             [
