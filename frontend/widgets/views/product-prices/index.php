@@ -96,7 +96,7 @@ $globalDefaultCombination = $defaultCombination;
                     'inputOptions' => ['class' => 'radiobutton'],
                     'labelOptions' => ['class' => 'radiobutton']
                 ])->input('radio', [
-                    'id' => 'price-' . $id++,
+                    'id' => 'price-' . $id++ . '-' . $product->id,
                     'value' => $price->id,
                     'checked' => ($key == 0)
                 ])->label(
