@@ -33,7 +33,7 @@ $globalDefaultCombination = $defaultCombination;
             <?php $combinationsAttributes = $productAttribute->getProductCombinationAttributes($combinationsIds); ?>
 
             <?php $checked = true;
-            echo $form->field($cart, 'attribute_value_id[]', [])->radioList(
+            echo $form->field($cart, 'attribute_value_id[' . $product->id . ']', [])->radioList(
                 \yii\helpers\ArrayHelper::map($combinationsAttributes,
                     function ($model) {
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
