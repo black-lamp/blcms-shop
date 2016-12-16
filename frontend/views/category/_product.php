@@ -27,7 +27,7 @@ $modelUrl = Url::to(['/shop/product/show',
     <?php if (!empty($model->image->small)): ?>
         <a href="<?= $modelUrl ?>">
             <?= Html::img($model->image->small, [
-                'alt' => $model->image->translation->alt
+                'alt' => (!empty($model->image->translation->alt)) ? $model->image->translation->alt : ''
             ]) ?>
         </a>
     <?php endif ?>

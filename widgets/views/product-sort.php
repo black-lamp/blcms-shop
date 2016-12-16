@@ -11,7 +11,7 @@ use yii\helpers\Html;
  * @var array $options
  */
 
-$moduleId = Yii::$app->controller->module->uniqueId;
+
 ?>
 <div class="pull-right text-center">
     <small><?= Yii::t('shop', 'Sorting') ?></small>
@@ -25,7 +25,11 @@ $moduleId = Yii::$app->controller->module->uniqueId;
             <ul class="dropdown-menu" aria-labelledby="productSortDropdown">
                 <?php foreach ($sortMethods as $sort => $sortName): ?>
                     <li class="<?= ($sort == $currentSort) ? 'active' : '' ?>">
-                        <?= Html::a($sortName, ["/{$moduleId}/", 'sort' => $sort]) ?>
+                        <?= Html::a($sortName, array_merge(
+                            ['/' . Yii::$app->controller->getRoute()],
+                            Yii::$app->request->getQueryParams(),
+                            ['sort' => $sort])
+                        ) ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
