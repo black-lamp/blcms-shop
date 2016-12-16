@@ -75,9 +75,13 @@ $globalDefaultCombination = $defaultCombination;
         <?php $language = \bl\multilang\entities\Language::getCurrent(); ?>
         <p>
             <span class="price-title"><?= \Yii::t('shop', 'Price'); ?></span>:
-            <span id="price" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
+            <span id="newPrice" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
                 <?= \Yii::$app->formatter->asCurrency((!empty($defaultCombination) ? $defaultCombination->salePrice : 0)); ?>
             </span>
+
+            <s id="oldPrice" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
+                <?= \Yii::$app->formatter->asCurrency((!empty($defaultCombination) ? $defaultCombination->oldPrice : 0)); ?>
+            </s>
         </p>
     </div>
 <?php else : ?>

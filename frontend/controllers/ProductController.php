@@ -120,7 +120,8 @@ class ProductController extends Controller
         if (!empty($combination)) {
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
-                'price' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? ''
+                'oldPrice' => Yii::$app->formatter->asCurrency($combination->oldPrice) ?? '',
+                'newPrice' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? ''
             ];
         }
         else return 0;

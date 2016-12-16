@@ -93,22 +93,42 @@ class ProductCombination extends ActiveRecord
     /**
      * @return float
      */
+    public function getOldPrice() {
+        $price = $this->price;
+
+        if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
+            $price = $price * Currency::currentCurrency();
+        }
+        if (\Yii::$app->getModule('shop')->enablePriceRounding) {
+            $price = floor($price);
+        }
+
+        return $price;
+    }
+
+    /**
+     * @return float
+     */
     public function getSalePrice() {
         $price = $this->price;
 
         if(!empty($this->sale)) {
-            if(!empty($this->type)) {
-                if($this->type->title == "money") {
+            if(!empty($this->sale_type_id)) {
+                if($this->saleType->title == "money") {
                     $price = $this->price - $this->sale;
                 }
-                else if($this->type->title == "percent") {
+            else if($this->saleType->title == "percent") {
                     $price = $this->price - ($this->price / 100) * $this->sale;
+
                 }
             }
         }
 
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
-            $price = floor($price * Currency::currentCurrency());
+            $price = $price * Currency::currentCurrency();
+        }
+        if (\Yii::$app->getModule('shop')->enablePriceRounding) {
+            $price = floor($price);
         }
 
         return $price;

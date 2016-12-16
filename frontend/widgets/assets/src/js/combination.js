@@ -6,7 +6,6 @@ $(document).ready(function() {
 
     var addToCartButton = $('#add-to-cart-button');
 
-    var priceTag = $('#price');
     var combinationsBlock = $('#combinations-values');
     var combinationBlockInputsNumber = $('#combinations-values div.form-group').length;
 
@@ -36,8 +35,13 @@ $(document).ready(function() {
                     data = JSON.parse(data);
                     if(data) $(addToCartButton).removeAttr('disabled');
 
-                    var price = (data.price) ? data.price : priceTag.data('default-value');
-                    priceTag.text(price);
+                    var oldPriceTag = $('#oldPrice');
+                    var newPriceTag = $('#newPrice');
+
+                    var oldPrice = (data.oldPrice) ? data.oldPrice : '';
+                    var newPrice = (data.newPrice) ? data.newPrice : '';
+                    oldPriceTag.text(oldPrice);
+                    newPriceTag.text(newPrice);
                     if (data.image) $('#main-image').attr('src', data.image);
                     $('img.zoomImg').attr('src', data.image);
                 },
