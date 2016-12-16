@@ -41,7 +41,6 @@ $(document).ready(function() {
                     $('img.zoomImg').attr('src', data.image);
                 },
                 error: function (data) {
-                    alert('sdfg');
                     priceTag.text('Нет в наличии');
                 }
             });
