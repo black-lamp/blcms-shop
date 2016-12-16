@@ -22,10 +22,12 @@ class InputTree extends Widget
     public $model;
     public $attribute;
 
-    public $languageId = 1;
+    public $languageId;
 
     public function init()
     {
+        $this->languageId = Language::getCurrent()->id;
+
         InputTreeAsset::register($this->getView());
     }
 
@@ -34,13 +36,6 @@ class InputTree extends Widget
         parent::run();
 
         $parents = self::findChildren($this->className, null);
-
-        $languages = Language::find()->all();
-        foreach ($languages as $key => $language) {
-            if ($language->id == $this->languageId) {
-                $this->languageId = $key;
-            }
-        }
 
         return $this->render('input-tree/index',
             [

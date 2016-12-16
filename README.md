@@ -12,12 +12,10 @@ For cart module:
 
 **Configuration for Imagable module:**
 ```php
-use bl\cms\shop\backend\components\CreateImageImagine;
-
-'shop_imagable' => [
-            'class' => 'bl\imagable\Imagable',
-            'imageClass' => CreateImageImagine::className(),
-            'nameClass' => 'bl\imagable\name\CRC32Name',
+        'shop_imagable' => [
+            'class' => bl\imagable\Imagable::className(),
+            'imageClass' => \bl\imagable\instances\CreateImageImagine::className(),
+            'nameClass' => bl\imagable\name\CRC32Name::className(),
             'imagesPath' => '@frontend/web/images',
             'categories' => [
                 'origin' => false,
@@ -56,7 +54,7 @@ use bl\cms\shop\backend\components\CreateImageImagine;
                             ]
                         ]
                     ],
-                    'cover' => [
+                    'delivery' => [
                         'origin' => false,
                         'size' => [
                             'big' => [
@@ -73,7 +71,7 @@ use bl\cms\shop\backend\components\CreateImageImagine;
                             ]
                         ]
                     ],
-                    'thumbnail' => [
+                    'shop-category/cover' => [
                         'origin' => false,
                         'size' => [
                             'big' => [
@@ -90,7 +88,7 @@ use bl\cms\shop\backend\components\CreateImageImagine;
                             ]
                         ]
                     ],
-                    'menu_item' => [
+                    'shop-category/thumbnail' => [
                         'origin' => false,
                         'size' => [
                             'big' => [
@@ -106,7 +104,41 @@ use bl\cms\shop\backend\components\CreateImageImagine;
                                 'height' => 150
                             ]
                         ]
-                    ]
+                    ],
+                    'shop-category/menu_item' => [
+                        'origin' => false,
+                        'size' => [
+                            'big' => [
+                                'width' => 1500,
+                                'height' => 500
+                            ],
+                            'thumb' => [
+                                'width' => 500,
+                                'height' => 500,
+                            ],
+                            'small' => [
+                                'width' => 150,
+                                'height' => 150
+                            ]
+                        ]
+                    ],
+                    'payment' => [
+                        'origin' => false,
+                        'size' => [
+                            'big' => [
+                                'width' => 1500,
+                                'height' => 500
+                            ],
+                            'thumb' => [
+                                'width' => 500,
+                                'height' => 500,
+                            ],
+                            'small' => [
+                                'width' => 150,
+                                'height' => 150
+                            ]
+                        ]
+                    ],
                 ]
             ]
         ],

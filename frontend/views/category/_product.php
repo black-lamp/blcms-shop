@@ -1,93 +1,97 @@
 <?php
 /**
- * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
- *
- * @var $model \bl\cms\shop\common\entities\Product
+ * @var Product $model
  */
 
 use bl\cms\cart\models\CartForm;
-use yii\bootstrap\Html;
-use yii\helpers\ArrayHelper;
+use bl\cms\shop\common\entities\Product;
+use yii\helpers\Html;
+use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
-$form = ActiveForm::begin([
-    'method' => 'post',
-    'action' => ['/cart/cart/add'],
-    'options' => [
-        '_fields' => [
-            'class' => 'col-md-4'
-        ]
-    ]
+$modelUrl = Url::to(['/shop/product/show',
+    'id' => $model->id
 ]);
-$cart = new CartForm();
+?>
 
+<div class="thumbnail">
+    <span>
+        <mark>
+            <?= Yii::t('shop', 'Art. {articulus}', [
+                'articulus' => $model->articulus
+            ]) ?>
+        </mark>
+    </span>
 
-$link = Url::toRoute(['/shop/product/show', 'id' => $model->id]);
+    <?php if (!empty($model->image->small)): ?>
+        <a href="<?= $modelUrl ?>">
+            <?= Html::img($model->image->small, [
+                'alt' => (!empty($model->image->translation->alt)) ? $model->image->translation->alt : ''
+            ]) ?>
+        </a>
+    <?php endif ?>
 
-$image = (!empty($model->image)) ?
-    Html::a(
-        Html::img($model->image->small, [
-            'class' => 'media-object img-responsive',
-            'alt' => Html::encode($model->image->translation->alt)
-        ]),
-        $link) :
-    '';
+    <div class="caption">
+        <a href="<?= $modelUrl ?>">
+            <p class="h4"><?= StringHelper::truncate($model->translation->title, 40) ?></p>
+        </a>
 
-$title = (!empty($model->translation->title)) ?
-    Html::a(
-        Html::tag(
-            'h3',
-            Html::encode($model->translation->title),
-            ['class' => 'media-heading']),
-        $link, ['class' => 'text-center']) : '';
+        <small class="text-muted"><?= StringHelper::truncate(strip_tags($model->translation->description), 130); ?></small>
 
-$description = (!empty($model->translation->description)) ?
-    Html::tag(
-        'div',
-        Html::encode($model->translation->description),
-        ['class' => 'description']) :
-    '';
+        <div class="row">
+            <div class="col-md-12">
+                <?php $form = ActiveForm::begin([
+                    'action' => ['/cart/cart/add'],
+                    'options' => [
+                        'class' => 'col-md-9 row'
+                    ]]);
+                $cart = new CartForm();
+                ?>
+                <?= $form->field($cart, 'productId', [
+                    'template' => '{input}',
+                    'options' => []
+                ])
+                    ->hiddenInput(['value' => $model->id])
+                    ->label(false);
+                ?>
 
-$articulus = (!empty($model->articulus)) ?
-    Html::tag('div',
-        \Yii::t('shop', 'Articulus') . ': ' . $model->articulus,
-        ['class' => 'code']) :
-    '';
+                <?= $form->field($cart, 'count', [
+                    'template' => '{input}',
+                    'options' => []
+                ])
+                    ->hiddenInput(['value' => 1])
+                    ->label(false);
+                ?>
 
-$price = (!empty($model->prices)) ?
-    $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-4']])->dropDownList(ArrayHelper::map($model->prices, 'id', function ($model) {
-        $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->price);
-        return $priceItem;
-    }))->label(\Yii::t('shop', 'Price')) : \Yii::$app->formatter->asCurrency($model->price);
-$count = $form->field($cart, 'count', ['options' => ['class' => 'col-md-4']])->
-    textInput(['type' => 'number', 'min' => 1, 'value' => 1])->label(\Yii::t('shop', 'Count'));
-$productId = $form->field($cart, 'productId')->hiddenInput(['value' => $model->id])->label(false);
-$submitButton = Html::submitButton(Yii::t('shop', 'Add to cart'),
-    ['class' => 'btn btn-tight btn-primary']);
+                <div class="help-block"></div>
 
-/*ADD TO FAVORITE*/
-if (!Yii::$app->user->isGuest) {
-    $addToFavButton = (!$model->isFavorite()) ? Html::a(
-        Yii::t('shop', 'Add to favorites'),
-        Url::to(['/shop/favorite-product/add', 'productId' => $model->id]),
-        ['class' => 'btn btn-primary']
-    ) :
-        Html::a(
-            Yii::t('shop', 'Remove from favorites'),
-            Url::to(['/shop/favorite-product/remove', 'productId' => $model->id]),
-            ['class' => 'btn btn-warning']
-        );
-}
-else $addToFavButton = '';
+                <!--PRICE-->
+                <?php if (!empty($model->price)): ?>
+                    <small><?= Yii::t('shop', 'Price'); ?>:</small>
+                    <?php if (!empty($model->prices[0]->sale)): ?>
+                        <strong><?= Yii::$app->formatter->asCurrency($model->prices[0]->salePrice); ?></strong>
+                        <strike><?= Yii::$app->formatter->asCurrency($model->price); ?></strike>
+                    <?php else: ?>
+                        <strong><?= Yii::$app->formatter->asCurrency($model->price); ?></strong>
+                    <?php endif ?>
+                <?php endif ?>
 
+                <div class="help-block"></div>
 
-$availability = (!empty($model->productAvailability)) ?
-    Html::tag('div', $model->productAvailability->translation->title, ['class' => 'col-md-12']) : '';
+                <button type="submit" class="btn btn-success">
+                    <i class="glyphicon glyphicon-shopping-cart"></i>
+                    <?= Yii::t('shop', 'Add to cart'); ?>
+                </button>
+                <?php $form->end() ?>
 
-
-echo Html::tag('div', $image, ['class' => 'col-md-3']) .
-    Html::tag('div', $title . $description . $articulus . $price . $count . $productId . $submitButton . $addToFavButton . $availability, ['class' => 'col-md-9']);
-
-$form::end();
-
+                <?php if (!Yii::$app->user->isGuest && !$model->isFavorite()): ?>
+                    <?php $addFavoriteProductUrl = Url::to(['/shop/favorite-product/add', 'productId' => $model->id]); ?>
+                    <a href="<?= $addFavoriteProductUrl ?>" class="btn btn-sm btn-warning pull-right">
+                        <i class="glyphicon glyphicon-star"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
