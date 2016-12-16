@@ -4,6 +4,8 @@
 $(document).ready(function() {
     var productId = $('#productId').val();
 
+    var addToCartButton = $('#add-to-cart-button');
+
     var priceTag = $('#price');
     var combinationsBlock = $('#combinations-values');
     var combinationBlockInputsNumber = $('#combinations-values div.form-group').length;
@@ -32,16 +34,16 @@ $(document).ready(function() {
 
                 success: function (data) {
                     data = JSON.parse(data);
-                    if(!data) $('#add-to-cart-button').attr('disabled','disabled');
-                    else $('#add-to-cart-button').removeAttr('disabled');
+                    if(data) $(addToCartButton).removeAttr('disabled');
 
                     var price = (data.price) ? data.price : priceTag.data('default-value');
                     priceTag.text(price);
-                    $('#main-image').attr('src', data.image);
+                    if (data.image) $('#main-image').attr('src', data.image);
                     $('img.zoomImg').attr('src', data.image);
                 },
                 error: function (data) {
-                    priceTag.text('Нет в наличии');
+                    $(addToCartButton).attr('disabled','disabled');
+                    priceTag.text('');
                 }
             });
         }

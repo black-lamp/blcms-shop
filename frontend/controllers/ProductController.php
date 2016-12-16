@@ -119,8 +119,8 @@ class ProductController extends Controller
         $combination = \Yii::$app->cart->getCombination($values, $productId);
         if (!empty($combination)) {
             $array = [
-                'image' => $combination->images[0]->productImage->thumb,
-                'price' => Yii::$app->formatter->asCurrency($combination->salePrice)
+                'image' => $combination->images[0]->productImage->thumb ?? '',
+                'price' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? ''
             ];
         }
         else return 0;
