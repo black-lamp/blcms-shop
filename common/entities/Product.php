@@ -273,6 +273,14 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDefaultCombination()
+    {
+        return $this->hasOne(ProductCombination::className(), ['product_id' => 'id'])->where(['default' => true]);
+    }
+
+    /**
      * Gets attributes, which used in product combinations
      * @return array|mixed
      */

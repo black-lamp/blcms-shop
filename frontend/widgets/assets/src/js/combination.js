@@ -5,6 +5,8 @@ $(document).ready(function() {
     var productId = $('#productId').val();
 
     var addToCartButton = $('#add-to-cart-button');
+    var oldPriceTag = $('#oldPrice');
+    var newPriceTag = $('#newPrice');
 
     var combinationsBlock = $('#combinations-values');
     var combinationBlockInputsNumber = $('#combinations-values div.form-group').length;
@@ -35,9 +37,6 @@ $(document).ready(function() {
                     data = JSON.parse(data);
                     if(data) $(addToCartButton).removeAttr('disabled');
 
-                    var oldPriceTag = $('#oldPrice');
-                    var newPriceTag = $('#newPrice');
-
                     var oldPrice = (data.oldPrice) ? data.oldPrice : '';
                     var newPrice = (data.newPrice) ? data.newPrice : '';
                     oldPriceTag.text(oldPrice);
@@ -47,7 +46,8 @@ $(document).ready(function() {
                 },
                 error: function (data) {
                     $(addToCartButton).attr('disabled','disabled');
-                    priceTag.text('');
+                    oldPriceTag.text('');
+                    newPriceTag.text('');
                 }
             });
         }
