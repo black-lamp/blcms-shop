@@ -18,6 +18,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $cover
  * @property string $thumbnail
  * @property string $menu_item
+ * @property boolean $additional_products
  *
  * @property CategoryTranslation[] $categoryTranslations
  * @property Filter[] $filters
@@ -67,7 +68,7 @@ class Category extends ActiveRecord
     {
         return [
             [['parent_id', 'position'], 'integer'],
-            [['show'], 'boolean'],
+            [['show', 'additional_products'], 'boolean'],
             [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
         ];
     }
@@ -84,6 +85,7 @@ class Category extends ActiveRecord
             'cover' => Yii::t('shop', 'Cover'),
             'thumbnail' => Yii::t('shop', 'Thumbnail'),
             'menu_item' => Yii::t('shop', 'Menu Item'),
+            'additional_products' => \Yii::t('shop', 'Additional products'),
         ];
     }
 

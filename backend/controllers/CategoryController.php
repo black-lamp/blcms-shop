@@ -13,7 +13,7 @@ use yii\web\{
     ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, Filter, SearchCategory
+    Category, CategoryTranslation, Filter, Product, SearchCategory
 };
 
 /**

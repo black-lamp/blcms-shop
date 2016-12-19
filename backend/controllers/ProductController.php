@@ -3,6 +3,7 @@ namespace bl\cms\shop\backend\controllers;
 
 use Yii;
 use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
@@ -15,7 +16,7 @@ use bl\cms\shop\backend\components\form\{
     CombinationAttributeForm, CombinationImageForm, ProductFileForm, ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    CategoryTranslation, Param, ParamTranslation, Product, ProductCombination, ProductCombinationAttribute, ProductCombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation, ProductVideo, ShopAttribute
+    Category, CategoryTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, ProductCombination, ProductCombinationAttribute, ProductCombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, ProductPrice, ProductPriceTranslation, SearchProduct, ProductTranslation, ProductVideo, ShopAttribute
 };
 
 /**
@@ -78,7 +79,8 @@ class ProductController extends Controller
                             'add-video', 'delete-video',
                             'add-price', 'remove-price',
                             'add-file', 'remove-file',
-                            'up', 'down', 'generate-seo-url'
+                            'up', 'down', 'generate-seo-url',
+                            'additional-product'
                         ],
                         'roles' => ['createProduct', 'createProductWithoutModeration',
                             'updateProduct', 'updateOwnProduct'],
@@ -122,6 +124,19 @@ class ProductController extends Controller
             'languages' => Language::findAll(['active' => true])
         ]);
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionAdditionalProduct()
+    {
+        $additionalProductsCategories = Category::find()->with('products')
+            ->where(['additional_products' => true])->all();
+
+        return $this->render('additional-product', [
+            'additionalProductsCategories' => $additionalProductsCategories
+        ]);
     }
 
     /**
@@ -1397,6 +1412,64 @@ class ProductController extends Controller
         ]));
 
         return $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    /**
+     * Adds new combination
+     *
+     * @param int $productId
+     * @param int $languageId
+     *
+     * @return mixed
+     */
+    public function actionAddAdditional(int $productId, int $languageId)
+    {
+        $additionalProductsCategories = Category::find()->with('products')
+            ->where(['additional_products' => true])->all();
+
+        $productAdditionalProducts = ProductAdditionalProduct::find()->where(['product_id' => $productId])->all();
+        return $this->render('save', [
+            'viewName' => 'add-additional',
+            'selectedLanguage' => Language::findOne($languageId),
+            'product' => Product::findOne($productId),
+            'languages' => Language::find()->all(),
+
+            'params' => [
+                'additionalProductsCategories' => $additionalProductsCategories,
+                'productAdditionalProducts' => $productAdditionalProducts,
+                'productId' => $productId
+            ]
+        ]);
+    }
+
+    /**
+     * @param $productId
+     * @param $additionalProductId
+     * @return bool
+     * @throws Exception
+     */
+    public function actionAddToAdditionalProducts($productId, $additionalProductId) {
+        $productAdditionalProduct = ProductAdditionalProduct::find()
+            ->where(['product_id' => $productId, 'additional_product_id' => $additionalProductId])->one();
+        if (empty($productAdditionalProduct)) {
+            $productAdditionalProduct = new ProductAdditionalProduct();
+            $productAdditionalProduct->product_id = $productId;
+            $productAdditionalProduct->additional_product_id = $additionalProductId;
+
+            if ($productAdditionalProduct->validate()) {
+                $productAdditionalProduct->save();
+                return true;
+            }
+        }
+        throw new Exception();
+    }
+
+    public function actionRemoveAdditionalProduct($id) {
+        $productAdditionalProduct = ProductAdditionalProduct::findOne($id);
+        if (!empty($productAdditionalProduct)) $productAdditionalProduct->delete();
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(\Yii::$app->request->referrer);
+        }
     }
 
     /**
