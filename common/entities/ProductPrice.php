@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\common\entities;
+
 use bl\multilang\behaviors\TranslationBehavior;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii2tech\ar\position\PositionBehavior;
 
@@ -109,7 +111,8 @@ class ProductPrice extends ActiveRecord
      * @return float|int
      * Gets price
      */
-    public function getPrice() {
+    public function getPrice()
+    {
         $price = $this->price;
         if (\Yii::$app->controller->module->enableCurrencyConversion) {
             $price = $price * Currency::currentCurrency();
@@ -123,20 +126,19 @@ class ProductPrice extends ActiveRecord
 
     /**
      * @return float|int
-     * Gets discount price
+     * @throws Exception
      */
-    public function getSalePrice() {
+    public function getSalePrice()
+    {
         $price = $this->price;
 
-        if(!empty($this->sale)) {
-            if(!empty($this->type)) {
-                if($this->type->title == "money") {
-                    $price = $this->price - $this->sale;
-                }
-                else if($this->type->title == "percent") {
-                    $price = $this->price - ($this->price / 100) * $this->sale;
-                }
+        if (!empty($this->sale) && !empty($this->type)) {
+            if ($this->type->title == "money") {
+                $price = $this->price - $this->sale;
+            } else if ($this->type->title == "percent") {
+                $price = $this->price - ($this->price / 100) * $this->sale;
             }
+            else throw new Exception(\Yii::t('shop', 'Such sale type does not exist.'));
         }
 
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
