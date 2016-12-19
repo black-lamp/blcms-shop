@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property double $sale
  * @property integer $sale_type_id
  * @property integer $default
+ * @property string $articulus
  *
  * @property Product $product
  * @property SaleType $saleType
@@ -37,6 +38,7 @@ class ProductCombination extends ActiveRecord
         return [
             [['product_id', 'sale_type_id', 'default'], 'integer'],
             [['price', 'sale'], 'number'],
+            [['articulus'], 'string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
         ];
@@ -55,6 +57,7 @@ class ProductCombination extends ActiveRecord
             'sale_type_id' => Yii::t('shop', 'Discount type'),
             'image_name' => Yii::t('shop', 'Image'),
             'default' => Yii::t('shop', 'Default'),
+            'articulus' => Yii::t('shop', 'Articulus'),
         ];
     }
 
@@ -95,6 +98,7 @@ class ProductCombination extends ActiveRecord
      */
     public function getOldPrice() {
         $price = $this->price;
+        if (empty($price)) $price = $this->product->price;
 
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
             $price = $price * Currency::currentCurrency();
@@ -111,6 +115,7 @@ class ProductCombination extends ActiveRecord
      */
     public function getSalePrice() {
         $price = $this->price;
+        if (empty($price)) $price = $this->product->price;
 
         if(!empty($this->sale)) {
             if(!empty($this->sale_type_id)) {
