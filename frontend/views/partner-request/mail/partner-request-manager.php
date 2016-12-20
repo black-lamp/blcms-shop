@@ -13,6 +13,9 @@
 </h1>
 
 <p>
+    <b><?= Yii::t('shop', 'Contact person'); ?></b>: <?= $partnerRequest['contact_person']; ?>
+</p>
+<p>
     <b><?= Yii::t('shop', 'Company name'); ?></b>: <?= $partnerRequest['company_name']; ?>
 </p>
 <p>

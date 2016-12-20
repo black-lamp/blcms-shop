@@ -6,15 +6,30 @@
  */
 ?>
 
-<h1>
-    <?= Yii::t('shop', 'Partner request'); ?>
-</h1>
+    <h1>
+        <?= Yii::t('shop', 'Partner request'); ?>
+    </h1>
 
-<p>
-    <?= Yii::t('shop', 'Your request was received and is awaiting processing.'); ?>
-</p>
+    <p>
+        <?= Yii::t('shop', 'Your request was received and is awaiting processing.'); ?>
+    </p>
 
-<hr>
+    <hr>
+
+    <p>
+        <b><?= Yii::t('shop', 'Contact person'); ?></b>: <?= $partnerRequest['contact_person']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Company name'); ?></b>: <?= $partnerRequest['company_name']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Website'); ?></b>: <?= $partnerRequest['website']; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Message'); ?></b>: <?= $partnerRequest['message']; ?>
+    </p>
+
+    <hr>
 
 <?php if (Yii::$app->user->isGuest) : ?>
     <p>
