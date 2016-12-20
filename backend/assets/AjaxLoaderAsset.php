@@ -6,15 +6,15 @@ use yii\web\AssetBundle;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
 
-class PjaxLoaderAsset extends AssetBundle
+class AjaxLoaderAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/black-lamp/blcms-shop/backend/web';
 
     public $css = [
-        'css/pjax-loader.css'
+        'css/ajax-loader.css'
     ];
     public $js = [
-        'js/pjax-loader.js'
+        'js/ajax-loader.js'
     ];
 
     public $depends = [

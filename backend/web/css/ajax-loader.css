@@ -1,5 +1,5 @@
-/*PJAX LOADER*/
-.spinner {
+/*AJAX LOADER*/
+div#ajaxLoader > div.spinner {
     position: fixed;
     top: 30vh;
     left: 46vw;
