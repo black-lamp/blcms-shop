@@ -75,43 +75,48 @@ $globalDefaultCombination = $defaultCombination;
         <?php $language = \bl\multilang\entities\Language::getCurrent(); ?>
         <p>
             <span class="price-title"><?= \Yii::t('shop', 'Price'); ?></span>:
-            <span id="newPrice" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
+            <span id="newPrice" data-language-prefix="<?= $language->lang_id; ?>"
+                  data-default-value="<?= \Yii::t('shop', $notAvailableText); ?>">
                 <?= \Yii::$app->formatter->asCurrency((!empty($defaultCombination) ? $defaultCombination->salePrice : 0)); ?>
             </span>
 
-            <s id="oldPrice" data-language-prefix="<?= $language->lang_id; ?>" data-default-value="<?= \Yii::t('shop', $notAvailableText);?>">
+            <s id="oldPrice" data-language-prefix="<?= $language->lang_id; ?>"
+               data-default-value="<?= \Yii::t('shop', $notAvailableText); ?>">
                 <?= \Yii::$app->formatter->asCurrency((!empty($defaultCombination) ? $defaultCombination->oldPrice : 0)); ?>
             </s>
         </p>
     </div>
-<?php else : ?>
+<?php elseif (
+    (\Yii::$app->cart->enableGetPricesFromCombinations && !empty($product->prices) && empty($product->productAttributes)) ||
+    (!\Yii::$app->cart->enableGetPricesFromCombinations && !empty($product->prices))
+): ?>
 
-    <?php if (!empty($product->prices)): ?>
-        <?php $id = 0; ?>
-        <?php foreach ($product->prices as $key => $price): ?>
-            <div class="price">
-                <?= $form->field($cart, 'priceId', [
-                    'enableClientValidation' => false,
-                    'template' => "{input}\n{label}",
-                    'inputOptions' => ['class' => 'radiobutton'],
-                    'labelOptions' => ['class' => 'radiobutton']
-                ])->input('radio', [
-                    'id' => 'price-' . $id++ . '-' . $product->id,
-                    'value' => $price->id,
-                    'checked' => ($key == 0)
-                ])->label(
-                    sprintf(" %s - <span class='sum'>%s</span>",
-                        $price->translation->title,
-                        Yii::$app->formatter->asCurrency($price->salePrice)
-                    )
-                ) ?>
-            </div>
-        <?php endforeach; ?>
-    <?php elseif (!empty($product->price)): ?>
+    <?php $id = 0; ?>
+    <?php foreach ($product->prices as $key => $price): ?>
         <div class="price">
-            <span class="sum one">
-                <?= Yii::$app->formatter->asCurrency($product->price) ?>
-            </span>
+            <?= $form->field($cart, 'priceId', [
+                'enableClientValidation' => false,
+                'template' => "{input}\n{label}",
+                'inputOptions' => ['class' => 'radiobutton'],
+                'labelOptions' => ['class' => 'radiobutton']
+            ])->input('radio', [
+                'id' => 'price-' . $id++ . '-' . $product->id,
+                'value' => $price->id,
+                'checked' => ($key == 0)
+            ])->label(
+                sprintf(" %s - <span class='sum'>%s</span>",
+                    $price->translation->title,
+                    Yii::$app->formatter->asCurrency($price->salePrice)
+                )
+            ) ?>
         </div>
-    <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div class="price">
+        <span class="sum one">
+            <?php if (!empty($product->price)) : ?>
+            <?= Yii::$app->formatter->asCurrency($product->price) ?>
+
+        </span>
+    </div>
 <?php endif; ?>
