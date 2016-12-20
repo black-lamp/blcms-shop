@@ -1194,20 +1194,20 @@ class ProductController extends Controller
      *
      * @param int $productId
      * @param int $languageId
-     *
      * @return mixed
      */
     public function actionAddCombination(int $productId, int $languageId)
     {
+        $combination = new ProductCombination();
 
-        $combinationsList = ProductCombination::find()->where(['product_id' => $productId])->all();
-
-        $combinationAttribute = new ProductCombinationAttribute();
-        $combinationAttributeForm = new CombinationAttributeForm();
+        $productImages = ProductImage::find()->where(['product_id' => $productId])->all();
         $combinationImages = new ProductCombinationImage();
         $imageForm = new CombinationImageForm();
 
-        $combination = new ProductCombination();
+        $combinationAttributeForm = new CombinationAttributeForm();
+        $combinationAttribute = new ProductCombinationAttribute();
+
+        $combinationsList = ProductCombination::find()->where(['product_id' => $productId])->all();
 
         if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
@@ -1217,27 +1217,7 @@ class ProductController extends Controller
 
                 if ($combination->validate()) $combination->save();
 
-                if ($combinationAttributeForm->load($post)) {
-
-                    if ($combinationAttributeForm->validate()) {
-
-                        foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
-
-                            if (!empty($attributeId)) {
-                                $combinationAttribute->combination_id = $combination->id;
-                                $combinationAttribute->attribute_id = (int)$attributeId;
-                                $combinationAttribute->attribute_value_id =
-                                    (int)$combinationAttributeForm->attribute_value_id[$key];
-
-                                if ($combinationAttribute->validate()) {
-                                    $combinationAttribute->save();
-
-                                    $combinationAttribute = new ProductCombinationAttribute();
-                                }
-                            }
-                        }
-                    }
-                }
+                $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute);
 
                 if ($imageForm->load($post)) {
                     if (!empty($imageForm->product_image_id)) {
@@ -1278,6 +1258,7 @@ class ProductController extends Controller
                 'combinations' => $combinationsList,
                 'combination' => $combination,
                 'product' => Product::findOne($productId),
+                'productImages' => $productImages,
                 'image_form' => $imageForm,
                 'languageId' => $languageId,
                 'combinationAttribute' => $combinationAttribute,
@@ -1286,6 +1267,32 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * @param $combination
+     * @param $post
+     * @param $combinationAttributeForm CombinationAttributeForm
+     * @param $combinationAttribute ProductCombinationAttribute
+     */
+    private function loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute) {
+        if ($combinationAttributeForm->load($post)) {
+            if ($combinationAttributeForm->validate()) {
+                foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
+
+                    if (!empty($attributeId)) {
+                        $combinationAttribute->combination_id = $combination->id;
+                        $combinationAttribute->attribute_id = (int)$attributeId;
+                        $combinationAttribute->attribute_value_id =
+                            (int)$combinationAttributeForm->attribute_value_id[$key];
+
+                        if ($combinationAttribute->validate()) {
+                            $combinationAttribute->save();
+                            $combinationAttribute = new ProductCombinationAttribute();
+                        }
+                    }
+                }
+            }
+        }
+    }
     /**
      * Updates combination
      *
@@ -1299,12 +1306,14 @@ class ProductController extends Controller
         $combination = ProductCombination::findOne($combinationId);
         if (empty($combination)) throw new NotFoundHttpException();
 
-        $combinationAttributeForm = new CombinationAttributeForm();
-        $combinationAttribute = new ProductCombinationAttribute();
+        $productImages = ProductImage::find()->where(['product_id' => $combination->product_id])->all();
+        $combinationImages = ProductCombinationImage::find()->where(['combination_id' => $combination->id])->all();
+        $imageForm = new CombinationImageForm();
+
         $combinationAttributes = ProductCombinationAttribute::find()
             ->where(['combination_id' => $combination->id])->all();
-        $combinationImages = new ProductCombinationImage();
-        $imageForm = new CombinationImageForm();
+        $combinationAttributeForm = new CombinationAttributeForm();
+        $combinationAttribute = new ProductCombinationAttribute();
 
         if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
@@ -1312,38 +1321,25 @@ class ProductController extends Controller
             if ($combination->load($post)) {
                 if ($combination->validate()) $combination->save();
 
-                if ($combinationAttributeForm->load($post)) {
-
-                    if ($combinationAttributeForm->validate()) {
-
-                        foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
-
-                            if (!empty($attributeId)) {
-                                $combinationAttribute->combination_id = $combination->id;
-                                $combinationAttribute->attribute_id = (int)$attributeId;
-                                $combinationAttribute->attribute_value_id =
-                                    (int)$combinationAttributeForm->attribute_value_id[$key];
-
-                                if ($combinationAttribute->validate()) {
-                                    $combinationAttribute->save();
-                                    $combinationAttribute = new ProductCombinationAttribute();
-                                }
-                            }
-                        }
-                    }
-                }
+                $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute);
 
                 if ($imageForm->load($post)) {
                     if ($imageForm->validate()) {
-                        foreach ($imageForm->product_image_id as $image) {
+                        $productImagesIdsArray = ArrayHelper::getColumn($productImages, 'id');
+                        $mustBeDeletedImagesIds = array_diff($productImagesIdsArray, $imageForm->product_image_id);
+                        ProductCombinationImage::deleteAll(['in', 'product_image_id', $mustBeDeletedImagesIds]);
 
-                            $combinationImages->combination_id = (int)$combination->id;
-                            $combinationImages->product_image_id = (int)$image;
-                            if ($combinationImages->validate()) {
-                                $combinationImages->save();
-                                $combinationImages = new ProductCombinationImage();
+                        foreach ($imageForm->product_image_id as $imageId) {
+                            $combinationImage = ProductCombinationImage::find()
+                                ->where(['product_image_id' => $imageId])->one();
+                            if (empty($combinationImage)) {
+                                $combinationImage = new ProductCombinationImage();
+                                $combinationImage->combination_id = (int)$combination->id;
+                                $combinationImage->product_image_id = (int)$imageId;
+                                if ($combinationImage->validate()) {
+                                    $combinationImage->save();
+                                }
                             }
-                            else die(var_dump($combinationImages));
                         }
                     }
                 }
@@ -1353,21 +1349,17 @@ class ProductController extends Controller
                     'id' => $combination->product_id
                 ]));
 
-                $this->redirect(['add-combination',
-                    'productId' => $combination->product_id,
-                    'languageId' => $languageId
-                ]);
+                return $this->redirect(\Yii::$app->request->referrer);
             }
         }
-
         return $this->render('edit-combination', [
             'combination' => $combination,
             'combinationAttributeForm' => $combinationAttributeForm,
-            'combinationAttribute' => $combinationAttribute,
             'combinationAttributes' => $combinationAttributes,
             'languageId' => $languageId,
             'image_form' => $imageForm,
-            'product' => Product::findOne($combination->product_id),
+            'combinationImages' => $combinationImages,
+            'productImages' => $productImages,
         ]);
     }
 
