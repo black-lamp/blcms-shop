@@ -1215,10 +1215,11 @@ class ProductController extends Controller
             if ($combination->load($post)) {
                 if ($combination->default) {
                     $defaultProductCombination = ProductCombination::find()
-                        ->where(['product_id' => $combination->product_id,'default' => true])
-                        ->andWhere(['!=', 'id', $combination->id])->one();
-                    $defaultProductCombination->default = 0;
-                    if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+                        ->where(['product_id' => $productId,'default' => true])->one();
+                    if (!empty($defaultProductCombination)) {
+                        $defaultProductCombination->default = 0;
+                        if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+                    }
                 }
                 else {
                     $productCombinations = ProductCombination::find()
@@ -1390,8 +1391,11 @@ class ProductController extends Controller
         ]);
     }
 
-
-
+    /**
+     * @param $combinationId
+     * @return \yii\web\Response
+     * @throws Exception
+     */
     public function actionChangeDefaultCombination($combinationId) {
 
         $combination = ProductCombination::findOne($combinationId);
