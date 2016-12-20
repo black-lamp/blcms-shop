@@ -1213,6 +1213,18 @@ class ProductController extends Controller
             $post = \Yii::$app->request->post();
 
             if ($combination->load($post)) {
+                if ($combination->default) {
+                    $defaultProductCombination = ProductCombination::find()
+                        ->where(['product_id' => $combination->product_id,'default' => true])
+                        ->andWhere(['!=', 'id', $combination->id])->one();
+                    $defaultProductCombination->default = 0;
+                    if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+                }
+                else {
+                    $productCombinations = ProductCombination::find()
+                        ->where(['product_id' => $combination->product_id])->all();
+                    if (empty($productCombinations)) $combination->default = 1;
+                }
                 $combination->product_id = $productId;
 
                 if ($combination->validate()) $combination->save();
@@ -1306,7 +1318,8 @@ class ProductController extends Controller
         $combination = ProductCombination::findOne($combinationId);
         if (empty($combination)) throw new NotFoundHttpException();
 
-        $productImages = ProductImage::find()->where(['product_id' => $combination->product_id])->all();
+        $product = Product::findOne($combination->product_id);
+
         $combinationImages = ProductCombinationImage::find()->where(['combination_id' => $combination->id])->all();
         $imageForm = new CombinationImageForm();
 
@@ -1319,25 +1332,39 @@ class ProductController extends Controller
             $post = \Yii::$app->request->post();
 
             if ($combination->load($post)) {
+
+                if ($combination->default) {
+                    $defaultProductCombination = ProductCombination::find()
+                        ->where(['product_id' => $combination->product_id,'default' => true])
+                        ->andWhere(['!=', 'id', $combination->id])->one();
+                    $defaultProductCombination->default = 0;
+                    if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+                }
+
                 if ($combination->validate()) $combination->save();
 
                 $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute);
 
                 if ($imageForm->load($post)) {
                     if ($imageForm->validate()) {
-                        $productImagesIdsArray = ArrayHelper::getColumn($productImages, 'id');
-                        $mustBeDeletedImagesIds = array_diff($productImagesIdsArray, $imageForm->product_image_id);
+                        $productImagesIdsArray = ArrayHelper::getColumn($product->images, 'id');
+                            $mustBeDeletedImagesIds = (!empty($imageForm->product_image_id)) ?
+                                array_diff($productImagesIdsArray, $imageForm->product_image_id) :
+                                $productImagesIdsArray;
+
                         ProductCombinationImage::deleteAll(['in', 'product_image_id', $mustBeDeletedImagesIds]);
 
-                        foreach ($imageForm->product_image_id as $imageId) {
-                            $combinationImage = ProductCombinationImage::find()
-                                ->where(['product_image_id' => $imageId])->one();
-                            if (empty($combinationImage)) {
-                                $combinationImage = new ProductCombinationImage();
-                                $combinationImage->combination_id = (int)$combination->id;
-                                $combinationImage->product_image_id = (int)$imageId;
-                                if ($combinationImage->validate()) {
-                                    $combinationImage->save();
+                        if (!empty($imageForm->product_image_id)) {
+                            foreach ($imageForm->product_image_id as $imageId) {
+                                $combinationImage = ProductCombinationImage::find()
+                                    ->where(['product_image_id' => $imageId])->one();
+                                if (empty($combinationImage)) {
+                                    $combinationImage = new ProductCombinationImage();
+                                    $combinationImage->combination_id = (int)$combination->id;
+                                    $combinationImage->product_image_id = (int)$imageId;
+                                    if ($combinationImage->validate()) {
+                                        $combinationImage->save();
+                                    }
                                 }
                             }
                         }
@@ -1359,7 +1386,7 @@ class ProductController extends Controller
             'languageId' => $languageId,
             'image_form' => $imageForm,
             'combinationImages' => $combinationImages,
-            'productImages' => $productImages,
+            'product' => $product,
         ]);
     }
 
