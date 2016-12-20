@@ -8,9 +8,13 @@ jQuery(document).ready(function () {
 
     var loader = '<div id="pjaxLoader"><div class="spinner"></div></div>';
 
+    function hidelLoader() {
+        $('#pjaxLoader').hide()
+    }
+
     $('body').append(loader);
     $('#pjaxLoader').css({
-        display:"none",
+        display: "none",
         position: "fixed",
         width: "100%",
         height: "100%",
@@ -18,11 +22,20 @@ jQuery(document).ready(function () {
         top: "0"
     });
 
-    jQuery(document).on("pjax:start", function () {
-        $('#pjaxLoader').show();
-    }).on("pjax:end", function () {
-        $('#pjaxLoader').hide();
-    });
-
+    jQuery(document)
+        .on("pjax:start", function () {
+            $('#pjaxLoader').show();
+        })
+        .on("pjax:end", function () {
+            setTimeout(function () {
+            $('#pjaxLoader').hide()
+        }, 750)})
+        .ajaxStart(function () {
+            $('#pjaxLoader').show();
+        })
+        .ajaxStop(function () {
+            setTimeout(function () {
+                $('#pjaxLoader').hide()
+            }, 750)})
 });
 

@@ -17,6 +17,5 @@ class ProductAsset extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
-        'bl\cms\shop\backend\assets\PjaxLoaderAsset',
     ];
 }
