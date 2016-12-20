@@ -182,6 +182,22 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getPrice()
+    {
+        $price = $this->price;
+        if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
+            $price = $price * Currency::currentCurrency();
+        }
+        if (\Yii::$app->getModule('shop')->enablePriceRounding) {
+            $price = floor($price);
+        }
+
+        return $price;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getParams()
     {
         return $this->hasMany(Param::className(), ['product_id' => 'id']);
