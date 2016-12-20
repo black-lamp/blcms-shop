@@ -1400,8 +1400,10 @@ class ProductController extends Controller
             $defaultProductCombination = ProductCombination::find()
                 ->where(['product_id' => $combination->product_id,'default' => true])
                 ->andWhere(['!=', 'id', $combination->id])->one();
-            $defaultProductCombination->default = false;
-            if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+            if (!empty($defaultProductCombination)) {
+                $defaultProductCombination->default = $combination->default;
+                if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+            }
 
             $combination->default = !$combination->default;
             if ($combination->validate()) $combination->save();
