@@ -27,6 +27,8 @@ class TreeWidget extends Widget
 
     public $currentCategoryId;
 
+    public $enableAjax = true;
+
     /**
      * Sets css-class for span tag when category is closed
      * @var string
@@ -41,7 +43,9 @@ class TreeWidget extends Widget
 
     public function init()
     {
-        TreeWidgetAsset::register($this->getView());
+        if ($this->enableAjax) {
+            TreeWidgetAsset::register($this->getView());
+        }
     }
 
     public function run()
