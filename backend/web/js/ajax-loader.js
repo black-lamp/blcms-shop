@@ -25,6 +25,6 @@ jQuery(document).ready(function () {
         .ajaxStop(function () {
             setTimeout(function () {
                 $('#ajaxLoader').hide()
-            }, 750)})
+            }, 700)})
 });
 
