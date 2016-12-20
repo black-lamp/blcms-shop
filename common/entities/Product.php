@@ -65,6 +65,7 @@ class Product extends ActiveRecord
      */
     public $count;
     public $combinationIds;
+    public $additionalProducts;
 
     /**
      * @inheritdoc
