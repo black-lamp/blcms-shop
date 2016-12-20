@@ -13,6 +13,7 @@ use yii\db\Expression;
  *
  * @property integer $id
  * @property integer $sender_id
+ * @property string $contact_person
  * @property string $company_name
  * @property string $website
  * @property string $message
@@ -66,7 +67,7 @@ class PartnerRequest extends \yii\db\ActiveRecord
             [['sender_id', 'moderation_status', 'moderated_by'], 'integer'],
             [['message'], 'string'],
             [['created_at', 'moderated_at'], 'safe'],
-            [['company_name', 'website'], 'string', 'max' => 255],
+            [['company_name', 'website', 'contact_person'], 'string', 'max' => 255],
             [['moderated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['moderated_by' => 'id']],
             [['sender_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['sender_id' => 'id']],
         ];

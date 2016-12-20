@@ -1,108 +1,70 @@
 <?php
-use bl\cms\shop\common\entities\PartnerRequest;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /**
- * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ * @var \yii\web\View $this
+ * @var \bl\cms\shop\common\entities\PartnerRequest $partner
+ * @var \bl\cms\cart\common\components\user\models\Profile $profile
  *
- * @var $this yii\web\View
- * @var $partner PartnerRequest
- * @var $form ActiveForm
- * @var $this ->context->staticPage \bl\cms\seo\common\entities\StaticPage
+ * @author Vladimir Kuprienko <vldmr.kuprienko@gmail.com>
  */
 
+$this->title = (!empty($this->context->staticPage->translation->title)) ?
+    $this->context->staticPage->translation->title :
+    Yii::t('frontend', 'Partners request');
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="partner-request-send row">
-
-    <h1 class="text-center"><?= (!empty($this->context->staticPage->translation->title)) ?
-            $this->context->staticPage->translation->title : Yii::t('shop', 'Partner request'); ?>
+<section class="other">
+    <h1 class="text-center m-b-20">
+        <?= $this->title ?>
     </h1>
-
-    <?php if (!empty($this->context->staticPage->translation->text)) : ?>
+    <div class="row">
+        <?php if (!empty($this->context->staticPage->translation->text)) : ?>
             <div class="col-md-12">
                 <?= $this->context->staticPage->translation->text; ?>
             </div>
-    <?php endif; ?>
-
-    <div class="col-md-12">
-        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->getPartnerStatus()) : ?>
-            <h3><?= \Yii::t('shop', 'You have already sent a request.'); ?></h3>
-        <?php else : ?>
-            <?php $form = ActiveForm::begin([
-                'method' => 'post',
-                'action' => [
-                    'partner-request/send',
-                ],
-                'options' => ['class' => 'tab-content']
-            ]);
-            ?>
-
-            <?php if (Yii::$app->user->isGuest) : ?>
-                <!--REGISTRATION-->
-                <h2>
-                    <?= Yii::t('shop', 'Registration'); ?>
-                </h2>
-                <div class="row">
-                    <div class="col-md-4">
-                        <?= $form->field($profile, 'name')->textInput()->label(\Yii::t('shop', 'Name')); ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($profile, 'patronymic')->textInput()->label(\Yii::t('shop', 'Patronymic')); ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($profile, 'surname')->textInput()->label(\Yii::t('shop', 'Surname')); ?>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <?= $form->field($user, 'email')->label(\Yii::t('shop', 'E-mail')) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($user, 'username')->label(\Yii::t('shop', 'Login')) ?>
-                    </div>
-                    <div class="col-md-4">
-                        <?= $form->field($user, 'password')->passwordInput()->label(\Yii::t('shop', 'Password')) ?>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <?= $form->field($profile, 'phone')->widget(\yii\widgets\MaskedInput::className(), [
-                            'mask' => '(999)-999-99-99',
-                        ])->label(\Yii::t('shop', 'Phone number')); ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!--COMPANY INFO-->
-            <h2>
-                <?= Yii::t('shop', 'Company info'); ?>
-            </h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $form->field($partner, 'company_name')->label(\Yii::t('shop', 'Company name')); ?>
-                </div>
-                <div class="col-md-6">
-                    <?= $form->field($partner, 'website')->label(\Yii::t('shop', 'Website')); ?>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <?= $form->field($partner, 'message')
-                        ->textarea(['rows' => 7])
-                        ->label(\Yii::t('shop', 'Message')); ?>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <?= Html::submitButton(Yii::t('shop', 'Send'), ['class' => 'btn btn-primary']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
-
         <?php endif; ?>
+        <div class="col-md-6 col-md-offset-3">
+            <?php if (Yii::$app->user->isGuest): ?>
+                <p>
+                    <?= Yii::t(
+                        'frontend',
+                        'For sending the request for partners you should to {signin} or {register} if you don\'t have a account', [
+                        'signin' => Html::a(Yii::t('frontend', 'SignIn'), Url::to('@signin')),
+                        'register' => Html::a(Yii::t('frontend', 'Register'), Url::to('@register'))
+                    ]) ?>
+                </p>
+            <?php elseif (!Yii::$app->user->isGuest && Yii::$app->user->identity->getPartnerStatus()) : ?>
+                <h3 class="text-center">
+                    <?= Yii::t('shop', 'You have already sent a request.') ?>
+                </h3>
+            <?php else : ?>
+                <h2 class="text-center m-t-20">
+                    <?= Yii::t('frontend', 'Send a request') ?>
+                </h2>
+                <?php $form = ActiveForm::begin([
+                    'action' => ['partner-request/send'],
+                    'enableClientValidation' => false
+                ]) ?>
+                <!-- Request form -->
+                <?php $partner->contact_person = $profile->name . ' ' . $profile->surname; ?>
+                <?= $form->field($partner, 'contact_person')
+                    ->textInput()->label(\Yii::t('shop', 'Contact person')); ?>
+                <?= $form->field($partner, 'company_name', ['inputOptions' => ['class' => '']])
+                ->label(Yii::t('shop', 'Company name')) ?>
+                <?= $form->field($partner, 'website', ['inputOptions' => ['class' => '']])
+                ->label(Yii::t('shop', 'Website')) ?>
+                <?= $form->field($partner, 'message', ['inputOptions' => ['class' => '']])
+                ->textarea(['rows' => 7])
+                ->label(Yii::t('shop', 'Message')) ?>
+                <div class="form-group">
+                    <?= Html::submitButton(Yii::t('shop', 'Send'), ['class' => 'button']) ?>
+                </div>
+                <?php ActiveForm::end(); ?>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
+</section>
