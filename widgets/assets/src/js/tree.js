@@ -1,64 +1,66 @@
 $(document).ready(function () {
-    downIconClass = downIconClass.replace(/ /g,".")
-    upIconClass = upIconClass.replace(/ /g,".")
+    if (typeof downIconClass !== 'undefined' && typeof upIconClass !== 'undefined') {
+        downIconClass = downIconClass.replace(/ /g,".");
+        upIconClass = upIconClass.replace(/ /g,".");
 
-    /*FIND WIDGET*/
-    var widget = $('#widget-menu');
-    var languagePrefix = widget.data('language');
-    var currentCategoryId = widget.attr('data-current-category-id');
+        /*FIND WIDGET*/
+        var widget = $('#widget-menu');
+        var languagePrefix = widget.data('language');
+        var currentCategoryId = widget.attr('data-current-category-id');
 
-    /*FIND TREE ITEMS WHICH MUST BE OPENED USING DATA ATTRIBUTE AND OPEN ITS*/
-    var openedTreeItem = $('[data-opened=true]');
-    autoOpen(openedTreeItem, currentCategoryId);
+        /*FIND TREE ITEMS WHICH MUST BE OPENED USING DATA ATTRIBUTE AND OPEN ITS*/
+        var openedTreeItem = $('[data-opened=true]');
+        autoOpen(openedTreeItem, currentCategoryId);
 
 
-    /*OPEN ON CLICK*/
-    widget.on('click', '.category-toggle.' + downIconClass, (function () {
-        var element = this;
-        var id = element.id;
-        var ul = $(element).parent().parent();
-        var level = $(ul).attr("data-level");
+        /*OPEN ON CLICK*/
+        widget.on('click', '.category-toggle.' + downIconClass, (function () {
+            var element = this;
+            var id = element.id;
+            var ul = $(element).parent().parent();
+            var level = $(ul).attr("data-level");
 
-        var url = (languagePrefix) ? '/' + languagePrefix + '/shop/category/get-categories' :
-            '/shop/category/get-categories';
-        $.ajax({
-            type: "GET",
-            url: url,
-            data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
+            var url = (languagePrefix) ? '/' + languagePrefix + '/shop/category/get-categories' :
+                '/shop/category/get-categories';
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
 
-            success: function (data) {
-                var downClasses = downIconClass.split('.');
-                var upClasses = upIconClass.split('.');
-                for (var i = 0; i < downClasses.length; i++) {
-                    $(element).removeClass(downClasses[i]);
-                    $(element).addClass(upClasses[i]);
+                success: function (data) {
+                    var downClasses = downIconClass.split('.');
+                    var upClasses = upIconClass.split('.');
+                    for (var i = 0; i < downClasses.length; i++) {
+                        $(element).removeClass(downClasses[i]);
+                        $(element).addClass(upClasses[i]);
+                    }
+
+                    $(data).height('100%').slideDown(300).insertAfter($('#' + id));
                 }
+            });
 
-                $(data).height('100%').slideDown(300).insertAfter($('#' + id));
+            ul.attr('style', '');
+        }));
+
+        /*CLOSE ON CLICK*/
+        widget.on('click', '.category-toggle.' + upIconClass, (function () {
+            var element = this;
+
+            var downClasses = downIconClass.split('.');
+            var upClasses = upIconClass.split('.');
+            for (var i = 0; i < downClasses.length; i++) {
+                $(element).removeClass(upClasses[i]);
+                $(element).addClass(downClasses[i]);
             }
-        });
 
-        ul.attr('style', '');
-    }));
+            var ul = $(element).nextAll();
+            $(ul).slideUp(300);
 
-    /*CLOSE ON CLICK*/
-    widget.on('click', '.category-toggle.' + upIconClass, (function () {
-        var element = this;
-
-        var downClasses = downIconClass.split('.');
-        var upClasses = upIconClass.split('.');
-        for (var i = 0; i < downClasses.length; i++) {
-            $(element).removeClass(upClasses[i]);
-            $(element).addClass(downClasses[i]);
-        }
-
-        var ul = $(element).nextAll();
-        $(ul).slideUp(300);
-
-        setTimeout(function() {
-            $(element).nextAll().remove()
-        }, 300);
-    }));
+            setTimeout(function() {
+                $(element).nextAll().remove()
+            }, 300);
+        }));
+    }
 });
 
 
