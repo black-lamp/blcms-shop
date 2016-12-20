@@ -1222,7 +1222,7 @@ class ProductController extends Controller
                 }
                 else {
                     $productCombinations = ProductCombination::find()
-                        ->where(['product_id' => $combination->product_id])->all();
+                        ->where(['product_id' => $productId])->all();
                     if (empty($productCombinations)) $combination->default = 1;
                 }
                 $combination->product_id = $productId;
@@ -1388,6 +1388,27 @@ class ProductController extends Controller
             'combinationImages' => $combinationImages,
             'product' => $product,
         ]);
+    }
+
+
+
+    public function actionChangeDefaultCombination($combinationId) {
+
+        $combination = ProductCombination::findOne($combinationId);
+
+        if (!$combination->default) {
+            $defaultProductCombination = ProductCombination::find()
+                ->where(['product_id' => $combination->product_id,'default' => true])
+                ->andWhere(['!=', 'id', $combination->id])->one();
+            $defaultProductCombination->default = false;
+            if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+
+            $combination->default = !$combination->default;
+            if ($combination->validate()) $combination->save();
+
+            return $this->redirect(\Yii::$app->request->referrer);
+        }
+        else throw new Exception('Product must have one default combination');
     }
 
     /**

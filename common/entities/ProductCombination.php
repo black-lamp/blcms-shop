@@ -36,8 +36,9 @@ class ProductCombination extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'sale_type_id', 'default'], 'integer'],
+            [['product_id', 'sale_type_id'], 'integer'],
             [['price', 'sale'], 'number'],
+            [['default'], 'boolean'],
             [['articulus'], 'string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],

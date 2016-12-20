@@ -17,7 +17,6 @@ class CombinationAttributeForm extends Model
     {
         return [
             [['attribute_id', 'attribute_value_id'], 'safe'],
-            [['attribute_id', 'attribute_value_id'], 'required'],
         ];
     }
 
