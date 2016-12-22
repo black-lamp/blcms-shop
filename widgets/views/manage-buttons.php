@@ -1,6 +1,8 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $deleteUrl string
  */
 
 use bl\multilang\entities\Language;
@@ -14,7 +16,7 @@ $item = $model;
 $to = $action;
 
 echo
-    Html::a('<span class="glyphicon glyphicon-remove"></span>', Url::toRoute(['delete', 'id' => $GLOBALS['item']->id]),
+    Html::a('<span class="glyphicon glyphicon-remove"></span>', $deleteUrl ?? Url::toRoute(['delete', 'id' => $GLOBALS['item']->id]),
         ['title' => Yii::t('yii', 'Delete'), 'class' => 'btn btn-danger pull-right btn-xs pjax']) .
 
     Html::tag('div',
