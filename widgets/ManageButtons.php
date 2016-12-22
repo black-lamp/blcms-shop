@@ -14,6 +14,8 @@ class ManageButtons extends Widget
 
     public $action = 'save';
 
+    public $deleteUrl;
+
     /**
      * @inheritdoc
      */
@@ -21,7 +23,8 @@ class ManageButtons extends Widget
     {
         return $this->render('manage-buttons', [
             'model' => $this->model,
-            'action' => $this->action
+            'action' => $this->action,
+            'deleteUrl' => $this->deleteUrl
         ]);
     }
 }

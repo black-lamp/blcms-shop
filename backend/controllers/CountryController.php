@@ -38,7 +38,7 @@ class CountryController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['remove'],
+                        'actions' => ['delete'],
                         'roles' => ['deleteCountry'],
                         'allow' => true,
                     ]
@@ -104,7 +104,7 @@ class CountryController extends Controller
 
     }
 
-    public function actionRemove($id) {
+    public function actionDelete($id) {
         ProductCountry::deleteAll(['id' => $id]);
         return $this->redirect(Url::to(['/shop/country']));
     }

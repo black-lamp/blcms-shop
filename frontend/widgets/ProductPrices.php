@@ -30,6 +30,11 @@ class ProductPrices extends Widget
     public $cart;
 
     /**
+     * @var string
+     */
+    public $view;
+
+    /**
      * @var ProductCombination
      */
     public $defaultCombination;
@@ -45,7 +50,7 @@ class ProductPrices extends Widget
     {
         parent::run();
 
-        return $this->render('product-prices/index',
+        return $this->render($this->view ?? 'product-prices/index',
             [
                 'product' => $this->product,
                 'form' => $this->form,
