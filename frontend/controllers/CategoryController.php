@@ -1,13 +1,11 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
 
+use bl\cms\shop\widgets\traits\TreeWidgetTrait;
 use Yii;
-use yii\base\Exception;
+use yii\web\Controller;
 use bl\cms\cart\models\CartForm;
 use bl\cms\seo\StaticPageBehavior;
-use yii\web\{
-    BadRequestHttpException, Controller
-};
 use bl\cms\shop\frontend\components\ProductSearch;
 use bl\cms\shop\common\entities\{
     Category, Filter
@@ -18,6 +16,8 @@ use bl\cms\shop\common\entities\{
  */
 class CategoryController extends Controller
 {
+    use TreeWidgetTrait;
+
     /**
      * @inheritdoc
      */
@@ -71,31 +71,5 @@ class CategoryController extends Controller
             'dataProvider' => $dataProvider ?? null,
         ]);
 
-    }
-
-    /**
-     * @param null|integer $parentId
-     * @param integer $level
-     * @param integer $currentCategoryId
-     * @return mixed
-     * @throws BadRequestHttpException
-     * @throws Exception
-     *
-     * This action is used by Tree wiget
-     */
-    public function actionGetCategories($parentId = null, $level, $currentCategoryId)
-    {
-        if (\Yii::$app->request->isAjax) {
-
-            if (!empty($level)) {
-                $categories = Category::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
-
-                return $this->renderAjax('@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax', [
-                    'categories' => $categories,
-                    'level' => $level,
-                    'currentCategoryId' => $currentCategoryId,
-                ]);
-            } else throw new Exception();
-        } else throw new BadRequestHttpException();
     }
 }

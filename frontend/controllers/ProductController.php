@@ -122,7 +122,8 @@ class ProductController extends Controller
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
                 'oldPrice' => Yii::$app->formatter->asCurrency($combination->oldPrice) ?? '',
-                'newPrice' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? ''
+                'newPrice' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? '',
+                'articulus' => $combination->articulus ?? ''
             ];
         }
         else return 0;
