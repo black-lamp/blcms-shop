@@ -2,59 +2,64 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $countries ProductCountry
+ * @var $countries ProductCountry[]
  */
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
-use yii\helpers\Url;
+use yii\bootstrap\Html;
 
 $this->title = \Yii::t('shop', 'List of countries');
 ?>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="glyphicon glyphicon-list"></i>
-                <?= $this->title ?>
-            </div>
-            <div class="panel-body">
+<div class="ibox">
 
-                <table class="table table-hover">
-                    <?php if (!empty($countries)): ?>
-                        <thead>
-                        <tr>
-                            <th class="col-md-2"><?= \Yii::t('shop', 'Id'); ?></th>
-                            <th class="col-md-8"><?= \Yii::t('shop', 'Title'); ?></th>
-                            <th class="col-md-2"><?= \Yii::t('shop', 'Manage'); ?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($countries as $country) : ?>
-                            <tr>
-                                <td>
-                                    <?= $country->id; ?>
-                                </td>
-                                <td>
-                                    <?php if (!empty($country->translation->title)) : ?>
-                                        <?= $country->translation->title; ?>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?= ManageButtons::widget(['model' => $country]); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    <?php endif; ?>
-                </table>
+    <div class="ibox-title">
+        <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-user-plus']) .
+            Yii::t('shop', 'Add country'), ['save', 'languageId' => Language::getCurrent()->id], ['class' => 'btn btn-primary btn-xs pull-right']);
+        ?>
+        <h5>
+            <i class="glyphicon glyphicon-list">
+            </i>
+            <?= Html::encode($this->title); ?>
+        </h5>
+    </div>
 
-                <a href="<?= Url::to(['/shop/country/save', 'languageId' => Language::getCurrent()->id]) ?>"
-                   class="btn btn-primary pull-right">
-                    <i class="fa fa-user-plus"></i> <?= Yii::t('shop', 'Add country') ?>
-                </a>
+    <div class="ibox-content">
+        <table class="table table-hover">
+            <?php if (!empty($countries)): ?>
+                <thead>
+                <tr>
+                    <th class="col-md-2"><?= \Yii::t('shop', 'Id'); ?></th>
+                    <th class="col-md-8"><?= \Yii::t('shop', 'Title'); ?></th>
+                    <th class="col-md-2"><?= \Yii::t('shop', 'Control'); ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($countries as $country) : ?>
+                    <tr>
+                        <td>
+                            <?= $country->id; ?>
+                        </td>
+                        <td>
+                            <?php if (!empty($country->translation->title)) : ?>
+                                <?= $country->translation->title; ?>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?= ManageButtons::widget(['model' => $country]); ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            <?php endif; ?>
+        </table>
+        <?php if (count($countries) > 5) : ?>
+            <div class="row">
+                <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-user-plus']) .
+                    Yii::t('shop', 'Add country'), ['save', 'languageId' => Language::getCurrent()->id], ['class' => 'btn btn-primary btn-xs pull-right']);
+                ?>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
 </div>

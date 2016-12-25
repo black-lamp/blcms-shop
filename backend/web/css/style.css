@@ -28,6 +28,29 @@ ul.nav-tabs li a {
     width: 100% !important;
 }
 
+/*ADD IMAGE*/
+div.image-link {
+    margin: 5px;
+    padding: 5px;
+    background-color: #f5f5f6;
+    min-height: 50px;
+    overflow: hidden;
+    word-wrap: normal;
+}
+div.image-link p {
+    position: relative;
+    font-style: italic;
+    user-select: all;
+    -moz-user-selectt: all;
+    -ms-user-selectelect: all;
+    -webkit-user-selectt: all;
+    margin: 0;
+    word-wrap: normal;
+}
+div.image-link p::selection {
+    background-color: yellow;
+}
+
 /*ALERT WIDGET*/
 div.alert-fade {
     position: fixed;

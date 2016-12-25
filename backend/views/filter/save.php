@@ -15,7 +15,7 @@ $this->title = Yii::t('shop', 'Create new filter type');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('shop', 'Filter Types'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="panel panel-default">
+<div class="ibox-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
         <div class="form-group">
-            <?= Html::a(Yii::t('shop', 'Close'), Url::to(['/shop/filter']), ['class' => 'btn btn-danger btn-xs pull-right']) ?>
+            <?= Html::a(Yii::t('shop', 'Cancel'), Url::to(['/shop/filter']), ['class' => 'btn btn-danger btn-xs pull-right']) ?>
             <?= Html::submitButton(Yii::t('shop', 'Save'), ['class' => 'btn btn-primary btn-xs pull-right m-r-xs']) ?>
         </div>
 

@@ -13,21 +13,18 @@ use yii\widgets\Pjax;
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $param Param
  * @var $param_translation ParamTranslation
- * @var $selectedLanguage Language[]
- * @var $products Product
- * @var $id Product
- * @var $product Product
+ * @var $languageId integer
+ * @var $languageIndex integer
  */
-
 ?>
 
+<?php Pjax::begin(); ?>
 <?php $form = ActiveForm::begin([
     'action' => [
         'product/add-param',
-        'id' => $id,
-        'languageId' => $selectedLanguage->id
+        'id' => $productId,
+        'languageId' => $languageId
     ],
     'method' => 'post',
     'options' => [
@@ -37,17 +34,8 @@ use yii\widgets\Pjax;
 ]);
 ?>
 
-<br>
-
 <table class="table table-bordered">
     <thead>
-    <tr>
-        <th class="text-center" colspan="4">
-            <h2>
-                <?= \Yii::t('shop', 'Params'); ?>
-            </h2>
-        </th>
-    </tr>
     <tr>
         <th class="col-md-5 text-center">
             <?= \Yii::t('shop', 'Title'); ?>
@@ -61,47 +49,68 @@ use yii\widgets\Pjax;
     </tr>
     </thead>
     <tbody>
-    <?php if (!empty($product->params)) : ?>
-        <?php foreach ($product->params as $param) : ?>
+    <?php if (!empty($params)) : ?>
+        <?php foreach ($params as $param) : ?>
             <tr class="text-center">
                 <td>
-                    <?= $param->translation->name ?>
+                    <?php foreach ($param->translations as $translation) : ?>
+                        <?php if ($translation->language_id == $languageId) : ?>
+
+                            <?= $translation->name ?? '' ?>
+
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </td>
+
                 <td>
-                    <?= $param->translation->value ?>
+                    <?php foreach ($param->translations as $translation) : ?>
+                        <?php if ($translation->language_id == $languageId) : ?>
+
+                            <?= $translation->value ?? '' ?>
+
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </td>
+
                 <td>
                     <a href="<?= Url::to([
-                        'delete-param',
-                        'id' => $param->translation->param_id,
+                        'update-param',
+                        'id' => $param->id,
+                        'languageId' => $languageId
                     ]) ?>"
-                       class="param glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
+                       class="param glyphicon glyphicon-edit text-danger btn btn-default btn-sm"></a>
+                    <a href="<?= Url::to([
+                        'delete-param',
+                        'id' => $param->id,
+                    ]) ?>"
+                       class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                 </td>
             </tr>
         <?php endforeach; ?>
     <?php endif; ?>
-        <tr>
-            <td>
-                <?= $form->field($param_translation, 'name', [
-                    'inputOptions' => [
-                        'class' => 'form-control col-md-5'
-                    ]
-                ])->label(false)
-                ?>
-            </td>
-            <td>
-                <?= $form->field($param_translation, 'value', [
-                    'inputOptions' => [
-                        'class' => 'form-control col-md-5'
-                    ]
-                ])->label(false)
-                ?>
-            </td>
-            <td>
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
-            </td>
-        </tr>
+    <tr>
+        <td>
+            <?= $form->field($param_translation, 'name', [
+                'inputOptions' => [
+                    'class' => 'form-control col-md-5'
+                ]
+            ])->label(false)
+            ?>
+        </td>
+        <td>
+            <?= $form->field($param_translation, 'value', [
+                'inputOptions' => [
+                    'class' => 'form-control col-md-5'
+                ]
+            ])->label(false)
+            ?>
+        </td>
+        <td>
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+        </td>
+    </tr>
     </tbody>
 </table>
 
 <?php $form->end(); ?>
+<?php Pjax::end(); ?>

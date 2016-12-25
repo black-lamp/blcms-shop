@@ -1,16 +1,29 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $this yii\web\View
+ * @var $languages [] bl\multilang\entities\Language
+ * @var $selectedLanguage bl\multilang\entities\Language
+ * @var $category \bl\cms\shop\common\entities\Category
+ * @var $image_form bl\cms\shop\backend\components\form\CategoryImageForm
  */
+
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-
 ?>
 
-<?php $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
+<?php $addForm = ActiveForm::begin([
+    'method' => 'post',
+    'options' => [
+        'enctype' => 'multipart/form-data',
+        'data-pjax' => true,
+    ]
+]); ?>
 
     <h2><?= \Yii::t('shop', 'Images'); ?></h2>
-    <table class="table-bordered table-condensed table-stripped table-hover">
+    <table class="table-bordered table-condensed">
         <thead class="thead-inverse">
         <tr>
             <th class="text-center col-md-1">
@@ -25,7 +38,7 @@ use yii\widgets\ActiveForm;
                 </th>
             <?php endif; ?>
             <th class="text-center col-md-3">
-                <?= \Yii::t('shop', 'Upload'); ?>
+                <?= \Yii::t('shop', 'Upload from disk'); ?>
             </th>
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <th class="text-center col-md-1">
@@ -35,6 +48,7 @@ use yii\widgets\ActiveForm;
         </tr>
         </thead>
         <tbody>
+        <!--MENU ITEM-->
         <tr>
             <td class="text-center">
                 <?= \Yii::t('shop', 'Menu item'); ?>
@@ -43,19 +57,26 @@ use yii\widgets\ActiveForm;
                 <td>
                     <?php if (!empty($category->menu_item)) : ?>
                         <img data-toggle="modal" data-target="#menuItemModal"
-                             src="/images/shop-category/menu_item/<?= $category->menu_item . '-small.jpg'; ?>"
+                             src="<?= $category->getImage('shop-category/menu_item', 'small'); ?>"
                              class="thumb">
                         <!-- Modal -->
                         <div id="menuItemModal" class="modal fade" role="dialog">
                             <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-category/menu_item/<?= $category->menu_item . '-thumb.jpg'; ?>">
+                                 src="<?= $category->getImage('shop-category/menu_item', 'thumb'); ?>">
                         </div>
                     <?php endif; ?>
                 </td>
                 <td>
                     <?php if (!empty($category->menu_item)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-category/menu_item/' . $category->menu_item . '-big.jpg'; ?>">
+                        <div class="image-link">
+                            <p>
+                                <?php $link = str_replace(Yii::$app->homeUrl, '', Url::home(true)) . $category->getImage('shop-category/menu_item', 'big'); ?>
+                                <a href="<?= Url::to($link); ?>" target="_blank">
+                                    <i class="fa fa-external-link" aria-hidden="true"></i>
+                                </a>
+                                <?= $link; ?>
+                            </p>
+                        </div>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -65,12 +86,13 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->menu_item)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'menu_item', 'languageId' => $languageId]); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'menu_item']); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
         </tr>
+        <!--THUMBNAIL-->
         <tr>
             <td class="text-center">
                 <?= \Yii::t('shop', 'Thumbnail'); ?>
@@ -79,19 +101,27 @@ use yii\widgets\ActiveForm;
                 <td>
                     <?php if (!empty($category->thumbnail)) : ?>
                     <img data-toggle="modal" data-target="#thumbnailModal"
-                         src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-small.jpg'; ?>"
+                         src="<?= $category->getImage('shop-category/thumbnail', 'small'); ?>"
                          class="thumb">
                     <!-- Modal -->
                     <div id="thumbnailModal" class="modal fade" role="dialog">
                         <img style="display: block" class="modal-dialog"
-                             src="/images/shop-category/thumbnail/<?= $category->thumbnail . '-thumb.jpg'; ?>">
+                             src="<?= $category->getImage('shop-category/thumbnail', 'thumb'); ?>">
                         <?php endif; ?>
                     </div>
                 </td>
                 <td>
                     <?php if (!empty($category->thumbnail)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-category/thumbnail/' . $category->thumbnail . '-big.jpg'; ?>">
+                        <div class="image-link">
+                            <p>
+                                <?php $link = str_replace(Yii::$app->homeUrl, '', Url::home(true)) .
+                                    $category->getImage('shop-category/thumbnail', 'big'); ?>
+                                <a href="<?= Url::to($link); ?>" target="_blank">
+                                    <i class="fa fa-external-link" aria-hidden="true"></i>
+                                </a>
+                                <?= $link; ?>
+                            </p>
+                        </div>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -101,12 +131,13 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->thumbnail)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'thumbnail', 'languageId' => $languageId]); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'thumbnail']); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
         </tr>
+        <!--COVER-->
         <tr>
             <td class="text-center">
                 <?= \Yii::t('shop', 'Cover'); ?>
@@ -115,19 +146,27 @@ use yii\widgets\ActiveForm;
                 <td>
                     <?php if (!empty($category->cover)) : ?>
                         <img data-toggle="modal" data-target="#coverModal"
-                             src="/images/shop-category/cover/<?= $category->cover . '-small.jpg'; ?>"
+                             src="<?= $category->getImage('shop-category/cover', 'small'); ?>"
                              class="thumb">
                         <!-- Modal -->
                         <div id="coverModal" class="modal fade" role="dialog">
                             <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-category/cover/<?= $category->cover . '-thumb.jpg'; ?>">
+                                 src="<?= $category->getImage('shop-category/cover', 'thumb'); ?>">
                         </div>
                     <?php endif; ?>
                 </td>
                 <td>
                     <?php if (!empty($category->cover)) : ?>
-                        <input type="text" class="form-control" disabled=""
-                               value="<?= '/images/shop-category/cover/' . $category->cover . '-big.jpg'; ?>">
+                        <div class="image-link">
+                            <p>
+                                <?php $link = str_replace(Yii::$app->homeUrl, '', Url::home(true)) .
+                                    $category->getImage('shop-category/cover', 'big'); ?>
+                                <a href="<?= Url::to($link); ?>" target="_blank">
+                                    <i class="fa fa-external-link" aria-hidden="true"></i>
+                                </a>
+                                <?= $link; ?>
+                            </p>
+                        </div>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -137,7 +176,7 @@ use yii\widgets\ActiveForm;
             <?php if (!empty($category->menu_item) || !empty($category->thumbnail) || !empty($category->cover)) : ?>
                 <td class="text-center">
                     <?php if (!empty($category->cover)) : ?>
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'cover', 'languageId' => $languageId]); ?>"
+                        <a href="<?= Url::toRoute(['delete-image', 'id' => $category->id, 'imageType' => 'cover']); ?>"
                            class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
                     <?php endif; ?>
                 </td>
@@ -146,6 +185,13 @@ use yii\widgets\ActiveForm;
         </tbody>
     </table>
 
-    <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
-
+    <div class="ibox">
+        <!--CANCEL BUTTON-->
+        <a href="<?= Url::to(['/shop/category']); ?>">
+            <?= Html::button(\Yii::t('shop', 'Cancel'), [
+                'class' => 'btn btn-danger btn-xs pull-right'
+            ]); ?>
+        </a>
+        <?= Html::submitButton(Yii::t('shop', 'Upload'), ['class' => 'btn btn-xs btn-primary m-r-xs pull-right']) ?>
+    </div>
 <?php $addForm::end(); ?>

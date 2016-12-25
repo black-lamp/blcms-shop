@@ -12,15 +12,14 @@ use yii\widgets\Pjax;
 
 $this->title = Yii::t('shop', 'Filters');
 ?>
-<div class="panel panel-default">
+<div class="ibox-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a(Yii::t('shop', 'Create new filter'), ['save'], ['class' => 'btn btn-primary btn-xs pull-right']) ?>
     </p>
-    <?php Pjax::begin(); ?>
-    <?= GridView::widget([
+    <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
@@ -70,7 +69,7 @@ $this->title = Yii::t('shop', 'Filters');
             /*ACTIONS*/
             [
                 'headerOptions' => ['class' => 'text-center col-md-1'],
-                'attribute' => \Yii::t('shop', 'Manage'),
+                'attribute' => \Yii::t('shop', 'Control'),
 
                 'value' => function ($model) {
 

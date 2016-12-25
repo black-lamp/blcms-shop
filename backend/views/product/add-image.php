@@ -1,132 +1,149 @@
 <?php
-use bl\cms\shop\backend\components\form\ProductImageForm;
-use bl\cms\shop\common\entities\Product;
-use bl\multilang\entities\Language;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $product Product
+ * @var $productId integer
  * @var $image_form ProductImageForm
- * @var Language $selectedLanguage
+ * @var $selectedLanguage \bl\multilang\entities\Language
  */
+
+use bl\cms\shop\backend\components\form\ProductImageForm;
+use bl\cms\shop\common\entities\Product;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
+
 ?>
 
-    <br>
-
-    <div role="tabpanel" class="tab-pane" id="images">
-        <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-            <thead class="thead-inverse">
-            <tr>
-                <th class="text-center" colspan="4">
-                    <h2><?= \Yii::t('shop', 'Photo'); ?></h2>
-                </th>
-            </tr>
-            <?php if (!empty($product->images)) : ?>
-            <tr>
-                <th class="text-center col-md-2">
-                    <?= \Yii::t('shop', 'Image preview'); ?>
-                </th>
-                <th class="text-center col-md-4">
-                    <?= \Yii::t('shop', 'Image URL'); ?>
-                </th>
-                <th class="text-center col-md-4">
-                    <?= \Yii::t('shop', 'Alt'); ?>
-                </th>
-                <th class="text-center col-md-2">
-                    <?= \Yii::t('shop', 'Manage'); ?>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($product->images as $image) : ?>
-                <tr>
-                    <td class="text-center col-md-2">
-                        <img data-toggle="modal" data-target="#menuItemModal-<?= $image->id ?>"
-                             src="<?= $image->small; ?>"
-                             class="thumb">
-                        <!-- Modal -->
-                        <div id="menuItemModal-<?= $image->id ?>" class="modal fade" role="dialog">
-                            <img style="display: block" class="modal-dialog"
-                                 src="/images/shop-product/<?= $image->thumb; ?>">
-                        </div>
-                    </td>
-                    <td class="text-center col-md-4">
-                        <input type="text" class="form-control"
-                               value="<?= str_replace(Yii::$app->homeUrl, '', Url::home(true)) .
-                               $image->big; ?>">
-                    </td>
-                    <td class="text-center col-md-4">
-                        <?= $image->alt; ?>
-                    </td>
-                    <td class="text-center col-md-2">
-                        <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id, 'languageId' => $selectedLanguage->id]); ?>"
-                           class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm"></a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+<?php Pjax::begin();?>
 
 <?php $addImageForm = ActiveForm::begin([
     'action' => [
         'product/add-image',
-        'id' => $product->id,
+        'id' => $productId,
         'languageId' => $selectedLanguage->id
     ],
     'method' => 'post',
     'options' => [
-        'class' => 'image',
+        'class' => 'tab-content',
         'data-pjax' => true
     ]
 ]);
 ?>
-    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-        <tbody>
-        <tr class="text-center">
-            <td class="col-md-2">
-                <strong>
-                    <?= \Yii::t('shop', 'Add from web'); ?>
-                </strong>
-            </td>
-            <td class="col-md-4">
-                <?= $addImageForm->field($image_form, 'link')->textInput([
-                    'placeholder' => Yii::t('shop', 'Image link')
-                ])->label(false); ?>
-            </td>
-            <td class="col-md-4">
-                <?= $addImageForm->field($image_form, 'alt1')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
-            </td>
-            <td class="col-md-2">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
 
-    <table class="col-md-12 table-bordered table-condensed table-stripped table-hover">
-        <tbody>
-        <tr>
-            <td class="col-md-2 text-center">
-                <strong>
-                    <?= \Yii::t('shop', 'Upload'); ?>
-                </strong>
-            </td>
-            <td class="col-md-4">
-                <?= $addImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
-            </td>
-            <td class="text-center col-md-4">
-                <?= $addImageForm->field($image_form, 'alt2')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
-            </td>
-            <td class="text-center col-md-2">
-                <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<h2><?= \Yii::t('shop', 'Images'); ?></h2>
+
+<table class="table table-bordered">
+    <tbody>
+
+    <tr>
+        <td class="col-md-3 text-center" colspan="2">
+            <strong>
+                <?= \Yii::t('shop', 'Add from web'); ?>
+            </strong>
+        </td>
+        <td class="col-md-4">
+            <?= $addImageForm->field($image_form, 'link')->textInput([
+                'placeholder' => Yii::t('shop', 'Image link')
+            ])->label(false); ?>
+        </td>
+        <td class="col-md-3">
+            <?= $addImageForm->field($image_form, 'alt1')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+        </td>
+        <td class="col-md-2 text-center">
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="text-center" colspan="2">
+            <strong>
+                <?= \Yii::t('shop', 'Upload'); ?>
+            </strong>
+        </td>
+        <td>
+            <?= $addImageForm->field($image_form, 'image')->fileInput()->label(false); ?>
+        </td>
+        <td class="text-center">
+            <?= $addImageForm->field($image_form, 'alt2')->textInput(['placeholder' => \Yii::t('shop', 'Alternative text')])->label(false); ?>
+        </td>
+        <td class="text-center">
+            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5"></td>
+    </tr>
+    <tr>
+        <td class="col-md-1"></td>
+        <th class="text-center col-md-2">
+            <?= \Yii::t('shop', 'Image preview'); ?>
+        </th>
+        <th class="text-center col-md-4">
+            <?= \Yii::t('shop', 'Image URL'); ?>
+        </th>
+        <th class="text-center col-md-3">
+            <?= \Yii::t('shop', 'Alt'); ?>
+        </th>
+        <th class="text-center col-md-2">
+            <?= \Yii::t('shop', 'Control'); ?>
+        </th>
+    </tr>
+    <?php if (!empty($images)) : ?>
+        <?php foreach ($images as $image) : ?>
+            <tr>
+                <td>
+                    <?= Html::a(
+                        '',
+                        Url::toRoute(['image-up', 'id' => $image->id, 'languageId' => $selectedLanguage->id]),
+                        [
+                            'class' => 'pjax fa fa-chevron-up'
+                        ]
+                    ) .
+                    $image->position .
+                    Html::a(
+                        '',
+                        Url::toRoute(['image-down', 'id' => $image->id, 'languageId' => $selectedLanguage->id]),
+                        [
+                            'class' => 'pjax fa fa-chevron-down'
+                        ]
+                    );
+                    ?>
+                </td>
+                <td class="text-center">
+                    <img data-toggle="modal" data-target="#menuItemModal-<?= $image->id ?>"
+                         src="<?= $image->small; ?>"
+                         class="thumb">
+                    <!-- Modal -->
+                    <div id="menuItemModal-<?= $image->id ?>" class="modal fade" role="dialog">
+                        <img style="display: block" class="modal-dialog"
+                             src="<?= $image->thumb; ?>">
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="image-link">
+                        <p>
+                            <i class="fa fa-external-link" aria-hidden="true"></i>
+                            <?= str_replace(Yii::$app->homeUrl, '', Url::home(true)) . $image->big; ?>
+                        </p>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <?= $image->getTranslation($selectedLanguage->id)->alt ?? ''; ?>
+                </td>
+                <td class="text-center">
+                    <a href="<?= Url::toRoute(['edit-image', 'id' => $image->id, 'languageId' => $selectedLanguage->id]); ?>"
+                       class="glyphicon glyphicon-edit btn btn-default btn-sm pjax"></a>
+
+                    <a href="<?= Url::toRoute(['delete-image', 'id' => $image->id, 'languageId' => $selectedLanguage->id]); ?>"
+                       class="glyphicon glyphicon-remove text-danger btn btn-default btn-sm pjax"></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>
+
 <?php $addImageForm->end(); ?>
+<?php Pjax::end();?>
+

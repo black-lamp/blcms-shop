@@ -1,91 +1,78 @@
 <?php
-use bl\articles\backend\assets\TabsAsset;
-use bl\cms\shop\backend\assets\InputTreeAsset;
-use bl\cms\shop\backend\components\form\CategoryImageForm;
-use bl\cms\shop\common\entities\Category;
-use bl\cms\shop\common\entities\CategoryTranslation;
-use bl\multilang\entities\Language;
-use marqu3s\summernote\Summernote;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
-
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $category Category
- * @var $category_translation CategoryTranslation
- * @var $categories Category[]
- * @var $selectedLanguage Language
- * @var $languages Language[]
- * @var $image_form CategoryImageForm
- * @var $minPosition Category
- * @var $maxPosition Category
- * @var $categoriesTree Category
+ * @var $this yii\web\View
+ * @var $viewName string
+ * @var $params array
  */
 
-InputTreeAsset::register($this);
-TabsAsset::register($this);
+use yii\widgets\Pjax;
+use yii\helpers\{
+    Html, Url
+};
+use bl\cms\itpl\shop\backend\assets\EditProductAsset;
 
-$this->title = \Yii::t('shop', 'Edit category');
+EditProductAsset::register($this);
+
+$this->title = ($params['category']->isNewRecord) ? \Yii::t('shop', 'Add new category') : \Yii::t('shop', 'Edit category');
+$this->params['breadcrumbs'] = [
+    [
+        'label' => Yii::t('shop', 'Shop'),
+        'url' => ['/seo/static/save-page', 'page_key' => 'shop', 'languageId' => $params['selectedLanguage']->id],
+        'itemprop' => 'url'
+    ],
+    [
+        'label' => Yii::t('shop', 'Categories'),
+        'url' => ['/shop/category'],
+        'itemprop' => 'url'
+    ],
+    $params['category']->translation->title ?? ''
+];
 ?>
 
-<div class="col-md-12">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="glyphicon glyphicon-list"></i>
-            <?php if (!empty($category->id)) : ?>
-                <?php if (!empty($category_translation->title)) : ?>
-                    <span>
-                    <?= \Yii::t('shop', 'Edit category'); ?>
-                </span>
-                <?php else: ?>
-                    <span>
-                    <?= \Yii::t('shop', 'Add category translation'); ?>
-                </span>
-                <?php endif; ?>
-            <?php else : ?>
-                <span>
-                    <?= \Yii::t('shop', 'Add new category'); ?>
-                </span>
-            <?php endif; ?>
-        </div>
-        <div class="panel-body">
+<div class="tabs-container">
 
-            <ul class="tabs">
-                <li>
-                    <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['save', 'id' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                </li>
-                <li>
-                    <?= Html::a(Yii::t('shop', 'SEO data'), Url::to(['add-seo', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                </li>
-                <li>
-                    <?= Html::a(Yii::t('shop', 'Images'), Url::to(['add-images', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                </li>
-                <li>
-                    <?= Html::a(Yii::t('shop', 'Filters'), Url::to(['select-filters', 'categoryId' => $category->id, 'languageId' => $selectedLanguage->id]), ['class' => 'image']); ?>
-                </li>
-            </ul>
+    <?php Pjax::begin([
+        'linkSelector' => '.pjax',
+        'enablePushState' => true,
+        'timeout' => 10000
+    ]);
+    ?>
+    <!--TABS-->
+    <ul class="nav nav-tabs">
+        <li class="<?= Yii::$app->controller->action->id == 'add-basic' || Yii::$app->controller->action->id == 'save' ? 'tab active' : 'tab'; ?>">
+            <?= Html::a(Yii::t('shop', 'Basic'), Url::to(['add-basic', 'id' => $params['category']->id, 'languageId' => $params['selectedLanguage']->id])); ?>
+        </li>
+        <li class="<?= Yii::$app->controller->action->id == 'add-seo' ? 'tab active' : 'tab'; ?> <?= $params['category']->isNewRecord ? 'disabled' : ''; ?>">
+            <?= Html::a(Yii::t('shop', 'SEO data'), $params['category']->isNewRecord ? '' : Url::to(['add-seo', 'id' => $params['category']->id, 'languageId' => $params['selectedLanguage']->id]), ['class' => 'pjax']); ?>
+        </li>
+        <li class="<?= Yii::$app->controller->action->id == 'add-images' ? 'tab active' : 'tab'; ?> <?= $params['category']->isNewRecord ? 'disabled' : ''; ?>">
+            <?= Html::a(Yii::t('shop', 'Images'), $params['category']->isNewRecord ? '' : Url::to(['add-images', 'categoryId' => $params['category']->id, 'languageId' => $params['selectedLanguage']->id]), ['class' => 'pjax']); ?>
+        </li>
+        <li class="<?= Yii::$app->controller->action->id == 'select-filters' ? 'tab active' : 'tab'; ?> <?= $params['category']->isNewRecord ? 'disabled' : ''; ?>">
+            <?= Html::a(Yii::t('shop', 'Filters'), $params['category']->isNewRecord ? '' : Url::to(['select-filters', 'categoryId' => $params['category']->id, 'languageId' => $params['selectedLanguage']->id]), ['class' => 'pjax']); ?>
+        </li>
+    </ul>
 
+    <!--CONTENT-->
+    <div class="ibox-content">
 
-            <?php Pjax::begin([
-                'linkSelector' => '.image',
-                'enablePushState' => true,
-                'timeout' => 10000
-            ]);
-            ?>
+        <!-- LANGUAGES -->
+        <?= \bl\cms\shop\widgets\LanguageSwitcher::widget([
+            'selectedLanguage' => $params['selectedLanguage'],
+        ]); ?>
 
-            <?= $this->render($viewName, $params);
-            ?>
-            <?php Pjax::end(); ?>
+        <!--CANCEL BUTTON-->
+        <a href="<?= Url::to(['/shop/category']); ?>">
+            <?= Html::button(\Yii::t('shop', 'Cancel'), [
+                'class' => 'btn m-t-xs m-r-xs btn-danger btn-xs pull-right'
+            ]); ?>
+        </a>
 
-
-            <a href="<?= Url::to(['/shop/category']); ?>">
-                <?= Html::button(\Yii::t('shop', 'Close'), [
-                    'class' => 'btn btn-danger pull-right'
-                ]); ?>
-            </a>
-        </div>
+        <!--TAB VIEW-->
+        <?= $this->render($viewName, $params); ?>
     </div>
+    <?php Pjax::end(); ?>
 </div>
+

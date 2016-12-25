@@ -3,49 +3,57 @@ use bl\cms\shop\backend\assets\ProductAsset;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\CategoryTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\SearchProduct;
 use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
+use dektrium\user\models\User;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\View;
 use yii\widgets\Pjax;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $this yii\web\View
+ * @var $this View
  * @var $categories CategoryTranslation
  * @var $languages Language[]
- * @var $searchModel bl\cms\shop\common\entities\ProductSearch
- * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel SearchProduct
+ * @var $dataProvider ActiveDataProvider
+ * @var $notModeratedProductsCount Product
  */
 
 $this->title = \Yii::t('shop', 'Product list');
+ProductAsset::register($this);
+
 $this->params['breadcrumbs'] = [
     Yii::t('shop', 'Shop'),
     Yii::t('shop', 'Products')
 ];
-ProductAsset::register($this);
 ?>
 
-
-<div class="panel panel-default">
+<div class="ibox">
 
     <!--TITLE-->
-    <div class="panel-heading">
-        <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
-           class="pull-right btn btn-primary btn-xs">
-            <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
-        </a>
-        <h5>
-            <i class="glyphicon glyphicon-list"></i>
-            <?= \Yii::t('shop', 'Product list'); ?>
-        </h5>
+    <div class="ibox-title">
+        <div class="ibox-tools">
+            <h5>
+                <i class="glyphicon glyphicon-list"></i>
+                <?= \Yii::t('shop', 'Product list'); ?>
+            </h5>
+            <!--ADD BUTTON-->
+            <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
+               class="btn btn-primary btn-xs">
+                <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
+            </a>
+        </div>
     </div>
 
     <!--CONTENT-->
-    <div class="panel-body">
+    <div class="ibox-content">
         <?php Pjax::begin([
             'linkSelector' => '.pjax',
             'enablePushState' => true,
@@ -78,19 +86,19 @@ ProductAsset::register($this);
                             '',
                             Url::toRoute(['up', 'id' => $model->id]),
                             [
-                                'class' => 'pjax product-nav glyphicon glyphicon-arrow-up text-primary pull-left'
+                                'class' => 'pjax fa fa-chevron-up'
                             ]
                         );
                         $buttonDown = Html::a(
                             '',
                             Url::toRoute(['down', 'id' => $model->id]),
                             [
-                                'class' => 'pjax product-nav glyphicon glyphicon-arrow-down text-primary pull-left'
+                                'class' => 'pjax fa fa-chevron-down'
                             ]
                         );
-                        return $buttonUp . $model->position . $buttonDown;
+                        return $buttonUp . '<div>' . $model->position . '</div>' . $buttonDown;
                     },
-                    'contentOptions' => ['class' => 'vote-actions col-md-1'],
+                    'contentOptions' => ['class' => 'vote-actions'],
                 ],
 
                 /*TITLE*/
@@ -98,16 +106,25 @@ ProductAsset::register($this);
                     'headerOptions' => ['class' => 'text-center col-md-4'],
                     'attribute' => 'title',
                     'value' => function ($model) {
-                        $content = Html::a(
-                            $model->translation->title,
-                            Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
-                        );
-                        $content .= '<br><small>' . Yii::t('shop', 'Created') . ' ' . $model->creation_time . '</small>';
+                        $content = null;
+                        if (!empty($model->translation->title)) {
+                            /** @var User $owner */
+                            $owner = (!empty(User::find()->where(['id' => $model->owner])->one()))
+                                ? User::find()->where(['id' => $model->owner])->one()
+                                : new User();
+
+                            $content = Html::a(
+                                $model->translation->title,
+                                Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
+                            );
+                            $content .= '<br><small>' . Yii::t('shop', 'Created') . ' ' . $model->creation_time . '</small><br>';
+                            $content .= '<small>' . \Yii::t('shop', 'Created by') . ' ' . $owner->username . '</small>';
+                        }
                         return $content;
                     },
                     'label' => Yii::t('shop', 'Title'),
                     'format' => 'html',
-                    'contentOptions' => ['class' => 'project-title col-md-4'],
+                    'contentOptions' => ['class' => 'project-title'],
                 ],
 
                 /*CATEGORY*/
@@ -118,22 +135,12 @@ ProductAsset::register($this);
                     'label' => Yii::t('shop', 'Category'),
                     'format' => 'text',
                     'filter' => ArrayHelper::map(Category::find()->all(), 'id', 'translation.title'),
-                    'contentOptions' => ['class' => 'project-title col-md-2'],
+                    'contentOptions' => ['class' => 'project-title'],
                 ],
-
-                /*BASE PRICE*/
-                [
-                    'headerOptions' => ['class' => 'text-center col-md-1'],
-                    'value' => 'price',
-                    'label' => Yii::t('shop', 'Price'),
-                    'format' => 'text',
-                    'contentOptions' => ['class' => 'col-md-1 text-center'],
-                ],
-
 
                 /*IMAGES*/
                 [
-                    'headerOptions' => ['class' => 'text-center col-md-1'],
+                    'headerOptions' => ['class' => 'text-center col-md-2'],
                     'attribute' => 'images',
                     'value' => function ($model) {
                         $content = '';
@@ -151,7 +158,7 @@ ProductAsset::register($this);
                     },
                     'label' => Yii::t('shop', 'Images'),
                     'format' => 'html',
-                    'contentOptions' => ['class' => 'col-md-1 project-people'],
+                    'contentOptions' => ['class' => 'project-people'],
                 ],
 
                 /*STATUS*/
@@ -165,10 +172,10 @@ ProductAsset::register($this);
                                 return
                                     Html::button(
                                         Yii::$app->user->can('moderateProductCreation') ?
-                                            Html::a(\Yii::t('shop', 'On moderation'),
-                                                Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id]),
-                                                ['class' => '']) :
-                                            Html::tag('span', \Yii::t('shop', 'On moderation')),
+                                        Html::a(\Yii::t('shop', 'On moderation'),
+                                            Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id]),
+                                            ['class' => '']) :
+                                        Html::tag('span', \Yii::t('shop', 'On moderation')),
                                         ['class' => 'col-md-12 btn btn-warning btn-xs']
                                     );
                                 break;
@@ -183,26 +190,26 @@ ProductAsset::register($this);
                         }
                     },
                     'label' => Yii::t('shop', 'Status'),
-                    'format' => 'html',
+                    'format' => 'raw',
                     'filter' => Html::activeDropDownList($searchModel, 'status',
                         [
                             Product::STATUS_ON_MODERATION => \Yii::t('shop', 'On moderation'),
                             Product::STATUS_DECLINED => \Yii::t('shop', 'Declined'),
                             Product::STATUS_SUCCESS => \Yii::t('shop', 'Success')
-                        ], ['class' => 'form-control', 'prompt' => 'Любой статус']),
-                    'contentOptions' => ['class' => 'project-title text-center col-md-1'],
+                        ], ['class' => 'form-control', 'prompt' => \Yii::t('shop', 'All')]),
+                    'contentOptions' => ['class' => 'project-title text-center'],
                 ],
 
                 /*ACTIONS*/
                 [
                     'headerOptions' => ['class' => 'text-center col-md-2'],
-                    'attribute' => \Yii::t('shop', 'Manage'),
+                    'attribute' => \Yii::t('shop', 'Control'),
 
                     'value' => function ($model) {
                         return ManageButtons::widget(['model' => $model]);
                     },
                     'format' => 'raw',
-                    'contentOptions' => ['class' => 'col-md-2 text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
                 ],
             ],
         ]);
@@ -211,5 +218,11 @@ ProductAsset::register($this);
         Pjax::end();
         ?>
         <?= \Yii::t('shop', 'Count of waiting moderation products is') . ' <b>' . $notModeratedProductsCount . '</b>'; ?>
+
+        <!--ADD BUTTON-->
+        <a href="<?= Url::to(['/shop/product/save', 'languageId' => Language::getCurrent()->id]) ?>"
+           class="btn btn-primary btn-xs pull-right">
+            <i class="fa fa-user-plus"></i> <?= \Yii::t('shop', 'Add'); ?>
+        </a>
     </div>
 </div>

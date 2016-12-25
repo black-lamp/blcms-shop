@@ -1,71 +1,79 @@
 <?php
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @var $this yii\web\View
+ * @var $languages[] bl\multilang\entities\Language
+ * @var $selectedLanguage bl\multilang\entities\Language
+ * @var $maxPosition integer
+ * @var $category \bl\cms\shop\common\entities\Category
+ * @var $categories \bl\cms\shop\common\entities\Category[]
+ * @var $categoryTranslation \bl\cms\shop\common\entities\CategoryTranslation
  */
-use bl\cms\shop\common\entities\CategoryTranslation;
+
 use marqu3s\summernote\Summernote;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-
 ?>
 
-<?php $addForm = ActiveForm::begin(['method' => 'post', 'options' => ['enctype' => 'multipart/form-data']]) ?>
+<?php $addForm = ActiveForm::begin([
+    'method' => 'post',
+    'action' => [
+        'category/add-basic',
+        'id' => $category->id,
+        'languageId' => $selectedLanguage->id
+    ],
+    'options' => [
+        'enctype' => 'multipart/form-data'
+    ]]) ?>
 
-    <div role="tabpanel" class="tab-pane active" id="basic">
+<?= Html::submitInput(\Yii::t('shop', 'Save'), ['class' => 'btn btn-xs btn-primary m-r-xs pull-right']); ?>
+
+    <div id="basic">
         <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
-        <!-- LANGUAGES -->
-        <?php if (count($languages) > 1): ?>
-            <div class="dropdown">
-                <button class="btn btn-warning btn-xs dropdown-toggle" type="button"
-                        id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="true">
-                    <?= $selectedLanguage->name ?>
-                    <span class="caret"></span>
-                </button>
-                <?php if (count($languages) > 1): ?>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <?php foreach ($languages as $language): ?>
-                            <li>
-                                <a href="
-                                        <?= Url::to([
-                                    'save',
-                                    'categoryId' => $category->id,
-                                    'languageId' => $language->id]) ?>
-                                                ">
-                                    <?= $language->name ?>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
 
         <!-- NAME -->
-        <?= $addForm->field($category_translation, 'title', [
+        <?= $addForm->field($categoryTranslation, 'title', [
             'inputOptions' => [
                 'class' => 'form-control'
             ]
         ])->label(\Yii::t('shop', 'Name'))
         ?>
 
-        <!-- SHOW -->
-        <?= $addForm->field($category, 'show', [
-            'inputOptions' => [
-                'class' => 'form-control'
-            ]
-        ])->checkbox(['class' => 'i-checks', 'checked ' => ($category->show) ? '' : false])
-        ?>
+        <div class="row">
+            <!-- PARENT CATEGORY -->
+            <div class="col-md-6">
+                <?=
+                \bl\cms\shop\widgets\InputTree::widget([
+                    'className' => \bl\cms\shop\common\entities\Category::className(),
+                    'form' => $addForm,
+                    'model' => $category,
+                    'attribute' => 'parent_id',
+                    'languageId' => $selectedLanguage->id
+                ]);
+                ?>
+            </div>
 
-        <!-- PARENT CATEGORY -->
-        <b><?= \Yii::t('shop', 'Parent category'); ?></b>
-        <?= '<ul class="list-group ul-treefree ul-dropfree">'; ?>
-        <?= '<li class="list-group-item"><input type="radio" checked name="Category[parent_id]" value="" id="null"><label for="null">' . \Yii::t("shop", "Without parent") . '</label>'; ?>
-        <?= CategoryTranslation::treeRecoursion($categoriesTree, $category->parent_id, 'Category[parent_id]', $category_translation->category_id); ?>
-        <?= '</ul>'; ?>
+            <!-- SHOW -->
+            <?= $addForm->field($category, 'show', [
+                'inputOptions' => [
+                    'class' => 'form-control'
+                ]
+            ])->checkbox(['class' => 'i-checks', 'checked ' => ($category->show) ? '' : false]);
+            ?>
+
+            <!-- ADDITIONAL PRODUCTS -->
+            <?= $addForm->field($category, 'additional_products', [
+                'inputOptions' => [
+                    'class' => 'form-control'
+                ]
+            ])->checkbox(['class' => 'i-checks', 'checked ' => ($category->additional_products) ? '' : false]);
+            ?>
+        </div>
 
         <!-- DESCRIPTION -->
-        <?= $addForm->field($category_translation, 'description', [
+        <?= $addForm->field($categoryTranslation, 'description', [
             'inputOptions' => [
                 'class' => 'form-control'
             ]
@@ -79,11 +87,19 @@ use yii\widgets\ActiveForm;
             ]])->textInput([
             'type' => 'number',
             'max' => $maxPosition,
-            'min' => $minPosition
+            'min' => 1,
+            'value' => 1
         ]); ?>
 
+        <div class="ibox">
+            <!--CANCEL BUTTON-->
+            <a href="<?= Url::to(['/shop/category']); ?>">
+                <?= Html::button(\Yii::t('shop', 'Cancel'), [
+                    'class' => 'btn btn-danger btn-xs pull-right'
+                ]); ?>
+            </a>
+            <!--SAVE BUTTON-->
+            <?= Html::submitInput(\Yii::t('shop', 'Save'), ['class' => 'btn btn-xs btn-primary m-r-xs pull-right']); ?>
+        </div>
     </div>
-
-    <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
-
 <?php $addForm::end(); ?>

@@ -6,10 +6,7 @@
  * @var $products_translation \bl\cms\shop\common\entities\Product
  * @var $selectedLanguage \bl\multilang\entities\Language
  */
-use bl\cms\shop\common\entities\{
-    Category, ProductAvailability, ProductCountryTranslation, Vendor
-};
-use bl\cms\shop\widgets\InputTree;
+use bl\cms\shop\common\entities\{ProductAvailability, ProductCountryTranslation, Vendor};
 use marqu3s\summernote\Summernote;
 use yii\helpers\{ArrayHelper, Html, Url};
 use yii\widgets\ActiveForm;
@@ -28,7 +25,7 @@ use yii\widgets\ActiveForm;
 
 
 <!--SAVE BUTTON-->
-<?= Html::submitInput(\Yii::t('shop', 'Save'), ['class' => 'btn btn-primary pull-right']); ?>
+<?= Html::submitInput(\Yii::t('shop', 'Save'), ['class' => 'btn btn-xs btn-primary m-r-xs pull-right']); ?>
 
 <!--BASIC-->
 <div id="basic">
@@ -48,8 +45,8 @@ use yii\widgets\ActiveForm;
         <div class="col-md-6">
             <b><?= \Yii::t('shop', 'Category'); ?></b>
             <?=
-            InputTree::widget([
-                'className' => Category::className(),
+            \bl\cms\shop\widgets\InputTree::widget([
+                'className' => \bl\cms\shop\common\entities\Category::className(),
                 'form' => $form,
                 'model' => $product,
                 'attribute' => 'category_id',
@@ -115,11 +112,24 @@ use yii\widgets\ActiveForm;
     </div>
 
 
-    <!--SALE-->
-    <?= $form->field($product, 'sale', [
-        'inputOptions' => [
-            'class' => '']
-    ])->checkbox(['class' => '']); ?>
+    <div class="row">
+        <!--SALE-->
+        <div style="display: inline-block;">
+            <?= $form->field($product, 'sale', [
+                'inputOptions' => [
+                    'class' => '']
+            ])->checkbox(); ?>
+        </div>
+
+        <!--POPULAR-->
+        <div style="display: inline-block;">
+            <?= $form->field($product, 'popular', [
+                'inputOptions' => [
+                    'class' => '']
+            ])->checkbox(); ?>
+        </div>
+    </div>
+
 
     <!--SHORT DESCRIPTION-->
     <?= $form->field($products_translation, 'description', [
@@ -139,13 +149,15 @@ use yii\widgets\ActiveForm;
 
     <!-- SEO -->
     <h2><?= \Yii::t('shop', 'SEO options'); ?></h2>
-    <?= $form->field($products_translation, 'seoUrl', [
-        'inputOptions' => [
-            'class' => 'form-control'
-        ]
-    ])->label('SEO URL')
-    ?>
-    <?= Html::button('Generate', ['class' => 'btn btn-primary pull-right', 'id' => 'generate-seo-url']); ?>
+    <div class="seo-url">
+        <?= $form->field($products_translation, 'seoUrl', [
+            'inputOptions' => [
+                'class' => 'form-control'
+            ]
+        ])->label('SEO URL')
+        ?>
+        <?= Html::button(\Yii::t('shop', 'Generate'), ['class' => 'btn btn-primary btn-generate', 'id' => 'generate-seo-url']); ?>
+    </div>
 
     <?= $form->field($products_translation, 'seoTitle', [
         'inputOptions' => [
@@ -166,12 +178,14 @@ use yii\widgets\ActiveForm;
     ])->textarea(['rows' => 3])->label(\Yii::t('shop', 'SEO keywords'))
     ?>
 
-    <a href="<?= Url::to(['/shop/product']); ?>">
-        <?= Html::button(\Yii::t('shop', 'Cancel'), [
-            'class' => 'btn btn-danger pull-right'
-        ]); ?>
-    </a>
-    <input type="submit" class="btn btn-primary pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+    <div class="ibox">
+        <a href="<?= Url::to(['/shop/product']); ?>">
+            <?= Html::button(\Yii::t('shop', 'Cancel'), [
+                'class' => 'btn btn-xs btn-danger pull-right'
+            ]); ?>
+        </a>
+        <input type="submit" class="btn btn-xs btn-primary m-r-xs pull-right" value="<?= \Yii::t('shop', 'Save'); ?>">
+    </div>
 </div>
 
 <?php $form::end(); ?>
