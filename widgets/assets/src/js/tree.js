@@ -7,6 +7,7 @@ $(document).ready(function () {
         var widget = $('#widget-menu');
         var languagePrefix = widget.data('language');
         var currentCategoryId = widget.attr('data-current-category-id');
+        var isGrid = widget.attr('data-is-grid');
 
         /*FIND TREE ITEMS WHICH MUST BE OPENED USING DATA ATTRIBUTE AND OPEN ITS*/
         var openedTreeItem = $('[data-opened=true]');
@@ -15,17 +16,26 @@ $(document).ready(function () {
 
         /*OPEN ON CLICK*/
         widget.on('click', '.category-toggle.' + downIconClass, (function () {
+
             var element = this;
-            var id = element.id;
-            var ul = $(element).parent().parent();
+            var id = $(element).attr('id');
+            var ul = $(element).closest('ul');
+            var li = $(element).closest('li');
             var level = $(ul).attr("data-level");
 
-            var url = (languagePrefix) ? '/' + languagePrefix + '/shop/category/get-categories' :
-                '/shop/category/get-categories';
+            var url = (languagePrefix) ? '/' + languagePrefix + appName + '/shop/category/get-categories' :
+                appName + '/shop/category/get-categories';
             $.ajax({
                 type: "GET",
                 url: url,
-                data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
+                data: {
+                    'parentId': id,
+                    'level': level,
+                    'currentCategoryId': currentCategoryId,
+                    'isGrid': isGrid,
+                    'downIconClass': downIconClass.replace('.', ' '),
+                    'upIconClass': upIconClass.replace('.', ' ')
+                },
 
                 success: function (data) {
                     var downClasses = downIconClass.split('.');
@@ -34,12 +44,17 @@ $(document).ready(function () {
                         $(element).removeClass(downClasses[i]);
                         $(element).addClass(upClasses[i]);
                     }
-
-                    $(data).height('100%').slideDown(300).insertAfter($('#' + id));
+                    var color = 255 - level * (10 - level * 2);
+                    $(data).height('100%')
+                        .css({
+                            'background-color': 'rgb(' + color + ',  ' + color + ', ' + color + ')',
+                            'border-left-width': 10,
+                            'border-left-color': 'rgb(235, 235, 235)',
+                            'border-left-style': 'solid'
+                        })
+                        .slideDown(300).appendTo($(li));
                 }
             });
-
-            ul.attr('style', '');
         }));
 
         /*CLOSE ON CLICK*/
@@ -53,7 +68,9 @@ $(document).ready(function () {
                 $(element).addClass(downClasses[i]);
             }
 
-            var ul = $(element).nextAll();
+            var li = $(element).closest('li');
+
+            var ul = (isGrid) ? li.children('ul') : $(element).nextAll();
             $(ul).slideUp(300);
 
             setTimeout(function() {
@@ -68,24 +85,49 @@ function autoOpen(openedTreeItem, currentCategoryId) {
     if (openedTreeItem) {
         openedTreeItem.each(function() {
             var id = this.id;
-            var ul = $(this).parent().parent();
+            var ul = $(this).closest('ul');
+            var li = $(element).closest('li');
             var level = $(ul).attr("data-level");
+            var widget = $('#widget-menu');
+            var isGrid = widget.attr('data-is-grid');
+            var languagePrefix = widget.data('language');
 
             $(this).removeClass(downIconClass);
             $(this).addClass(upIconClass);
 
+            var url = (languagePrefix) ? '/' + languagePrefix + appName + '/shop/category/get-categories' :
+            appName + '/shop/category/get-categories';
+
             $.ajax({
                 type: "GET",
-                url: '/shop/category/get-categories',
-                data: 'parentId=' + id + '&level=' + level + '&currentCategoryId=' + currentCategoryId,
+                url: url,
+
+                data: {
+                    'parentId': id,
+                    'level': level,
+                    'currentCategoryId': currentCategoryId,
+                    'isGrid': isGrid,
+                    'downIconClass': downIconClass.replace('.', ' '),
+                    'upIconClass': upIconClass.replace('.', ' ')
+                },
 
                 success: function (data) {
+                    var color = 255 - level * 7;
 
-                    $(data).slideDown(300).insertAfter($('#' + id));
+                    $(data).height('100%')
+                        .css({
+                            'background-color': 'rgb(' + color + ',  ' + color + ', ' + color + ')',
+                            'border-left-width': 10,
+                            'border-left-color': 'rgb(235, 235, 235)',
+                            'border-left-style': 'solid'
+                        })
+                        .slideDown(300).appendTo($(li));
+
                     level++;
                     autoOpen($('[data-level=' + level + '] ' + '[data-opened=true]'), currentCategoryId);
                 }
             });
+
         });
     }
 }

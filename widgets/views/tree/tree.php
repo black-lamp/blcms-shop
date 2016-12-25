@@ -8,30 +8,61 @@
  * @var $level integer
  * @var $upIconClass string
  * @var $downIconClass string
- * @var $langId string
+ * @var $languageId string
+ * @var $isGrid boolean
+ * @var $appName string
  */
 
-//die(var_dump(\Yii::$app->view->context->id));
-//die(var_dump(\Yii::$app->view->context));
+$params = [
+    'categories' => $categories,
+    'currentCategoryId' => $currentCategoryId,
+    'level' => $level,
+    'upIconClass' => $upIconClass,
+    'downIconClass' => $downIconClass,
+    'languageId' => $languageId,
+    'appName' => $appName,
+];
 ?>
 
-<div id="widget-menu" data-current-category-id="<?=$currentCategoryId; ?>" data-language="<?=$langId; ?>">
-    <?= $this->render(
-        '@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax',
-        [
-            'categories' => $categories,
-            'currentCategoryId' => $currentCategoryId,
-            'level' => $level,
-            'upIconClass' => $upIconClass,
-            'downIconClass' => $downIconClass,
-        ]);
-    ?>
+<div id="widget-menu" data-current-category-id="<?= $currentCategoryId; ?>" data-language="<?= $languageId; ?>"
+     data-is-grid=<?= $isGrid ? 'true' : 'false'; ?>>
+    <?php if ($isGrid) : ?>
+        <table id="my-grid" class="table table-hover">
+            <thead>
+            <tr>
+                <th class="text-center col-md-1"></th>
+                <th class="text-center col-md-3"><?= \Yii::t('shop', 'Title'); ?></th>
+                <th class="text-center col-md-2"><?= \Yii::t('shop', 'Parent category'); ?></th>
+                <th class="text-center col-md-2"><?= \Yii::t('shop', 'Images'); ?></th>
+                <th class="text-center col-md-1"><?= \Yii::t('shop', 'Show'); ?></th>
+                <th class="text-center col-md-1"><?= \Yii::t('shop', 'Position'); ?></th>
+                <th class="text-center col-md-2"><?= \Yii::t('shop', 'Control'); ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr></tr>
+            </tbody>
+        </table>
+        <?= $this->render(
+            '@vendor/black-lamp/blcms-shop/widgets/views/tree/grid-tr',
+            $params
+        );
+        ?>
+
+    <?php else : ?>
+        <?= $this->render(
+            '@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax',
+            $params
+        );
+        ?>
+    <?php endif; ?>
 </div>
 
 <?php
 $this->registerJs('
     var upIconClass = "' . $upIconClass . '";
     var downIconClass = "' . $downIconClass . '";
+    var appName = "' . $appName . '";
 ', $this::POS_HEAD);
 ?>
 

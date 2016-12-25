@@ -7,6 +7,7 @@ use bl\cms\shop\widgets\assets\TreeWidgetAsset;
 use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Widget;
+use yii\web\NotFoundHttpException;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -20,6 +21,8 @@ use yii\base\Widget;
  *  'currentCategoryId' => $category->id
  * ]); ?>
  *
+ * In your controller use bl\cms\shop\widgets\traits\TreeWidgetTrait;
+ *
  */
 class TreeWidget extends Widget
 {
@@ -27,7 +30,23 @@ class TreeWidget extends Widget
 
     public $currentCategoryId;
 
+    /**
+     * @var bool
+     * If true - TreeWidgetAsset will registered.
+     */
     public $enableAjax = true;
+
+    /**
+     * @var bool
+     * If true - widget will be displayed as admin table.
+     */
+    public $isGrid = false;
+
+    /**
+     * @var string
+     * If app is backend, $appName must be '/admin';
+     */
+    public $appName = '';
 
     /**
      * Sets css-class for span tag when category is closed
@@ -44,7 +63,12 @@ class TreeWidget extends Widget
     public function init()
     {
         if ($this->enableAjax) {
-            TreeWidgetAsset::register($this->getView());
+            $asset = TreeWidgetAsset::register($this->getView());
+            if ($this->isGrid) {
+                $asset->css = [
+                    'css/tree-grid.css'
+                    ];
+            }
         }
     }
 
@@ -60,7 +84,10 @@ class TreeWidget extends Widget
 
         if (!empty($this->className)) {
             $class = \Yii::createObject($this->className);
-            $categories = $class::find()->where(['parent_id' => 0, 'show' => 1])->orderBy('position')->all();
+
+            $categories = (!empty($this->appName)) ?
+                $class::find()->where(['parent_id' => 0])->orderBy('position')->all() :
+                $class::find()->where(['parent_id' => 0, 'show' => 1])->orderBy('position')->all();
 
             $currentCategoryId = '';
 
@@ -73,15 +100,19 @@ class TreeWidget extends Widget
                 }
             }
 
-            return $this->render('tree/tree', [
+            $params = [
                 'categories' => $categories,
                 'currentCategoryId' => $currentCategoryId,
                 'level' => 0,
                 'context' => $this,
                 'upIconClass' => $this->upIconClass,
                 'downIconClass' => $this->downIconClass,
-                'langId' => $langId ?? ''
-            ]);
+                'languageId' => $langId ?? '',
+                'appName' => $this->appName,
+                'isGrid' => $this->isGrid
+            ];
+
+            return $this->render('tree/tree', $params);
         } else return false;
 
     }
@@ -98,10 +129,20 @@ class TreeWidget extends Widget
 
     }
 
+    /**
+     * Gets all category's ancestry.
+     * @param $categoryId
+     * @param array $parentCategoriesArray
+     * @return array
+     * @throws NotFoundHttpException
+     */
     private static function findAllAncestry($categoryId, $parentCategoriesArray = [])
     {
         $category = Category::findOne($categoryId);
-        $parentCategoryId = $category->parent_id;
+        if (!empty($category)) {
+            $parentCategoryId = $category->parent_id;
+        }
+        else throw new NotFoundHttpException();
 
         if (!empty($parentCategoryId)) {
             $parentCategoriesArray[] = $parentCategoryId;
