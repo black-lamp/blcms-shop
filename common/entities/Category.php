@@ -114,6 +114,7 @@ class Category extends ActiveRecord
     }
 
     /**
+     * Gets shown children
      * @param $parent_id integer
      * @return \yii\db\ActiveQuery|array
      */
@@ -121,6 +122,18 @@ class Category extends ActiveRecord
     {
         $parent_id = $parent_id ?? $this->id;
         $children = $this::find()->where(['parent_id' => $parent_id, 'show' => true])->all();
+        return $children;
+    }
+
+    /**
+     * Gets all children
+     * @param $parent_id integer
+     * @return \yii\db\ActiveQuery|array
+     */
+    public function getAllChildren($parent_id = null)
+    {
+        $parent_id = $parent_id ?? $this->id;
+        $children = $this::find()->where(['parent_id' => $parent_id])->all();
         return $children;
     }
 
