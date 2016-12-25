@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\widgets\traits\TreeWidgetTrait;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\Inflector;
@@ -13,7 +14,7 @@ use yii\web\{
     ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, Filter, Product, SearchCategory
+    Category, CategoryTranslation, Filter, SearchCategory
 };
 
 /**
@@ -22,6 +23,7 @@ use bl\cms\shop\common\entities\{
  */
 class CategoryController extends Controller
 {
+    use TreeWidgetTrait;
 
     /**
      * Event is triggered before creating new product.
@@ -70,7 +72,9 @@ class CategoryController extends Controller
                     ],
                     [
                         'actions' => ['save', 'add-basic', 'add-images', 'add-seo', 'delete-image',
-                            'select-filters', 'delete-filter', 'up', 'down', 'switch-show', 'get-seo-url'],
+                            'select-filters', 'delete-filter', 'up', 'down', 'switch-show', 'get-seo-url',
+                            'get-categories'
+                        ],
                         'roles' => ['saveShopCategory'],
                         'allow' => true,
                     ],
@@ -113,12 +117,18 @@ class CategoryController extends Controller
         $category = Category::findOne($id);
         if (($category->delete())) {
             Yii::$app->getSession()->setFlash('success', 'The category has been successfully removed');
+            if (\Yii::$app->request->isAjax) {
+                return true;
+            }
             $this->trigger(self::EVENT_AFTER_DELETE_CATEGORY, new CategoryEvent(['id' => $id]));
         } else {
             Yii::$app->getSession()->setFlash('error', 'Error deleting category');
         }
 
-        return $this->actionIndex();
+        if (\Yii::$app->request->isAjax) {
+            return false;
+        }
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     /**
@@ -378,11 +388,16 @@ class CategoryController extends Controller
         if ($category = Category::findOne($id)) {
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
 
-            $category->movePrev();
-            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent(['id' => $id]));
-        } else throw new NotFoundHttpException();
-        return $this->actionIndex();
+            if ($category->movePrev()) {
+                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                    new CategoryEvent(['id' => $id]));
+                if (\Yii::$app->request->isAjax) {
+                    return 'up';
+                }
+            }
+            return $this->actionIndex();
+        }
+        throw new NotFoundHttpException();
     }
 
     /**
@@ -396,11 +411,16 @@ class CategoryController extends Controller
     {
         if ($category = Category::findOne($id)) {
             $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
-            $category->moveNext();
-            $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
-                new CategoryEvent(['id' => $id]));
-        } else throw new NotFoundHttpException();
-        return $this->actionIndex();
+            if ($category->moveNext()) {
+                $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
+                    new CategoryEvent(['id' => $id]));
+                if (\Yii::$app->request->isAjax) {
+                    return 'down';
+                }
+            }
+            return $this->actionIndex();
+        }
+        throw new NotFoundHttpException();
     }
 
     /**
@@ -419,6 +439,9 @@ class CategoryController extends Controller
             $category->save();
             $this->trigger(self::EVENT_AFTER_EDIT_CATEGORY,
                 new CategoryEvent(['id' => $id]));
+            if (\Yii::$app->request->isAjax) {
+                return $category->show;
+            }
             return $this->actionIndex();
         } else throw new NotFoundHttpException();
     }
