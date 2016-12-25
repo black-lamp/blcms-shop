@@ -20,7 +20,6 @@ $(document).ready(function() {
             attributeId = attributeId.replace('CartForm[attribute_value_id][', '');
             attributeId = attributeId.replace(']', '');
             values[i] = checkedValues[i].value;
-
         }
 
         if (values.length == combinationBlockInputsNumber) {
@@ -43,6 +42,7 @@ $(document).ready(function() {
                     newPriceTag.text(newPrice);
                     if (data.image) $('#main-image').attr('src', data.image);
                     $('img.zoomImg').attr('src', data.image);
+                    if (data.articulus) $('#articulus').text(data.articulus);
                 },
                 error: function (data) {
                     $(addToCartButton).attr('disabled','disabled');

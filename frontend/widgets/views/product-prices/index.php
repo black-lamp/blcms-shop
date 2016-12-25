@@ -116,7 +116,7 @@ $globalDefaultCombination = $defaultCombination;
         <span class="sum one">
             <?php if (!empty($product->price)) : ?>
             <?= Yii::$app->formatter->asCurrency($product->price) ?>
-
+            <?php endif; ?>
         </span>
     </div>
 <?php endif; ?>
