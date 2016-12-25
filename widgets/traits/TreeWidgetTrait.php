@@ -26,7 +26,7 @@ trait TreeWidgetTrait
      */
     public function actionGetCategories($parentId = null, $level, $currentCategoryId, $isGrid = false, $downIconClass, $upIconClass)
     {
-//        if (\Yii::$app->request->isAjax) {
+        if (\Yii::$app->request->isAjax) {
 
             if (!empty($level)) {
                 $categories = Category::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
@@ -51,6 +51,6 @@ trait TreeWidgetTrait
                         '@vendor/black-lamp/blcms-shop/widgets/views/tree/categories-ajax', $params);
                 }
             } else throw new Exception();
-//        } else throw new BadRequestHttpException();
+        } else throw new BadRequestHttpException();
     }
 }
