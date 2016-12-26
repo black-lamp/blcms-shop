@@ -1,7 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
-use bl\cms\cart\common\components\user\models\User;
+use bl\cms\shop\common\components\user\models\User;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;

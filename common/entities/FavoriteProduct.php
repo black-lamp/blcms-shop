@@ -1,9 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
-use bl\cms\cart\common\components\user\models\User;
-use Yii;
-use yii\base\Exception;
+use bl\cms\shop\common\components\user\models\User;
 use yii\db\ActiveRecord;
 
 /**

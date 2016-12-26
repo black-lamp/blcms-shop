@@ -3,7 +3,7 @@ namespace bl\cms\shop\frontend\controllers;
 
 use bl\cms\cart\common\components\user\models\Profile;
 use bl\cms\cart\common\components\user\models\RegistrationForm;
-use bl\cms\cart\common\components\user\models\User;
+use bl\cms\shop\common\components\user\models\User;
 use bl\cms\seo\StaticPageBehavior;
 use bl\cms\shop\frontend\components\events\PartnersEvents;
 use bl\cms\shop\common\entities\PartnerRequest;
