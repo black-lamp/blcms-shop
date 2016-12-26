@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
+use bl\cms\shop\common\components\user\models\UserGroup;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -14,11 +15,13 @@ use yii\db\ActiveRecord;
  * @property integer $sale_type_id
  * @property boolean $default_combination
  * @property string $articulus
+ * @property integer $user_group_id
  *
  * @property Product $product
  * @property SaleType $saleType
  * @property ProductCombinationAttribute[] $shopProductCombinationAttributes
  * @property ProductCombinationImage[] $images
+ * @property UserGroup $userGroup
  */
 class ProductCombination extends ActiveRecord
 {
@@ -36,12 +39,13 @@ class ProductCombination extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'sale_type_id'], 'integer'],
+            [['product_id', 'sale_type_id', 'user_group_id'], 'integer'],
             [['price', 'sale'], 'number'],
             [['default_combination'], 'boolean'],
             [['articulus'], 'string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
+            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
 
@@ -59,6 +63,7 @@ class ProductCombination extends ActiveRecord
             'image_name' => Yii::t('shop', 'Image'),
             'default' => Yii::t('shop', 'Default'),
             'articulus' => Yii::t('shop', 'Articulus'),
+            'user_group_id' => \Yii::t('shop', 'User group')
         ];
     }
 
@@ -151,6 +156,14 @@ class ProductCombination extends ActiveRecord
             $defaultProductCombination->default_combination = false;
             if ($defaultProductCombination->validate()) $defaultProductCombination->save();
         }
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroup()
+    {
+        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 
 }

@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
@@ -18,11 +19,13 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $sale_type_id
  * @property integer $position
  * @property string $articulus
+ * @property integer $user_group_id
  *
  * @property SaleType $type
  * @property Product $product
  * @property ProductPriceTranslation[] $translations
  * @property ProductPriceTranslation $translation
+ * @property UserGroup $userGroup
  *
  * @method ProductPriceTranslation getTranslation($languageId = null)
  */
@@ -62,10 +65,11 @@ class ProductPrice extends ActiveRecord
         return [
             [['product_id', 'price'], 'required'],
             [['price', 'sale'], 'double'],
-            [['product_id', 'sale_type_id'], 'integer'],
+            [['product_id', 'sale_type_id', 'user_group_id'], 'integer'],
             [['articulus'], 'string'],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
 
@@ -149,5 +153,13 @@ class ProductPrice extends ActiveRecord
         }
 
         return $price;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroup()
+    {
+        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 }
