@@ -65,6 +65,7 @@ class AdminController extends BaseAdminController
         }
 
         return $this->render('save-user-group', [
+            'languageId' => $languageId,
             'userGroupTranslation' => $userGroupTranslation
         ]);
     }

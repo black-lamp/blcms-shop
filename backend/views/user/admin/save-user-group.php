@@ -3,6 +3,7 @@
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @var $userGroupTranslation \bl\cms\shop\common\components\user\models\UserGroupTranslation
+ * @var $languageId integer
  */
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
@@ -13,9 +14,16 @@ $this->title = \Yii::t('shop', 'Change user group');
 
 <div class="ibox">
     <div class="ibox-title">
-        <h1>
-            <?= $this->title; ?>
-        </h1>
+        <div class="row">
+            <h1 class="col-md-9">
+                <?= $this->title; ?>
+            </h1>
+            <div class="col-md-3 pull-right">
+                <?= \bl\cms\shop\widgets\LanguageSwitcher::widget([
+                    'selectedLanguage' => \bl\multilang\entities\Language::findOne($languageId)
+                ]); ?>
+            </div>
+        </div>
     </div>
     <div class="ibox-content">
 
