@@ -45,6 +45,9 @@ class User extends BaseModel
             ],
             'emailTrim'     => ['email', 'trim'],
 
+            // user group
+            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
+
             // password rules
             'passwordRequired' => ['password', 'required', 'on' => ['register']],
             'passwordLength'   => ['password', 'string', 'min' => 6, 'max' => 72, 'on' => ['register', 'create']],
@@ -104,5 +107,13 @@ class User extends BaseModel
             else return false;
         }
         else return false;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroup()
+    {
+        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 }
