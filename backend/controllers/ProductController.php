@@ -1213,18 +1213,13 @@ class ProductController extends Controller
             $post = \Yii::$app->request->post();
 
             if ($combination->load($post)) {
-                if ($combination->default) {
-                    $defaultProductCombination = ProductCombination::find()
-                        ->where(['product_id' => $productId,'default' => true])->one();
-                    if (!empty($defaultProductCombination)) {
-                        $defaultProductCombination->default = 0;
-                        if ($defaultProductCombination->validate()) $defaultProductCombination->save();
-                    }
+                if ($combination->default_combination) {
+                    $combination->findDefaultCombinationAndUndefault();
                 }
                 else {
                     $productCombinations = ProductCombination::find()
                         ->where(['product_id' => $productId])->all();
-                    if (empty($productCombinations)) $combination->default = 1;
+                    if (empty($productCombinations)) $combination->default_combination = true;
                 }
                 $combination->product_id = $productId;
 
@@ -1334,12 +1329,8 @@ class ProductController extends Controller
 
             if ($combination->load($post)) {
 
-                if ($combination->default) {
-                    $defaultProductCombination = ProductCombination::find()
-                        ->where(['product_id' => $combination->product_id,'default' => true])
-                        ->andWhere(['!=', 'id', $combination->id])->one();
-                    $defaultProductCombination->default = 0;
-                    if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+                if ($combination->default_combination) {
+                    $combination->findDefaultCombinationAndUndefault();
                 }
 
                 if ($combination->validate()) $combination->save();
@@ -1400,16 +1391,10 @@ class ProductController extends Controller
 
         $combination = ProductCombination::findOne($combinationId);
 
-        if (!$combination->default) {
-            $defaultProductCombination = ProductCombination::find()
-                ->where(['product_id' => $combination->product_id,'default' => true])
-                ->andWhere(['!=', 'id', $combination->id])->one();
-            if (!empty($defaultProductCombination)) {
-                $defaultProductCombination->default = $combination->default;
-                if ($defaultProductCombination->validate()) $defaultProductCombination->save();
-            }
+        if (!$combination->default_combination) {
+            $combination->findDefaultCombinationAndUndefault();
 
-            $combination->default = !$combination->default;
+            $combination->default_combination = !$combination->default_combination;
             if ($combination->validate()) $combination->save();
 
             return $this->redirect(\Yii::$app->request->referrer);

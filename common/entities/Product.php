@@ -294,7 +294,8 @@ class Product extends ActiveRecord
      */
     public function getDefaultCombination()
     {
-        return $this->hasOne(ProductCombination::className(), ['product_id' => 'id'])->where(['default' => true]);
+        return $this->hasOne(ProductCombination::className(), ['product_id' => 'id'])
+            ->where(['default_combination' => true]);
     }
 
     /**

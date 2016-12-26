@@ -84,7 +84,7 @@ $this->params['breadcrumbs'] = [
                 <?= $form->field($combination, 'sale')->textInput(['type' => 'number', 'step' => '0.01']); ?>
             </div>
         </div>
-        <?= $form->field($combination, 'default')->checkbox(); ?>
+        <?= $form->field($combination, 'default_combination')->checkbox(); ?>
 
         <!--IMAGES-->
         <?php $image_form->product_image_id = ArrayHelper::map($combinationImages, 'product_image_id', 'product_image_id'); ?>
@@ -178,4 +178,3 @@ $this->params['breadcrumbs'] = [
         <?php $form->end() ?>
     </div>
 </div>
-

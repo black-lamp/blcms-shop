@@ -12,7 +12,7 @@ use yii\db\ActiveRecord;
  * @property double $price
  * @property double $sale
  * @property integer $sale_type_id
- * @property integer $default
+ * @property boolean $default_combination
  * @property string $articulus
  *
  * @property Product $product
@@ -38,7 +38,7 @@ class ProductCombination extends ActiveRecord
         return [
             [['product_id', 'sale_type_id'], 'integer'],
             [['price', 'sale'], 'number'],
-            [['default'], 'boolean'],
+            [['default_combination'], 'boolean'],
             [['articulus'], 'string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['sale_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => SaleType::className(), 'targetAttribute' => ['sale_type_id' => 'id']],
@@ -138,6 +138,19 @@ class ProductCombination extends ActiveRecord
         }
 
         return $price;
+    }
+
+    /**
+     * Finds default combination for one product and makes it not default.
+     */
+    public function findDefaultCombinationAndUndefault() {
+        $defaultProductCombination = ProductCombination::find()
+            ->where(['product_id' => $this->product_id,'default_combination' => true])
+            ->andWhere(['!=', 'id', $this->id])->one();
+        if (!empty($defaultProductCombination)) {
+            $defaultProductCombination->default_combination = false;
+            if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+        }
     }
 
 }
