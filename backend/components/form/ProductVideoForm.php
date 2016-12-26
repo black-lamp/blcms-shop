@@ -35,7 +35,7 @@ class ProductVideoForm extends Model
 
             if (!empty($this->file_name)) {
 
-                $baseName = Product::generateImageName($this->file_name->name) . '.' . end(explode("/", $this->file_name->type));
+                $baseName = Product::generateImageName($this->file_name->name) . '.' . $this->file_name->extension;
 
                 $this->file_name->saveAs($dir . '/' . $baseName);
 
@@ -43,6 +43,7 @@ class ProductVideoForm extends Model
             }
 
         }
+        else die(var_dump($this->errors));
 
         return false;
     }
