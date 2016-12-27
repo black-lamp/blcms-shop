@@ -1340,16 +1340,21 @@ class ProductController extends Controller
                 if ($imageForm->load($post)) {
                     if ($imageForm->validate()) {
                         $productImagesIdsArray = ArrayHelper::getColumn($product->images, 'id');
-                            $mustBeDeletedImagesIds = (!empty($imageForm->product_image_id)) ?
-                                array_diff($productImagesIdsArray, $imageForm->product_image_id) :
-                                $productImagesIdsArray;
+                        $mustBeDeletedImagesIds = (!empty($imageForm->product_image_id)) ?
+                            array_diff($productImagesIdsArray, $imageForm->product_image_id) :
+                            $productImagesIdsArray;
 
-                        ProductCombinationImage::deleteAll(['in', 'product_image_id', $mustBeDeletedImagesIds]);
+                        $mustBeDeletedImages = ProductCombinationImage::find()
+                            ->where(['in', 'product_image_id', $mustBeDeletedImagesIds])
+                            ->andWhere(['combination_id' => $combination->id])->all();
+                        foreach ($mustBeDeletedImages as $mustBeDeletedImage) {
+                            $mustBeDeletedImage->delete();
+                        }
 
                         if (!empty($imageForm->product_image_id)) {
                             foreach ($imageForm->product_image_id as $imageId) {
                                 $combinationImage = ProductCombinationImage::find()
-                                    ->where(['product_image_id' => $imageId])->one();
+                                    ->where(['product_image_id' => $imageId, 'combination_id' => $combination->id])->one();
                                 if (empty($combinationImage)) {
                                     $combinationImage = new ProductCombinationImage();
                                     $combinationImage->combination_id = (int)$combination->id;
