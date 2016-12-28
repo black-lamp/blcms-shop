@@ -12,8 +12,6 @@ $(document).ready(function () {
         e.preventDefault();
         addToInputs();
     });
-
-
 });
 
 /*GETS ATTRIBUTE VALUES BY AJAX WHEN OPTION HAS SELECTED*/
@@ -34,10 +32,17 @@ function getAttributeValues() {
                 $('#productcombinationvalue').children().remove();
 
                 $.each(attributeValues, function (i, value) {
-                    $(new Option(value['translation']['value'], value['id'])).appendTo('#productcombinationvalue');
+                    var label = $('<label>');
+                    var radioBtn = $('<label class="btn btn-default">' +
+                        '<input type="radio" name="value" value="' + value['id'] + '">' +
+                        '<div>' + value['translation']['value'] + '</div>' +
+                        '</label>');
+                    radioBtn.appendTo('#productcombinationvalue');
+
                 });
             },
-            error: function () {
+            error: function (data) {
+                console.log(data);
                 alert('You have not permissions to get attribute values.')
             }
         });
@@ -51,7 +56,7 @@ function addToInputs() {
     var valueInput = $('.hidden-value').last();
 
     var selectedAttribute = $("#productcombinationattribute option:selected");
-    var selectedValue = $("#productcombinationvalue option:selected");
+    var selectedValue = $("#productcombinationvalue input:checked");
 
     var selectedAttributeId = $(selectedAttribute).attr('value');
     var selectedValueId = $(selectedValue).attr('value');
@@ -62,12 +67,13 @@ function addToInputs() {
         $(valueInput).clone().appendTo("#value-inputs");
 
         var key = $('.hidden-attribute').length - 1;
-        $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId).attr('data-key', key);;
-        $(valueInput[valueInput.length - 1]).val(selectedValueId).attr('data-key', key);;
+        $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId).attr('data-key', key);
+        $(valueInput[valueInput.length - 1]).val(selectedValueId).attr('data-key', key);
+        ;
 
         addToTable(
             $(selectedAttribute).text(),
-            $(selectedValue).text(),
+            $(selectedValue).next()[0],
             key
         );
     }
@@ -91,7 +97,6 @@ function addToTable(attributeTdText, valueTdText, removeTdText) {
     $(removeButton).click(function () {
         var key = $(this).attr('data-key');
 
-        console.log($('input[data-key="' + (key) + ']"'));
         $('input[data-key="' + (key) + '"]').remove();
 
         $(this).parent().parent().remove();
@@ -101,7 +106,7 @@ function addToTable(attributeTdText, valueTdText, removeTdText) {
     lastTr.clone().appendTo('#attributes-list').hide();
 
     $(attributeTd).text(attributeTdText);
-    $(valueTd).text(valueTdText);
+    $(valueTdText).clone().appendTo(valueTd);
 
 }
 

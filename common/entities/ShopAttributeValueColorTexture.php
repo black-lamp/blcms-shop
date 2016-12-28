@@ -50,4 +50,11 @@ class ShopAttributeValueColorTexture extends ActiveRecord
     public function getAttributeTexture() {
         return Html::img('/images/shop/attribute-texture/' . self::findOne($this->id)->texture, ['class' => 'texture']);
     }
+
+    public function getAttributeColor() {
+
+        return Html::tag('div', '', [
+            'style' => 'background-color:' . self::findOne($this->id)->color . ';',
+            'class' => 'color']);
+    }
 }
