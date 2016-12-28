@@ -212,6 +212,9 @@ class Product extends ActiveRecord
         return $this->hasMany(ProductImage::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getImage()
     {
         return $this->hasOne(ProductImage::className(), ['product_id' => 'id']);
@@ -233,6 +236,11 @@ class Product extends ActiveRecord
         return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
     }
 
+    /**
+     * Generates unique name by string.
+     * @param $baseName
+     * @return string
+     */
     public static function generateImageName($baseName)
     {
         $fileName = hash('crc32', $baseName . time());
@@ -300,7 +308,7 @@ class Product extends ActiveRecord
 
     /**
      * Gets attributes, which used in product combinations
-     * @return array|mixed
+     * @return ShopAttribute[]
      */
     public function getProductAttributes() {
         $attributes = [];

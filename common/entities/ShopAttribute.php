@@ -106,7 +106,7 @@ class ShopAttribute extends ActiveRecord
 
     /**
      * @param $combinationsIds
-     * @return array
+     * @return ProductCombinationAttribute[]
      */
     public function getProductCombinationAttributes($combinationsIds) {
         $productCombinationAttributes = ProductCombinationAttribute::find()->where(['attribute_id' => $this->id])
