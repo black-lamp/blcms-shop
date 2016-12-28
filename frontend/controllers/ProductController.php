@@ -1,14 +1,15 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
 
-use bl\cms\shop\common\entities\ProductCombination;
 use Yii;
-use yii\helpers\Json;
-use yii\web\Response;
-use yii\web\Controller;
 use bl\cms\cart\models\CartForm;
 use yii\web\NotFoundHttpException;
+use yii\web\{
+    Response, Controller
+};
 use bl\cms\shop\frontend\traits\EventTrait;
+use bl\cms\shop\common\entities\ProductCombination;
+use bl\cms\shop\frontend\widgets\traits\ProductPricesTrait;
 use bl\cms\shop\common\entities\{
     Category, Product, ProductTranslation
 };
@@ -20,6 +21,7 @@ class ProductController extends Controller
 {
 
     use EventTrait;
+    use ProductPricesTrait;
 
     /**
      * Event is triggered before.
@@ -112,21 +114,5 @@ class ProductController extends Controller
             'name' => 'keywords',
             'content' => strip_tags($model->translation->seoKeywords) ?? ''
         ]);
-    }
-
-
-    public function actionGetProductCombination($values, $productId) {
-        $values = Json::decode($values);
-        $combination = \Yii::$app->cart->getCombination($values, $productId);
-        if (!empty($combination)) {
-            $array = [
-                'image' => $combination->images[0]->productImage->thumb ?? '',
-                'oldPrice' => Yii::$app->formatter->asCurrency($combination->oldPrice) ?? '',
-                'newPrice' => Yii::$app->formatter->asCurrency($combination->salePrice) ?? '',
-                'articulus' => $combination->articulus ?? ''
-            ];
-        }
-        else return 0;
-        return Json::encode($array);
     }
 }
