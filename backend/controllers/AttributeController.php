@@ -293,7 +293,27 @@ class AttributeController extends Controller
                     'translation' => 'translation'
                 ]
             ]);
-            return json_encode($attributeValuesArray);
+
+            $shopAttribute = ShopAttribute::findOne($attributeId);
+            if ($shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE || $shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+                $newArray = [];
+                foreach ($attributeValuesArray as $attributeValuesItem) {
+
+                    $texture = ShopAttributeValueColorTexture::findOne($attributeValuesItem['translation']['value']);
+                    if ($shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                        $texture = $texture->attributeTexture;
+                    }
+                    else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+                        $texture = $texture->attributeColor;
+                    }
+
+                    $attributeValuesItem['translation'] =
+                        array_replace($attributeValuesItem['translation'], ['value' => $texture]);
+                    $newArray[] = $attributeValuesItem;
+                }
+                $attributeValuesArray = $newArray;
+            }
+        return json_encode($attributeValuesArray);
         } else throw new NotFoundHttpException();
     }
 }
