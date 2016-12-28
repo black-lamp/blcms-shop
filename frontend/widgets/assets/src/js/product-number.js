@@ -8,7 +8,7 @@ $(document).ready(function () {
         var priceTag = $(this).find('#newPrice');
 
         var countInput = $(this).find('#cartform-count');
-        if (countInput) {
+        if (countInput.length) {
 
             var oneItemPrice = $(priceTag).attr('data-sum');
 
