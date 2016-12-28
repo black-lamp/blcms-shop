@@ -21,7 +21,7 @@ global $globalDefaultCombination;
 $globalDefaultCombination = $defaultCombination;
 ?>
 
-<div id="combinations-values" data-product-id="<?= $product->id; ?>">
+<div class="combinations-values" data-product-id="<?= $product->id; ?>">
 
     <?php foreach ($product->productAttributes as $productAttribute) : ?>
         <p class="attribute-title">
@@ -39,32 +39,10 @@ $globalDefaultCombination = $defaultCombination;
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
                     },
                     function ($model) {
-                        if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
-                            return $model->attributeValue->translation->colorTexture->attributeTexture;
-                        } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
-                            return Html::tag('div', '', [
-                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
-                                'class' => 'attribute-color',
-                            ]);
-                        }
                         return $model->attributeValue->translation->value;
                     }),
                     [
                         'name' => 'CartForm[attribute_value_id][' . $product->id . '-' . $productAttribute->id . ']',
-                        'encode' => false,
-//                        'item' => function ($index, $label, $name, $checked, $value) {
-//
-//                            if (!empty($GLOBALS['globalDefaultCombination'])) {
-//                                foreach ($GLOBALS['globalDefaultCombination']->shopProductCombinationAttributes as $attribute) {
-//                                    $serialized = json_encode([
-//                                        'attributeId' => $attribute->attribute_id,
-//                                        'valueId' => $attribute->attribute_value_id]);
-//                                    if ($serialized == $value) $checked = true;
-//                                }
-//                            }
-//                            return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
-//                            Html::radio($name, $checked, ['value' => $value, 'class' => 'radiobutton']) . $label . '</label>';
-//                        },
                     ]
                 )->label(false); ?>
 
@@ -77,14 +55,14 @@ $globalDefaultCombination = $defaultCombination;
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
                     },
                     function ($model) {
-                        if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
-                            return $model->attributeValue->translation->colorTexture->attributeTexture;
-                        } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
-                            return Html::tag('div', '', [
-                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
-                                'class' => 'attribute-color',
-                            ]);
-                        }
+//                        if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
+//                            return $model->attributeValue->translation->colorTexture->attributeTexture;
+//                        } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
+//                            return Html::tag('div', '', [
+//                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
+//                                'class' => 'attribute-color',
+//                            ]);
+//                        }
                         return $model->attributeValue->translation->value;
                     }),
                     [

@@ -2,17 +2,17 @@ $(document).ready(function () {
 
     var widget = $('.product-prices-widget');
     var notAvailableText = $(widget).data('not-available-text');
-    var combinationsBlock = $('#combinations-values');
+    var combinationsBlock = $('.combinations-values');
 
     combinationsBlock.change(function () {
         var thisCombinationBlock = this;
         var productId = $(thisCombinationBlock).data('product-id');
 
-        var combinationBlockInputsNumber = $(combinationsBlock).find('div.form-group').length;
+        var combinationBlockInputsNumber = $(thisCombinationBlock).find('div.form-group').length;
 
-        var addToCartButton = $(combinationsBlock).closest('.product-prices-widget').find('#add-to-cart-button');
-        var oldPriceTag = $(combinationsBlock).find('#oldPrice');
-        var newPriceTag = $(combinationsBlock).find('#newPrice');
+        var addToCartButton = $(thisCombinationBlock).closest('.product-prices-widget').find('#add-to-cart-button');
+        var oldPriceTag = $(thisCombinationBlock).find('#oldPrice');
+        var newPriceTag = $(thisCombinationBlock).find('#newPrice');
         var currencyCode = $(newPriceTag).data('currency-code');
         var productImage = $('#main-image');
 
@@ -20,7 +20,6 @@ $(document).ready(function () {
         var selectedValues = $(thisCombinationBlock).find('option:selected');
 
         var checkedValuesLables = checkedValues.parent('label');
-        // var selectedValuesLables = selectedValues.parent('label');
         var values = [];
         for (var i = 0; i < checkedValues.length; i++) {
             values[i] = checkedValues[i].value;
@@ -34,7 +33,6 @@ $(document).ready(function () {
          */
         $(thisCombinationBlock).find('.active').removeClass('active');
         checkedValuesLables.addClass('active');
-
 
         if (values.length == combinationBlockInputsNumber) {
             values = JSON.stringify(values);
