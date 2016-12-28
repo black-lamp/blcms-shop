@@ -55,14 +55,14 @@ $globalDefaultCombination = $defaultCombination;
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
                     },
                     function ($model) {
-//                        if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
-//                            return $model->attributeValue->translation->colorTexture->attributeTexture;
-//                        } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
-//                            return Html::tag('div', '', [
-//                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
-//                                'class' => 'attribute-color',
-//                            ]);
-//                        }
+                        if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
+                            return $model->attributeValue->translation->colorTexture->attributeTexture;
+                        } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
+                            return Html::tag('div', '', [
+                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
+                                'class' => 'attribute-color',
+                            ]);
+                        }
                         return $model->attributeValue->translation->value;
                     }),
                     [
