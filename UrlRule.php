@@ -60,7 +60,7 @@ class UrlRule extends Object implements UrlRuleInterface
         if(!empty($this->prefix) && $this->routesCount == 1) {
             return [$this->categoryRoute, []];
         }
-        $categoryId = 0;
+        $categoryId = null;
         for($i = 1; $i < $this->routesCount; $i++) {
             if($i === $this->routesCount - 1) {
                 if($product = $this->findProductBySeoUrl($this->routes[$i], $categoryId)) {
