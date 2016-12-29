@@ -176,7 +176,9 @@ class CategoryController extends Controller
                 $this->trigger(self::EVENT_BEFORE_EDIT_CATEGORY);
 
             $post = Yii::$app->request->post();
+
             $category->load($post);
+            $category->parent_id = (!empty($category->parent_id)) ? $category->parent_id : null;
             $categoryTranslation->load($post);
 
             if ($category->validate()) {
