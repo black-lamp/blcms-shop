@@ -78,7 +78,7 @@ $globalDefaultCombination = $defaultCombination;
                                     if ($serialized == $value) $checked = true;
                                 }
                             }
-                            return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
+                            return '<label class="btn btn-xs btn-default' . ($checked ? ' active' : '') . '">' .
                             Html::radio($name, $checked, ['value' => $value, 'class' => 'radiobutton']) . $label . '</label>';
                         },
                     ]

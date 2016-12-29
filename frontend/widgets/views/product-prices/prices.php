@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
     <?= $form->field($cart, 'priceId', [])
         ->radioList(ArrayHelper::map($product->prices, 'id', 'translation.title'), [
             'item' => function ($index, $label, $name, $checked, $value) {
-                return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
+                return '<label class="btn btn-xs btn-default' . ($checked ? ' active' : '') . '">' .
                 Html::radio($name, $checked, ['value' => $value, 'class' => 'radiobutton']) . $label . '</label>';
             }
         ])->label(false); ?>
