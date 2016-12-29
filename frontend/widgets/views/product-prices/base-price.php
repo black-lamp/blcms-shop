@@ -15,7 +15,7 @@
 ?>
 
 <div class="prices-block">
-        <?= $this->render('prices', [
+        <?= $this->render('sum', [
             'basePrice' => $product->price ?? 0
         ]); ?>
 </div>
