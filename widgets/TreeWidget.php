@@ -86,8 +86,8 @@ class TreeWidget extends Widget
             $class = \Yii::createObject($this->className);
 
             $categories = (!empty($this->appName)) ?
-                $class::find()->where(['parent_id' => 0])->orderBy('position')->all() :
-                $class::find()->where(['parent_id' => 0, 'show' => 1])->orderBy('position')->all();
+                $class::find()->where(['parent_id' => null])->orderBy('position')->all() :
+                $class::find()->where(['parent_id' => null, 'show' => 1])->orderBy('position')->all();
 
             $currentCategoryId = '';
 

@@ -37,7 +37,7 @@ use yii\helpers\Url;
                             <a href="<?= Url::toRoute(['/shop/category/save', 'id' => $category->id, 'languageId' => $languageId]); ?>">
                                 <?php if (!$level == 1) : ?>
                                     <span>
-                                <?= $category->translation->title; ?>
+                                <?= (!empty($category->translation)) ? $category->translation->title : ''; ?>
                             </span>
                                 <?php else : ?>
                                     <span>
