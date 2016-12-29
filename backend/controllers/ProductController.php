@@ -209,12 +209,20 @@ class ProductController extends Controller
      * @param integer $id
      * @return mixed
      * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
+        $product = Product::findOne($id);
+        if (empty($product)) {
+            throw new NotFoundHttpException();
+        }
+
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
             $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT);
-            Product::deleteAll(['id' => $id]);
+
+            $product->delete();
+
             $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent([
                 'id' => $id
             ]));
@@ -268,7 +276,7 @@ class ProductController extends Controller
         if (Yii::$app->request->isPost) {
 
             $product->load(Yii::$app->request->post());
-
+            $product->category_id = (!empty($product->category_id)) ? $product->category_id : null;
             if ($product->isNewRecord) {
 
                 $eventName = self::EVENT_AFTER_CREATE_PRODUCT;
