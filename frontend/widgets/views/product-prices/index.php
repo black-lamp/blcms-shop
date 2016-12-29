@@ -26,13 +26,12 @@ use yii\bootstrap\Html;
         ->label(false) ?>
 
 
+    <?php if ($params['showCounter']): ?>
     <div class="form-group">
         <div class="quantity">
             <h3 class="title">
                 <?= Yii::t('shop', 'Count') ?>
             </h3>
-
-            <?php if ($params['showCounter']): ?>
                 <?= $params['form']->field($params['cart'], 'count', [
                     'enableClientValidation' => false
                 ])->widget(TouchSpin::className(), [
@@ -50,9 +49,9 @@ use yii\bootstrap\Html;
                     ],
                 ])
                     ->label(false) ?>
-            <?php endif; ?>
         </div>
     </div>
+    <?php endif; ?>
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
     <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'cart-btn', 'id' => 'add-to-cart-button']) ?>
