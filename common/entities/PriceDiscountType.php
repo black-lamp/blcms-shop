@@ -1,25 +1,25 @@
 <?php
 namespace bl\cms\shop\common\entities;
-use Yii;
+
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "shop_product_sale_type".
+ * This is the model class for table "shop_product_discount_type".
  *
  * @property integer $id
  * @property string $title
  *
- * @property ProductPrice[] $prices
+ * @property Price[] $prices
  */
 
-class SaleType extends ActiveRecord
+class PriceDiscountType extends ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'shop_product_sale_type';
+        return 'shop_price_discount_type';
     }
 
     /**
@@ -38,16 +38,17 @@ class SaleType extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
+            'id' => \Yii::t('shop', 'ID'),
+            'title' => \Yii::t('shop', 'Title'),
         ];
     }
+
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getPrices()
     {
-        return $this->hasMany(ProductPrice::className(), ['sale_type_id' => 'id']);
+        return $this->hasMany(Price::className(), ['discount_type_id' => 'id']);
     }
 }

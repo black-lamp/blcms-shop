@@ -5,7 +5,7 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "shop_product_combination_attribute".
+ * This is the model class for table "shop_combination_attribute".
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @property integer $id
@@ -13,18 +13,18 @@ use yii\db\ActiveRecord;
  * @property integer $attribute_id
  * @property integer $attribute_value_id
  *
- * @property ShopAttribute $productAttribute
- * @property ShopAttributeValue $attributeValue
- * @property ProductCombination $combination
+ * @property ShopAttribute $shopAttribute
+ * @property ShopAttributeValue $shopAttributeValue
+ * @property Combination $combination
  */
-class ProductCombinationAttribute extends ActiveRecord
+class CombinationAttribute extends ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'shop_product_combination_attribute';
+        return 'shop_combination_attribute';
     }
 
     /**
@@ -36,7 +36,7 @@ class ProductCombinationAttribute extends ActiveRecord
             [['combination_id', 'attribute_id', 'attribute_value_id'], 'integer'],
             [['attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttribute::className(), 'targetAttribute' => ['attribute_id' => 'id']],
             [['attribute_value_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttributeValue::className(), 'targetAttribute' => ['attribute_value_id' => 'id']],
-            [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCombination::className(), 'targetAttribute' => ['combination_id' => 'id']],
+            [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
         ];
     }
 
@@ -47,9 +47,9 @@ class ProductCombinationAttribute extends ActiveRecord
     {
         return [
             'id' => Yii::t('shop', 'ID'),
-            'combination_id' => Yii::t('shop', 'Combination ID'),
-            'attribute_id' => Yii::t('shop', 'Attribute ID'),
-            'attribute_value_id' => Yii::t('shop', 'Attribute Value ID'),
+            'combination_id' => Yii::t('shop', 'Combination'),
+            'attribute_id' => Yii::t('shop', 'Attribute'),
+            'attribute_value_id' => Yii::t('shop', 'Attribute value'),
         ];
     }
 
@@ -64,7 +64,7 @@ class ProductCombinationAttribute extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAttributeValue()
+    public function getProductAttributeValue()
     {
         return $this->hasOne(ShopAttributeValue::className(), ['id' => 'attribute_value_id']);
     }
@@ -74,6 +74,6 @@ class ProductCombinationAttribute extends ActiveRecord
      */
     public function getCombination()
     {
-        return $this->hasOne(ProductCombination::className(), ['id' => 'combination_id']);
+        return $this->hasOne(Combination::className(), ['id' => 'combination_id']);
     }
 }
