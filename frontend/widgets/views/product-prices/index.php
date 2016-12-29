@@ -55,6 +55,6 @@ use yii\bootstrap\Html;
     </div>
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
-    <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'cart-btn', 'id' => 'add-to-cart-button']) ?>
+    <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'btn btn-primary cart-btn', 'id' => 'add-to-cart-button']) ?>
 
 </div>
