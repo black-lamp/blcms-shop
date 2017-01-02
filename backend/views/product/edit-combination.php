@@ -16,7 +16,7 @@ use bl\cms\shop\backend\components\form\{
     CombinationAttributeForm, CombinationImageForm
 };
 use bl\cms\shop\common\entities\{
-    Product, ProductCombination, ProductCombinationAttribute, ProductCombinationImage, SaleType, ShopAttribute
+    Product, Combination, CombinationAttribute, CombinationImage, PriceDiscountType, ShopAttribute
 };
 use bl\imagable\helpers\FileHelper;
 use yii\helpers\{
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'] = [
                 <?= $form->field($combination, 'sale_type_id')
                     ->dropDownList(
                         ['' => '--none--'] +
-                        ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
+                        ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
                     );
                 ?>
             </div>

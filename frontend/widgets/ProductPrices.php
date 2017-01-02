@@ -6,7 +6,7 @@ use yii\base\Widget;
 use yii\widgets\ActiveForm;
 use bl\cms\cart\models\CartForm;
 use bl\cms\shop\common\entities\{
-    Product, ProductCombination
+    Product, Combination
 };
 use bl\cms\shop\frontend\widgets\assets\ProductPricesAsset;
 
@@ -27,7 +27,7 @@ class ProductPrices extends Widget
     public $form;
 
     /**
-     * @var ProductCombination
+     * @var Combination
      */
     public $defaultCombination;
 

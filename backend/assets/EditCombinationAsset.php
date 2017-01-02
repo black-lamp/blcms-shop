@@ -14,7 +14,8 @@ class EditCombinationAsset extends AssetBundle
     ];
 
     public $js = [
-        'js/edit-combination.js'
+        'js/edit-combination.js',
+        'js/add-combination-price.js'
     ];
 
     public $depends = [

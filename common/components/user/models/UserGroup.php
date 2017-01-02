@@ -15,6 +15,9 @@ use yii\db\ActiveRecord;
  */
 class UserGroup extends ActiveRecord
 {
+
+    const USER_GROUP_ALL_USERS = 1;
+
     /**
      * @inheritdoc
      */

@@ -8,7 +8,7 @@ use yii\web\{
     Response, Controller
 };
 use bl\cms\shop\frontend\traits\EventTrait;
-use bl\cms\shop\common\entities\ProductCombination;
+use bl\cms\shop\common\entities\Combination;
 use bl\cms\shop\frontend\widgets\traits\ProductPricesTrait;
 use bl\cms\shop\common\entities\{
     Category, Product, ProductTranslation
@@ -58,7 +58,7 @@ class ProductController extends Controller
             return $this->render('show', [
                 'product' => $product,
                 'cart' => new CartForm(),
-                'defaultCombination' => ProductCombination::find()->where([
+                'defaultCombination' => Combination::find()->where([
                     'product_id' => $id,
                     'default_combination' => true
                 ])->one()
