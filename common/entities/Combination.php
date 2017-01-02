@@ -76,9 +76,35 @@ class Combination extends ActiveRecord
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
+    /**
+     * Gets prices for all user groups
+     * @return \yii\db\ActiveQuery
+     */
     public function getPrices()
     {
         return $this->hasMany(Price::className(), ['combination_id' => 'id']);
+    }
+
+    /**
+     * Gets price for user group
+     * @return array|null|ActiveRecord
+     */
+    public function getPrice()
+    {
+        if (\Yii::$app->user->isGuest) {
+            $params = [
+                'combination_id' => $this->id,
+                'user_group_id' => UserGroup::USER_GROUP_ALL_USERS
+            ];
+        }
+        else {
+            $params = [
+                'combination_id' => $this->id,
+                'user_group_id' => \Yii::$app->user->user_group_id
+            ];
+        }
+        $price = Price::find()->where($params)->one();
+        return $price;
     }
 
     /**

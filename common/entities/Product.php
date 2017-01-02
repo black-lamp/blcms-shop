@@ -304,7 +304,7 @@ class Product extends ActiveRecord
     public function getProductAttributes() {
         $attributes = [];
         foreach ($this->combinations as $combination) {
-            foreach ($combination->shopProductCombinationAttributes as $combinationAttribute) {
+            foreach ($combination->combinationAttributes as $combinationAttribute) {
                 $attributes[] = $combinationAttribute->productAttribute;
             }
         }
