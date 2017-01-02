@@ -69,7 +69,6 @@ function addToInputs() {
         var key = $('.hidden-attribute').length - 1;
         $(attributeInput[attributeInput.length - 1]).val(selectedAttributeId).attr('data-key', key);
         $(valueInput[valueInput.length - 1]).val(selectedValueId).attr('data-key', key);
-        ;
 
         addToTable(
             $(selectedAttribute).text(),
@@ -103,7 +102,7 @@ function addToTable(attributeTdText, valueTdText, removeTdText) {
     });
 
     $(lastTr).show();
-    lastTr.clone().appendTo('#attributes-list').hide();
+    lastTr.clone().appendTo('#attributes-list tbody').hide();
 
     $(attributeTd).text(attributeTdText);
     $(valueTdText).clone().appendTo(valueTd);

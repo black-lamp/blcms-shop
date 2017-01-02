@@ -1226,8 +1226,10 @@ class ProductController extends Controller
             $post = \Yii::$app->request->post();
             if ($combination->load($post)) {
                 $combination->product_id = $productId;
-                $combination->setDefaultOrNotDefault();
+
                 if ($combination->validate()) $combination->save();
+                $combination->setDefaultOrNotDefault();
+
                 if ($combinationTranslation->load($post)) {
                     $combinationTranslation->combination_id = $combination->id;
                     $combinationTranslation->language_id = $languageId;
@@ -1452,9 +1454,15 @@ class ProductController extends Controller
     public function actionRemoveCombination(int $combinationId)
     {
         $combination = Combination::findOne($combinationId);
+        $productId = $combination->product_id;
 
         if (!empty($combination)) {
             $combination->delete();
+            if (Combination::find()->where(['product_id' => $productId])->count() == 1) {
+                $combination = Combination::find()->where(['product_id' => $productId])->one();
+                $combination->default = 1;
+                if ($combination->validate()) $combination->save();
+            }
 
             $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
             $this->trigger($eventName, new ProductEvent([

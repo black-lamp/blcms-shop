@@ -113,7 +113,7 @@ class Combination extends ActiveRecord
             ->where(['product_id' => $this->product_id, 'default' => true])
             ->andWhere(['!=', 'id', $this->id])->one();
         if (!empty($defaultProductCombination)) {
-            $defaultProductCombination->default = false;
+            $defaultProductCombination->default = 0;
             if ($defaultProductCombination->validate()) $defaultProductCombination->save();
         }
     }

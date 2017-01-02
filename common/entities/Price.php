@@ -96,7 +96,7 @@ class Price extends ActiveRecord
      * Gets price
      * @return float|int
      */
-    public function getPrice()
+    public function getOldPrice()
     {
         $price = $this->price;
         if (\Yii::$app->controller->module->enableCurrencyConversion) {
@@ -118,7 +118,7 @@ class Price extends ActiveRecord
     {
         $price = $this->price;
 
-        if (!empty($this->dicount) && !empty($this->type)) {
+        if (!empty($this->discount) && !empty($this->discount_type_id)) {
             if ($this->discountType->title == "money") {
                 $price = $this->price - $this->discount;
             } else if ($this->discountType->title == "percent") {
