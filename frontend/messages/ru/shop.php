@@ -79,6 +79,7 @@ return [
     'Sorting' => 'Сортировка',
     'Title' => 'Название',
     'The list is empty' => 'Список пуст',
+    'To cart' => 'В корзину',
     'Viewed products' => 'Просмотренные товары',
     'Vendor' => 'Производитель',
     'Website' => 'Сайт',
