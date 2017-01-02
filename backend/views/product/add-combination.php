@@ -12,7 +12,7 @@
  */
 
 use bl\cms\shop\backend\assets\EditCombinationAsset;
-use bl\cms\shop\common\entities\SaleType;
+use bl\cms\shop\common\entities\PriceDiscountType;
 use bl\cms\shop\common\entities\ShopAttribute;
 use bl\imagable\helpers\FileHelper;
 use yii\helpers\ArrayHelper;
@@ -54,7 +54,7 @@ EditCombinationAsset::register($this);
             <?= $form->field($combination, 'sale_type_id')
                 ->dropDownList(
                     ['' => '--none--'] +
-                    ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
+                    ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
                 );
             ?>
         </div>

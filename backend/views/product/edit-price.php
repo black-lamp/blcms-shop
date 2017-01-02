@@ -6,7 +6,7 @@
  * @var $priceTranslation \bl\cms\shop\common\entities\ProductImageTranslation
  * @var $selectedLanguage \bl\multilang\entities\Language
  */
-use bl\cms\shop\common\entities\SaleType;
+use bl\cms\shop\common\entities\PriceDiscountType;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -44,7 +44,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($price, 'sale_type_id')
         ->dropDownList(
             ['' => '--none--'] +
-            ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
+            ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
         )->label(false)
     ?>
 </td>

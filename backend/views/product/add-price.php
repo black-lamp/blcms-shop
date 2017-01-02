@@ -2,7 +2,7 @@
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
-use bl\cms\shop\common\entities\SaleType;
+use bl\cms\shop\common\entities\PriceDiscountType;
 use bl\cms\shop\widgets\ManageButtons;
 use bl\multilang\entities\Language;
 use yii\bootstrap\ActiveForm;
@@ -70,7 +70,7 @@ use yii\widgets\Pjax;
             <?= $form->field($priceModel, 'sale_type_id')
                 ->dropDownList(
                     ['' => '--none--'] +
-                    ArrayHelper::map(SaleType::find()->asArray()->all(), 'id', 'title')
+                    ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
                 )->label(false)
             ?>
         </td>
