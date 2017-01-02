@@ -62,7 +62,7 @@ EditCombinationAsset::register($this);
             <?= $form->field($combination, 'sale')->textInput(['type' => 'number', 'step' => '0.01']); ?>
         </div>
     </div>
-<?= $form->field($combination, 'default_combination')->checkbox(); ?>
+<?= $form->field($combination, 'default')->checkbox(); ?>
 
 
 <?= $form->field($image_form, 'product_image_id')
@@ -151,7 +151,7 @@ EditCombinationAsset::register($this);
                 <td><?= $combination->saleType->title ?? ''; ?></td>
                 <td><?= $combination->sale ?? ''; ?></td>
                 <td>
-                    <?php if ($combination->default_combination) : ?>
+                    <?php if ($combination->default) : ?>
                         <i class="fa fa-plus"></i>
                     <?php else : ?>
                         <a href="<?= Url::to(['change-default-combination', 'combinationId' => $combination->id]); ?>">

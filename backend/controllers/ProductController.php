@@ -1431,10 +1431,10 @@ class ProductController extends Controller
 
         $combination = Combination::findOne($combinationId);
 
-        if (!$combination->default_combination) {
+        if (!$combination->default) {
             $combination->findDefaultCombinationAndUndefault();
 
-            $combination->default_combination = !$combination->default_combination;
+            $combination->default = !$combination->default;
             if ($combination->validate()) $combination->save();
 
             return $this->redirect(\Yii::$app->request->referrer);

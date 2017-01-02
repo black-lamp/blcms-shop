@@ -60,7 +60,7 @@ class ProductController extends Controller
                 'cart' => new CartForm(),
                 'defaultCombination' => Combination::find()->where([
                     'product_id' => $id,
-                    'default_combination' => true
+                    'default' => true
                 ])->one()
             ]);
         } else throw new NotFoundHttpException();
