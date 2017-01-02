@@ -23,9 +23,9 @@ trait ProductPricesTrait
         if (!empty($combination)) {
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
-                'oldPrice' => $combination->oldPrice ?? '',
-                'newPrice' => $combination->salePrice ?? '',
-                'articulus' => $combination->articulus ?? ''
+                'oldPrice' => $combination->price->oldPrice ?? '',
+                'newPrice' => $combination->price->discountPrice ?? '',
+                'sku' => $combination->sku ?? ''
             ];
         }
         else return 0;
