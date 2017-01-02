@@ -118,4 +118,16 @@ class Combination extends ActiveRecord
         }
     }
 
+    /**
+     * If there are not combinations in product, sets this combination as default.
+     */
+    public function setDefaultOrNotDefault() {
+        if ($this->default) $this->findDefaultCombinationAndUndefault();
+        else {
+            $productCombinations = Combination::find()
+                ->where(['product_id' => $this->product_id])->all();
+            if (empty($productCombinations)) $this->default = true;
+        }
+    }
+
 }

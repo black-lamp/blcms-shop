@@ -43,7 +43,6 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Vendor $vendor
  * @property ProductImage[] $images
  * @property ProductImage $image
- * @property ProductPrice[] $prices
  * @property ProductVideo[] $videos
  * @property ProductFile[] $files
  * @property ProductAvailability $productAvailability
@@ -175,14 +174,6 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPrices()
-    {
-        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id'])->orderBy('position');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getPrice()
     {
         $price = $this->price;
@@ -294,7 +285,7 @@ class Product extends ActiveRecord
      */
     public function getCombinations()
     {
-        return $this->hasMany(ProductCombination::className(), ['product_id' => 'id']);
+        return $this->hasMany(Combination::className(), ['product_id' => 'id']);
     }
 
     /**
@@ -302,8 +293,8 @@ class Product extends ActiveRecord
      */
     public function getDefaultCombination()
     {
-        return $this->hasOne(ProductCombination::className(), ['product_id' => 'id'])
-            ->where(['default_combination' => true]);
+        return $this->hasOne(Combination::className(), ['product_id' => 'id'])
+            ->where(['default' => true]);
     }
 
     /**

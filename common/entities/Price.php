@@ -24,6 +24,9 @@ use bl\cms\shop\common\components\user\models\UserGroup;
 class Price extends ActiveRecord
 {
 
+    const INEQUALITY_SIGN_LESS = '<';
+    const INEQUALITY_SIGN_GREATER = '>';
+
     /**
      * @inheritdoc
      */
