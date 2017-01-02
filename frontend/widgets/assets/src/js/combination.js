@@ -69,8 +69,8 @@ $(document).ready(function () {
                     if (data.image) productImage.fadeOut(125).attr('src', data.image).fadeIn(125);
                     $('img.zoomImg').attr('src', data.image);
 
-                    var articulusText = (data.articulus) ? data.articulus : notAvailableText;
-                    $('#articulus').text(articulusText);
+                    var skuText = (data.sku) ? data.sku : notAvailableText;
+                    $('#sku').text(skuText);
                 },
                 error: function (data) {
                     $(addToCartButton).attr('disabled', 'disabled');
