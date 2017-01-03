@@ -83,7 +83,7 @@ $id = 0;
                             $output = Html::radio($name, $checked, [
                                 'value' => $value,
                                 'class' => 'radiobutton project-status-btn',
-                                'id' => $id
+                                'id' => $name . '-' . $id
                             ]);
 
                             $wrapperClasses = ($checked) ? 'active' : '';
@@ -94,7 +94,7 @@ $id = 0;
                                 $wrapperClasses .= ' wrapper-inline';
                             }
 
-                            $output .= Html::label(' ' . $label, $id++, [
+                            $output .= Html::label(' ' . $label, $name . '-' . $id++, [
                                 'class' => $labelClasses
                             ]);
 
