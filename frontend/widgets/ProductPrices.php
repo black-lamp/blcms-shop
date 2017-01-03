@@ -61,15 +61,6 @@ class ProductPrices extends Widget
         if (\Yii::$app->cart->enableGetPricesFromCombinations && !empty($this->product->productAttributes)) {
             ProductCombinationAsset::register($this->getView());
             $this->renderView = 'combinations';
-        } elseif (
-            (\Yii::$app->cart->enableGetPricesFromCombinations
-                && empty($this->product->productAttributes)
-                && !empty($this->product->prices)) ||
-            (!\Yii::$app->cart->enableGetPricesFromCombinations
-                && !empty($this->product->prices))
-        ) {
-            ProductPricesAsset::register($this->getView());
-            $this->renderView = 'prices';
         } else {
             $this->renderView = 'base-price';
         }

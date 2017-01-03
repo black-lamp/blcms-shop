@@ -52,7 +52,7 @@ $globalDefaultCombination = $defaultCombination;
             echo $form->field($cart, 'attribute_value_id[' . $product->id . ']', [])
                 ->radioList(ArrayHelper::map($combinationsAttributes,
                     function ($model) {
-                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
+                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
                     },
                     function ($model) {
                         if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
@@ -63,7 +63,7 @@ $globalDefaultCombination = $defaultCombination;
                                 'class' => 'attribute-color',
                             ]);
                         }
-                        return $model->attributeValue->translation->value;
+                        return $model->productAttributeValue->translation->value;
                     }),
                     [
                         'name' => 'CartForm[attribute_value_id][' . $product->id . '-' . $productAttribute->id . ']',
