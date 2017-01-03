@@ -81,11 +81,11 @@ ProductAsset::register($this);
 
 
         <div class="col-md-8">
-            <!--ARTICULUS-->
-            <?php if (!empty($product->articulus)) : ?>
+            <!--SKU-->
+            <?php if (!empty($product->sku)) : ?>
                 <div class="intro-text">
                     <p>
-                        <strong><?= \Yii::t('shop', 'SKU'); ?></strong>: <?= $product->articulus; ?>
+                        <strong><?= \Yii::t('shop', 'SKU'); ?></strong>: <?= $product->sku; ?>
                     </p>
                 </div>
             <?php endif ?>

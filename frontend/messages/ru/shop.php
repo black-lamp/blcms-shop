@@ -13,7 +13,7 @@ return [
     'Addresses' => 'Адреса',
     'Account' => 'Аккаунт',
     'Apartment' => 'Квартира',
-    'Articulus' => 'Артикул',
+    'SKU' => 'Артикул',
     'Availability' => 'Доступность товара',
     'Become a partner' => 'Стать партнёром',
     'by country' => 'По стране производителя',

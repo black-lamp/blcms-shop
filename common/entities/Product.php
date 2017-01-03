@@ -26,7 +26,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $vendor_id
  * @property integer $country_id
  * @property integer $price
- * @property string $articulus
+ * @property string $sku
  * @property string $creation_time
  * @property string $update_time
  * @property integer $status
@@ -83,7 +83,7 @@ class Product extends ActiveRecord
             [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner', 'views'], 'integer'],
             [['sale', 'popular'], 'boolean'],
             [['price'], 'double'],
-            [['articulus'], 'string'],
+            [['sku'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
@@ -128,7 +128,7 @@ class Product extends ActiveRecord
             'id' => Yii::t('shop', 'ID'),
             'position' => Yii::t('shop', 'Position'),
             'price' => Yii::t('shop', 'Base price'),
-            'articulus' => Yii::t('shop', 'Articulus'),
+            'sku' => Yii::t('shop', 'SKU'),
             'creation_time' => Yii::t('shop', 'Creation Time'),
             'update_time' => Yii::t('shop', 'Update Time'),
             'owner' => Yii::t('shop', 'Owner'),

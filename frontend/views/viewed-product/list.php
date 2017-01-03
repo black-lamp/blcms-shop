@@ -30,17 +30,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            /*ARTICULUS*/
+            /*SKU*/
             [
                 'headerOptions' => ['class' => 'text-center col-md-1'],
-                'attribute' => 'product.articulus',
+                'attribute' => 'product.sku',
                 'value' => function ($model) {
-                    if (!empty($model->product->articulus)) {
-                        return $model->product->articulus;
+                    if (!empty($model->product->sku)) {
+                        return $model->product->sku;
                     }
                     return '';
                 },
-                'label' => Yii::t('shop', 'Articulus'),
+                'label' => Yii::t('shop', 'SKU'),
                 'format' => 'html',
                 'contentOptions' => ['class' => 'project-title'],
             ],

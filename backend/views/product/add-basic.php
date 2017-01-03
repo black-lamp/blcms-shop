@@ -56,12 +56,12 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-md-6">
             <div>
-                <!--ARTICULUS-->
-                <?= $form->field($product, 'articulus', [
+                <!--SKU-->
+                <?= $form->field($product, 'sku', [
                     'inputOptions' => [
                         'class' => 'form-control'
                     ]
-                ])->label(\Yii::t('shop', 'Articulus'))
+                ])->label(\Yii::t('shop', 'SKU'))
                 ?>
             </div>
             <div>

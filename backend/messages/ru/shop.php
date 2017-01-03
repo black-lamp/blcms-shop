@@ -20,7 +20,7 @@ return [
     'All' => 'Все',
     'An error occurred when saving the record.' => 'При сохранении записи возникла ошибка',
     'Apply' => 'Подтвердить',
-    'Articulus' => 'Артикул',
+    'SKU' => 'Артикул',
     'Attributes' => 'Атрибуты',
     'Availability' => 'Доступность товара',
     'Availability statuses' => 'Статусы доступности товара',

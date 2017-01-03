@@ -42,7 +42,7 @@ EditCombinationAsset::register($this);
 
     <div class="row">
         <div class="col-md-4">
-            <?= $form->field($combination, 'articulus'); ?>
+            <?= $form->field($combination, 'sku'); ?>
         </div>
     </div>
     <div class="row">

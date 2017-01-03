@@ -18,8 +18,8 @@ $modelUrl = Url::to(['/shop/product/show',
 <div class="thumbnail">
     <span>
         <mark>
-            <?= Yii::t('shop', 'Art. {articulus}', [
-                'articulus' => $model->articulus
+            <?= Yii::t('shop', 'Art. {SKU}', [
+                'sku' => $model->sku
             ]) ?>
         </mark>
     </span>

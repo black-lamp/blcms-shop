@@ -18,7 +18,7 @@ return [
     'All changes have been saved' => 'Всі зміни збережені',
     'Alternative text' => 'Альтернативний текст',
     'Apply' => 'Підтвердити',
-    'Articulus' => 'Артикул',
+    'SKU' => 'Артикул',
     'Basic' => 'Основні',
     'Basic options' => 'Основні настройки',
     'Categories' => 'Категорії',

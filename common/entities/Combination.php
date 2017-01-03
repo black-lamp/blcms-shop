@@ -100,7 +100,7 @@ class Combination extends ActiveRecord
         else {
             $params = [
                 'combination_id' => $this->id,
-                'user_group_id' => \Yii::$app->user->user_group_id
+                'user_group_id' => \Yii::$app->user->identity->user_group_id
             ];
         }
         $price = Price::find()->where($params)->one();
