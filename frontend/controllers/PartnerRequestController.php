@@ -48,9 +48,11 @@ class PartnerRequestController extends Controller
             if (Yii::$app->user->isGuest) {
                 if ($user->load(\Yii::$app->request->post())) {
 
-                    $profile->user_id = $user->register();
+                    if ($profile->user_id = $user->register()) {
+                        $profile->name = $user->name;
+                        $profile->surname = $user->surname;
+                        $profile->phone = $user->phone;
 
-                    if ($profile->load(Yii::$app->request->post())) {
                         if ($profile->validate()) {
                             $profile->save();
                         }
@@ -70,8 +72,7 @@ class PartnerRequestController extends Controller
 
                 Yii::$app->getSession()->setFlash('success', \Yii::t('shop', 'Your partner request was successfully sent.'));
                 return $this->render('success');
-            }
-            else throw new Exception();
+            } else throw new Exception();
         }
         $this->registerStaticSeoData();
 
