@@ -77,10 +77,7 @@ class TreeWidget extends Widget
         parent::run();
 
         $currentLanguage = Language::getCurrent();
-        $defaultLanguage = Language::getDefault();
-        if ($currentLanguage->id != $defaultLanguage->id) {
-            $langId = $currentLanguage->lang_id;
-        }
+        $langId = $currentLanguage->id;
 
         if (!empty($this->className)) {
             $class = \Yii::createObject($this->className);
