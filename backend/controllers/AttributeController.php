@@ -53,7 +53,7 @@ class AttributeController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['add-value'],
+                        'actions' => ['add-value', 'save-value'],
                         'roles' => ['addAttributeValue'],
                         'allow' => true,
                     ],
@@ -197,6 +197,7 @@ class AttributeController extends Controller
     {
         if (!empty($attrId)) {
             $languageId = empty($languageId) ? Language::getCurrent()->id : $languageId;
+
             $attributeValue = new ShopAttributeValue();
             $attributeValueTranslation = new ShopAttributeValueTranslation();
             $attributeTextureModel = new AttributeTextureForm();
@@ -221,9 +222,8 @@ class AttributeController extends Controller
                         }
                         if ($colorTexture->validate()) {
                             $colorTexture->save();
-                            $attributeValueTranslation->value = (string) $colorTexture->id;
-                        }
-                        else throw new Exception('Color or texture saving error');
+                            $attributeValueTranslation->value = (string)$colorTexture->id;
+                        } else throw new Exception('Color or texture saving error');
                     }
 
                     if ($attributeValue->validate()) {
@@ -254,11 +254,73 @@ class AttributeController extends Controller
         throw new NotFoundHttpException();
     }
 
-    public function actionRemoveAttributeValue($attributeValueId) {
+    public function actionSaveValue($id = null, int $languageId)
+    {
+        $attributeValue = ShopAttributeValue::findOne($id);
+        if (empty($attributeValue)) throw new NotFoundHttpException();
+
+        $attributeValueTranslation = ShopAttributeValueTranslation::find()
+            ->where(['value_id' => $id, 'language_id' => $languageId])->one();
+
+        if (empty($attributeValueTranslation)) {
+            $attributeValueTranslation = new ShopAttributeValueTranslation();
+            $attributeValueTranslation->value_id = $id;
+            $attributeValueTranslation->language_id = $languageId;
+        }
+        $attributeTextureModel = new AttributeTextureForm();
+
+
+
+        if (\Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            if ($attributeValueTranslation->load($post)) {
+                if ($attributeValueTranslation->validate()) $attributeValueTranslation->save();
+            }
+        }
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            if ($attributeValueTranslation->load($post) || $attributeTextureModel->load($post)) {
+
+                if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR || $attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                    $colorTexture = new ShopAttributeValueColorTexture();
+                    if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+                        $colorTexture->color = $attributeTextureModel->color;
+                    } elseif ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                        $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
+                        $colorTexture->texture = $attributeTextureModel->upload();
+                    }
+                    if ($colorTexture->validate()) {
+                        $colorTexture->save();
+                        $attributeValueTranslation->value = (string)$colorTexture->id;
+                    } else throw new Exception('Color or texture saving error');
+                }
+
+                $attributeValueTranslation->value_id = $attributeValue->id;
+                $attributeValueTranslation->language_id = $languageId;
+
+                if ($attributeValueTranslation->validate()) {
+                    $attributeValueTranslation->save();
+                    return $this->redirect(Url::toRoute(['save', 'attrId' => $attributeValue->shopAttribute->id,
+                        'languageId' => $languageId]));
+                }
+            }
+        }
+
+        return $this->render('save-value', [
+            'attributeValueTranslation' => $attributeValueTranslation,
+            'attributeTextureModel' => $attributeTextureModel,
+            'languageId' => $languageId
+        ]);
+    }
+
+    public function actionRemoveAttributeValue($attributeValueId)
+    {
         $attributeValue = ShopAttributeValue::findOne($attributeValueId);
 
         if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE ||
-            $attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+            $attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR
+        ) {
 
             if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                 $path = Yii::getAlias('@frontend/web/images/shop/attribute-texture/') .
@@ -302,8 +364,7 @@ class AttributeController extends Controller
                     $texture = ShopAttributeValueColorTexture::findOne($attributeValuesItem['translation']['value']);
                     if ($shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                         $texture = $texture->attributeTexture;
-                    }
-                    else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
+                    } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
                         $texture = $texture->attributeColor;
                     }
 
@@ -313,7 +374,7 @@ class AttributeController extends Controller
                 }
                 $attributeValuesArray = $newArray;
             }
-        return json_encode($attributeValuesArray);
+            return json_encode($attributeValuesArray);
         } else throw new NotFoundHttpException();
     }
 }
