@@ -13,6 +13,7 @@
  */
 use kartik\touchspin\TouchSpin;
 use yii\helpers\Html;
+
 ?>
 
 <div class="product-prices-widget" data-not-available-text="<?= $params['notAvailableText']; ?>">
@@ -26,12 +27,12 @@ use yii\helpers\Html;
         ->label(false) ?>
 
 
-    <?php if ($params['showCounter']) : ?>
-    <div class="form-group">
-        <div class="quantity">
-            <h3 class="title">
-                <?= Yii::t('shop', 'Count') ?>
-            </h3>
+    <?php if ($params['showCounter']): ?>
+        <div class="form-group">
+            <div class="quantity">
+                <h3 class="title">
+                    <?= Yii::t('shop', 'Count') ?>
+                </h3>
                 <?= $params['form']->field($params['cart'], 'count', [
                     'enableClientValidation' => false
                 ])->widget(TouchSpin::className(), [
@@ -47,9 +48,11 @@ use yii\helpers\Html;
                     ],
                 ])
                     ->label(false) ?>
+            </div>
         </div>
-    </div>
-    <?php endif; ?>
+    <?php else: ?>
+        <?= $params['form']->field($params['cart'], 'count')->hiddenInput(['value' => 1]); ?>
+    <?php endif ?>
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
     <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'btn btn-primary cart-btn', 'id' => 'add-to-cart-button']) ?>
