@@ -26,6 +26,8 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $vendor_id
  * @property integer $country_id
  * @property integer $price
+ * @property float $discount
+ * @property integer $discount_type_id
  * @property string $sku
  * @property string $creation_time
  * @property string $update_time
@@ -80,11 +82,12 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner', 'views'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner', 'views', 'discount_type_id'], 'integer'],
             [['sale', 'popular'], 'boolean'],
-            [['price'], 'double'],
+            [['price', 'discount'], 'double'],
             [['sku'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
+            [['discount_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceDiscountType::className(), 'targetAttribute' => ['discount_type_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
@@ -128,6 +131,8 @@ class Product extends ActiveRecord
             'id' => Yii::t('shop', 'ID'),
             'position' => Yii::t('shop', 'Position'),
             'price' => Yii::t('shop', 'Base price'),
+            'discount_type_id' => \Yii::t('shop', 'Discount type'),
+            'discount' => \Yii::t('shop', 'Discount'),
             'sku' => Yii::t('shop', 'SKU'),
             'creation_time' => Yii::t('shop', 'Creation Time'),
             'update_time' => Yii::t('shop', 'Update Time'),
