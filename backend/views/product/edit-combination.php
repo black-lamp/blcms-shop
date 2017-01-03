@@ -158,7 +158,7 @@ $this->params['breadcrumbs'] = [
                         <?= $existAttribute->productAttribute->translation->title; ?>
                     </td>
                     <td class="col-md-5">
-                        <?= $existAttribute->attributeValue->translation->value; ?>
+                        <?= $existAttribute->productAttributeValue->translation->value; ?>
                     </td>
                     <td class="col-md-2">
                         <?= Html::a('',

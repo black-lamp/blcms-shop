@@ -140,10 +140,10 @@ EditCombinationAsset::register($this);
         <?php foreach ($combinations as $combination): ?>
             <tr class="text-center">
                 <td>
-                    <?php foreach ($combination->shopProductCombinationAttributes as $combinationAttribute) : ?>
+                    <?php foreach ($combination->combinationAttributes as $combinationAttribute) : ?>
                         <p>
                             <?= $combinationAttribute->productAttribute->translation->title; ?>:
-                            <?= $combinationAttribute->attributeValue->translation->value; ?>
+                            <?= $combinationAttribute->productAttributeValue->translation->value; ?>
                         </p>
                     <?php endforeach; ?>
                 </td>
