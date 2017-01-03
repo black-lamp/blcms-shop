@@ -6,10 +6,10 @@
  * @var $product \bl\cms\shop\common\entities\Product
  * @var $form \yii\widgets\ActiveForm
  * @var $cart \bl\cms\cart\models\CartForm
- * @var $defaultCombination \bl\cms\shop\common\entities\ProductCombination
+ * @var $defaultCombination \bl\cms\shop\common\entities\Combination
  * @var $notAvailableText string
  *
- * @var $product ->productAttributes ShopAttribute[] Attributes that are present in the combinations of this product
+ * @var $product->productAttributes ShopAttribute[] Attributes that are present in the combinations of this product
  *
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  */
@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
 
 global $globalDefaultCombination;
 $globalDefaultCombination = $defaultCombination;
+$id = 0;
 ?>
 
 <div class="combinations-values" data-product-id="<?= $product->id; ?>">
@@ -36,10 +37,10 @@ $globalDefaultCombination = $defaultCombination;
             <?= $form->field($cart, 'attribute_value_id[' . $product->id . ']', [])
                 ->dropDownList(ArrayHelper::map($combinationsAttributes,
                     function ($model) {
-                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attributeValue->id]);
+                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
                     },
                     function ($model) {
-                        return $model->attributeValue->translation->value;
+                        return $model->productAttributeValue->translation->value;
                     }),
                     [
                         'name' => 'CartForm[attribute_value_id][' . $product->id . '-' . $productAttribute->id . ']',
@@ -56,10 +57,10 @@ $globalDefaultCombination = $defaultCombination;
                     },
                     function ($model) {
                         if ($model->productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
-                            return $model->attributeValue->translation->colorTexture->attributeTexture;
+                            return $model->productAttributeValue->translation->colorTexture->attributeTexture;
                         } else if ($model->productAttribute->type->id == ShopAttributeType::TYPE_COLOR) {
                             return Html::tag('div', '', [
-                                'style' => 'background-color: ' . $model->attributeValue->translation->colorTexture->color . ';',
+                                'style' => 'background-color: ' . $model->productAttributeValue->translation->colorTexture->color . ';',
                                 'class' => 'attribute-color',
                             ]);
                         }
@@ -68,18 +69,36 @@ $globalDefaultCombination = $defaultCombination;
                     [
                         'name' => 'CartForm[attribute_value_id][' . $product->id . '-' . $productAttribute->id . ']',
                         'encode' => false,
-                        'item' => function ($index, $label, $name, $checked, $value) {
+                        'item' => function ($index, $label, $name, $checked, $value) use ($productAttribute, &$id) {
 
                             if (!empty($GLOBALS['globalDefaultCombination'])) {
-                                foreach ($GLOBALS['globalDefaultCombination']->shopProductCombinationAttributes as $attribute) {
+                                foreach ($GLOBALS['globalDefaultCombination']->combinationAttributes as $attribute) {
                                     $serialized = json_encode([
                                         'attributeId' => $attribute->attribute_id,
                                         'valueId' => $attribute->attribute_value_id]);
                                     if ($serialized == $value) $checked = true;
                                 }
                             }
-                            return '<label class="btn btn-xs btn-default' . ($checked ? ' active' : '') . '">' .
-                            Html::radio($name, $checked, ['value' => $value, 'class' => 'radiobutton']) . $label . '</label>';
+
+                            $output = Html::radio($name, $checked, [
+                                'value' => $value,
+                                'class' => 'radiobutton project-status-btn',
+                                'id' => $id
+                            ]);
+
+                            $wrapperClasses = ($checked) ? 'active' : '';
+                            $labelClasses = 'radiobutton';
+                            if($productAttribute->type->id == ShopAttributeType::TYPE_COLOR ||
+                                $productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
+                                $labelClasses .= ' color';
+                                $wrapperClasses .= ' wrapper-inline';
+                            }
+
+                            $output .= Html::label(' ' . $label, $id++, [
+                                'class' => $labelClasses
+                            ]);
+
+                            return Html::tag('div', $output, ['class' => $wrapperClasses]);
                         },
                     ]
                 )->label(false); ?>

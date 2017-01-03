@@ -12,7 +12,7 @@
  * ]);
  */
 use kartik\touchspin\TouchSpin;
-use yii\bootstrap\Html;
+use yii\helpers\Html;
 ?>
 
 <div class="product-prices-widget" data-not-available-text="<?= $params['notAvailableText']; ?>">
@@ -26,7 +26,7 @@ use yii\bootstrap\Html;
         ->label(false) ?>
 
 
-    <?php if ($params['showCounter']): ?>
+    <?php if ($params['showCounter']) : ?>
     <div class="form-group">
         <div class="quantity">
             <h3 class="title">
@@ -42,8 +42,6 @@ use yii\bootstrap\Html;
                         'pluginOptions' => [
                             'min' => 1
                         ],
-                        'buttonup_class' => 'btn btn-primary',
-                        'buttondown_class' => 'btn btn-info',
                         'buttonup_txt' => '<i class="glyphicon glyphicon glyphicon-plus"></i>',
                         'buttondown_txt' => '<i class="glyphicon glyphicon-minus"></i>',
                     ],
@@ -55,5 +53,4 @@ use yii\bootstrap\Html;
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
     <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'btn btn-primary cart-btn', 'id' => 'add-to-cart-button']) ?>
-
 </div>
