@@ -78,7 +78,6 @@ class ProductController extends Controller
                             'add-param', 'delete-param', 'update-param',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
-                            'add-price', 'remove-price',
                             'add-file', 'remove-file',
                             'up', 'down', 'generate-seo-url',
                             'additional-product'
