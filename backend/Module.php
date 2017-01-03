@@ -23,7 +23,7 @@ class Module extends \yii\base\Module
     public $enableCurrencyConversion = false;
 
     /**
-     * Enables rounding in ProductPrice's model getPrice() and getSalePrice() methods
+     * Enables rounding for prices
      * @var bool
      */
     public $enablePriceRounding = true;

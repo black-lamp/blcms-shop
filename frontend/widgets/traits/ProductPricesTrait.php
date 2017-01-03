@@ -31,15 +31,4 @@ trait ProductPricesTrait
         else return 0;
         return Json::encode($array);
     }
-
-
-    public function actionGetProductPrice(int $priceId) {
-        $productPrice = ProductPrice::findOne($priceId);
-
-        $prices = [
-            'price' => $productPrice->getPrice(),
-            'salePrice' => $productPrice->getSalePrice()
-        ];
-        return Json::encode($prices);
-    }
 }

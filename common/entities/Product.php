@@ -7,6 +7,7 @@ use bl\cms\cart\models\OrderProduct;
 use bl\cms\shop\helpers\ShopArrayHelper;
 use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
+use Exception;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\{
@@ -177,11 +178,40 @@ class Product extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * Gets price
+     * @return float|int
      */
-    public function getPrice()
+    public function getOldPrice()
     {
         $price = $this->price;
+        if (\Yii::$app->controller->module->enableCurrencyConversion) {
+            $price = $price * Currency::currentCurrency();
+        }
+        if (\Yii::$app->controller->module->enablePriceRounding) {
+            $price = floor($price);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Gets price with discount
+     * @return float|int
+     * @throws Exception
+     */
+    public function getDiscountPrice()
+    {
+        $price = $this->price;
+
+        if (!empty($this->discount) && !empty($this->discount_type_id)) {
+            if ($this->discountType->title == "money") {
+                $price = $this->price - $this->discount;
+            } else if ($this->discountType->title == "percent") {
+                $price = $this->price - ($this->price / 100) * $this->discount;
+            }
+            else throw new Exception(\Yii::t('shop', 'Such discount type does not exist.'));
+        }
+
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
             $price = $price * Currency::currentCurrency();
         }
@@ -190,6 +220,14 @@ class Product extends ActiveRecord
         }
 
         return $price;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDiscountType()
+    {
+        return $this->hasOne(PriceDiscountType::className(), ['id' => 'discount_type_id']);
     }
 
     /**
