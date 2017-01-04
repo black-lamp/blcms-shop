@@ -12,6 +12,7 @@ class PriceForm extends Model
     public $price;
     public $discount;
     public $discount_type_id;
+    public $userGroupTitle;
 
     /**
      * @inheritdoc
@@ -25,7 +26,6 @@ class PriceForm extends Model
         ];
     }
 
-
     /**
      * @inheritdoc
      */
@@ -38,4 +38,5 @@ class PriceForm extends Model
             'discount_type_id' => \Yii::t('shop', 'Discount type')
         ];
     }
+
 }

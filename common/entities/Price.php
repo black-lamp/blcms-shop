@@ -42,6 +42,7 @@ class Price extends ActiveRecord
     {
         return [
             [['combination_id', 'user_group_id', 'discount_type_id', 'number'], 'integer'],
+            [['user_group_id'], 'default'],
             [['price', 'discount'], 'number'],
             [['inequality_sign'], 'string', 'max' => 255],
             [['discount_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceDiscountType::className(), 'targetAttribute' => ['discount_type_id' => 'id']],

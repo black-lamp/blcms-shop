@@ -1019,7 +1019,6 @@ class ProductController extends Controller
 
         $imageForm = new CombinationImageForm();
         $productImages = ProductImage::find()->where(['product_id' => $productId])->all();
-        $combinationImages = new CombinationImage();
 
         $combinationAttributeForm = new CombinationAttributeForm();
         $combinationAttribute = new CombinationAttribute();
@@ -1057,7 +1056,7 @@ class ProductController extends Controller
                 }
 
                 $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute);
-                $this->saveCombinationImages($imageForm, $post, $combinationImages, $combination);
+                $this->saveCombinationImages($imageForm, $post, null, $combination);
 
                 $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
                 $this->trigger($eventName, new ProductEvent([
@@ -1096,20 +1095,47 @@ class ProductController extends Controller
     /**
      * @param $imageForm CombinationImageForm
      * @param $post array
-     * @param $combinationImages CombinationImage
+     * @param $combinationImages array
      * @param $combination Combination
+     * @param $newCombination boolean
+     * @param $productImages ProductImage|null
      */
-    private function saveCombinationImages($imageForm, $post, $combinationImages, $combination) {
+    private function saveCombinationImages($imageForm, $post, $combinationImages,
+                                           $combination, $newCombination = true, $productImages = null) {
         if ($imageForm->load($post)) {
+
             if (!empty($imageForm->product_image_id)) {
                 if ($imageForm->validate()) {
-                    foreach ($imageForm->product_image_id as $image) {
 
-                        $combinationImages->combination_id = (int)$combination->id;
-                        $combinationImages->product_image_id = (int)$image;
-                        if ($combinationImages->validate()) {
-                            $combinationImages->save();
-                            $combinationImages = new CombinationImage();
+                    if (!$newCombination) {
+                        /*Deleting*/
+                        foreach ($combinationImages as $combinationImage) {
+                            if (!in_array($combinationImage->id, $imageForm->product_image_id)) {
+                                CombinationImage::deleteAll(['id' => $combinationImage->id]);
+                            }
+                        }
+                    }
+
+                    foreach ($imageForm->product_image_id as $image) {
+                        if (!$newCombination) {
+                            /*Adding*/
+                            if (!in_array($image, ArrayHelper::toArray($combinationImages))) {
+                                $newImage = new CombinationImage();
+                                $newImage->product_image_id = $image;
+                                $newImage->combination_id = $combination->id;
+                                if ($newImage->validate()) $newImage->save();
+
+                                CombinationImage::deleteAll(['id' => $image]);
+                            }
+                        }
+                        else {
+                            $newCombinationImage = new CombinationImage();
+
+                            $newCombinationImage->combination_id = (int)$combination->id;
+                            $newCombinationImage->product_image_id = (int)$image;
+                            if ($newCombinationImage->validate()) {
+                                $newCombinationImage->save();
+                            }
                         }
                     }
                 }
@@ -1168,12 +1194,27 @@ class ProductController extends Controller
         $combinationImages = CombinationImage::find()->where(['combination_id' => $combination->id])->all();
 
         $combinationAttributeForm = new CombinationAttributeForm();
-        $combinationAttribute = CombinationAttribute::find()->where(['combination_id' => $combination->id])->all();
+        $combinationAttributes = CombinationAttribute::find()
+            ->where(['combination_id' => $combination->id])->all();
 
-        $priceForm = new PriceForm;
-        $userGroups = UserGroup::find()->all();
+        $combinationPrices = Price::find()
+            ->indexBy('user_group_id')
+            ->where(['combination_id' => $combination->id])
+            ->all();
+        $priceForm = [];
+        foreach ($combinationPrices as $groupId => $combinationPrice) {
+            $priceForm[$groupId] = new PriceForm();
+            $priceForm[$groupId]->price = $combinationPrice->price;
+            $priceForm[$groupId]->discount = $combinationPrice->discount;
+            $priceForm[$groupId]->discount_type_id = $combinationPrice->discount_type_id;
+            $priceForm[$groupId]->userGroupTitle = $combinationPrice->userGroup->translation->title;
+        }
 
         if (\Yii::$app->request->isPost) {
+
+            $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT, new ProductEvent([
+                'id' => $combination->product_id
+            ]));
 
             $post = \Yii::$app->request->post();
             if ($combination->load($post)) {
@@ -1187,25 +1228,28 @@ class ProductController extends Controller
                     if ($combinationTranslation->validate()) $combinationTranslation->save();
                 }
 
-                if ($priceForm->load($post)) {
-
-                    foreach ($userGroups as $userGroup) {
-                        $combinationPrice = new Price();
-                        $combinationPrice->combination_id = $combination->id;
-                        $combinationPrice->user_group_id = $userGroup->id;
-                        $combinationPrice->price = $priceForm['price'][$userGroup->id];
-                        $combinationPrice->discount_type_id = $priceForm['discount_type_id'][$userGroup->id];
-                        $combinationPrice->discount = $priceForm['discount'][$userGroup->id];
-
+                /*Saving prices*/
+                foreach ($priceForm as $userGroup => $prices) {
+                    if ($prices->load($post)) {
+                        $combinationPrice = Price::find()
+                            ->where(['combination_id' => $combination->id, 'user_group_id' => $userGroup])->one();
+                        if (empty($combinationPrice)) {
+                            $combinationPrice = new Price();
+                            $combinationPrice->combination_id = $combination->id;
+                            $combinationPrice->user_group_id = $userGroup->id;
+                        }
+                        $combinationPrice->price = (float) $prices->price;
+                        $combinationPrice->discount_type_id = $prices->discount_type_id ?? (int) $prices->discount_type_id;
+                        $combinationPrice->discount = (float) $prices->discount;
                         if ($combinationPrice->validate()) $combinationPrice->save();
+                        else die(var_dump($combinationPrice->errors));
                     }
                 }
 
-                $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute);
-                $this->saveCombinationImages($imageForm, $post, new CombinationImage(), $combination);
+                $this->loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, new CombinationAttribute());
+                $this->saveCombinationImages($imageForm, $post, $combinationImages, $combination, false, $productImages);
 
-                $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
-                $this->trigger($eventName, new ProductEvent([
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
                     'id' => $combination->product_id
                 ]));
 
@@ -1215,6 +1259,7 @@ class ProductController extends Controller
                 ]);
             }
         }
+
         return $this->render('save', [
             'viewName' => 'edit-combination',
             'selectedLanguage' => Language::findOne($languageId),
@@ -1226,24 +1271,25 @@ class ProductController extends Controller
                 'combinationTranslation' => $combinationTranslation,
                 'product' => Product::findOne($combination->product_id),
                 'productImages' => $productImages,
+
                 'image_form' => $imageForm,
-                'combinationImages' => $combinationImages,
+                'combinationImagesIds' => ArrayHelper::getColumn($combinationImages, 'product_image_id'),
+
                 'languageId' => $languageId,
-                'combinationAttribute' => $combinationAttribute,
+                'combinationAttributes' => $combinationAttributes,
                 'combinationAttributeForm' => $combinationAttributeForm,
-                'price' => $priceForm,
-                'userGroups' => $userGroups
+                'priceForm' => $priceForm,
             ]
         ]);
-//        return $this->render('edit-combination', [
-//            'combination' => $combination,
-//            'combinationAttributeForm' => $combinationAttributeForm,
-//            'combinationAttributes' => $combinationAttributes,
-//            'languageId' => $languageId,
-//            'image_form' => $imageForm,
-//            'combinationImages' => $combinationImages,
-//            'product' => $product,
-//        ]);
+    }
+
+    /**
+     * @param int $id
+     * @return \yii\web\Response
+     */
+    public function actionDeleteCombinationAttribute(int $id) {
+        CombinationAttribute::deleteAll(['id' => $id]);
+        return $this->redirect(\Yii::$app->request->referrer);
     }
 
     /**
