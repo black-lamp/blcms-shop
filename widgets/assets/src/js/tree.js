@@ -23,8 +23,7 @@ $(document).ready(function () {
             var li = $(element).closest('li');
             var level = $(ul).attr("data-level");
 
-            var url = (languagePrefix) ? '/' + languagePrefix + appName + '/shop/category/get-categories' :
-                appName + '/shop/category/get-categories';
+            var url = appName + '/shop/category/get-categories';
             $.ajax({
                 type: "GET",
                 url: url,
