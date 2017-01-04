@@ -18,13 +18,16 @@ trait TreeWidgetTrait
      * @param boolean $isGrid
      * @param string $downIconClass
      * @param string $upIconClass
+     * @param integer $languageId
      * @return mixed
      * @throws BadRequestHttpException
      * @throws Exception
      *
      * This action is used by Tree wiget
      */
-    public function actionGetCategories($parentId = null, $level, $currentCategoryId, $isGrid = false, $downIconClass, $upIconClass)
+    public function actionGetCategories($parentId = null, $level,
+                                        $currentCategoryId, $isGrid = false,
+                                        $downIconClass, $upIconClass, $languageId = null)
     {
         if (\Yii::$app->request->isAjax) {
 
@@ -35,7 +38,7 @@ trait TreeWidgetTrait
                     'categories' => $categories,
                     'level' => $level,
                     'currentCategoryId' => $currentCategoryId,
-                    'languageId' => Language::getCurrent()->id,
+                    'languageId' => $languageId ?? Language::getCurrent()->id,
                     'downIconClass' => $downIconClass,
                     'upIconClass' => $upIconClass
                 ];

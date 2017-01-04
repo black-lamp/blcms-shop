@@ -37,11 +37,11 @@ use yii\helpers\Url;
                             <a href="<?= Url::toRoute(['/shop/category/save', 'id' => $category->id, 'languageId' => $languageId]); ?>">
                                 <?php if (!$level == 1) : ?>
                                     <span>
-                                <?= (!empty($category->translation)) ? $category->translation->title : ''; ?>
+                                <?= (!empty($category->getTranslation($languageId))) ? $category->getTranslation($languageId)->title : ''; ?>
                             </span>
                                 <?php else : ?>
                                     <span>
-                                <?= $category->translation->title; ?>
+                                <?= $category->getTranslation($languageId)->title; ?>
                             </span>
                                 <?php endif; ?>
                             </a>
@@ -49,7 +49,7 @@ use yii\helpers\Url;
 
                         <!--PARENT-->
                         <td class="col-md-2">
-                            <?= (!empty($category->parent)) ? $category->parent->translation->title : ''; ?>
+                            <?= (!empty($category->parent)) ? $category->parent->getTranslation($languageId)->title : ''; ?>
                         </td>
 
                         <!--IMAGES-->

@@ -5,7 +5,7 @@ $(document).ready(function () {
 
         /*FIND WIDGET*/
         var widget = $('#widget-menu');
-        var languagePrefix = widget.data('language');
+        var languageId = widget.data('language');
         var currentCategoryId = widget.attr('data-current-category-id');
         var isGrid = widget.attr('data-is-grid');
 
@@ -30,6 +30,7 @@ $(document).ready(function () {
                 data: {
                     'parentId': id,
                     'level': level,
+                    'languageId': languageId,
                     'currentCategoryId': currentCategoryId,
                     'isGrid': isGrid,
                     'downIconClass': downIconClass.replace('.', ' '),
