@@ -73,7 +73,7 @@ $this->params['breadcrumbs'] = [
                 <?= $form->field($combination, 'price')->textInput(['type' => 'number', 'step' => '0.01']); ?>
             </div>
             <div class="col-md-4">
-                <?= $form->field($combination, 'sale_type_id')
+                <?= $form->field($combination, 'discount_type_id')
                     ->dropDownList(
                         ['' => '--none--'] +
                         ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
@@ -81,7 +81,7 @@ $this->params['breadcrumbs'] = [
                 ?>
             </div>
             <div class="col-md-4">
-                <?= $form->field($combination, 'sale')->textInput(['type' => 'number', 'step' => '0.01']); ?>
+                <?= $form->field($combination, 'discount')->textInput(['type' => 'number', 'step' => '0.01']); ?>
             </div>
         </div>
         <?= $form->field($combination, 'default')->checkbox(); ?>
