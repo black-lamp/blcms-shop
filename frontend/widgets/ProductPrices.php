@@ -58,7 +58,7 @@ class ProductPrices extends Widget
      */
     public function init()
     {
-        if (\Yii::$app->cart->enableGetPricesFromCombinations && !empty($this->product->productAttributes)) {
+        if (\Yii::$app->getModule('shop')->enableCombinatios && !empty($this->product->productAttributes)) {
             ProductCombinationAsset::register($this->getView());
             $this->renderView = 'combinations';
         } else {
