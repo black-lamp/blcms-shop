@@ -11,6 +11,12 @@ class Module extends \yii\base\Module
     public $defaultRoute = 'shop';
 
     /**
+     * Enables attribute combinations in product card
+     * @var bool
+     */
+    public $enableCombinations = false;
+
+    /**
      * @var bool
      * Enables logging in admin panel
      */

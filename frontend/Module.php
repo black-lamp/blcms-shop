@@ -10,6 +10,12 @@ class Module extends \yii\base\Module
     public $controllerNamespace = 'bl\cms\shop\frontend\controllers';
 
     /**
+     * Enables attribute combinations in product card
+     * @var bool
+     */
+    public $enableCombinations = false;
+
+    /**
      * @var string
      * Partner manager e-mail, on which partner request will be sent.
      */
