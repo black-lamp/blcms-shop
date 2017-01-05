@@ -1,6 +1,6 @@
 <?php
 /**
- * If Cart module $enableGetPricesFromCombinations property is false
+ * If Shop module $enableCombinations property is false
  * or there are not product combinations and there not product prices
  * this view will be displayed.
  *

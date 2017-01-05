@@ -1,6 +1,6 @@
 <?php
 /**
- * If Cart module $enableGetPricesFromCombinations property is true
+ * If Shop module $enableCombinations property is true
  * and if there are product combinations attributes this view will be displayed.
  *
  * @var $product \bl\cms\shop\common\entities\Product
