@@ -86,7 +86,7 @@ function autoOpen(openedTreeItem, currentCategoryId) {
         openedTreeItem.each(function() {
             var id = this.id;
             var ul = $(this).closest('ul');
-            var li = $(element).closest('li');
+            var li = $(this).closest('li');
             var level = $(ul).attr("data-level");
             var widget = $('#widget-menu');
             var isGrid = widget.attr('data-is-grid');
@@ -95,8 +95,8 @@ function autoOpen(openedTreeItem, currentCategoryId) {
             $(this).removeClass(downIconClass);
             $(this).addClass(upIconClass);
 
-            var url = (languagePrefix) ? '/' + languagePrefix + appName + '/shop/category/get-categories' :
-            appName + '/shop/category/get-categories';
+            var url = appName ? '/' + appName + '/shop/category/get-categories' :
+                '/shop/category/get-categories';
 
             $.ajax({
                 type: "GET",
@@ -127,7 +127,6 @@ function autoOpen(openedTreeItem, currentCategoryId) {
                     autoOpen($('[data-level=' + level + '] ' + '[data-opened=true]'), currentCategoryId);
                 }
             });
-
         });
     }
 }
