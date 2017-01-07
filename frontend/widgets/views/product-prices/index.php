@@ -30,9 +30,9 @@ use yii\helpers\Html;
     <?php if ($params['showCounter']): ?>
         <div class="form-group">
             <div class="quantity">
-                <h3 class="title">
+                <p class="count">
                     <?= Yii::t('shop', 'Count') ?>
-                </h3>
+                </p>
                 <?= $params['form']->field($params['cart'], 'count', [
                     'enableClientValidation' => false
                 ])->widget(TouchSpin::className(), [

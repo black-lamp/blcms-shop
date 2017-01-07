@@ -17,9 +17,9 @@ else {
 ?>
 
 <div>
-    <h3 class="title">
+    <p class="sum">
         <?= Yii::t('frontend.product.card', 'Price') ?>
-    </h3>
+    </p>
     <p id="oldPrice" class="old-sum">
         <?= (!empty($oldPrice)) ? Yii::$app->formatter->asCurrency($oldPrice) : ''; ?>
     </p>
