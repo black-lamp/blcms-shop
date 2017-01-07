@@ -45,7 +45,7 @@ trait TreeWidgetTrait
                 /**
                  * @var $this \yii\web\Controller
                  */
-                if ($isGrid) {
+                if ($isGrid == 'true') {
                     return $this->renderAjax(
                         '@vendor/black-lamp/blcms-shop/widgets/views/tree/grid-tr', $params);
                 }
