@@ -31,7 +31,7 @@ use yii\helpers\Html;
         <div class="form-group">
             <div class="quantity">
                 <p class="count">
-                    <?= Yii::t('shop', 'Count') ?>
+                    <?= Yii::t('shop', 'Count') ?>:
                 </p>
                 <?= $params['form']->field($params['cart'], 'count')
                     ->textInput(['type' => 'number', 'autocomplete' => 'off', 'value' => 1, 'min' => 1])
