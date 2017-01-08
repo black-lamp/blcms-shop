@@ -332,6 +332,21 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @param $id
+     * @return Combination
+     * @throws \yii\base\Exception
+     */
+    public function getCombination($id)
+    {
+        if (!empty($id)) {
+            $combination = Combination::findOne($id);
+            if (!empty($combination)) return $combination;
+            else throw new \yii\base\Exception('Combination does not exists');
+        }
+        else throw new \yii\base\Exception('Combination id can not be empty');
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getDefaultCombination()
