@@ -33,20 +33,8 @@ use yii\helpers\Html;
                 <p class="count">
                     <?= Yii::t('shop', 'Count') ?>
                 </p>
-                <?= $params['form']->field($params['cart'], 'count', [
-                    'enableClientValidation' => false
-                ])->widget(TouchSpin::className(), [
-                    'options' => [
-                        'value' => 1
-                    ],
-                    'pluginOptions' => [
-                        'pluginOptions' => [
-                            'min' => 1
-                        ],
-                        'buttonup_txt' => '<i class="glyphicon glyphicon glyphicon-plus"></i>',
-                        'buttondown_txt' => '<i class="glyphicon glyphicon-minus"></i>',
-                    ],
-                ])
+                <?= $params['form']->field($params['cart'], 'count')
+                    ->textInput(['type' => 'number', 'autocomplete' => 'off', 'value' => 1, 'min' => 1])
                     ->label(false) ?>
             </div>
         </div>
