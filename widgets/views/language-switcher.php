@@ -22,9 +22,14 @@ use yii\helpers\Url;
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                 <?php foreach ($languages as $language): ?>
                     <li>
+
+                        <?php $module = (Yii::$app->controller->module->id != Yii::$app->id) ?
+                            '/' . Yii::$app->controller->module->id : ''
+                        ?>
+
                         <a href="
                             <?= Url::to([
-                            '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id,
+                            $module . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id,
                             'id' => Yii::$app->request->get('id'),
                             'languageId' => $language->id]); ?>
                         ">
