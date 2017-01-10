@@ -3,6 +3,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
 use bl\cms\shop\common\components\user\models\UserGroup;
 
@@ -105,6 +106,21 @@ class Combination extends ActiveRecord
         }
         $price = Price::find()->where($params)->one();
         return $price;
+    }
+
+    /**
+     * @param int $userGroupId
+     * @return array|null|ActiveRecord
+     * @throws Exception
+     */
+    public function getPriceByUserGroup(int $userGroupId) {
+        if (!empty($userGroupId)) {
+            $price = Price::find()->where([
+                'user_group_id' => $userGroupId
+            ])->one();
+            return $price;
+        }
+        else throw new Exception('User group id is empty');
     }
 
     /**
