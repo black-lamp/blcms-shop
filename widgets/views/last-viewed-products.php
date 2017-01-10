@@ -58,7 +58,7 @@ use yii\helpers\Url;
                         <div class="price col-md-6">
                             <?php if (!empty($product->product->prices)) : ?>
                                 <?= $form->field($cart, 'priceId', ['options' => ['class' => '']])
-                                    ->dropDownList(ArrayHelper::map($product->product->prices, 'id',
+                                    ->dropDownList(ArrayHelper::map($product->product->discountPrices, 'id',
                                         function ($model) {
                                             $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
                                             return $priceItem;
@@ -66,7 +66,7 @@ use yii\helpers\Url;
                             <?php else : ?>
                                 <p class="label-price"><?= Yii::t('shop', 'Price'); ?></p>
                                 <p class="standart-price">
-                                    <?= \Yii::$app->formatter->asCurrency($product->product->price); ?>
+                                    <?= \Yii::$app->formatter->asCurrency($product->product->discountPrice); ?>
                                 </p>
                             <?php endif; ?>
                             <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->product->id])->label(false); ?>
