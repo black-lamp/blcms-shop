@@ -68,6 +68,8 @@ class ProductSearch extends Product
             }
         }
 
+        $query->andWhere(['status' => Product::STATUS_SUCCESS]);
+
 
         $filterTypes = FilterType::find()->all();
         foreach ($filterTypes as $filterType) {
