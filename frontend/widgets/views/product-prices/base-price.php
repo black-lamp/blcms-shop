@@ -16,6 +16,7 @@
 
 <div class="prices-block">
         <?= $this->render('sum', [
-            'basePrice' => $product->price ?? 0
+            'oldPrice' => $product->oldPrice ?? 0,
+            'newPrice' => $product->discountPrice ?? 0
         ]); ?>
 </div>

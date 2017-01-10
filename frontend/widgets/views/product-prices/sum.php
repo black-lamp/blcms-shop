@@ -3,15 +3,16 @@
  * The block where price sum will be shown.
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $defaultCombination \bl\cms\shop\common\entities\ProductCombination|null
- * @var $priceModel \bl\cms\shop\common\entities\ProductPrice|null
+ * @var $defaultCombination \bl\cms\shop\common\entities\Combination|null
+ * @var $priceModel \bl\cms\shop\common\entities\Price|null
+ *
+ * @var $oldPrice string
+ * @var $newPrice string
  */
 
 if (!empty($defaultCombination)) {
     $oldPrice = $defaultCombination->price->oldPrice ?? 0;
     $newPrice = $defaultCombination->price->discountPrice ?? 0;
-} else {
-    $newPrice = $basePrice ?? 0;
 }
 ?>
 
