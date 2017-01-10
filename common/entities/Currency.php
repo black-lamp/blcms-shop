@@ -73,6 +73,7 @@ class Currency extends ActiveRecord
      */
     public static function currentCurrency() {
         $currency = self::find()->orderBy('id DESC')->one();
-        return $currency->value;
+        if (!empty($currency)) return $currency->value;
+        else return 0;
     }
 }
