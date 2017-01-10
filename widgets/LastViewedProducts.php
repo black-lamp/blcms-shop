@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\widgets;
 
+use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ViewedProduct;
 use yii\base\Widget;
 
@@ -28,7 +29,8 @@ class LastViewedProducts extends Widget
     {
         parent::run();
 
-        $products = ViewedProduct::find()->where(['user_id' => \Yii::$app->user->id])->limit($this->num)->all();
+        $products = ViewedProduct::find()->where(['user_id' => \Yii::$app->user->id, 'status' => Product::STATUS_SUCCESS])
+            ->limit($this->num)->all();
 
         if (!empty($products)) {
             return $this->render('last-viewed-products',

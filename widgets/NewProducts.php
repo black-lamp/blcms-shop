@@ -33,7 +33,7 @@ class NewProducts extends Widget
     {
         $this->cart = \Yii::$app->cart;
 
-        $products = Product::find()->orderBy(['id' => SORT_DESC])->limit($this->num)->all();
+        $products = Product::find()->where(['status' => Product::STATUS_SUCCESS])->orderBy(['id' => SORT_DESC])->limit($this->num)->all();
         $showOwners = $this->cart->saveToDataBase;
 
         return $this->render('new-products', [
