@@ -18,7 +18,7 @@ if (!empty($defaultCombination)) {
 
 <div>
     <p class="sum">
-        <span class="price-title"><?= Yii::t('frontend.product.card', 'Price') ?>:</span>
+        <span class="price-title"><?= Yii::t('shop', 'Price') ?>:</span>
         <span id="newPrice"
               data-sum="<?= $newPrice; ?>"
               data-currency-code="<?= Yii::$app->formatter->numberFormatterSymbols[NumberFormatter::CURRENCY_SYMBOL]; ?>">
