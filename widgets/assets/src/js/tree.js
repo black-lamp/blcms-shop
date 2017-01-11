@@ -23,7 +23,7 @@ $(document).ready(function () {
             var li = $(element).closest('li');
             var level = $(ul).attr("data-level");
 
-            var url = appName ? '/' + appName + '/shop/category/get-categories' :
+            var url = appName ? appName + '/shop/category/get-categories' :
                 '/shop/category/get-categories';
             $.ajax({
                 type: "GET",
@@ -96,7 +96,7 @@ function autoOpen(openedTreeItem, currentCategoryId) {
             $(this).removeClass(downIconClass);
             $(this).addClass(upIconClass);
 
-            var url = appName ? '/' + appName + '/shop/category/get-categories' :
+            var url = appName ? appName + '/shop/category/get-categories' :
                 '/shop/category/get-categories';
 
             $.ajax({
