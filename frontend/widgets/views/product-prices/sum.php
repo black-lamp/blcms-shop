@@ -20,13 +20,13 @@ if (!empty($defaultCombination)) {
     <p class="sum">
         <span class="price-title"><?= Yii::t('shop', 'Price') ?>:</span>
         <span id="newPrice"
-              data-sum="<?= $newPrice; ?>"
+              data-sum="<?= $newPrice ?? 0; ?>"
               data-currency-code="<?= Yii::$app->formatter->numberFormatterSymbols[NumberFormatter::CURRENCY_SYMBOL]; ?>">
-            <?= Yii::$app->formatter->asCurrency($newPrice) ?>
+            <?= Yii::$app->formatter->asCurrency($newPrice ?? 0) ?>
         </span>
 
         <span id="oldPrice" class="old-sum">
-            <?= (!empty($oldPrice)) ? Yii::$app->formatter->asCurrency($oldPrice) : ''; ?>
+            <?= Yii::$app->formatter->asCurrency($oldPrice ?? 0); ?>
         </span>
     </p>
 
