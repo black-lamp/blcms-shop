@@ -29,7 +29,7 @@ class LastViewedProducts extends Widget
     {
         parent::run();
 
-        $products = ViewedProduct::find()->where(['user_id' => \Yii::$app->user->id, 'status' => Product::STATUS_SUCCESS])
+        $products = ViewedProduct::find()->where(['user_id' => \Yii::$app->user->id])
             ->limit($this->num)->all();
 
         if (!empty($products)) {
