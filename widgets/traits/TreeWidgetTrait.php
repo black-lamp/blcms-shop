@@ -26,11 +26,11 @@ trait TreeWidgetTrait
      * This action is used by Tree wiget
      */
     public function actionGetCategories($parentId = null, $level,
-                                        $currentCategoryId, $isGrid = false,
+                                        $currentCategoryId = null, $isGrid = false,
                                         $downIconClass, $upIconClass, $languageId = null)
     {
-        if (\Yii::$app->request->isAjax) {
 
+        if (\Yii::$app->request->isAjax) {
             if (!empty($level)) {
                 $categories = Category::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
 
