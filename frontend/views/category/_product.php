@@ -69,9 +69,11 @@ $modelUrl = Url::to(['/shop/product/show',
                 <!--PRICE-->
                 <?php if (!empty($model->price)): ?>
                     <small><?= Yii::t('shop', 'Price'); ?>:</small>
-                    <strong><?= Yii::$app->formatter->asCurrency($model->getDiscountPrice()); ?></strong>
-                    <?php if (!empty($model->discount_type_id)): ?>
-                        <strike><?= Yii::$app->formatter->asCurrency($model->getOldPrice()); ?></strike>
+                    <?php if (!empty($model->prices[0]->sale)): ?>
+                        <strong><?= Yii::$app->formatter->asCurrency($model->prices[0]->salePrice); ?></strong>
+                        <strike><?= Yii::$app->formatter->asCurrency($model->price); ?></strike>
+                    <?php else: ?>
+                        <strong><?= Yii::$app->formatter->asCurrency($model->price); ?></strong>
                     <?php endif ?>
                 <?php endif ?>
 

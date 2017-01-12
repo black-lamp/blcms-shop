@@ -18,7 +18,7 @@ class ProductVideoForm extends Model
     public function rules()
     {
         return [
-            [['file_name'], 'file', 'skipOnEmpty' => false, 'extensions' => 'avi, mp4']
+            [['file_name'], 'file', 'skipOnEmpty' => true, 'extensions' => 'avi, mp4']
         ];
     }
 

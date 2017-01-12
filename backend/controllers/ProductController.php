@@ -816,6 +816,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'video_form' => new ProductVideo(),
                     'video_form_upload' => new ProductVideoForm(),
+                    'video' => $video,
                     'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
                 ]);
             }
@@ -831,6 +832,7 @@ class ProductController extends Controller
                     'selectedLanguage' => Language::findOne($languageId),
                     'video_form' => new ProductVideo(),
                     'video_form_upload' => new ProductVideoForm(),
+                    'video' => $video,
                     'videos' => ProductVideo::find()->where(['product_id' => $product->id])->all()
                 ]
             ]);
