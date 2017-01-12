@@ -294,11 +294,12 @@ class ProductController extends Controller
 
             $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT);
 
+            $old_productTitle = $products_translation->title;
             $products_translation->load(Yii::$app->request->post());
 
             if ($product->validate() && $products_translation->validate()) {
 
-                if (empty($products_translation->seoUrl)) {
+                if (empty($products_translation->seoUrl) || ($products_translation->title != $old_productTitle)) {
                     $products_translation->seoUrl = Inflector::slug($products_translation->title);
                 }
 
