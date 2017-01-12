@@ -66,7 +66,7 @@ class Product extends ActiveRecord
      * This properties are used for the Cart component.
      */
     public $count;
-    public $combinationIds;
+    public $combinationId;
     public $additionalProducts;
 
     /**
