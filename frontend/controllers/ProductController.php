@@ -50,12 +50,10 @@ class ProductController extends Controller
             'recommendedProducts' => $this->recommendedProducts($id, $product->category_id)
         ]);
     }
-
     public function actionXml() {
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');
-
         return $this->renderPartial('xml', [
             'categories' => Category::find()->all(),
             'products' => Product::findAll(['export' => true]),
@@ -66,35 +64,30 @@ class ProductController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'text/xml; charset=UTF-8');
-
         return $this->renderPartial('hlxml', [
             'categories' => Category::find()->all(),
             'products' => Product::findAll(['export' => true]),
             'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
         ]);
     }
-
     /**
      * This method return array of two previous and two next in order of products
      */
     private function recommendedProducts($id, $categoryId) {
         $previous = Product::find()->with('translations')->where(['<', 'id', $id])->andWhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->limit('2')->all();
         $next = Product::find()->with('translations')->where(['>', 'id', $id])->andWhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
-
         if (empty($next[1]) && !empty($next[0])) {
             $next[1] = Product::find()->with('translations')->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->one();
         }
         if (empty($next[0])) {
             $next = Product::find()->with('translations')->where(['<', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_ASC])->limit('2')->all();
         }
-
         if (empty($previous[1]) && !empty($previous[0])) {
             $previous[1] = Product::find()->with('translations')->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->one();
         }
         if (empty($previous[0])) {
             $previous = Product::find()->with('translations')->where(['>', 'id', $id])->andwhere(['category_id' => $categoryId])->orderBy(['id' => SORT_DESC])->limit('2')->all();
         }
-
         $recommendedProducts = [];
         if (!empty($previous[1])) {
             $recommendedProducts[] = $previous[1];
@@ -108,7 +101,6 @@ class ProductController extends Controller
         if (!empty($next[1])) {
             $recommendedProducts[] = $next[1];
         }
-
         return $recommendedProducts;
     }
 }
