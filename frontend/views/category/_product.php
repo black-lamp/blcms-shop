@@ -2,14 +2,12 @@
 /**
  * @var Product $model
  */
-
 use bl\cms\cart\models\CartForm;
 use bl\cms\shop\common\entities\Product;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-
 $modelUrl = Url::to(['/shop/product/show',
     'id' => $model->id
 ]);
@@ -69,11 +67,9 @@ $modelUrl = Url::to(['/shop/product/show',
                 <!--PRICE-->
                 <?php if (!empty($model->price)): ?>
                     <small><?= Yii::t('shop', 'Price'); ?>:</small>
-                    <?php if (!empty($model->prices[0]->sale)): ?>
-                        <strong><?= Yii::$app->formatter->asCurrency($model->prices[0]->salePrice); ?></strong>
-                        <strike><?= Yii::$app->formatter->asCurrency($model->price); ?></strike>
-                    <?php else: ?>
-                        <strong><?= Yii::$app->formatter->asCurrency($model->price); ?></strong>
+                    <strong><?= Yii::$app->formatter->asCurrency($model->getDiscountPrice()); ?></strong>
+                    <?php if (!empty($model->discount_type_id)): ?>
+                        <strike><?= Yii::$app->formatter->asCurrency($model->getOldPrice()); ?></strike>
                     <?php endif ?>
                 <?php endif ?>
 

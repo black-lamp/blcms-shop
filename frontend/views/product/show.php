@@ -1,5 +1,7 @@
 <?php
+use bl\cms\cart\models\CartForm;
 use bl\cms\shop\common\entities\Category;
+use bl\cms\shop\common\entities\Combination;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductCountry;
@@ -11,14 +13,13 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
-
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $product Product
- * @var $cart \bl\cms\cart\models\CartForm
+ * @var Product $product
+ * @var CartForm $cart
+ * @var Combination $defaultCombination
  */
-
 RecommendedProductsAsset::register($this);
 ProductAsset::register($this);
 ?>
@@ -73,9 +74,7 @@ ProductAsset::register($this);
                 (!empty($product->images)) ? $product->image->thumb : Url::toRoute('/images/default.jpg'),
                 [
                     'class' => 'media-object img-responsive',
-                    'alt' => (!empty($product->images)) ?
-                        Html::encode($product->image->translation->alt) :
-                        ''
+                    'alt' => (!empty($product->image->translation->alt)) ? Html::encode($product->image->translation->alt) : ''
                 ]); ?>
         </div>
 
@@ -141,67 +140,43 @@ ProductAsset::register($this);
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php $form = ActiveForm::begin([
+                        'method' => 'post',
+                        'action' => ['/cart/cart/add']
+                    ]); ?>
+
+                    <!--PRICES-->
+                    <?= \bl\cms\shop\frontend\widgets\ProductPrices::widget([
+                        'product' => $product,
+                        'form' => $form,
+                        'defaultCombination' => $defaultCombination
+                    ]); ?>
+
+
+                    <!--ADD TO FAVORITE-->
+                    <?php if (!Yii::$app->user->isGuest) : ?>
+                        <?php if (!$product->isFavorite()) : ?>
+                            <?= Html::a(
+                                Yii::t('shop', 'Add to favorites'),
+                                Url::to(['/shop/favorite-product/add', 'productId' => $product->id]),
+                                ['class' => 'btn btn-info']
+                            ); ?>
+                        <?php else : ?>
+                            <?= Html::a(
+                                Yii::t('shop', 'Remove from favorites'),
+                                Url::to(['/shop/favorite-product/remove', 'productId' => $product->id]),
+                                ['class' => 'btn btn-warning']
+                            ); ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php $form::end(); ?>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        <?php $form = ActiveForm::begin([
-            'method' => 'post',
-            'action' => ['/cart/cart/add']
-        ]); ?>
-
-        <!--PRICES-->
-        <?php if (!empty($product->prices)) : ?>
-            <?= $form->field($cart, 'priceId', ['options' => ['class' => 'col-md-3']])
-                ->dropDownList(ArrayHelper::map($product->prices, 'id',
-                    function ($model) {
-                        $priceItem = $model->translation->title . ' - ' . \Yii::$app->formatter->asCurrency($model->salePrice);
-                        return $priceItem;
-                    }))
-                ->label(\Yii::t('shop', 'Price'));
-            ?>
-        <?php elseif (!empty($product->price)) : ?>
-            <?= \Yii::$app->formatter->asCurrency($product->price); ?>
-        <?php endif; ?>
-
-        <!--QUANTITY-->
-        <?= $form->field($cart, 'count', ['options' => ['class' => 'col-md-3']])->
-        textInput([
-            'type' => 'number',
-            'min' => '1',
-            'value' => '1',
-            'data-action' => 'text',
-            'class' => 'form-control',
-            'id' => 'count'
-        ])->label(\Yii::t('shop', 'Count'));
-        ?>
-        <!--PRODUCT ID HIDDEN INPUT-->
-        <?= $form->field($cart, 'productId')->hiddenInput(['value' => $product->id])->label(false); ?>
-
-        <!--SUBMIT BUTTON-->
-        <?= Html::submitButton(Yii::t('shop', 'Add to cart'),
-            [
-                'class' => 'btn btn-primary'
-            ]); ?>
-
-        <!--ADD TO FAVORITE-->
-        <?php if (!Yii::$app->user->isGuest) : ?>
-            <?php if (!$product->isFavorite()) : ?>
-                <?= Html::a(
-                    Yii::t('shop', 'Add to favorites'),
-                    Url::to(['/shop/favorite-product/add', 'productId' => $product->id]),
-                    ['class' => 'btn btn-info']
-                ); ?>
-            <?php else : ?>
-                <?= Html::a(
-                    Yii::t('shop', 'Remove from favorites'),
-                    Url::to(['/shop/favorite-product/remove', 'productId' => $product->id]),
-                    ['class' => 'btn btn-warning']
-                ); ?>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php $form::end(); ?>
     </div>
 
     <!--FULL TEXT -->
@@ -211,6 +186,7 @@ ProductAsset::register($this);
         </div>
     <?php endif ?>
 
+    <!--PARAMS-->
     <?php if (!empty($product->params)) : ?>
         <h4 class="text-center"><?= Yii::t('shop', 'Params'); ?>:</h4>
         <div class="table-responsive">
