@@ -40,10 +40,10 @@ div#widget-menu ul li span.category-toggle {
     position: absolute;
     line-height: 27px;
     top: 0;
-    right: 10px;
+    right: 0;
+    padding: 0 5px;
 }
 div#widget-menu ul li span.category-toggle:hover {
-    right: 8px;
     color: #4285f4;
     transition: 0.15s;
 }
