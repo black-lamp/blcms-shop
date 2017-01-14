@@ -87,6 +87,9 @@ $id = 0;
                             ]);
 
                             $wrapperClasses = ($checked) ? 'active' : '';
+                            $wrapperClasses .=
+                                ($productAttribute->type->id == ShopAttributeType::TYPE_COLOR || $productAttribute->type->id == ShopAttributeType::TYPE_COLOR) ?
+                                    ' color-texture': '';
                             $labelClasses = 'radiobutton';
                             if($productAttribute->type->id == ShopAttributeType::TYPE_COLOR ||
                                 $productAttribute->type->id == ShopAttributeType::TYPE_TEXTURE) {
