@@ -424,3 +424,6 @@ In backend and frontend configuration of your module add
 ```
 'enableLog' => true,
 ```
+
+**Vendor list**
+- /shop/vendor
