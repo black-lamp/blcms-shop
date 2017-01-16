@@ -1,10 +1,10 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
+use bl\cms\shop\backend\components\events\PriceEvent;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductPrice;
 use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\multilang\entities\Language;
-use yii\helpers\Url;
 use yii\web\Controller;
 
 /**
@@ -12,6 +12,24 @@ use yii\web\Controller;
  */
 class PriceController extends Controller
 {
+
+    /**
+     * Event is triggered after creating new price.
+     * Triggered with bl\cms\shop\backend\components\events\PriceEvent.
+     */
+    const EVENT_AFTER_SAVE_PRICE = 'afterSavePrice';
+
+    /**
+     * Event is triggered after creating new price.
+     * Triggered with bl\cms\shop\backend\components\events\PriceEvent.
+     */
+    const EVENT_AFTER_DELETE_PRICE = 'afterDeletePrice';
+
+    /**
+     * @param $productId
+     * @param $languageId
+     * @return string
+     */
     public function actionAdd($productId, $languageId) {
         $price = new ProductPrice();
         $priceTranslation = new ProductPriceTranslation();
@@ -27,6 +45,12 @@ class PriceController extends Controller
                     $priceTranslation->price_id = $price->id;
                     $priceTranslation->language_id = $selectedLanguage->id;
                     if($priceTranslation->save()) {
+
+                        $this->trigger(self::EVENT_AFTER_SAVE_PRICE, new PriceEvent([
+                            'priceId' => $price->id,
+                            'userName' => \Yii::$app->user->identity->username,
+                        ]));
+
                         $price = new ProductPrice();
                         $priceTranslation = new ProductPriceTranslation();
                     }
@@ -46,7 +70,17 @@ class PriceController extends Controller
     }
 
     public function actionRemove($priceId, $productId, $languageId) {
-        ProductPrice::deleteAll(['id' => $priceId]);
+        $price = ProductPrice::findOne($priceId);
+
+        if (!empty($price)) {
+            $price->delete();
+        }
+
+        $this->trigger(self::EVENT_AFTER_DELETE_PRICE, new PriceEvent([
+            'priceId' => $priceId,
+            'userName' => \Yii::$app->user->identity->username,
+        ]));
+
         return $this->actionAdd($productId, $languageId);
     }
 }
