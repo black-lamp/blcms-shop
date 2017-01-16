@@ -1,7 +1,8 @@
 <?php
-
 namespace bl\cms\shop\common\entities;
 
+use bl\imagable\helpers\FileHelper;
+use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -11,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property string $title
  * @property string $image_name
+ * @property string $description
  *
  * @property Product[] $products
  */
@@ -27,11 +29,26 @@ class Vendor extends ActiveRecord
     /**
      * @inheritdoc
      */
+    public function behaviors()
+    {
+        return [
+            'translation' => [
+                'class' => TranslationBehavior::className(),
+                'translationClass' => VendorTranslation::className(),
+                'relationColumn' => 'vendor_id'
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
             [['title'], 'required'],
             [['title', 'image_name'], 'string', 'max' => 255],
+            [['description'], 'string']
         ];
     }
 
@@ -41,9 +58,10 @@ class Vendor extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('blcms-shop/backend/vendor', 'Id'),
-            'title' => Yii::t('blcms-shop/backend/vendor', Yii::t('shop','Title')),
-            'image_name' => Yii::t('blcms-shop/backend/vendor', Yii::t('shop','Image filename'))
+            'id' => Yii::t('shop', 'Id'),
+            'title' => Yii::t('shop','Title'),
+            'image_name' => Yii::t('shop','Image filename'),
+            'description' => \Yii::t('shop', 'Description')
         ];
     }
 
@@ -53,5 +71,44 @@ class Vendor extends ActiveRecord
     public function getProducts()
     {
         return $this->hasMany(Product::className(), ['vendor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getModeratedProducts() {
+        return $this->hasMany(Product::className(), ['vendor_id' => 'id'])->where(['status' => Product::STATUS_SUCCESS]);
+    }
+
+    /**
+     * @param string $size
+     * @return mixed
+     */
+    public function getImage(string $size = 'big') {
+        $image = \Yii::$app->shop_imagable->get('shop-vendors', $size, $this->image_name);
+        $image = str_replace(\Yii::getAlias('@frontend') . '/web', '', $image);
+
+        return $image;
+    }
+
+
+    /**
+     * Adds title, meta-description and meta-keywords to category page using bl\cms\seo\StaticPageBehavior.
+     */
+    public function registerMetaData()
+    {
+        $currentView = Yii::$app->controller->view;
+
+        $currentView->title = html_entity_decode($this->translation->seoTitle) ??
+            html_entity_decode($this->translation->title);
+        $currentView->registerMetaTag([
+            'name' => 'description',
+            'content' => html_entity_decode($this->translation->seoDescription)
+        ]);
+        $currentView->registerMetaTag([
+            'name' => 'keywords',
+            'content' => html_entity_decode($this->translation->seoKeywords)
+        ]);
+        $currentView->title = html_entity_decode($this->translation->seoTitle ?? $this->translation->title);
     }
 }

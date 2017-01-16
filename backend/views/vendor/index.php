@@ -32,8 +32,7 @@ $this->title = Yii::t('shop', 'Product vendors');
                                 <th class="col-xs-1 col-sm-1 col-md-1"><?= 'Id' ?></th>
                                 <th class="col-xs-2 col-sm-2 col-md-2"><?= Yii::t('shop', 'Logo') ?></th>
                                 <th class="col-xs-5 col-sm-7 col-md-7"><?= Yii::t('shop', 'Title') ?></th>
-                                <th class="col-sm-1 col-md-1 text-center"><?= Yii::t('shop', 'Edit') ?></th>
-                                <th class="col-sm-1 col-md-1 text-center"><?= Yii::t('shop', 'Delete') ?></th>
+                                <th class="col-sm-2 col-md-2 text-center"><?= Yii::t('shop', 'Control') ?></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -69,26 +68,10 @@ $this->title = Yii::t('shop', 'Product vendors');
                                     </td>
 
                                     <td class="text-center">
-                                        <?= Html::a(
-                                            Html::tag('span', '', ['class' => 'glyphicon glyphicon-pencil']),
-                                            [
-                                                'save',
-                                                'id' => $vendor->id
-                                            ],
-                                            [
-                                                'class' => 'btn btn-warning btn-sm'
-                                            ]);
-                                        ?>
-                                    </td>
-
-                                    <td class="text-center">
-                                        <?= Html::a('', [
-                                            'remove',
-                                            'id' => $vendor->id
-                                        ], [
-                                            'class' => 'glyphicon glyphicon-remove text-danger btn btn-default btn-sm'
+                                        <?= \bl\cms\shop\widgets\ManageButtons::widget([
+                                            'model' => $vendor,
+                                            'deleteUrl' =>  Url::to(['remove', 'id' => $vendor->id])
                                         ]); ?>
-                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>

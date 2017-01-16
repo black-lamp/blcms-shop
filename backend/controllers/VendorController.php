@@ -1,10 +1,11 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\common\entities\VendorTranslation;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\base\Exception;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use bl\cms\shop\common\entities\Vendor;
@@ -57,19 +58,28 @@ class VendorController extends Controller
         ]);
     }
 
-    public function actionSave($id = null)
+    public function actionSave(int $id = null, int $languageId = null)
     {
+        $languageId = $languageId ?? Language::getCurrent()->id;
         if(!empty($id)) {
             $vendor = Vendor::findOne($id);
+            $vendorTranslation = VendorTranslation::find()
+                ->where(['vendor_id' => $id, 'language_id' => $languageId])->one();
+            if (empty($vendorTranslation)) $vendorTranslation = new VendorTranslation();
         } else {
             $vendor = new Vendor();
+            $vendorTranslation = new VendorTranslation();
         }
+        $vendorTranslation->language_id = $languageId;
 
         $vendor_image = new VendorImage();
 
         if(Yii::$app->getRequest()->isPost) {
 
-            $vendor->load(Yii::$app->request->post());
+            $post = Yii::$app->request->post();
+            $vendor->load($post);
+            $vendorTranslation->load($post);
+
             $vendor_image->imageFile = UploadedFile::getInstance($vendor_image, 'imageFile');
 
             if($vendor->validate() && $vendor_image->validate()) {
@@ -83,6 +93,12 @@ class VendorController extends Controller
                 }
                 $vendor->save();
 
+                if ($vendorTranslation->isNewRecord) {
+                    $vendorTranslation->vendor_id = $vendor->id;
+                    $vendorTranslation->language_id = $languageId;
+                }
+                if ($vendorTranslation->validate()) $vendorTranslation->save();
+
                 Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'All changes have been saved'));
                 return $this->redirect(Url::toRoute('/shop/vendor'));
             }
@@ -93,6 +109,7 @@ class VendorController extends Controller
 
         return $this->render('save', [
             'vendor' => $vendor,
+            'vendorTranslation' => $vendorTranslation,
             'vendor_image' => $vendor_image
         ]);
     }
