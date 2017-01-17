@@ -39,7 +39,7 @@ use yii\helpers\Html;
             </div>
         </div>
     <?php else: ?>
-        <?= $params['form']->field($params['cart'], 'count')->hiddenInput(['value' => 1]); ?>
+        <?= $params['form']->field($params['cart'], 'count')->hiddenInput(['value' => 1])->label(false); ?>
     <?php endif ?>
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
