@@ -20,6 +20,8 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property PriceDiscountType $discountType
  * @property Combination $combination
  * @property UserGroup $userGroup
+ * @property float $oldPrice
+ * @property float $discountPrice
  */
 class Price extends ActiveRecord
 {

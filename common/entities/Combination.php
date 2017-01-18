@@ -19,6 +19,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property CombinationAttribute[] $shopCombinationAttributes
  * @property CombinationImage[] $shopCombinationImages
  * @property CombinationTranslation[] $shopCombinationTranslations
+ * @property Price $price
  */
 class Combination extends ActiveRecord
 {
