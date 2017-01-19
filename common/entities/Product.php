@@ -1,9 +1,8 @@
 <?php
-
 namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\common\components\user\models\Profile;
-use bl\cms\cart\models\OrderProduct;
+use bl\cms\cart\models\Order;
 use bl\cms\shop\helpers\ShopArrayHelper;
 use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
@@ -18,7 +17,6 @@ use yii2tech\ar\position\PositionBehavior;
 
 /**
  * This is the model class for table "shop_product".
- *
  * @author Albert Gainutdinov
  *
  * @property integer $id
@@ -26,32 +24,40 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $category_id
  * @property integer $vendor_id
  * @property integer $country_id
- * @property integer $price
- * @property float $discount
- * @property integer $discount_type_id
  * @property string $sku
  * @property string $creation_time
  * @property string $update_time
  * @property integer $status
- * @property integer $owner
  * @property integer $availability
+ * @property integer $owner
+ * @property integer $sale
  * @property integer $views
- * @property boolean $sale
- * @property boolean $popular
+ * @property integer $popular
+ * @property integer $price_id
  *
- * @property OrderProduct[] $orderProducts
- * @property Param[] $params
  * @property Category $category
- * @property ProductCountry $country
+ * @property Param[] $params
+ * @property ProductCountry $productCountry
  * @property Vendor $vendor
- * @property ProductImage[] $images
- * @property ProductImage $image
- * @property ProductVideo[] $videos
- * @property ProductFile[] $files
  * @property ProductAvailability $productAvailability
+ * @property Order[] $orders Gets orders, which have this product
+ * @property integer $orderedNumber Gets number of units that have already bought.
+ * @property User $productOwner
+ * @property Profile $ownerProfile
+ * @property Price $price Gets price for current user group.
+ * @property Price[] $prices Gets all product prices
+ * @property float $oldPrice
+ * @property float $discountPrice
+ * @property ProductFile[] $files
+ * @property ProductImage[] $images Gets all product images
+ * @property ProductImage $image Gets one product image
+ * @property ProductVideo[] $videos
  * @property ProductTranslation $translation
+ * @property ProductTranslation[] $translations
+ * @property Combination[] $shopCombinations
  * @property Combination $defaultCombination
  * @property ShopAttribute[] $productAttributes
+ * @property boolean $isFavorite
  *
  * @method ProductTranslation getTranslation($languageId = null)
  */
@@ -85,17 +91,16 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'owner', 'status', 'owner', 'views', 'discount_type_id'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'status', 'availability', 'owner', 'views', 'price_id'], 'integer'],
             [['sale', 'popular'], 'boolean'],
-            [['price', 'discount'], 'double'],
-            [['sku'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
-            [['discount_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceDiscountType::className(), 'targetAttribute' => ['discount_type_id' => 'id']],
+            [['sku'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
             [['availability'], 'exist', 'skipOnError' => true, 'targetClass' => ProductAvailability::className(), 'targetAttribute' => ['availability' => 'id']],
             [['owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['owner' => 'id']],
+            [['price_id'], 'exist', 'skipOnError' => true, 'targetClass' => Price::className(), 'targetAttribute' => ['price_id' => 'id']],
         ];
     }
 
@@ -133,26 +138,20 @@ class Product extends ActiveRecord
         return [
             'id' => Yii::t('shop', 'ID'),
             'position' => Yii::t('shop', 'Position'),
-            'price' => Yii::t('shop', 'Base price'),
-            'discount_type_id' => \Yii::t('shop', 'Discount type'),
-            'discount' => \Yii::t('shop', 'Discount'),
-            'sku' => Yii::t('shop', 'SKU'),
+            'category_id' => Yii::t('shop', 'Category'),
+            'vendor_id' => Yii::t('shop', 'Vendor'),
+            'country_id' => Yii::t('shop', 'Country'),
+            'sku' => Yii::t('shop', 'Sku'),
             'creation_time' => Yii::t('shop', 'Creation Time'),
             'update_time' => Yii::t('shop', 'Update Time'),
-            'owner' => Yii::t('shop', 'Owner'),
             'status' => Yii::t('shop', 'Status'),
             'availability' => Yii::t('shop', 'Availability'),
+            'owner' => Yii::t('shop', 'Owner'),
             'sale' => Yii::t('shop', 'Sale'),
+            'views' => Yii::t('shop', 'Views'),
             'popular' => Yii::t('shop', 'Popular'),
+            'price_id' => Yii::t('shop', 'Price'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTranslations()
-    {
-        return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);
     }
 
     /**
@@ -166,9 +165,9 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVendor()
+    public function getParams()
     {
-        return $this->hasOne(Vendor::className(), ['id' => 'vendor_id']);
+        return $this->hasMany(Param::className(), ['product_id' => 'id']);
     }
 
     /**
@@ -180,20 +179,85 @@ class Product extends ActiveRecord
     }
 
     /**
-     * Gets price
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVendor()
+    {
+        return $this->hasOne(Vendor::className(), ['id' => 'vendor_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductAvailability()
+    {
+        return $this->hasOne(ProductAvailability::className(), ['id' => 'availability']);
+    }
+
+    /**
+     * Gets orders, which have this product
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrders()
+    {
+        $orders = Order::find()->joinWith('orderProducts')->where(['product_id' => $this->id])->all();
+        return $orders;
+    }
+
+    /**
+     * Gets number of units that have already bought.
+     * @return int|mixed
+     */
+    public function getOrderedNumber()
+    {
+        $orderedProductsNumber = Order::find()->select('count')->joinWith('orderProducts')->where(['product_id' => $this->id])->sum('count');
+        return $orderedProductsNumber ?? 0;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductOwner()
+    {
+        return $this->hasOne(User::className(), ['id' => 'owner']);
+    }
+
+    /**
+     * Gets user profile, which created product.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOwnerProfile()
+    {
+        return $this->hasOne(Profile::className(), ['user_id' => 'owner']);
+    }
+
+    /**
+     * @return array|null|ActiveRecord
+     */
+    public function getPrice()
+    {
+        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->id])->one();
+        return $price;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPrices()
+    {
+        return $this->hasMany(Price::className(), ['product_id' => 'id']);
+    }
+
+    /**
      * @return float|int
      */
     public function getOldPrice()
     {
         $price = $this->price;
-        if (\Yii::$app->controller->module->enableCurrencyConversion) {
-            $price = $price * Currency::currentCurrency();
-        }
-        if (\Yii::$app->controller->module->enablePriceRounding) {
-            $price = floor($price);
-        }
+        if (!empty($price)) $oldPrice = $price->oldPrice;
+        else $oldPrice = 0;
 
-        return $price;
+        return $oldPrice;
     }
 
     /**
@@ -204,40 +268,18 @@ class Product extends ActiveRecord
     public function getDiscountPrice()
     {
         $price = $this->price;
+        if (!empty($price)) $discountPrice = $price->discountPrice;
+        else $discountPrice = 0;
 
-        if (!empty($this->discount) && !empty($this->discount_type_id)) {
-            if ($this->discountType->title == "money") {
-                $price = $this->price - $this->discount;
-            } else if ($this->discountType->title == "percent") {
-                $price = $this->price - ($this->price / 100) * $this->discount;
-            }
-            else throw new Exception(\Yii::t('shop', 'Such discount type does not exist.'));
-        }
-
-        if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
-            $price = $price * Currency::currentCurrency();
-        }
-        if (\Yii::$app->getModule('shop')->enablePriceRounding) {
-            $price = floor($price);
-        }
-
-        return $price;
+        return $discountPrice;
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDiscountType()
+    public function getFiles()
     {
-        return $this->hasOne(PriceDiscountType::className(), ['id' => 'discount_type_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParams()
-    {
-        return $this->hasMany(Param::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
     }
 
     /**
@@ -267,62 +309,9 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFiles()
+    public function getTranslations()
     {
-        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
-    }
-
-    /**
-     * Generates unique name by string.
-     * @param $baseName
-     * @return string
-     */
-    public static function generateImageName($baseName)
-    {
-        $fileName = hash('crc32', $baseName . time());
-        if (file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
-            return static::generateImageName($baseName);
-        }
-        return $fileName;
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProductAvailability()
-    {
-        return $this->hasOne(ProductAvailability::className(), ['id' => 'availability']);
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        $url = '/' . Yii::$app->controller->module->id . '/product/show';
-        return Url::to([$url, 'id' => $this->id]);
-    }
-
-    /**
-     * Gets user profile, which created product.
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getOwnerProfile()
-    {
-        return $this->hasOne(Profile::className(), ['user_id' => 'owner']);
-    }
-
-    /**
-     * Return true if product has added to favorites already or false if not.
-     * @return boolean
-     */
-    public function isFavorite()
-    {
-        $favoriteProduct = FavoriteProduct::find()
-            ->where(['product_id' => $this->id, 'user_id' => \Yii::$app->user->id])->one();
-        if (!empty($favoriteProduct)) return true;
-        else return false;
+        return $this->hasMany(ProductTranslation::className(), ['product_id' => 'id']);
     }
 
     /**
@@ -344,8 +333,7 @@ class Product extends ActiveRecord
             $combination = Combination::findOne($id);
             if (!empty($combination)) return $combination;
             else throw new \yii\base\Exception('Combination does not exists');
-        }
-        else throw new \yii\base\Exception('Combination id can not be empty');
+        } else throw new \yii\base\Exception('Combination id can not be empty');
     }
 
     /**
@@ -361,17 +349,50 @@ class Product extends ActiveRecord
      * Gets attributes, which used in product combinations
      * @return ShopAttribute[]
      */
-    public function getProductAttributes() {
+    public function getProductAttributes()
+    {
         $attributes = [];
         foreach ($this->combinations as $combination) {
             foreach ($combination->combinationAttributes as $combinationAttribute) {
                 $attributes[] = $combinationAttribute->productAttribute;
             }
         }
-
         $attributes = ShopArrayHelper::removeDuplicatedArrayElements($attributes);
-
         return $attributes;
     }
 
+    /**
+     * Return true if product has added to favorites already or false if not.
+     * @return boolean
+     */
+    public function isFavorite()
+    {
+        $favoriteProduct = FavoriteProduct::find()
+            ->where(['product_id' => $this->id, 'user_id' => \Yii::$app->user->id])->one();
+        if (!empty($favoriteProduct)) return true;
+        else return false;
+    }
+
+    /**
+     * Generates unique name by string.
+     * @param $baseName
+     * @return string
+     */
+    public static function generateImageName($baseName)
+    {
+        $fileName = hash('crc32', $baseName . time());
+        if (file_exists(Yii::getAlias('@frontend/web/images/shop/' . $fileName . '-original.jpg'))) {
+            return static::generateImageName($baseName);
+        }
+        return $fileName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        $url = '/' . Yii::$app->controller->module->id . '/product/show';
+        return Url::to([$url, 'id' => $this->id]);
+    }
 }
