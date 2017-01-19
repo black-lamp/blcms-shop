@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\common\entities;
+use bl\cms\shop\common\components\user\models\UserGroup;
 use yii\db\ActiveRecord;
 
 
@@ -10,7 +11,8 @@ use yii\db\ActiveRecord;
  * @property integer $combination_id
  * @property integer $price_id
  *
- * @property Price $price
+ * @property Price $priceForAllUsers
+ * @property Price $priceForCurrentUserGroup
  * @property Combination $combination
  */
 class CombinationPrice extends ActiveRecord
@@ -51,9 +53,21 @@ class CombinationPrice extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPrice()
+    public function getPriceForAllUsers()
     {
-        return $this->hasOne(Price::className(), ['id' => 'price_id']);
+        $price = Price::find()
+            ->where(['id' => $this->price_id, 'user_group_id' => UserGroup::USER_GROUP_ALL_USERS]);
+        return $price;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPriceForCurrentUserGroup()
+    {
+        $price = Price::find()
+            ->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->identity->user_group_id]);
+        return $price;
     }
 
     /**
