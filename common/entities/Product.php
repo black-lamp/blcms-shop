@@ -51,6 +51,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property ProductAvailability $productAvailability
  * @property ProductTranslation $translation
  * @property Combination $defaultCombination
+ * @property Combination[] $combinations
  * @property ShopAttribute[] $productAttributes
  *
  * @method ProductTranslation getTranslation($languageId = null)

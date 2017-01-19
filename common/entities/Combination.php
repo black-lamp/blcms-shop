@@ -16,7 +16,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property integer $default
  *
  * @property Product $product
- * @property CombinationAttribute[] $shopCombinationAttributes
+ * @property CombinationAttribute[] $combinationAttributes
  * @property CombinationImage[] $shopCombinationImages
  * @property CombinationTranslation[] $shopCombinationTranslations
  * @property Price $price
