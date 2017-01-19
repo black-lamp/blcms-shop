@@ -14,20 +14,14 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property double $price
  * @property double $discount
  * @property integer $discount_type_id
- * @property string $inequality_sign
- * @property integer $number
  *
- * @property PriceDiscountType $discountType
- * @property Combination $combination
  * @property UserGroup $userGroup
+ * @property PriceDiscountType $discountType
  * @property float $oldPrice
  * @property float $discountPrice
  */
 class Price extends ActiveRecord
 {
-
-    const INEQUALITY_SIGN_LESS = '<';
-    const INEQUALITY_SIGN_GREATER = '>';
 
     /**
      * @inheritdoc
@@ -43,16 +37,13 @@ class Price extends ActiveRecord
     public function rules()
     {
         return [
-            [['combination_id', 'user_group_id', 'discount_type_id', 'number'], 'integer'],
+            [['user_group_id', 'discount_type_id', 'number'], 'integer'],
             [['user_group_id'], 'default'],
             [['price', 'discount'], 'number'],
-            [['inequality_sign'], 'string', 'max' => 255],
             [['discount_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceDiscountType::className(), 'targetAttribute' => ['discount_type_id' => 'id']],
-            [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
             [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
-
 
     /**
      * @inheritdoc
@@ -61,30 +52,11 @@ class Price extends ActiveRecord
     {
         return [
             'id' => \Yii::t('shop', 'ID'),
-            'combination_id' => \Yii::t('shop', 'Combination'),
-            'user_group_id' => \Yii::t('shop', 'User group'),
+            'user_group_id' => \Yii::t('shop', 'User Group'),
             'price' => \Yii::t('shop', 'Price'),
             'discount' => \Yii::t('shop', 'Discount'),
-            'discount_type_id' => \Yii::t('shop', 'Discount type'),
-            'inequality_sign' => \Yii::t('shop', 'Inequality sign'),
-            'number' => \Yii::t('shop', 'Number'),
+            'discount_type_id' => \Yii::t('shop', 'Discount Type'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDiscountType()
-    {
-        return $this->hasOne(PriceDiscountType::className(), ['id' => 'discount_type_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCombination()
-    {
-        return $this->hasOne(Combination::className(), ['id' => 'combination_id']);
     }
 
     /**
@@ -93,6 +65,14 @@ class Price extends ActiveRecord
     public function getUserGroup()
     {
         return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDiscountType()
+    {
+        return $this->hasOne(PriceDiscountType::className(), ['id' => 'discount_type_id']);
     }
 
     /**
@@ -126,8 +106,7 @@ class Price extends ActiveRecord
                 $price = $this->price - $this->discount;
             } else if ($this->discountType->title == "percent") {
                 $price = $this->price - ($this->price / 100) * $this->discount;
-            }
-            else throw new Exception(\Yii::t('shop', 'Such discount type does not exist.'));
+            } else throw new Exception(\Yii::t('shop', 'Such discount type does not exist.'));
         }
 
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
