@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 use bl\cms\shop\common\components\user\models\UserGroup;
+use Exception;
 use yii\db\ActiveRecord;
 
 
@@ -13,6 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property Price $priceForAllUsers
  * @property Price $priceForCurrentUserGroup
+ * @property Price $priceByUserGroup
  * @property Combination $combination
  */
 class CombinationPrice extends ActiveRecord
@@ -68,6 +70,20 @@ class CombinationPrice extends ActiveRecord
         $price = Price::find()
             ->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->identity->user_group_id]);
         return $price;
+    }
+
+    /**
+     * @param int $userGroupId
+     * @return array|\yii\db\ActiveQuery
+     * @throws Exception
+     */
+    public function getPriceByUserGroup(int $userGroupId) {
+        if (!empty($userGroupId)) {
+            $price = Price::find()
+                ->where(['id' => $this->price_id, 'user_group_id' =>$userGroupId])->one();
+            return $price;
+        }
+        else throw new Exception('User group id is empty');
     }
 
     /**
