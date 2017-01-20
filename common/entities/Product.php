@@ -43,6 +43,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Order[] $orders Gets orders, which have this product
  * @property integer $orderedNumber Gets number of units that have already bought.
  * @property User $productOwner
+ * @property ProductPrice $productPrice
  * @property Profile $ownerProfile
  * @property Price $price Gets price for current user group.
  * @property Price[] $prices Gets all product prices
@@ -232,11 +233,23 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductPrice() {
+        return $this->hasOne(ProductPrice::className(), ['id' => 'price_id']);
+    }
+    /**
      * @return array|null|ActiveRecord
      */
     public function getPrice()
     {
-        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->id])->one();
+        /**
+         * @var $productPrice ProductPrice
+         */
+        $productPrice = ProductPrice::find()->where(['product_id' => $this->id])->one();
+        $price = \Yii::$app->user->isGuest ?
+            $productPrice->priceForAllUsers :
+            $productPrice->priceForCurrentUserGroup;
         return $price;
     }
 
@@ -245,7 +258,9 @@ class Product extends ActiveRecord
      */
     public function getPrices()
     {
-        return $this->hasMany(Price::className(), ['product_id' => 'id']);
+        $productPrice = ProductPrice::findOne($this->price_id);
+        $prices = $productPrice->prices;
+        return $prices;
     }
 
     /**
