@@ -16,10 +16,10 @@ use yii\web\{
     Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
 use bl\cms\shop\backend\components\form\{
-    CombinationAttributeForm, CombinationImageForm, PriceForm, ProductFileForm, ProductImageForm, ProductVideoForm
+    CombinationAttributeForm, CombinationImageForm, ProductFileForm, ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, CombinationTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
+    Category, CategoryTranslation, CombinationPrice, CombinationTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
 };
 
 /**
@@ -193,9 +193,9 @@ class ProductController extends Controller
                 ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
             if (empty($price)) {
                 $price = new Price();
-                $price->user_group_id = $userGroup->id;
-                if ($price->validate()) $price->save();
+                $price->save();
                 $productPrice = new ProductPrice();
+                $productPrice->user_group_id = $userGroup->id;
                 $productPrice->product_id = $product->id;
                 $productPrice->price_id = $price->id;
                 if ($productPrice->validate()) $productPrice->save();
@@ -1072,8 +1072,13 @@ class ProductController extends Controller
         $combinationAttributeForm = new CombinationAttributeForm();
         $combinationAttribute = new CombinationAttribute();
 
-        $priceForm = new PriceForm;
         $userGroups = UserGroup::find()->all();
+
+        $prices = [];
+        foreach ($userGroups as $userGroup) {
+            $price = new Price();
+            $prices[$userGroup->id] = $price;
+        }
 
         if (\Yii::$app->request->isPost) {
 
@@ -1081,8 +1086,8 @@ class ProductController extends Controller
             if ($combination->load($post)) {
                 $combination->product_id = $productId;
 
-                if ($combination->validate()) $combination->save();
                 $combination->setDefaultOrNotDefault();
+                if ($combination->validate()) $combination->save();
 
                 if ($combinationTranslation->load($post)) {
                     $combinationTranslation->combination_id = $combination->id;
@@ -1090,16 +1095,13 @@ class ProductController extends Controller
                     if ($combinationTranslation->validate()) $combinationTranslation->save();
                 }
 
-                if ($priceForm->load($post)) {
-
-                    foreach ($userGroups as $userGroup) {
-                        $combinationPrice = new Price();
+                if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
+                    foreach ($prices as $key => $price) {
+                        $price->save(false);
+                        $combinationPrice = new CombinationPrice();
                         $combinationPrice->combination_id = $combination->id;
-                        $combinationPrice->user_group_id = $userGroup->id;
-                        $combinationPrice->price = $priceForm['price'][$userGroup->id];
-                        $combinationPrice->discount_type_id = $priceForm['discount_type_id'][$userGroup->id];
-                        $combinationPrice->discount = $priceForm['discount'][$userGroup->id];
-
+                        $combinationPrice->price_id = $price->id;
+                        $combinationPrice->user_group_id = $key;
                         if ($combinationPrice->validate()) $combinationPrice->save();
                     }
                 }
@@ -1135,8 +1137,7 @@ class ProductController extends Controller
                 'languageId' => $languageId,
                 'combinationAttribute' => $combinationAttribute,
                 'combinationAttributeForm' => $combinationAttributeForm,
-                'price' => $priceForm,
-                'userGroups' => $userGroups
+                'prices' => $prices,
             ]
         ]);
     }
@@ -1237,8 +1238,11 @@ class ProductController extends Controller
         $combinationTranslation = CombinationTranslation::find()->where([
             'combination_id' => $combination->id, 'language_id' => $languageId
         ])->one();
-        if (empty($combinationTranslation)) $combinationTranslation = new CombinationTranslation();
-
+        if (empty($combinationTranslation)) {
+            $combinationTranslation = new CombinationTranslation();
+            $combinationTranslation->combination_id = $combination->id;
+            $combinationTranslation->language_id = $languageId;
+        }
 
         $imageForm = new CombinationImageForm();
         $productImages = ProductImage::find()->where(['product_id' => $combination->product_id])->all();
@@ -1248,17 +1252,22 @@ class ProductController extends Controller
         $combinationAttributes = CombinationAttribute::find()
             ->where(['combination_id' => $combination->id])->all();
 
-        $combinationPrices = Price::find()
-            ->indexBy('user_group_id')
-            ->where(['combination_id' => $combination->id])
-            ->all();
-        $priceForm = [];
-        foreach ($combinationPrices as $groupId => $combinationPrice) {
-            $priceForm[$groupId] = new PriceForm();
-            $priceForm[$groupId]->price = $combinationPrice->price;
-            $priceForm[$groupId]->discount = $combinationPrice->discount;
-            $priceForm[$groupId]->discount_type_id = $combinationPrice->discount_type_id;
-            $priceForm[$groupId]->userGroupTitle = $combinationPrice->userGroup->translation->title;
+        $prices = [];
+        $userGroups = UserGroup::find()->all();
+        foreach ($userGroups as $userGroup) {
+            $price = Price::find()->joinWith('combinationPrice')
+                ->where(['combination_id' => $combination->id, 'user_group_id' => $userGroup->id])->one();
+            if (empty($price)) {
+                $price = new Price();
+                $price->user_group_id = $userGroup->id;
+                if ($price->validate()) $price->save();
+                $combinationPrice = new CombinationPrice();
+                $combinationPrice->combination_id = $combination->id;
+                $combinationPrice->price_id = $price->id;
+                if ($combinationPrice->validate()) $combinationPrice->save();
+
+            }
+            $prices[$price->id] = $price;
         }
 
         if (\Yii::$app->request->isPost) {
@@ -1269,31 +1278,17 @@ class ProductController extends Controller
 
             $post = \Yii::$app->request->post();
             if ($combination->load($post)) {
-
                 if ($combination->validate()) $combination->save();
+
                 $combination->setDefaultOrNotDefault();
 
-                if ($combinationTranslation->load($post)) {
-                    $combinationTranslation->combination_id = $combination->id;
-                    $combinationTranslation->language_id = $languageId;
-                    if ($combinationTranslation->validate()) $combinationTranslation->save();
-                }
+                if ($combinationTranslation->load($post) && $combinationTranslation->validate())
+                    $combinationTranslation->save();
 
                 /*Saving prices*/
-                foreach ($priceForm as $userGroup => $prices) {
-                    if ($prices->load($post)) {
-                        $combinationPrice = Price::find()
-                            ->where(['combination_id' => $combination->id, 'user_group_id' => $userGroup])->one();
-                        if (empty($combinationPrice)) {
-                            $combinationPrice = new Price();
-                            $combinationPrice->combination_id = $combination->id;
-                            $combinationPrice->user_group_id = $userGroup->id;
-                        }
-                        $combinationPrice->price = (float)$prices->price;
-                        $combinationPrice->discount_type_id = $prices->discount_type_id ?? (int)$prices->discount_type_id;
-                        $combinationPrice->discount = (float)$prices->discount;
-                        if ($combinationPrice->validate()) $combinationPrice->save();
-                        else die(var_dump($combinationPrice->errors));
+                if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
+                    foreach ($prices as $price) {
+                        $price->save(false);
                     }
                 }
 
@@ -1329,7 +1324,7 @@ class ProductController extends Controller
                 'languageId' => $languageId,
                 'combinationAttributes' => $combinationAttributes,
                 'combinationAttributeForm' => $combinationAttributeForm,
-                'priceForm' => $priceForm,
+                'prices' => $prices
             ]
         ]);
     }
