@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\models\OrderProduct;
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\base\Exception;
@@ -52,7 +53,8 @@ class Combination extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'default'], 'integer'],
+            [['product_id'], 'integer'],
+            [['default'], 'boolean'],
             [['sku'], 'string', 'max' => 255],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
@@ -99,26 +101,38 @@ class Combination extends ActiveRecord
      * Gets prices for all user groups
      * @return \yii\db\ActiveQuery
      */
-    public function getCombinationPrice()
+    public function getCombinationPrices()
     {
-        return $this->hasOne(CombinationPrice::className(), ['combination_id' => 'id']);
+        $combinationPrices = CombinationPrice::find()->where(['combination_id' => $this->id])->all();
+        return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id']);
     }
 
     /**
-     * Gets price for user group
+     * Gets price for current user group
      * @return array|null|ActiveRecord
      */
     public function getPrice()
     {
-        $combinationPrice = $this->combinationPrice;
+        $user_group_id = (\Yii::$app->user->isGuest) ? UserGroup::USER_GROUP_ALL_USERS :
+            \Yii::$app->user->user_group_id;
+        $combinationPrice = CombinationPrice::find()->where(['combination_id' => 'id', 'user_group_id' => $user_group_id])->one();
 
-        if (\Yii::$app->user->isGuest) {
-            $price = $combinationPrice->priceForAllUsers;
+        return $combinationPrice->price;
+    }
+
+    /**
+     * Gets price for all user groups
+     * @return array|null|ActiveRecord
+     */
+    public function getPrices()
+    {
+        $combinationPrices = $this->combinationPrices;
+
+        $prices = [];
+        foreach ($combinationPrices as $combinationPrice) {
+            $prices[] = $combinationPrice->price;
         }
-        else {
-            $price = $combinationPrice->priceForCurrentUserGroup;
-        }
-        return $price;
+        return $prices;
     }
 
     /**
@@ -126,13 +140,12 @@ class Combination extends ActiveRecord
      * @return array|null|ActiveRecord
      * @throws Exception
      */
-    public function getPriceByUserGroup(int $userGroupId) {
-        if (!empty($userGroupId)) {
-            $combinationPrice = $this->combinationPrice;
-            $price = $combinationPrice->priceByUserGroup;
-            return $price;
-        }
-        else throw new Exception('User group id is empty');
+    public function getPriceByUserGroup(int $userGroupId)
+    {
+        $combinationPrice = CombinationPrice::find()
+            ->where(['combination_id' => 'id', 'user_group_id' => $userGroupId])->one();
+
+        return $combinationPrice->price;
     }
 
     /**
@@ -160,6 +173,11 @@ class Combination extends ActiveRecord
      * If there are not combinations in product, sets this combination as default.
      */
     public function setDefaultOrNotDefault() {
+        if (!$this->default) {
+            $elseCombination = Combination::find()->where(['product_id' => $this->product_id])->one();
+            if (empty($elseCombination)) $this->default = true;
+        }
+
         if ($this->default) $this->findDefaultCombinationAndUndefault();
         else {
             $productCombinations = Combination::find()
