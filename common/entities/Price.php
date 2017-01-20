@@ -3,18 +3,15 @@ namespace bl\cms\shop\common\entities;
 
 use yii\base\Exception;
 use yii\db\ActiveRecord;
-use bl\cms\shop\common\components\user\models\UserGroup;
 
 /**
  * This is the model class for table "shop_price".
  *
  * @property integer $id
- * @property integer $user_group_id
  * @property double $price
  * @property double $discount
  * @property integer $discount_type_id
  *
- * @property UserGroup $userGroup
  * @property PriceDiscountType $discountType
  * @property float $oldPrice
  * @property float $discountPrice
@@ -38,11 +35,9 @@ class Price extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_group_id', 'discount_type_id', 'number'], 'integer'],
-            [['user_group_id'], 'default'],
+            [['discount_type_id'], 'integer'],
             [['price', 'discount'], 'number'],
             [['discount_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceDiscountType::className(), 'targetAttribute' => ['discount_type_id' => 'id']],
-            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
 
@@ -53,19 +48,10 @@ class Price extends ActiveRecord
     {
         return [
             'id' => \Yii::t('shop', 'ID'),
-            'user_group_id' => \Yii::t('shop', 'User Group'),
             'price' => \Yii::t('shop', 'Price'),
             'discount' => \Yii::t('shop', 'Discount'),
             'discount_type_id' => \Yii::t('shop', 'Discount Type'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUserGroup()
-    {
-        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 
     /**
@@ -133,6 +119,6 @@ class Price extends ActiveRecord
      */
     public function getCombinationPrice()
     {
-        return $this->hasMany(CombinationPrice::className(), ['price_id' => 'id']);
+        return $this->hasOne(CombinationPrice::className(), ['price_id' => 'id']);
     }
 }
