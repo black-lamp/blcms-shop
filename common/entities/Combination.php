@@ -115,9 +115,9 @@ class Combination extends ActiveRecord
     {
         $user_group_id = (\Yii::$app->user->isGuest) ? UserGroup::USER_GROUP_ALL_USERS :
             \Yii::$app->user->user_group_id;
-        $combinationPrice = CombinationPrice::find()->where(['combination_id' => 'id', 'user_group_id' => $user_group_id])->one();
+        $combinationPrice = CombinationPrice::find()->where(['combination_id' => $this->id, 'user_group_id' => $user_group_id])->one();
 
-        return $combinationPrice->price;
+        return $combinationPrice->price ?? 0;
     }
 
     /**
