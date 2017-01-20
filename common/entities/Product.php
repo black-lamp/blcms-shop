@@ -58,6 +58,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property ProductTranslation[] $translations
  * @property Combination[] $shopCombinations
  * @property Combination $defaultCombination
+ * @property Combination[] $combinations
  * @property ShopAttribute[] $productAttributes
  * @property boolean $isFavorite
  *

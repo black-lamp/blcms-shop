@@ -13,8 +13,8 @@ use yii\db\ActiveRecord;
  * @property integer $attribute_id
  * @property integer $attribute_value_id
  *
- * @property ShopAttribute $shopAttribute
- * @property ShopAttributeValue $shopAttributeValue
+ * @property ShopAttribute $productAttribute
+ * @property ShopAttributeValue $productAttributeValue
  * @property Combination $combination
  */
 class CombinationAttribute extends ActiveRecord

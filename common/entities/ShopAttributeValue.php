@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  *
  * @property ShopAttribute $attribute
  * @property ShopAttributeValueTranslation[] $shopAttributeValueTranslations
+ * @property ShopAttributeValueTranslation $translation
  *
  * @method ShopAttributeValueTranslation getTranslation($languageId = null)
  */

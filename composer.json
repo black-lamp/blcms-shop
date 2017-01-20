@@ -17,16 +17,17 @@
     "php": ">=7.0",
     "yiisoft/yii2": ">=2.0.4",
     "yiisoft/yii2-bootstrap": "*",
-    "2amigos/yii2-tinymce-widget": "*",
-    "black-lamp/blcms-staticpage": "0.*",
-    "kartik-v/yii2-widgets": "*",
-
     "yii2tech/ar-position": "*",
 
+    "black-lamp/blcms-staticpage": "0.*",
     "black-lamp/yii2-multi-lang": "^1.0.0",
     "black-lamp/yii2-seo": "0.1.*",
+    "black-lamp/yii2-imagable": "1.*",
+
+    "2amigos/yii2-tinymce-widget": "*",
+    "kartik-v/yii2-widgets": "*",
     "marqu3s/yii2-summernote": "dev-master",
-    "black-lamp/yii2-imagable": "1.*"
+    "evgeniyrru/yii2-slick" : "^1.0.0"
   },
   "autoload": {
     "psr-4": {
