@@ -3,6 +3,7 @@ namespace bl\cms\shop\common\entities;
 
 use bl\cms\cart\common\components\user\models\Profile;
 use bl\cms\cart\models\Order;
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\helpers\ShopArrayHelper;
 use bl\multilang\behaviors\TranslationBehavior;
 use dektrium\user\models\User;
@@ -235,22 +236,22 @@ class Product extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProductPrice() {
-        return $this->hasOne(ProductPrice::className(), ['id' => 'price_id']);
+    public function getProductPrices() {
+        return $this->hasMany(ProductPrice::className(), ['id' => 'price_id']);
     }
+
     /**
-     * @return array|null|ActiveRecord
+     * Gets prices for current user group
+     * @return mixed
      */
     public function getPrice()
     {
-        /**
-         * @var $productPrice ProductPrice
-         */
-        $productPrice = ProductPrice::find()->where(['product_id' => $this->id])->one();
-        $price = \Yii::$app->user->isGuest ?
-            $productPrice->priceForAllUsers :
-            $productPrice->priceForCurrentUserGroup;
-        return $price;
+        $user_group_id = (\Yii::$app->user->isGuest) ? UserGroup::USER_GROUP_ALL_USERS :
+            \Yii::$app->user->user_group_id;
+        $productPrice = ProductPrice::find()
+            ->where(['product_id' => $this->id, 'user_group_id' => $user_group_id])->one();
+
+        return $productPrice->price;
     }
 
     /**
