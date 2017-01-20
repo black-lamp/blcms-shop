@@ -11,11 +11,11 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $combination_id
  * @property integer $price_id
+ * @property integer $user_group_id
  *
- * @property Price $priceForAllUsers
- * @property Price $priceForCurrentUserGroup
- * @property Price $priceByUserGroup
+ * @property Price $price
  * @property Combination $combination
+ * @property UserGroup $userGroup
  */
 class CombinationPrice extends ActiveRecord
 {
@@ -34,9 +34,10 @@ class CombinationPrice extends ActiveRecord
     public function rules()
     {
         return [
-            [['combination_id', 'price_id'], 'integer'],
+            [['combination_id', 'price_id', 'user_group_id'], 'integer'],
             [['price_id'], 'exist', 'skipOnError' => true, 'targetClass' => Price::className(), 'targetAttribute' => ['price_id' => 'id']],
             [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
+            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
 
@@ -49,41 +50,15 @@ class CombinationPrice extends ActiveRecord
             'id' => \Yii::t('shop', 'ID'),
             'combination_id' => \Yii::t('shop', 'Combination'),
             'price_id' => \Yii::t('shop', 'Price'),
+            'user_group_id' => \Yii::t('shop', 'User group'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPriceForAllUsers()
-    {
-        $price = Price::find()
-            ->where(['id' => $this->price_id, 'user_group_id' => UserGroup::USER_GROUP_ALL_USERS]);
-        return $price;
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPriceForCurrentUserGroup()
-    {
-        $price = Price::find()
-            ->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->identity->user_group_id]);
-        return $price;
-    }
-
-    /**
-     * @param int $userGroupId
-     * @return array|\yii\db\ActiveQuery
-     * @throws Exception
-     */
-    public function getPriceByUserGroup(int $userGroupId) {
-        if (!empty($userGroupId)) {
-            $price = Price::find()
-                ->where(['id' => $this->price_id, 'user_group_id' =>$userGroupId])->one();
-            return $price;
-        }
-        else throw new Exception('User group id is empty');
+    public function getPrice() {
+        return $this->hasOne(Price::className(), ['id' => 'price_id']);
     }
 
     /**
@@ -92,5 +67,13 @@ class CombinationPrice extends ActiveRecord
     public function getCombination()
     {
         return $this->hasOne(Combination::className(), ['id' => 'combination_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroup()
+    {
+        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 }
