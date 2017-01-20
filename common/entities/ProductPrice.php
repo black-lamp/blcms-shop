@@ -12,11 +12,9 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $product_id
  * @property integer $price_id
+ * @property integer $user_group_id
  *
  * @property Price $price
- * @property Price $prices
- * @property Price $priceForAllUsers
- * @property Price $priceForCurrentUserGroup
  * @property Product $product
  */
 class ProductPrice extends ActiveRecord
@@ -35,9 +33,10 @@ class ProductPrice extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'price_id'], 'integer'],
+            [['product_id', 'price_id', 'user_group_id'], 'integer'],
             [['price_id'], 'exist', 'skipOnError' => true, 'targetClass' => Price::className(), 'targetAttribute' => ['price_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
         ];
     }
 
@@ -50,39 +49,17 @@ class ProductPrice extends ActiveRecord
             'id' => Yii::t('shop', 'ID'),
             'product_id' => Yii::t('shop', 'Product'),
             'price_id' => Yii::t('shop', 'Price'),
+            'user_group_id' => Yii::t('shop', 'User group'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPrices()
+    public function getPrice()
     {
-        return $this->hasMany(Price::className(), ['id' => 'price_id']);
-    }
+        return $this->hasOne(Price::className(), ['id' => 'price_id']);
 
-    public function getPriceByUserGroup($userGroupId)
-    {
-        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => $userGroupId])->one();
-        return $price;
-    }
-
-    /**
-     * @return array|null|ActiveRecord
-     */
-    public function getPriceForAllUsers()
-    {
-        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => UserGroup::USER_GROUP_ALL_USERS])->one();
-        return $price;
-    }
-
-    /**
-     * @return array|null|ActiveRecord
-     */
-    public function getPriceForCurrentUserGroup()
-    {
-        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->identity->user_group_id])->one();
-        return $price;
     }
 
     /**
@@ -91,5 +68,13 @@ class ProductPrice extends ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroup()
+    {
+        return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
 }
