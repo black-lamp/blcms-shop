@@ -1259,10 +1259,10 @@ class ProductController extends Controller
                 ->where(['combination_id' => $combination->id, 'user_group_id' => $userGroup->id])->one();
             if (empty($price)) {
                 $price = new Price();
-                $price->user_group_id = $userGroup->id;
                 if ($price->validate()) $price->save();
                 $combinationPrice = new CombinationPrice();
                 $combinationPrice->combination_id = $combination->id;
+                $combinationPrice->user_group_id = $userGroup->id;
                 $combinationPrice->price_id = $price->id;
                 if ($combinationPrice->validate()) $combinationPrice->save();
 

@@ -85,7 +85,8 @@ class Combination extends ActiveRecord
      */
     public function getPrices()
     {
-        return $this->hasMany(Price::className(), ['combination_id' => 'id']);
+        $prices = Price::find()->joinWith('combinationPrice')->where(['combination_id' => $this->id])->all();
+        return $prices;
     }
 
     /**
