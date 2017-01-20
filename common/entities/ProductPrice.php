@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
+use bl\cms\shop\common\components\user\models\UserGroup;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -13,6 +14,9 @@ use yii\db\ActiveRecord;
  * @property integer $price_id
  *
  * @property Price $price
+ * @property Price $prices
+ * @property Price $priceForAllUsers
+ * @property Price $priceForCurrentUserGroup
  * @property Product $product
  */
 class ProductPrice extends ActiveRecord
@@ -52,9 +56,33 @@ class ProductPrice extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPrice()
+    public function getPrices()
     {
-        return $this->hasOne(Price::className(), ['id' => 'price_id']);
+        return $this->hasMany(Price::className(), ['id' => 'price_id']);
+    }
+
+    public function getPriceByUserGroup($userGroupId)
+    {
+        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => $userGroupId])->one();
+        return $price;
+    }
+
+    /**
+     * @return array|null|ActiveRecord
+     */
+    public function getPriceForAllUsers()
+    {
+        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => UserGroup::USER_GROUP_ALL_USERS])->one();
+        return $price;
+    }
+
+    /**
+     * @return array|null|ActiveRecord
+     */
+    public function getPriceForCurrentUserGroup()
+    {
+        $price = Price::find()->where(['id' => $this->price_id, 'user_group_id' => \Yii::$app->user->identity->user_group_id])->one();
+        return $price;
     }
 
     /**
