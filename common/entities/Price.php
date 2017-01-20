@@ -19,6 +19,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property float $oldPrice
  * @property float $discountPrice
  * @property ProductPrice $productPrice
+ * @property CombinationPrice $combinationPrice
  */
 class Price extends ActiveRecord
 {
@@ -125,5 +126,13 @@ class Price extends ActiveRecord
     public function getProductPrice()
     {
         return $this->hasOne(ProductPrice::className(), ['price_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationPrice()
+    {
+        return $this->hasMany(CombinationPrice::className(), ['price_id' => 'id']);
     }
 }
