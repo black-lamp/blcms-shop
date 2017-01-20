@@ -3,13 +3,15 @@ namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\common\components\user\models\UserGroup;
 use Yii;
-use yii\base\Exception;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
+use yii\base\{
+    Exception, Model
+};
+use yii\helpers\{
+    ArrayHelper, Inflector, Url
+};
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
 use bl\cms\shop\backend\components\events\ProductEvent;
-use yii\helpers\Url;
 use yii\web\{
     Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
@@ -17,7 +19,7 @@ use bl\cms\shop\backend\components\form\{
     CombinationAttributeForm, CombinationImageForm, PriceForm, ProductFileForm, ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, CombinationTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, SearchProduct, ProductTranslation, ProductVideo
+    Category, CategoryTranslation, CombinationTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
 };
 
 /**
@@ -184,6 +186,24 @@ class ProductController extends Controller
             } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to create new product.'));
         }
 
+        $prices = [];
+        $userGroups = UserGroup::find()->all();
+        foreach ($userGroups as $userGroup) {
+            $price = Price::find()->joinWith('productPrice')
+                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
+            if (empty($price)) {
+                $price = new Price();
+                $price->user_group_id = $userGroup->id;
+                if ($price->validate()) $price->save();
+                $productPrice = new ProductPrice();
+                $productPrice->product_id = $product->id;
+                $productPrice->price_id = $price->id;
+                if ($productPrice->validate()) $productPrice->save();
+
+            }
+            $prices[$price->id] = $price;
+        }
+
         return $this->render('save', [
             'viewName' => 'add-basic',
             'selectedLanguage' => $selectedLanguage,
@@ -191,6 +211,7 @@ class ProductController extends Controller
             'languages' => Language::find()->all(),
 
             'params' => [
+                'prices' => $prices,
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
                 'products_translation' => $products_translation,
@@ -273,6 +294,24 @@ class ProductController extends Controller
             } else throw new ForbiddenHttpException();
         }
 
+        $prices = [];
+        $userGroups = UserGroup::find()->all();
+        foreach ($userGroups as $userGroup) {
+            $price = Price::find()->joinWith('productPrice')
+                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
+            if (empty($price)) {
+                $price = new Price();
+                $price->user_group_id = $userGroup->id;
+                if ($price->validate()) $price->save();
+                $productPrice = new ProductPrice();
+                $productPrice->product_id = $product->id;
+                $productPrice->price_id = $price->id;
+                if ($productPrice->validate()) $productPrice->save();
+
+            }
+            $prices[$price->id] = $price;
+        }
+
         if (Yii::$app->request->isPost) {
 
             $product->load(Yii::$app->request->post());
@@ -308,6 +347,11 @@ class ProductController extends Controller
                 $products_translation->save();
                 $product->save();
 
+                if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
+                    foreach ($prices as $price) {
+                        $price->save(false);
+                    }
+                }
                 $this->trigger($eventName, new ProductEvent([
                     'id' => $product->id
                 ]));
@@ -318,6 +362,7 @@ class ProductController extends Controller
 
         if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-basic', [
+                'prices' => $prices,
                 'languages' => Language::find()->all(),
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
@@ -332,6 +377,7 @@ class ProductController extends Controller
                 'languages' => Language::find()->all(),
 
                 'params' => [
+                    'prices' => $prices,
                     'languages' => Language::find()->all(),
                     'selectedLanguage' => $selectedLanguage,
                     'product' => $product,
@@ -1104,7 +1150,8 @@ class ProductController extends Controller
      * @param $productImages ProductImage|null
      */
     private function saveCombinationImages($imageForm, $post, $combinationImages,
-                                           $combination, $newCombination = true, $productImages = null) {
+                                           $combination, $newCombination = true, $productImages = null)
+    {
         if ($imageForm->load($post)) {
 
             if (!empty($imageForm->product_image_id)) {
@@ -1130,8 +1177,7 @@ class ProductController extends Controller
 
                                 CombinationImage::deleteAll(['id' => $image]);
                             }
-                        }
-                        else {
+                        } else {
                             $newCombinationImage = new CombinationImage();
 
                             $newCombinationImage->combination_id = (int)$combination->id;
@@ -1153,7 +1199,8 @@ class ProductController extends Controller
      * @param $combinationAttributeForm CombinationAttributeForm
      * @param $combinationAttribute CombinationAttribute
      */
-    private function loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute) {
+    private function loadCombinationAttributeForm($combination, $post, $combinationAttributeForm, $combinationAttribute)
+    {
         if ($combinationAttributeForm->load($post)) {
             if ($combinationAttributeForm->validate()) {
                 foreach ($combinationAttributeForm->attribute_id as $key => $attributeId) {
@@ -1173,6 +1220,7 @@ class ProductController extends Controller
             }
         }
     }
+
     /**
      * Updates combination
      *
@@ -1241,9 +1289,9 @@ class ProductController extends Controller
                             $combinationPrice->combination_id = $combination->id;
                             $combinationPrice->user_group_id = $userGroup->id;
                         }
-                        $combinationPrice->price = (float) $prices->price;
-                        $combinationPrice->discount_type_id = $prices->discount_type_id ?? (int) $prices->discount_type_id;
-                        $combinationPrice->discount = (float) $prices->discount;
+                        $combinationPrice->price = (float)$prices->price;
+                        $combinationPrice->discount_type_id = $prices->discount_type_id ?? (int)$prices->discount_type_id;
+                        $combinationPrice->discount = (float)$prices->discount;
                         if ($combinationPrice->validate()) $combinationPrice->save();
                         else die(var_dump($combinationPrice->errors));
                     }
@@ -1290,7 +1338,8 @@ class ProductController extends Controller
      * @param int $id
      * @return \yii\web\Response
      */
-    public function actionDeleteCombinationAttribute(int $id) {
+    public function actionDeleteCombinationAttribute(int $id)
+    {
         CombinationAttribute::deleteAll(['id' => $id]);
         return $this->redirect(\Yii::$app->request->referrer);
     }
@@ -1300,7 +1349,8 @@ class ProductController extends Controller
      * @return \yii\web\Response
      * @throws Exception
      */
-    public function actionChangeDefaultCombination($combinationId) {
+    public function actionChangeDefaultCombination($combinationId)
+    {
 
         $combination = Combination::findOne($combinationId);
 
@@ -1311,8 +1361,7 @@ class ProductController extends Controller
             if ($combination->validate()) $combination->save();
 
             return $this->redirect(\Yii::$app->request->referrer);
-        }
-        else throw new Exception('Product must have one default combination');
+        } else throw new Exception('Product must have one default combination');
     }
 
     /**
@@ -1350,7 +1399,8 @@ class ProductController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException
      */
-    public function actionRemoveCombinationAttribute(int $combinationAttributeId) {
+    public function actionRemoveCombinationAttribute(int $combinationAttributeId)
+    {
         $combinationAttribute = CombinationAttribute::findOne($combinationAttributeId);
         if (empty($combinationAttribute)) throw new NotFoundHttpException();
 
@@ -1398,7 +1448,8 @@ class ProductController extends Controller
      * @return bool
      * @throws Exception
      */
-    public function actionAddToAdditionalProducts($productId, $additionalProductId) {
+    public function actionAddToAdditionalProducts($productId, $additionalProductId)
+    {
         $productAdditionalProduct = ProductAdditionalProduct::find()
             ->where(['product_id' => $productId, 'additional_product_id' => $additionalProductId])->one();
         if (empty($productAdditionalProduct)) {
@@ -1414,7 +1465,8 @@ class ProductController extends Controller
         throw new Exception();
     }
 
-    public function actionRemoveAdditionalProduct($id) {
+    public function actionRemoveAdditionalProduct($id)
+    {
         $productAdditionalProduct = ProductAdditionalProduct::findOne($id);
         if (!empty($productAdditionalProduct)) $productAdditionalProduct->delete();
         if (!Yii::$app->request->isAjax) {
