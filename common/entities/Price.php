@@ -9,7 +9,6 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * This is the model class for table "shop_price".
  *
  * @property integer $id
- * @property integer $combination_id
  * @property integer $user_group_id
  * @property double $price
  * @property double $discount
@@ -19,6 +18,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property PriceDiscountType $discountType
  * @property float $oldPrice
  * @property float $discountPrice
+ * @property ProductPrice $productPrice
  */
 class Price extends ActiveRecord
 {
@@ -119,4 +119,11 @@ class Price extends ActiveRecord
         return $price;
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductPrice()
+    {
+        return $this->hasOne(ProductPrice::className(), ['price_id' => 'id']);
+    }
 }
