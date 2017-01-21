@@ -6,6 +6,7 @@ $(document).ready(function () {
 
     combinationsBlock.change(function () {
         var thisCombinationBlock = this;
+        var thisWidget = $(this).closest('.product-prices-widget');
         var productId = $(thisCombinationBlock).data('product-id');
 
         var combinationBlockInputsNumber = $(thisCombinationBlock).find('div.form-group').length;
@@ -60,6 +61,10 @@ $(document).ready(function () {
 
                     if (!data.oldPrice && !data.newPrice) {
                         newPrice = notAvailableText;
+                        $(thisWidget).find('button[type="submit"]').prop('disabled', true);
+                    }
+                    else {
+                        $(thisWidget).find('button[type="submit"]').prop('disabled', false);
                     }
 
                     oldPriceTag.text(oldPrice);
