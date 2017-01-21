@@ -271,7 +271,15 @@ class Product extends ActiveRecord
     public function getOldPrice()
     {
         $price = $this->price;
-        if (!empty($price)) $oldPrice = $price->oldPrice;
+        if (!empty($price)) {
+            $oldPrice = $price->oldPrice;
+            if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
+                $oldPrice = $oldPrice * Currency::currentCurrency();
+            }
+            if (\Yii::$app->getModule('shop')->enablePriceRounding) {
+                $oldPrice = floor($oldPrice);
+            }
+        }
         else $oldPrice = 0;
 
         return $oldPrice;
@@ -285,7 +293,15 @@ class Product extends ActiveRecord
     public function getDiscountPrice()
     {
         $price = $this->price;
-        if (!empty($price)) $discountPrice = $price->discountPrice;
+        if (!empty($price)) {
+            $discountPrice = $price->discountPrice;
+            if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
+                $discountPrice = $discountPrice * Currency::currentCurrency();
+            }
+            if (\Yii::$app->getModule('shop')->enablePriceRounding) {
+                $discountPrice = floor($discountPrice);
+            }
+        }
         else $discountPrice = 0;
 
         return $discountPrice;
