@@ -107,8 +107,8 @@ class Combination extends ActiveRecord
                 'user_group_id' => \Yii::$app->user->identity->user_group_id
             ];
         }
-        $price = Price::find()->where($params)->one();
-        return $price;
+        $combinationPrice = CombinationPrice::find()->where($params)->one();
+        return $combinationPrice->price;
     }
 
     /**
