@@ -248,11 +248,11 @@ class Product extends ActiveRecord
     public function getPrice()
     {
         $user_group_id = (\Yii::$app->user->isGuest) ? UserGroup::USER_GROUP_ALL_USERS :
-            \Yii::$app->user->user_group_id;
+            \Yii::$app->user->identity->user_group_id;
         $productPrice = ProductPrice::find()
             ->where(['product_id' => $this->id, 'user_group_id' => $user_group_id])->one();
 
-        return $productPrice->price;
+        return $productPrice->price ?? 0;
     }
 
     /**
