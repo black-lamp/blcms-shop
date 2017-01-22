@@ -2,8 +2,8 @@
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
- * @var $combinations \bl\cms\shop\common\entities\ProductCombination[]
- * @var $combination \bl\cms\shop\common\entities\ProductCombination
+ * @var $combinations \bl\cms\shop\common\entities\Combination[]
+ * @var $combination \bl\cms\shop\common\entities\Combination
  * @var $combinationAttributeForm bl\cms\shop\backend\components\form\CombinationAttributeForm
  * @var $product \bl\cms\shop\common\entities\Product
  * @var $languageId integer
