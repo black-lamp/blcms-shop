@@ -301,9 +301,9 @@ class ProductController extends Controller
                 ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
             if (empty($price)) {
                 $price = new Price();
-                $price->user_group_id = $userGroup->id;
                 if ($price->validate()) $price->save();
                 $productPrice = new ProductPrice();
+                $productPrice->user_group_id = $userGroup->id;
                 $productPrice->product_id = $product->id;
                 $productPrice->price_id = $price->id;
                 if ($productPrice->validate()) $productPrice->save();
