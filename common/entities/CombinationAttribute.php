@@ -2,7 +2,9 @@
 namespace bl\cms\shop\common\entities;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "shop_combination_attribute".
@@ -12,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property integer $combination_id
  * @property integer $attribute_id
  * @property integer $attribute_value_id
+ * @property string $creation_time
+ * @property string $update_time
  *
  * @property ShopAttribute $productAttribute
  * @property ShopAttributeValue $productAttributeValue
@@ -34,9 +38,28 @@ class CombinationAttribute extends ActiveRecord
     {
         return [
             [['combination_id', 'attribute_id', 'attribute_value_id'], 'integer'],
+            [['creation_time', 'update_time'], 'safe'],
+
             [['attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttribute::className(), 'targetAttribute' => ['attribute_id' => 'id']],
             [['attribute_value_id'], 'exist', 'skipOnError' => true, 'targetClass' => ShopAttributeValue::className(), 'targetAttribute' => ['attribute_value_id' => 'id']],
             [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 

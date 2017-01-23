@@ -1,7 +1,9 @@
 <?php
 namespace bl\cms\shop\common\entities;
 use bl\multilang\entities\Language;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "shop_combination_translation".
@@ -33,8 +35,27 @@ class CombinationTranslation extends ActiveRecord
         return [
             [['combination_id', 'language_id'], 'integer'],
             [['description'], 'string', 'max' => 255],
+            [['creation_time', 'update_time'], 'safe'],
+
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
             [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 

@@ -4,8 +4,10 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use Yii;
 use yii\base\Exception;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use bl\cms\shop\common\components\user\models\UserGroup;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "shop_combination".
@@ -14,13 +16,14 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property integer $product_id
  * @property string $sku
  * @property integer $default
+ * @property string $creation_time
+ * @property string $update_time
  *
  * @property Product $product
  * @property CombinationAttribute[] $shopCombinationAttributes
  * @property CombinationImage[] $images
  * @property CombinationPrice[] $combinationPrice
  * @property CombinationTranslation[] $translations
- * @property OrderProduct[] $orderProducts
  */
 class Combination extends ActiveRecord
 {
@@ -43,6 +46,14 @@ class Combination extends ActiveRecord
                 'translationClass' => CombinationTranslation::className(),
                 'relationColumn' => 'combination_id'
             ],
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 
@@ -54,6 +65,7 @@ class Combination extends ActiveRecord
         return [
             [['product_id', 'default'], 'integer'],
             [['sku'], 'string', 'max' => 255],
+            [['creation_time', 'update_time'], 'safe'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
