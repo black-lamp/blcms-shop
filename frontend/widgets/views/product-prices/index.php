@@ -17,7 +17,20 @@ use yii\helpers\Html;
 ?>
 
 <div class="product-prices-widget" data-not-available-text="<?= $params['notAvailableText']; ?>">
-    <?= $this->render($renderView, $params); ?>
+
+    <?php if ($params['enableCache']): ?>
+        <?php if ($this->beginCache(
+            $params['product']->id,
+            (!empty($params['cacheDuration'])) ?
+                ['duration' => $params['cacheDuration']] : ['dependency' => $params['dependency']])): ?>
+            <?= $this->render($renderView, $params); ?>
+            <?php $this->endCache(); ?>
+        <?php endif; ?>
+
+    <?php else: ?>
+
+        <?= $this->render($renderView, $params); ?>
+    <?php endif; ?>
 
     <?= $params['form']->field($params['cart'], 'productId', [
         'template' => '{input}',

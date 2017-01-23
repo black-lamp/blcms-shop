@@ -76,7 +76,7 @@ class ProductPrices extends Widget
                   SELECT update_time FROM shop_combination_attribute UNION
                   SELECT update_time FROM shop_combination_image UNION
                   SELECT update_time FROM shop_combination_price UNION
-                  SELECT update_time FROM shop_combination_translation) AS update_time;'
+                  SELECT update_time FROM shop_combination_translation)temp;'
     ];
 
     /**
