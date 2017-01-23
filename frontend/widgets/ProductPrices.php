@@ -78,7 +78,9 @@ class ProductPrices extends Widget
                 $this->renderView = 'combinations';
                 \Yii::$app->view->endCache();
             }
-            $this->renderView = 'combinations';
+            else {
+                $this->renderView = 'combinations';
+            }
         } else {
             $this->renderView = 'base-price';
         }
