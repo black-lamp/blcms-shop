@@ -356,6 +356,15 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function hasCombinations()
+    {
+        $count = Combination::find()->where(['product_id' => 'id'])->count();
+        return (boolean) $count;
+    }
+
+    /**
      * @param $id
      * @return Combination
      * @throws \yii\base\Exception
