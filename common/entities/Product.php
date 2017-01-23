@@ -360,7 +360,7 @@ class Product extends ActiveRecord
      */
     public function hasCombinations()
     {
-        $count = Combination::find()->where(['product_id' => 'id'])->count();
+        $count = Combination::find()->where(['product_id' => $this->id])->count();
         return (boolean) $count;
     }
 
