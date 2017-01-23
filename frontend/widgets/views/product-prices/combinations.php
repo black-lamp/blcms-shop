@@ -22,6 +22,7 @@ $globalDefaultCombination = $defaultCombination;
 $id = 0;
 ?>
 
+<?php if ($this->beginCache($product->id)): ?>
 <div class="combinations-values" data-product-id="<?= $product->id; ?>">
 
     <?php foreach ($product->productAttributes as $productAttribute) : ?>
@@ -112,3 +113,6 @@ $id = 0;
         'defaultCombination' => $defaultCombination,
     ]); ?>
 </div>
+
+<?php $this->endCache(); ?>
+<?php endif; ?>
