@@ -18,7 +18,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
  * @property Product $product
  * @property CombinationAttribute[] $shopCombinationAttributes
  * @property CombinationImage[] $images
- * @property CombinationPrice[] $combinationPrice
+ * @property Price $price
  * @property CombinationTranslation[] $translations
  * @property OrderProduct[] $orderProducts
  */
@@ -91,7 +91,7 @@ class Combination extends ActiveRecord
 
     /**
      * Gets price for user group
-     * @return array|null|ActiveRecord
+     * @return array|null|ActiveRecord|Price
      */
     public function getPrice()
     {

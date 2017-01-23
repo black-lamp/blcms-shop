@@ -286,7 +286,7 @@ class AttributesWidget extends Widget
             $this->discountPriceOptions
         );
 
-        if (!empty($this->product->discount_type_id)) {
+        if (!empty($this->product->price->discount_type_id)) {
             $item .= Html::tag('strike',
                 Yii::$app->formatter->asCurrency($this->product->getOldPrice()),
                 $this->priceOptions
