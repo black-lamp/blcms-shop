@@ -66,6 +66,20 @@ class ProductPrices extends Widget
     public $cacheDuration = 3600;
 
     /**
+     * If cacheDuration is empty it will be used
+     * @var array
+     */
+    public $dependency = [
+        'class' => 'yii\caching\DbDependency',
+        'sql' => 'SELECT MAX(update_time) FROM (
+                  SELECT update_time FROM shop_combination UNION 
+                  SELECT update_time FROM shop_combination_attribute UNION
+                  SELECT update_time FROM shop_combination_image UNION
+                  SELECT update_time FROM shop_combination_price UNION
+                  SELECT update_time FROM shop_combination_translation) AS update_time;'
+    ];
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -96,7 +110,8 @@ class ProductPrices extends Widget
                     'notAvailableText' => $this->notAvailableText,
                     'showCounter' => $this->showCounter,
                     'enableCache' => $this->enableCache,
-                    'cacheDuration' => $this->cacheDuration
+                    'cacheDuration' => $this->cacheDuration,
+                    'dependency' => $this->dependency,
                 ]
             ]
         );
