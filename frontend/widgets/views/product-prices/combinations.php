@@ -9,6 +9,7 @@
  * @var $defaultCombination \bl\cms\shop\common\entities\Combination
  * @var $notAvailableText string
  * @var $enableCache boolean
+ * @var $cacheDuration integer
  *
  * @var $product->productAttributes ShopAttribute[] Attributes that are present in the combinations of this product
  *
@@ -23,6 +24,7 @@ $globalDefaultCombination = $defaultCombination;
 $id = 0;
 ?>
 
+<?php if ($enableCache && $this->beginCache($product->id, ['duration' => $cacheDuration])): ?>
 <div class="combinations-values" data-product-id="<?= $product->id; ?>">
 
     <?php foreach ($product->productAttributes as $productAttribute) : ?>
@@ -112,4 +114,7 @@ $id = 0;
     <?= $this->render('sum', [
         'defaultCombination' => $defaultCombination,
     ]); ?>
+
+<?php $this->endCache(); ?>
+<?php endif; ?>
 </div>

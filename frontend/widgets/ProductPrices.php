@@ -72,15 +72,7 @@ class ProductPrices extends Widget
     {
         if (\Yii::$app->getModule('shop')->enableCombinations && $this->product->hasCombinations()) {
             ProductCombinationAsset::register($this->getView());
-
-            if ($this->enableCache &&
-                \Yii::$app->view->beginCache($this->product->id, ['duration' => $this->cacheDuration])) {
-                $this->renderView = 'combinations';
-                \Yii::$app->view->endCache();
-            }
-            else {
-                $this->renderView = 'combinations';
-            }
+            $this->renderView = 'combinations';
         } else {
             $this->renderView = 'base-price';
         }
@@ -103,7 +95,8 @@ class ProductPrices extends Widget
                     'defaultCombination' => $this->defaultCombination,
                     'notAvailableText' => $this->notAvailableText,
                     'showCounter' => $this->showCounter,
-                    'enableCache' => $this->enableCache
+                    'enableCache' => $this->enableCache,
+                    'cacheDuration' => $this->cacheDuration
                 ]
             ]
         );
