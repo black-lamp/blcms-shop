@@ -99,8 +99,7 @@ class Vendor extends ActiveRecord
     {
         $currentView = Yii::$app->controller->view;
 
-        $currentView->title = html_entity_decode($this->translation->seoTitle) ??
-            html_entity_decode($this->translation->title);
+        $currentView->title = html_entity_decode($this->translation->seoTitle ?? $this->translation->title);
         $currentView->registerMetaTag([
             'name' => 'description',
             'content' => html_entity_decode($this->translation->seoDescription)
