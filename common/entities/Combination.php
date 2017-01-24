@@ -88,7 +88,7 @@ class Combination extends ActiveRecord
      */
     public function getProduct()
     {
-        return $this->hasOne(Product::className(), ['id' => $this->product_id]);
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
     /**
@@ -144,7 +144,7 @@ class Combination extends ActiveRecord
      */
     public function getCombinationAttributes()
     {
-        return $this->hasMany(CombinationAttribute::className(), ['combination_id' => $this->id]);
+        return $this->hasMany(CombinationAttribute::className(), ['combination_id' => 'id']);
     }
 
     /**
@@ -152,7 +152,7 @@ class Combination extends ActiveRecord
      */
     public function getImages()
     {
-        return $this->hasMany(CombinationImage::className(), ['combination_id' => $this->id]);
+        return $this->hasMany(CombinationImage::className(), ['combination_id' => 'id']);
     }
 
     /**
@@ -160,7 +160,7 @@ class Combination extends ActiveRecord
      */
     public function getShopCombinationTranslations()
     {
-        return $this->hasMany(CombinationTranslation::className(), ['combination_id' => $this->id]);
+        return $this->hasMany(CombinationTranslation::className(), ['combination_id' => 'id']);
     }
 
     /**

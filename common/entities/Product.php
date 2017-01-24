@@ -395,8 +395,10 @@ class Product extends ActiveRecord
     {
         $attributes = [];
         foreach ($this->combinations as $combination) {
-            foreach ($combination->combinationAttributes as $combinationAttribute) {
-                $attributes[] = $combinationAttribute->productAttribute;
+            if (!empty($combination->combinationAttributes)) {
+                foreach ($combination->combinationAttributes as $combinationAttribute) {
+                    $attributes[] = $combinationAttribute->productAttribute;
+                }
             }
         }
         $attributes = ShopArrayHelper::removeDuplicatedArrayElements($attributes);
