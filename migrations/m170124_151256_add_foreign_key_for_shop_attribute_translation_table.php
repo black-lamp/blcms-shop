@@ -1,5 +1,6 @@
 <?php
 
+use bl\cms\shop\common\entities\ShopAttribute;
 use bl\cms\shop\common\entities\ShopAttributeTranslation;
 use yii\db\Migration;
 
@@ -15,12 +16,16 @@ class m170124_151256_add_foreign_key_for_shop_attribute_translation_table extend
 
         if (is_array($records)) {
             foreach ($records as $record) {
-                $newRecord = new ShopAttributeTranslation();
-                $newRecord->title =
-                    $record['title'];
-                $newRecord->language_id = $record['language_id'];
-                $newRecord->attr_id = $record['attr_id'];
-                $newRecord->save();
+                $attribute = ShopAttribute::findOne($record['attr_id']);
+
+                if (!empty($attribute)) {
+                    $newRecord = new ShopAttributeTranslation();
+                    $newRecord->title =
+                        $record['title'];
+                    $newRecord->language_id = $record['language_id'];
+                    $newRecord->attr_id = $record['attr_id'];
+                    $newRecord->save();
+                }
             }
         }
     }
