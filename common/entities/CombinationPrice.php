@@ -2,7 +2,9 @@
 namespace bl\cms\shop\common\entities;
 use bl\cms\shop\common\components\user\models\UserGroup;
 use Exception;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 
 /**
@@ -12,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property integer $combination_id
  * @property integer $price_id
  * @property integer $user_group_id
+ * @property string $creation_time
+ * @property string $update_time
  *
  * @property Price $price
  * @property Combination $combination
@@ -35,9 +39,28 @@ class CombinationPrice extends ActiveRecord
     {
         return [
             [['combination_id', 'price_id', 'user_group_id'], 'integer'],
+            [['creation_time', 'update_time'], 'safe'],
+
             [['price_id'], 'exist', 'skipOnError' => true, 'targetClass' => Price::className(), 'targetAttribute' => ['price_id' => 'id']],
             [['combination_id'], 'exist', 'skipOnError' => true, 'targetClass' => Combination::className(), 'targetAttribute' => ['combination_id' => 'id']],
             [['user_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserGroup::className(), 'targetAttribute' => ['user_group_id' => 'id']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creation_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 

@@ -76,7 +76,7 @@
     width: 100%;
     bottom: -30px;
 }
-.recommended-products .product .product-content div.buy button {
+.recommended-products .product .product-content div.buy a {
     font-size: 41px;
     border-radius: 50%;
     border: 0;
@@ -86,6 +86,6 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
     transition: .15s;
 }
-.recommended-products .product .product-content div.buy button:hover {
+.recommended-products .product .product-content div.buy a:hover {
     background-color: #e18502;
 }

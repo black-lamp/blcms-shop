@@ -54,11 +54,37 @@ class ProductPrices extends Widget
     public $showCounter = true;
 
     /**
+     * Enables cache for combinations
+     * @var bool
+     */
+    public $enableCache = false;
+
+    /**
+     * Sets cache duration
+     * @var int
+     */
+    public $cacheDuration = 3600;
+
+    /**
+     * If cacheDuration is empty it will be used
+     * @var array
+     */
+    public $dependency = [
+        'class' => 'yii\caching\DbDependency',
+        'sql' => 'SELECT MAX(update_time) FROM (
+                  SELECT update_time FROM shop_combination UNION 
+                  SELECT update_time FROM shop_combination_attribute UNION
+                  SELECT update_time FROM shop_combination_image UNION
+                  SELECT update_time FROM shop_combination_price UNION
+                  SELECT update_time FROM shop_combination_translation)temp;'
+    ];
+
+    /**
      * @inheritdoc
      */
     public function init()
     {
-        if (\Yii::$app->getModule('shop')->enableCombinations && !empty($this->product->productAttributes)) {
+        if (\Yii::$app->getModule('shop')->enableCombinations && $this->product->hasCombinations()) {
             ProductCombinationAsset::register($this->getView());
             $this->renderView = 'combinations';
         } else {
@@ -83,6 +109,9 @@ class ProductPrices extends Widget
                     'defaultCombination' => $this->defaultCombination,
                     'notAvailableText' => $this->notAvailableText,
                     'showCounter' => $this->showCounter,
+                    'enableCache' => $this->enableCache,
+                    'cacheDuration' => $this->cacheDuration,
+                    'dependency' => $this->dependency,
                 ]
             ]
         );

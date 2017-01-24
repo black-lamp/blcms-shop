@@ -273,12 +273,6 @@ class Product extends ActiveRecord
         $price = $this->price;
         if (!empty($price)) {
             $oldPrice = $price->oldPrice;
-            if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
-                $oldPrice = $oldPrice * Currency::currentCurrency();
-            }
-            if (\Yii::$app->getModule('shop')->enablePriceRounding) {
-                $oldPrice = floor($oldPrice);
-            }
         }
         else $oldPrice = 0;
 
@@ -295,12 +289,6 @@ class Product extends ActiveRecord
         $price = $this->price;
         if (!empty($price)) {
             $discountPrice = $price->discountPrice;
-            if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
-                $discountPrice = $discountPrice * Currency::currentCurrency();
-            }
-            if (\Yii::$app->getModule('shop')->enablePriceRounding) {
-                $discountPrice = floor($discountPrice);
-            }
         }
         else $discountPrice = 0;
 
@@ -356,6 +344,15 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function hasCombinations()
+    {
+        $count = Combination::find()->where(['product_id' => $this->id])->count();
+        return (boolean) $count;
+    }
+
+    /**
      * @param $id
      * @return Combination
      * @throws \yii\base\Exception
@@ -386,8 +383,10 @@ class Product extends ActiveRecord
     {
         $attributes = [];
         foreach ($this->combinations as $combination) {
-            foreach ($combination->combinationAttributes as $combinationAttribute) {
-                $attributes[] = $combinationAttribute->productAttribute;
+            if (!empty($combination->combinationAttributes)) {
+                foreach ($combination->combinationAttributes as $combinationAttribute) {
+                    $attributes[] = $combinationAttribute->productAttribute;
+                }
             }
         }
         $attributes = ShopArrayHelper::removeDuplicatedArrayElements($attributes);
