@@ -91,6 +91,9 @@ class ProductImageSlider extends Slick
      */
     private function renderItem($item)
     {
-        return Html::img($item->getBig(), ['alt' => $item->translation->alt]);
+        $img = (!empty($item->getBig())) ? $item->getBig() : '';
+        $alt = (!empty($item->translation->alt)) ? $item->translation->alt : '';
+
+        return Html::img($img, ['alt' => $alt]);
     }
 }
