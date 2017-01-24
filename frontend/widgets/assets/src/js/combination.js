@@ -2,25 +2,36 @@ $(document).ready(function () {
 
     var widget = $('.product-prices-widget');
     var notAvailableText = $(widget).data('not-available-text');
-    var combinationsBlock = $('.combinations-values');
+    var countInput = $('#cartform-count');
 
-    combinationsBlock.change(function () {
-        var thisCombinationBlock = this;
-        var thisWidget = $(this).closest('.product-prices-widget');
-        var productId = $(thisCombinationBlock).data('product-id');
-
-        var combinationBlockInputsNumber = $(thisCombinationBlock).find('div.form-group').length;
-
-        var addToCartButton = $(thisCombinationBlock).closest('.product-prices-widget').find('#add-to-cart-button');
-        var oldPriceTag = $(thisCombinationBlock).find('#oldPrice');
+    $('.quantity').change(function () {
+        var widget = $(this).closest('.product-prices-widget');
+        var thisCombinationBlock = $(widget).find('.combinations-values');
         var newPriceTag = $(thisCombinationBlock).find('#newPrice');
         var currencyCode = $(newPriceTag).data('currency-code');
+
+        countInput.change(function () {
+            if (countInput.length) {
+                var oneItemPrice = $(newPriceTag).attr('data-sum');
+                var number = countInput.val();
+                var newPrice = (oneItemPrice * number).toLocaleString();
+                newPriceTag.text(newPrice + ' ' + currencyCode);
+            }
+        });
+    });
+
+    $('.combinations-values').change(function () {
+        var productId = $(this).data('product-id');
+        var thisWidget = $(this).closest('.product-prices-widget');
+        var addToCartButton = $(thisWidget).find('#add-to-cart-button');
+        var oldPriceTag = $(this).find('#oldPrice');
         var productImage = $('#main-image');
-
-        var checkedValues = $(thisCombinationBlock).find('input:checked');
-        var selectedValues = $(thisCombinationBlock).find('option:selected');
-
+        var checkedValues = $(this).find('input:checked');
+        var selectedValues = $(this).find('option:selected');
         var checkedValuesLables = checkedValues.parent('label');
+        var priceWrapHeight = $(thisWidget).find('.prices-wrapp').innerHeight();
+        var newPriceTag = $(this).find('#newPrice');
+        var currencyCode = $(newPriceTag).data('currency-code');
         var values = [];
         for (var i = 0; i < checkedValues.length; i++) {
             values[i] = checkedValues[i].value;
@@ -32,9 +43,10 @@ $(document).ready(function () {
         /**
          * Adds "active" class for selected element.
          */
-        $(thisCombinationBlock).find('.active').removeClass('active');
-        checkedValuesLables.addClass('active');
+        $(this).find('.active').removeClass('active');
+        $(this).addClass('active');
 
+        var combinationBlockInputsNumber = $(this).find('div.form-group').length;
         if (values.length == combinationBlockInputsNumber) {
             values = JSON.stringify(values);
             $.ajax({
@@ -44,38 +56,46 @@ $(document).ready(function () {
                     values: values,
                     productId: productId
                 },
+                ajaxSend: showLoader(newPriceTag, oldPriceTag, priceWrapHeight),
+                complete: function () {
+                    setTimeout(hideLoader, 2000);
+                },
 
                 success: function (data) {
-                    data = JSON.parse(data);
-                    if (data) $(addToCartButton).removeAttr('disabled');
-                    else $(addToCartButton).attr('disabled', 'disabled');
+                    setTimeout(
+                        function () {
+                            data = JSON.parse(data);
+                            if (data) $(addToCartButton).removeAttr('disabled');
+                            else $(addToCartButton).attr('disabled', 'disabled');
 
-                    var oldPrice = (data.oldPrice) ? data.oldPrice.toLocaleString() + ' ' + currencyCode : '';
-                    if (data.newPrice) {
-                        var newPrice = data.newPrice.toLocaleString() + ' ' + currencyCode;
-                        var dataSum = data.newPrice;
-                    }
-                    else {
-                        newPrice = dataSum = '';
-                    }
+                            var oldPrice = (data.oldPrice) ? data.oldPrice.toLocaleString() + ' ' + currencyCode : '';
+                            if (data.newPrice) {
+                                var newPrice = (data.newPrice * countInput.val()).toLocaleString() + ' ' + currencyCode;
+                                var dataSum = data.newPrice;
+                            }
+                            else {
+                                newPrice = dataSum = '';
+                            }
 
-                    if (!data.oldPrice && !data.newPrice) {
-                        newPrice = notAvailableText;
-                        $(thisWidget).find('button[type="submit"]').prop('disabled', true);
-                    }
-                    else {
-                        $(thisWidget).find('button[type="submit"]').prop('disabled', false);
-                    }
+                            if (!data.oldPrice && !data.newPrice) {
+                                newPrice = notAvailableText;
+                                $(thisWidget).find('button[type="submit"]').prop('disabled', true);
+                            }
+                            else {
+                                $(thisWidget).find('button[type="submit"]').prop('disabled', false);
+                            }
 
-                    oldPriceTag.text(oldPrice);
-                    newPriceTag.fadeOut(125).text(newPrice).fadeIn(125);
-                    newPriceTag.attr('data-sum', dataSum);
+                            oldPriceTag.text(oldPrice);
+                            newPriceTag.fadeOut(125).text(newPrice).fadeIn(125);
+                            newPriceTag.attr('data-sum', dataSum);
 
-                    if (data.image) productImage.fadeOut(125).attr('src', data.image).fadeIn(125);
-                    $('img.zoomImg').attr('src', data.image);
+                            if (data.image) productImage.fadeOut(125).attr('src', data.image).fadeIn(125);
+                            $('img.zoomImg').attr('src', data.image);
 
-                    var skuText = (data.sku) ? data.sku : notAvailableText;
-                    $('#sku').text(skuText);
+                            var skuText = (data.sku) ? data.sku : notAvailableText;
+                            $('#sku').text(skuText);
+                        }, 1500
+                    );
                 },
                 error: function (data) {
                     $(addToCartButton).attr('disabled', 'disabled');
@@ -86,3 +106,19 @@ $(document).ready(function () {
         }
     });
 });
+
+function showLoader(newPriceTag, oldPriceTag, priceWrapHeight) {
+    var loader = '<div id="floatBarsG">';
+
+    for (var i = 1; i < 9; i++) {
+        loader += "<div id='floatBarsG_" + i + "' class='floatBarsG'></div>";
+    }
+    loader += '</div>';
+    $(newPriceTag).html(loader);
+    $(oldPriceTag).text('');
+
+    $('#floatBarsG').css('height', priceWrapHeight);
+}
+function hideLoader() {
+    $('floatBarsG').remove();
+}

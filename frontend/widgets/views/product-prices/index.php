@@ -11,7 +11,6 @@
  *  'defaultCombination' => $defaultCombination
  * ]);
  */
-use kartik\touchspin\TouchSpin;
 use yii\helpers\Html;
 
 ?>
