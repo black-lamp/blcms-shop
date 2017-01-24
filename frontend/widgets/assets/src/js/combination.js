@@ -28,7 +28,6 @@ $(document).ready(function () {
         var productImage = $('#main-image');
         var checkedValues = $(this).find('input:checked');
         var selectedValues = $(this).find('option:selected');
-        var checkedValuesLables = checkedValues.parent('label');
         var priceWrapHeight = $(thisWidget).find('.prices-wrapp').innerHeight();
         var newPriceTag = $(this).find('#newPrice');
         var currencyCode = $(newPriceTag).data('currency-code');

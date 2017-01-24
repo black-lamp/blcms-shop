@@ -16,11 +16,11 @@
     -ms-animation-name:bounce_floatBarsG;
     -webkit-animation-name:bounce_floatBarsG;
     -moz-animation-name:bounce_floatBarsG;
-    animation-duration:1.235s;
-    -o-animation-duration:1.235s;
-    -ms-animation-duration:1.235s;
-    -webkit-animation-duration:1.235s;
-    -moz-animation-duration:1.235s;
+    animation-duration:0.455s;
+    -o-animation-duration:0.455s;
+    -ms-animation-duration:0.455s;
+    -webkit-animation-duration:0.455s;
+    -moz-animation-duration:0.455s;
     animation-iteration-count:infinite;
     -o-animation-iteration-count:infinite;
     -ms-animation-iteration-count:infinite;
@@ -40,74 +40,74 @@
 
 #floatBarsG_1{
     left:0;
-    animation-delay:0.496s;
-    -o-animation-delay:0.496s;
-    -ms-animation-delay:0.496s;
-    -webkit-animation-delay:0.496s;
-    -moz-animation-delay:0.496s;
+    animation-delay:0.186s;
+    -o-animation-delay:0.186s;
+    -ms-animation-delay:0.186s;
+    -webkit-animation-delay:0.186s;
+    -moz-animation-delay:0.186s;
 }
 
 #floatBarsG_2{
     left:9px;
-    animation-delay:0.6125s;
-    -o-animation-delay:0.6125s;
-    -ms-animation-delay:0.6125s;
-    -webkit-animation-delay:0.6125s;
-    -moz-animation-delay:0.6125s;
+    animation-delay:0.2225s;
+    -o-animation-delay:0.2225s;
+    -ms-animation-delay:0.2225s;
+    -webkit-animation-delay:0.2225s;
+    -moz-animation-delay:0.2225s;
 }
 
 #floatBarsG_3{
     left:18px;
-    animation-delay:0.739s;
-    -o-animation-delay:0.739s;
-    -ms-animation-delay:0.739s;
-    -webkit-animation-delay:0.739s;
-    -moz-animation-delay:0.739s;
+    animation-delay:0.269s;
+    -o-animation-delay:0.269s;
+    -ms-animation-delay:0.269s;
+    -webkit-animation-delay:0.269s;
+    -moz-animation-delay:0.269s;
 }
 
 #floatBarsG_4{
     left:27px;
-    animation-delay:0.8655s;
-    -o-animation-delay:0.8655s;
-    -ms-animation-delay:0.8655s;
-    -webkit-animation-delay:0.8655s;
-    -moz-animation-delay:0.8655s;
+    animation-delay:0.3155s;
+    -o-animation-delay:0.3155s;
+    -ms-animation-delay:0.3155s;
+    -webkit-animation-delay:0.3155s;
+    -moz-animation-delay:0.3155s;
 }
 
 #floatBarsG_5{
     left:36px;
-    animation-delay:0.992s;
-    -o-animation-delay:0.992s;
-    -ms-animation-delay:0.992s;
-    -webkit-animation-delay:0.992s;
-    -moz-animation-delay:0.992s;
+    animation-delay:0.362s;
+    -o-animation-delay:0.362s;
+    -ms-animation-delay:0.362s;
+    -webkit-animation-delay:0.362s;
+    -moz-animation-delay:0.362s;
 }
 
 #floatBarsG_6{
     left:45px;
-    animation-delay:1.1085s;
-    -o-animation-delay:1.1085s;
-    -ms-animation-delay:1.1085s;
-    -webkit-animation-delay:1.1085s;
-    -moz-animation-delay:1.1085s;
+    animation-delay:0.4085s;
+    -o-animation-delay:0.4085s;
+    -ms-animation-delay:0.4085s;
+    -webkit-animation-delay:0.4085s;
+    -moz-animation-delay:0.4085s;
 }
 
 #floatBarsG_7{
     left:54px;
-    animation-delay:1.235s;
-    -o-animation-delay:1.235s;
-    -ms-animation-delay:1.235s;
-    -webkit-animation-delay:1.235s;
-    -moz-animation-delay:1.235s;
+    animation-delay:0.455s;
+    -o-animation-delay:0.455s;
+    -ms-animation-delay:0.455s;
+    -webkit-animation-delay:0.455s;
+    -moz-animation-delay:0.455s;
 }
 
 #floatBarsG_8{
     left:63px;
-    animation-delay:1.3615s;
-    -o-animation-delay:1.3615s;
-    -ms-animation-delay:1.3615s;
-    -webkit-animation-delay:1.3615s;
-    -moz-animation-delay:1.3615s;
+    animation-delay:0.5015s;
+    -o-animation-delay:0.5015s;
+    -ms-animation-delay:0.5015s;
+    -webkit-animation-delay:0.5015s;
+    -moz-animation-delay:0.5015s;
 }
 
 
