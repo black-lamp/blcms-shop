@@ -33,6 +33,11 @@ class ProductImageSlider extends Slick
      */
     public $product;
     /**
+     * @var string
+     */
+    public $imagesSize = ProductImage::SIZE_BIG;
+
+    /**
      * @inheritdoc
      */
     public $containerOptions = ['class' => 'product-image-slider'];
@@ -91,7 +96,7 @@ class ProductImageSlider extends Slick
      */
     private function renderItem($item)
     {
-        $img = (!empty($item->getBig())) ? $item->getBig() : '';
+        $img = (!empty($item->getImage('big'))) ? $item->getImage($this->imagesSize) : '';
         $alt = (!empty($item->translation->alt)) ? $item->translation->alt : '';
 
         return Html::img($img, ['alt' => $alt]);
