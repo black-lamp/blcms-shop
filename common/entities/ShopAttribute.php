@@ -113,4 +113,12 @@ class ShopAttribute extends ActiveRecord
             ->andWhere(['combination_id' => $combinationsIds])->all();
         return $productCombinationAttributes;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslations()
+    {
+        return $this->hasMany(ShopAttributeTranslation::className(), ['attr_id' => 'id']);
+    }
 }
