@@ -131,11 +131,11 @@ class Combination extends ActiveRecord
      */
     public function getPriceByUserGroup(int $userGroupId) {
         if (!empty($userGroupId)) {
-            $price = Price::find()->where([
-                'combination_id' => $this->id,
-                'user_group_id' => $userGroupId
-            ])->one();
-            return $price;
+            $combinationPrice = CombinationPrice::find()
+                ->where(['combination_id' => $this->id, 'user_group_id' => $userGroupId])
+                ->one();
+            if (!empty($combinationPrice)) return $combinationPrice->price;
+            else throw new Exception('Price not found');
         }
         else throw new Exception('User group id is empty');
     }
