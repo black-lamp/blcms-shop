@@ -25,6 +25,9 @@ use yii2tech\ar\position\PositionBehavior;
 
 class ProductImage extends ActiveRecord
 {
+    const SIZE_BIG = 'big';
+    const SIZE_SMALL = 'small';
+    const SIZE_THUMB = 'thumb';
 
     /**
      * @inheritdoc
@@ -90,22 +93,34 @@ class ProductImage extends ActiveRecord
         return $this->hasMany(ProductImageTranslation::className(), ['image_id' => 'id']);
     }
 
+    /**
+     * @return string path to big product image.
+     */
     public function getBig() {
-        $image = $this->getImage('big');
-        return '/images/shop-product/' . FileHelper::getFullName($image);
+        return $this->getImage(self::SIZE_BIG);
     }
 
+    /**
+     * @return string path to thumb product image.
+     */
     public function getThumb() {
-        $image = $this->getImage('thumb');
-        return '/images/shop-product/' . FileHelper::getFullName($image);
+        return $this->getImage(self::SIZE_THUMB);
     }
 
+    /**
+     * @return string path to small product image.
+     */
     public function getSmall() {
-        $image = $this->getImage('small');
-        return '/images/shop-product/' . FileHelper::getFullName($image);
+        return $this->getImage(self::SIZE_SMALL);
     }
 
-    private function getImage($size) {
-        return \Yii::$app->shop_imagable->get('shop-product', $size, $this->file_name);
+    /**
+     * @param string $size image size.
+     * @return string path to product image.
+     */
+    public function getImage($size = self::SIZE_BIG) {
+        $image = \Yii::$app->shop_imagable->get('shop-product', $size, $this->file_name);
+
+        return '/images/shop-product/' . FileHelper::getFullName($image);
     }
 }

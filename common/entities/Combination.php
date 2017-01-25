@@ -22,7 +22,8 @@ use yii\db\Expression;
  * @property Product $product
  * @property CombinationAttribute[] $shopCombinationAttributes
  * @property CombinationImage[] $images
- * @property CombinationPrice[] $combinationPrice
+ * @property CombinationPrice $price
+ * @property CombinationPrice[] $prices
  * @property CombinationTranslation[] $translations
  */
 class Combination extends ActiveRecord
@@ -93,7 +94,7 @@ class Combination extends ActiveRecord
 
     /**
      * Gets prices for all user groups
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery[]|Price[]
      */
     public function getPrices()
     {
@@ -103,7 +104,7 @@ class Combination extends ActiveRecord
 
     /**
      * Gets price for user group
-     * @return array|null|ActiveRecord
+     * @return array|null|ActiveRecord|Price
      */
     public function getPrice()
     {

@@ -38,6 +38,10 @@ class AttributesWidget extends Widget
      */
     public $product;
     /**
+     * @var ActiveForm
+     */
+    public $form;
+    /**
      * @var CartForm
      */
     public $cartForm;
@@ -49,7 +53,7 @@ class AttributesWidget extends Widget
     /**
      * @var array the HTML attributes for 'prices' container block.
      */
-    public $priceContainerOptions = ['class' => 'product-prices'];
+    public $priceContainerOptions = [];
     /**
      * @var array the HTML attributes for 'default price' block.
      */
@@ -67,16 +71,11 @@ class AttributesWidget extends Widget
      * @var array the HTML attributes for 'attribute title' block.
      */
     public $attributeTitleOptions = [];
-
     /**
      * @var array the HTML attributes for 'submit button'.
      */
     public $submitButtonOptions = ['class' => 'btn btn-success'];
 
-    /**
-     * @var ActiveForm
-     */
-    private $_form;
     /**
      * @var string the default CSS classes.
      */
@@ -84,6 +83,7 @@ class AttributesWidget extends Widget
     private $_attributesContainerClass = 'product-attributes';
     private $_priceClass = 'product-price';
     private $_discountPriceClass = 'product-discount-price';
+    private $_skuClass = 'product-sku';
 
     /**
      * @inheritDoc
@@ -101,7 +101,7 @@ class AttributesWidget extends Widget
         Html::addCssClass($this->discountPriceOptions, $this->_discountPriceClass);
         Html::addCssClass($this->attributeContainerOptions, $this->_attributesContainerClass);
 
-        $this->_form = ActiveForm::begin([
+        $this->form = ActiveForm::begin([
             'action' => ['/cart/cart/add'],
             'options' => $this->options
         ]);
@@ -113,7 +113,7 @@ class AttributesWidget extends Widget
      */
     public function run()
     {
-        $this->_form->end();
+        $this->form->end();
         $this->registerGetCombinationScript();
     }
 
@@ -124,9 +124,9 @@ class AttributesWidget extends Widget
      */
     private function renderHiddenInputs()
     {
-        $items = $this->_form->field($this->cartForm, 'productId')->hiddenInput(['value' => $this->product->id])
+        $items = $this->form->field($this->cartForm, 'productId')->hiddenInput(['value' => $this->product->id])
             ->label(false);
-        $items .= $this->_form->field($this->cartForm, 'count')->hiddenInput(['value' => self::DEFAULT_PRODUCT_COUNT])
+        $items .= $this->form->field($this->cartForm, 'count')->hiddenInput(['value' => self::DEFAULT_PRODUCT_COUNT])
             ->label(false);
 
         return $items;
@@ -143,14 +143,21 @@ class AttributesWidget extends Widget
             return false;
         }
 
-        $items = Html::beginTag('div', $this->priceContainerOptions);
+        $items = '';
+        if (!empty($this->priceContainerOptions)) {
+            $items = Html::beginTag('div', $this->priceContainerOptions);
+        }
+
         if (!empty($this->product->defaultCombination)) {
             $items .= $this->renderCombinationPriceItem();
         }
         else {
             $items .= $this->renderDefaultPriceItem();
         }
-        $items .= Html::endTag('div');
+
+        if (!empty($this->priceContainerOptions)) {
+            $items .= Html::endTag('div');
+        }
 
         return $items;
     }
@@ -163,12 +170,14 @@ class AttributesWidget extends Widget
      */
     public function renderAttributes()
     {
-        if (empty($this->product)) {
+        if (empty($this->product->combinations)) {
             return false;
         }
 
         $items = '';
-        $items .= Html::beginTag('div', $this->attributeContainerOptions);
+        if (!empty($this->attributeContainerOptions)) {
+            $items .= Html::beginTag('div', $this->attributeContainerOptions);
+        }
 
         $attributeTitle = '';
         foreach ($this->product->combinations as $combination) {
@@ -183,7 +192,9 @@ class AttributesWidget extends Widget
             }
         }
 
-        $items .= Html::endTag('div');
+        if (!empty($this->attributeContainerOptions)) {
+            $items .= Html::endTag('div');
+        }
 
         return $items;
     }
@@ -220,7 +231,7 @@ class AttributesWidget extends Widget
         ));
 
         if ($attributeType == ShopAttributeType::TYPE_DROP_DOWN_LIST) {
-            $item .= $this->_form->field($this->cartForm, 'attribute_value_id')
+            $item .= $this->form->field($this->cartForm, 'attribute_value_id')
                 ->dropDownList(ArrayHelper::map($combinationsAttributes,
                     function ($model) {
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
@@ -228,10 +239,12 @@ class AttributesWidget extends Widget
                     function ($model) {
                         return $model->productAttributeValue->translation->value;
                     }
-                ))
+                ), [
+                    'name' => 'CartForm[attribute_value_id][' . $this->product->id . '-' . $productAttribute->id . ']'
+                ])
                 ->label(false);
         } else {
-            $item .= $this->_form->field($this->cartForm, "attribute_value_id")
+            $item .= $this->form->field($this->cartForm, "attribute_value_id")
                 ->radioList(ArrayHelper::map($combinationsAttributes,
                     function ($model) {
                         return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
@@ -265,12 +278,14 @@ class AttributesWidget extends Widget
             $this->discountPriceOptions
         );
 
-        if (!empty($this->product->defaultCombination->price->discount_type_id)){
-            $item .= Html::tag('strike',
-                Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->oldPrice),
-                $this->priceOptions
-            );
+        if (empty($this->product->defaultCombination->price->discount_type_id)) {
+            Html::addCssStyle($this->priceOptions, ['display' => 'none']);
         }
+
+        $item .= Html::tag('strike',
+            Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->oldPrice),
+            $this->priceOptions
+        );
 
         return $item;
     }
@@ -286,7 +301,7 @@ class AttributesWidget extends Widget
             $this->discountPriceOptions
         );
 
-        if (!empty($this->product->discount_type_id)) {
+        if (!empty($this->product->price->discount_type_id)) {
             $item .= Html::tag('strike',
                 Yii::$app->formatter->asCurrency($this->product->getOldPrice()),
                 $this->priceOptions
@@ -308,12 +323,19 @@ addToCartForms.change(function() {
     var productId = $(this).find('#cartform-productid').val();
     var price = $(this).find('.$this->_priceClass');
     var discountPrice = $(this).find('.$this->_discountPriceClass');
-    var inputs = $(this).find('input:checked');
-    
+    var sku = $(this).find('.$this->_skuClass');
+    var sliderThumbs = $('#productImageSliderThumbs');
+    var checkedValues = $(this).find('input:checked');
+    var selectedValues = $(this).find('option:selected');
+
     var values = [];
-    for(var i = 0; i < inputs.length; i++) {
-        values[i] = inputs.val();
+    for (var i = 0; i < checkedValues.length; i++) {
+        values[i] = checkedValues[i].value;
     }
+    for (var j = 0; j < selectedValues.length; j++) {
+        values[checkedValues.length + j] = $(selectedValues[j]).val();
+    }
+    
     values = JSON.stringify(values);
   
     $.ajax({
@@ -327,8 +349,18 @@ addToCartForms.change(function() {
         success: function (data) {
             data = JSON.parse(data);
             
-            price.html(data.oldPrice);
             discountPrice.html(data.newPrice);
+          
+            if (data.oldPrice == data.newPrice) {
+                price.hide(150);
+            } else {
+                price.html(data.oldPrice);
+                price.show(300);
+                price.css('display', 'block');
+            }
+            
+            sku.html(data.sku);
+            $(sliderThumbs).find("img[src='" + data.image + "']").click();
         },
         error: function (data) {
             console.log(data);
