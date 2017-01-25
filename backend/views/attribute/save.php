@@ -72,22 +72,19 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if(!$attribute->isNewRecord) {
                 if ($attribute->type_id == ShopAttributeType::TYPE_DROP_DOWN_LIST ||
                     $attribute->type_id == ShopAttributeType::TYPE_RADIO_BUTTON) {
-                    $options = [
+                    $options = ['options' => [
                         ShopAttributeType::TYPE_COLOR => ['disabled' => true],
                         ShopAttributeType::TYPE_TEXTURE => ['disabled' => true],
-                    ];
+                    ]];
                 }
                 else {
-                    $options = [
-                        ShopAttributeType::TYPE_RADIO_BUTTON => ['disabled' => true],
-                        ShopAttributeType::TYPE_DROP_DOWN_LIST => ['disabled' => true],
-                    ];
+                    $options = ["disabled" => "disabled"];
                 }
             }
             ?>
 
             <?= $form->field($attribute, 'type_id')
-                ->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), ['options' => $options]); ?>
+                ->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
 
             <div class="form-group">
                 <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
