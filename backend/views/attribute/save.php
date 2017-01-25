@@ -14,6 +14,7 @@
  */
 
 use bl\cms\shop\common\entities\ShopAttribute;
+use bl\cms\shop\common\entities\ShopAttributeType;
 use bl\cms\shop\common\entities\ShopAttributeValueColorTexture;
 use bl\multilang\entities\Language;
 use kartik\widgets\ColorInput;
@@ -68,8 +69,25 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($attributeTranslation, 'title')->textInput() ?>
 
             <!--ATTRIBUTE TYPE-->
-            <?php $options = (!$attribute->isNewRecord) ? ["disabled" => "disabled"] : [] ?>
-            <?= $form->field($attribute, 'type_id')->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
+            <?php if(!$attribute->isNewRecord) {
+                if ($attribute->type_id == ShopAttributeType::TYPE_DROP_DOWN_LIST ||
+                    $attribute->type_id == ShopAttributeType::TYPE_RADIO_BUTTON) {
+                    $options = [
+                        ShopAttributeType::TYPE_COLOR => ['disabled' => true],
+                        ShopAttributeType::TYPE_TEXTURE => ['disabled' => true],
+                    ];
+                }
+                else {
+                    $options = [
+                        ShopAttributeType::TYPE_RADIO_BUTTON => ['disabled' => true],
+                        ShopAttributeType::TYPE_DROP_DOWN_LIST => ['disabled' => true],
+                    ];
+                }
+            }
+            ?>
+
+            <?= $form->field($attribute, 'type_id')
+                ->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), ['options' => $options]); ?>
 
             <div class="form-group">
                 <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
