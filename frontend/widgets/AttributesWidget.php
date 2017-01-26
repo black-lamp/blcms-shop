@@ -291,11 +291,14 @@ class AttributesWidget extends Widget
                             $checked = $combinationsAttributes[$index]->combination->default;
 
                             $options = $this->textureInputOptions;
+                            $labelOptions = $this->labelOptions;
+
                             Html::addCssStyle($options, ['background-color' => $label]);
+                            Html::addCssClass($labelOptions, 'color');
 
                             return Html::label(
                                 Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
-                                null, $this->labelOptions
+                                null, $labelOptions
                             );
                         }
                     ])
@@ -318,11 +321,14 @@ class AttributesWidget extends Widget
                             $checked = $combinationsAttributes[$index]->combination->default;
 
                             $options = $this->textureInputOptions;
+                            $labelOptions = $this->labelOptions;
+
                             Html::addCssStyle($options, ['background-image' => "url($label)"]);
+                            Html::addCssClass($labelOptions, 'texture');
 
                             return Html::label(
                                 Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
-                                null, $this->labelOptions
+                                null, $labelOptions
                             );
                         }
                     ])
