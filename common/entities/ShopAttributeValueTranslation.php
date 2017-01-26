@@ -14,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property string $value
  * @property integer $language_id
  *
+ * @property ShopAttributeValueColorTexture $colorTexture
+ *
  * @property Language $language
  */
 class ShopAttributeValueTranslation extends ActiveRecord
