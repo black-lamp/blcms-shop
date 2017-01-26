@@ -77,13 +77,23 @@ class AttributesWidget extends Widget
     public $submitButtonOptions = ['class' => 'btn btn-success'];
 
     /**
+     * @var array
+     */
+    public $textureInputOptions = ['class' => 'texture'];
+
+    /**
+     * @var array
+     */
+    public $labelOptions = [];
+
+    /**
      * @var string the default CSS classes.
      */
+    public $skuCssClass = 'product-sku';
     private $_formClass = 'product-price-form';
     private $_attributesContainerClass = 'product-attributes';
     private $_priceClass = 'product-price';
     private $_discountPriceClass = 'product-discount-price';
-    private $_skuClass = 'product-sku';
 
     /**
      * @inheritDoc
@@ -230,38 +240,94 @@ class AttributesWidget extends Widget
             $this->product->combinations, 'id'
         ));
 
-        if ($attributeType == ShopAttributeType::TYPE_DROP_DOWN_LIST) {
-            $item .= $this->form->field($this->cartForm, 'attribute_value_id')
-                ->dropDownList(ArrayHelper::map($combinationsAttributes,
-                    function ($model) {
-                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
-                    },
-                    function ($model) {
-                        return $model->productAttributeValue->translation->value;
-                    }
-                ), [
-                    'name' => 'CartForm[attribute_value_id][' . $this->product->id . '-' . $productAttribute->id . ']'
-                ])
-                ->label(false);
-        } else {
-            $item .= $this->form->field($this->cartForm, "attribute_value_id")
-                ->radioList(ArrayHelper::map($combinationsAttributes,
-                    function ($model) {
-                        return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
-                    },
-                    function ($model) {
-                        return $model->productAttributeValue->translation->value;
-                    }
-                ), [
-                    'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
-                    'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
-                        $checked = $combinationsAttributes[$index]->combination->default;
-                        return Html::label(Html::radio($name, $checked, ['value' => $value])
-                            . $label
-                        );
-                    }
-                ])
-                ->label(false);
+        $attributesItems = ArrayHelper::map($combinationsAttributes,
+            function ($model) {
+                /** @var CombinationAttribute $model */
+                return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
+            },
+            function ($model) {
+                /** @var CombinationAttribute $model */
+                return $model->productAttributeValue->translation->value;
+            }
+        );
+
+        switch ($attributeType) {
+            case ShopAttributeType::TYPE_DROP_DOWN_LIST:
+                $item .= $this->form->field($this->cartForm, 'attribute_value_id')
+                    ->dropDownList($attributesItems, [
+                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]"
+                    ])
+                    ->label(false);
+                break;
+
+            case ShopAttributeType::TYPE_RADIO_BUTTON:
+                $item .= $this->form->field($this->cartForm, "attribute_value_id")
+                    ->radioList($attributesItems, [
+                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
+                            $checked = $combinationsAttributes[$index]->combination->default;
+
+                            return Html::label(Html::radio($name, $checked, ['value' => $value])
+                                . $label
+                            );
+                        }
+                    ])
+                    ->label(false);
+                break;
+
+            case ShopAttributeType::TYPE_COLOR:
+                $item .= $this->form->field($this->cartForm, "attribute_value_id")
+                    ->radioList(ArrayHelper::map($combinationsAttributes,
+                        function ($model) {
+                            /** @var CombinationAttribute $model */
+                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
+                        },
+                        function ($model) {
+                            /** @var CombinationAttribute $model */
+                            return $model->productAttributeValue->translation->colorTexture->color;
+                        }), [
+                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
+                            $checked = $combinationsAttributes[$index]->combination->default;
+
+                            $options = $this->textureInputOptions;
+                            Html::addCssStyle($options, ['background-color' => $label]);
+
+                            return Html::label(
+                                Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
+                                null, $this->labelOptions
+                            );
+                        }
+                    ])
+                    ->label(false);
+                break;
+
+            case ShopAttributeType::TYPE_TEXTURE:
+                $item .= $this->form->field($this->cartForm, "attribute_value_id")
+                    ->radioList(ArrayHelper::map($combinationsAttributes,
+                        function ($model) {
+                            /** @var CombinationAttribute $model */
+                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
+                        },
+                        function ($model) {
+                            /** @var CombinationAttribute $model */
+                            return $model->productAttributeValue->translation->colorTexture->getTextureFile();
+                        }), [
+                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
+                            $checked = $combinationsAttributes[$index]->combination->default;
+
+                            $options = $this->textureInputOptions;
+                            Html::addCssStyle($options, ['background-image' => "url($label)"]);
+
+                            return Html::label(
+                                Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
+                                null, $this->labelOptions
+                            );
+                        }
+                    ])
+                    ->label(false);
+                break;
         }
 
         return $item;
@@ -323,10 +389,10 @@ addToCartForms.change(function() {
     var productId = $(this).find('#cartform-productid').val();
     var price = $(this).find('.$this->_priceClass');
     var discountPrice = $(this).find('.$this->_discountPriceClass');
-    var sku = $(this).find('.$this->_skuClass');
-    var sliderThumbs = $('#productImageSliderThumbs');
     var checkedValues = $(this).find('input:checked');
     var selectedValues = $(this).find('option:selected');
+    var sliderThumbs = $('#productImageSliderThumbs');
+    var sku = $('.$this->skuCssClass');
 
     var values = [];
     for (var i = 0; i < checkedValues.length; i++) {
