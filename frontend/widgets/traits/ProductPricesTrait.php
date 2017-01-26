@@ -34,6 +34,7 @@ trait ProductPricesTrait
 
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
+                'images' => $combination->getImagesArray() ?? '',
                 'oldPrice' => $oldPrice,
                 'newPrice' => $newPrice,
                 'sku' => $combination->sku ?? ''

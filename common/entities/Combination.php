@@ -156,6 +156,20 @@ class Combination extends ActiveRecord
         return $this->hasMany(CombinationImage::className(), ['combination_id' => 'id']);
     }
 
+    public function getImagesArray() {
+        $images = [];
+
+        foreach ($this->images as $image) {
+            $images[] = [
+                'thumb' => $image->productImage->thumb,
+                'small' => $image->productImage->small,
+                'big' => $image->productImage->big
+            ];
+        }
+
+        return $images;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
