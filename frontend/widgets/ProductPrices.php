@@ -84,11 +84,12 @@ class ProductPrices extends Widget
      */
     public function init()
     {
+        $asset = ProductCombinationAsset::register($this->getView());
         if (\Yii::$app->getModule('shop')->enableCombinations && $this->product->hasCombinations()) {
-            ProductCombinationAsset::register($this->getView());
             $this->renderView = 'combinations';
         } else {
             $this->renderView = 'base-price';
+            $asset->js = [];
         }
     }
 
