@@ -238,7 +238,7 @@ class Product extends ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getProductPrices() {
-        return $this->hasMany(ProductPrice::className(), ['id' => 'price_id']);
+        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
     }
 
     /**
