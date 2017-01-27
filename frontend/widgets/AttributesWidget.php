@@ -47,9 +47,9 @@ class AttributesWidget extends Widget
     public $cartForm;
 
     /**
-     * @var array the HTML attributes of 'form' block.
+     * @var array
      */
-    public $options = [];
+    public $formConfig = ['action' => ['/cart/cart/add']];
     /**
      * @var array the HTML attributes for 'prices' container block.
      */
@@ -106,15 +106,13 @@ class AttributesWidget extends Widget
 
         $this->cartForm = new CartForm();
 
-        Html::addCssClass($this->options, $this->_formClass);
+        Html::addCssClass($this->formConfig['options'], $this->_formClass);
         Html::addCssClass($this->priceOptions, $this->_priceClass);
         Html::addCssClass($this->discountPriceOptions, $this->_discountPriceClass);
         Html::addCssClass($this->attributeContainerOptions, $this->_attributesContainerClass);
 
-        $this->form = ActiveForm::begin([
-            'action' => ['/cart/cart/add'],
-            'options' => $this->options
-        ]);
+
+        $this->form = ActiveForm::begin($this->formConfig);
         echo $this->renderHiddenInputs();
     }
 
