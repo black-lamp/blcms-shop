@@ -20,7 +20,7 @@ use yii\db\Expression;
  * @property string $update_time
  *
  * @property Product $product
- * @property CombinationAttribute[] $shopCombinationAttributes
+ * @property CombinationAttribute[] $combinationAttributes
  * @property CombinationImage[] $images
  * @property CombinationPrice $price
  * @property CombinationPrice[] $prices

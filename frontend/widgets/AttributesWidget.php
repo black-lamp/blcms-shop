@@ -47,9 +47,9 @@ class AttributesWidget extends Widget
     public $cartForm;
 
     /**
-     * @var array the HTML attributes of 'form' block.
+     * @var array
      */
-    public $options = [];
+    public $formConfig = ['action' => ['/cart/cart/add']];
     /**
      * @var array the HTML attributes for 'prices' container block.
      */
@@ -106,15 +106,13 @@ class AttributesWidget extends Widget
 
         $this->cartForm = new CartForm();
 
-        Html::addCssClass($this->options, $this->_formClass);
+        Html::addCssClass($this->formConfig['options'], $this->_formClass);
         Html::addCssClass($this->priceOptions, $this->_priceClass);
         Html::addCssClass($this->discountPriceOptions, $this->_discountPriceClass);
         Html::addCssClass($this->attributeContainerOptions, $this->_attributesContainerClass);
 
-        $this->form = ActiveForm::begin([
-            'action' => ['/cart/cart/add'],
-            'options' => $this->options
-        ]);
+
+        $this->form = ActiveForm::begin($this->formConfig);
         echo $this->renderHiddenInputs();
     }
 
@@ -189,17 +187,9 @@ class AttributesWidget extends Widget
             $items .= Html::beginTag('div', $this->attributeContainerOptions);
         }
 
-        $attributeTitle = '';
-        foreach ($this->product->combinations as $combination) {
-            $currentAttributeTitle = (!empty($combination->combinationAttributes[0]))
-                ? $combination->combinationAttributes[0]->productAttribute->translation->title
-                : '';
-            if ($attributeTitle != $currentAttributeTitle) {
-                $attributeTitle = $currentAttributeTitle;
-
-                $items .= Html::tag('p', $attributeTitle . ':', $this->attributeTitleOptions);
-                $items .= $this->renderAttributeItem($combination->combinationAttributes);
-            }
+        foreach ($this->product->productAttributes as $attribute) {
+            $items .= Html::tag('p', $attribute->translation->title . ':', $this->attributeTitleOptions);
+            $items .= $this->renderAttributeItem($attribute);
         }
 
         if (!empty($this->attributeContainerOptions)) {
@@ -223,22 +213,18 @@ class AttributesWidget extends Widget
     /**
      * TODO: render the color input, refactoring.
      *
-     * @param CombinationAttribute[] $attributes
+     * @param ShopAttribute $attribute
      * @return string
      */
-    private function renderAttributeItem($attributes)
+    private function renderAttributeItem($attribute)
     {
         $item = '';
         $productId = $this->product->id;
 
-        $productAttribute = (!empty($attributes[0]->productAttribute))
-            ? $attributes[0]->productAttribute
-            : new ShopAttribute();
-        $attributeType = $productAttribute->type_id;
-
-        $combinationsAttributes = $productAttribute->getProductCombinationAttributes(ArrayHelper::getColumn(
+        $combinationsAttributes = $attribute->getProductCombinationAttributes(ArrayHelper::getColumn(
             $this->product->combinations, 'id'
         ));
+        $attributeType = $attribute->type_id;
 
         $attributesItems = ArrayHelper::map($combinationsAttributes,
             function ($model) {
@@ -255,7 +241,7 @@ class AttributesWidget extends Widget
             case ShopAttributeType::TYPE_DROP_DOWN_LIST:
                 $item .= $this->form->field($this->cartForm, 'attribute_value_id')
                     ->dropDownList($attributesItems, [
-                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]"
+                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]"
                     ])
                     ->label(false);
                 break;
@@ -263,7 +249,7 @@ class AttributesWidget extends Widget
             case ShopAttributeType::TYPE_RADIO_BUTTON:
                 $item .= $this->form->field($this->cartForm, "attribute_value_id")
                     ->radioList($attributesItems, [
-                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
                         'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
                             $checked = $combinationsAttributes[$index]->combination->default;
 
@@ -286,7 +272,7 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return $model->productAttributeValue->translation->colorTexture->color;
                         }), [
-                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
                         'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
                             $checked = $combinationsAttributes[$index]->combination->default;
 
@@ -316,7 +302,7 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return $model->productAttributeValue->translation->colorTexture->getTextureFile();
                         }), [
-                        'name' => "CartForm[attribute_value_id][$productId-$productAttribute->id]",
+                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
                         'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
                             $checked = $combinationsAttributes[$index]->combination->default;
 
