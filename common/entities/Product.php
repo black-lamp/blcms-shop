@@ -267,7 +267,7 @@ class Product extends ActiveRecord
                 ->where(['product_id' => $this->id, 'user_group_id' => $userGroupId])
                 ->one();
             if (!empty($productPrice)) return $productPrice->price;
-            else throw new Exception('Price not found');
+            else return false;
         }
         else throw new Exception('User group id is empty');
     }
