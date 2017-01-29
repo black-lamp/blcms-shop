@@ -541,7 +541,7 @@ class ProductController extends Controller
                     'id' => $id
                 ]));
             }
-            return $this->actionIndex();
+            return $this->redirect(\Yii::$app->request->referrer);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
@@ -566,7 +566,7 @@ class ProductController extends Controller
                     'id' => $id
                 ]));
             }
-            return $this->actionIndex();
+            return $this->redirect(\Yii::$app->request->referrer);
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
