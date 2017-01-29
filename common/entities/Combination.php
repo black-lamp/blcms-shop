@@ -126,7 +126,7 @@ class Combination extends ActiveRecord
 
     /**
      * @param int $userGroupId
-     * @return array|null|ActiveRecord
+     * @return bool|mixed
      * @throws Exception
      */
     public function getPriceByUserGroup(int $userGroupId) {
@@ -135,7 +135,7 @@ class Combination extends ActiveRecord
                 ->where(['combination_id' => $this->id, 'user_group_id' => $userGroupId])
                 ->one();
             if (!empty($combinationPrice)) return $combinationPrice->price;
-            else throw new Exception('Price not found');
+            else return false;
         }
         else throw new Exception('User group id is empty');
     }
