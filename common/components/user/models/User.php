@@ -1,15 +1,17 @@
 <?php
-/**
- * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
- */
-
 namespace bl\cms\shop\common\components\user\models;
 
+use bl\cms\cart\frontend\components\user\UserMailer;
 use bl\cms\shop\common\entities\PartnerRequest;
 use dektrium\user\helpers\Password;
 use dektrium\user\models\Token;
 use dektrium\user\models\User as BaseModel;
 
+/**
+ * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
+ *
+ * @property-read UserMailer $mailer
+ */
 class User extends BaseModel
 {
 
@@ -130,4 +132,14 @@ class User extends BaseModel
     {
         return $this->hasOne(UserGroup::className(), ['id' => 'user_group_id']);
     }
+
+    /**
+     * @return UserMailer
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function getMailer()
+    {
+        return \Yii::$container->get(UserMailer::className());
+    }
+
 }
