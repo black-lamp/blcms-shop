@@ -70,7 +70,7 @@ class AttributesWidget extends Widget
     /**
      * @var array the HTML attributes for 'attribute title' block.
      */
-    public $attributeTitleOptions = [];
+    public $attributeTitleOptions = ['class' => 'attribute-title'];
     /**
      * @var array the HTML attributes for 'submit button'.
      */
@@ -132,9 +132,11 @@ class AttributesWidget extends Widget
      */
     private function renderHiddenInputs()
     {
-        $items = $this->form->field($this->cartForm, 'productId')->hiddenInput(['value' => $this->product->id])
+        $items = $this->form->field($this->cartForm, 'productId')
+            ->hiddenInput(['value' => $this->product->id])
             ->label(false);
-        $items .= $this->form->field($this->cartForm, 'count')->hiddenInput(['value' => self::DEFAULT_PRODUCT_COUNT])
+        $items .= $this->form->field($this->cartForm, 'count')
+            ->hiddenInput(['value' => self::DEFAULT_PRODUCT_COUNT])
             ->label(false);
 
         return $items;
@@ -427,7 +429,7 @@ addToCartForms.change(function() {
 });
 
 JS;
-
+        
         $this->view->registerJs($js, View::POS_END, __CLASS__);
     }
 }
