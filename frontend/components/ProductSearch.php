@@ -90,11 +90,17 @@ class ProductSearch extends Product
         if (isset($params['sort'])) {
             switch ($params['sort']) {
                 case self::SORT_CHEAP:
-                    $query->orderBy(['price' => SORT_ASC]);
+                    $query->joinWith('combinations.combinationPrices.price p');
+                    $query->joinWith('productPrices.price u');
+
+                    $query->orderBy(['u.price' => SORT_ASC, 'p.price' => SORT_ASC]);
                     break;
 
                 case self::SORT_EXPENSIVE:
-                    $query->orderBy(['price' => SORT_DESC]);
+                    $query->joinWith('combinations.combinationPrices.price p');
+                    $query->joinWith('productPrices.price u');
+
+                    $query->orderBy(['u.price' => SORT_DESC, 'p.price' => SORT_DESC]);
                     break;
 
                 case self::SORT_OLD:
