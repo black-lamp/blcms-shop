@@ -143,6 +143,13 @@ class Combination extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getCombinationPrices() {
+        return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCombinationAttributes()
     {
         return $this->hasMany(CombinationAttribute::className(), ['combination_id' => 'id']);
