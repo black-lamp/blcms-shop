@@ -27,7 +27,7 @@ class PartnersBootstrap implements BootstrapInterface
         }
         else {
             $profile = Profile::find()->where(['user_id' => Yii::$app->user->id])->one();
-            $partnerRequest = PartnerRequest::find()->where(['sender_id' => $profile->user_id])->one();
+            $partnerRequest = PartnerRequest::find()->where(['sender_id' => Yii::$app->user->id])->one();
             $partnerEmail = $profile->user->email;
         }
 

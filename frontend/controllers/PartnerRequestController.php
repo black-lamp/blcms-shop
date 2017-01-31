@@ -40,7 +40,7 @@ class PartnerRequestController extends Controller
             $profile = \Yii::createObject(Profile::className());
         } else {
             $user = User::findOne(Yii::$app->user->id);
-            $profile = Profile::findOne($user->id);
+            $profile = Profile::find()->where(['user_id' => $user->id])->one();
         }
 
         if (Yii::$app->request->isPost) {
@@ -65,7 +65,6 @@ class PartnerRequestController extends Controller
 
                 $partner->sender_id = $profile->user_id;
                 $partner->moderation_status = PartnerRequest::STATUS_ON_MODERATION;
-
                 $partner->save();
 
                 $this->trigger(self::EVENT_SEND, new PartnersEvents());
