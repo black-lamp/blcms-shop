@@ -7,6 +7,7 @@ use Exception;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\helpers\Url;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -36,7 +37,7 @@ class PartnersBootstrap implements BootstrapInterface
                 'partnerRequest' => $partnerRequest,
                 'profile' => $profile
             ])
-                ->setFrom($event->sender->module->senderEmail)
+                ->setFrom([$event->sender->module->senderEmail => \Yii::$app->name ?? Url::to(['/'], true)])
                 ->setTo($event->sender->module->partnerManagerEmail)
                 ->setSubject(Yii::t('shop', 'New partner request'))
                 ->send();
@@ -49,7 +50,7 @@ class PartnersBootstrap implements BootstrapInterface
                 'partnerRequest' => $partnerRequest,
                 'profile' => $profile
             ])
-                ->setFrom($event->sender->module->senderEmail)
+                ->setFrom([$event->sender->module->senderEmail => \Yii::$app->name ?? Url::to(['/'], true)])
                 ->setTo($partnerEmail)
                 ->setSubject(Yii::t('shop', 'Partner request'))
                 ->send();
