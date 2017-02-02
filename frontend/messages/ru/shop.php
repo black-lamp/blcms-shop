@@ -91,6 +91,7 @@ return [
     'Surname' => 'Фамилия',
     'The list is empty' => 'Список пуст',
     'This category does not have any products' => 'В этой категории нет товаров',
+    'This product is not available in this configuration' => 'Товар в данной конфигурации недоступен',
     'Title' => 'Название',
     'To cart' => 'В корзину',
     'Vendor' => 'Производитель',

@@ -31,6 +31,7 @@ use yii\widgets\ActiveForm;
  */
 class AttributesWidget extends Widget
 {
+    CONST NOT_FOUND_COMBINATION = 0;
     CONST DEFAULT_PRODUCT_COUNT = 1;
 
     /**
@@ -85,6 +86,14 @@ class AttributesWidget extends Widget
      * @var array
      */
     public $labelOptions = [];
+    /**
+     * @var string the message displayed if the combination was not found.
+     */
+    public $notAvailableMessage = '';
+    /**
+     * @var string the HTML attributes for 'notAvailableMessage' block.
+     */
+    public $notAvailableMessageOptions = ['style' => ['display' => 'none']];
 
     /**
      * @var string the default CSS classes.
@@ -94,6 +103,7 @@ class AttributesWidget extends Widget
     private $_attributesContainerClass = 'product-attributes';
     private $_priceClass = 'product-price';
     private $_discountPriceClass = 'product-discount-price';
+    private $_notAvailableMessageClass = 'not-available-message';
 
     /**
      * @inheritDoc
@@ -106,10 +116,15 @@ class AttributesWidget extends Widget
 
         $this->cartForm = new CartForm();
 
+        if (empty($this->notAvailableMessage)) {
+            $this->notAvailableMessage = Yii::t('shop', 'This product is not available in this configuration');
+        }
+
         Html::addCssClass($this->formConfig['options'], $this->_formClass);
         Html::addCssClass($this->priceOptions, $this->_priceClass);
         Html::addCssClass($this->discountPriceOptions, $this->_discountPriceClass);
         Html::addCssClass($this->attributeContainerOptions, $this->_attributesContainerClass);
+        Html::addCssClass($this->notAvailableMessageOptions, $this->_notAvailableMessageClass);
 
 
         $this->form = ActiveForm::begin($this->formConfig);
@@ -173,6 +188,50 @@ class AttributesWidget extends Widget
     }
 
     /**
+     * Renders 'price item' using product price from default combination.
+     *
+     * @return string
+     */
+    private function renderCombinationPriceItem() {
+        $item = Html::tag('strong',
+            Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->discountPrice),
+            $this->discountPriceOptions
+        );
+
+        if (empty($this->product->defaultCombination->price->discount_type_id)) {
+            Html::addCssStyle($this->priceOptions, ['display' => 'none']);
+        }
+
+        $item .= Html::tag('strike',
+            Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->oldPrice),
+            $this->priceOptions
+        );
+
+        return $item;
+    }
+
+    /**
+     * Renders 'price item' using default product price.
+     *
+     * @return string
+     */
+    private function renderDefaultPriceItem() {
+        $item = Html::tag('strong',
+            Yii::$app->formatter->asCurrency($this->product->getDiscountPrice()),
+            $this->discountPriceOptions
+        );
+
+        if (!empty($this->product->price->discount_type_id)) {
+            $item .= Html::tag('strike',
+                Yii::$app->formatter->asCurrency($this->product->getOldPrice()),
+                $this->priceOptions
+            );
+        }
+
+        return $item;
+    }
+
+    /**
      * Renders 'attributes' block.
      * TODO: refactoring
      *
@@ -198,6 +257,8 @@ class AttributesWidget extends Widget
             $items .= Html::endTag('div');
         }
 
+        $items .= Html::tag('p', $this->notAvailableMessage, $this->notAvailableMessageOptions);
+
         return $items;
     }
 
@@ -213,7 +274,7 @@ class AttributesWidget extends Widget
 
 
     /**
-     * TODO: render the color input, refactoring.
+     * Renders 'attribute item' input
      *
      * @param ShopAttribute $attribute
      * @return string
@@ -327,49 +388,6 @@ class AttributesWidget extends Widget
         return $item;
     }
 
-    /**
-     * Renders 'price item' using product price from default combination.
-     *
-     * @return string
-     */
-    private function renderCombinationPriceItem() {
-        $item = Html::tag('strong',
-            Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->discountPrice),
-            $this->discountPriceOptions
-        );
-
-        if (empty($this->product->defaultCombination->price->discount_type_id)) {
-            Html::addCssStyle($this->priceOptions, ['display' => 'none']);
-        }
-
-        $item .= Html::tag('strike',
-            Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->oldPrice),
-            $this->priceOptions
-        );
-
-        return $item;
-    }
-
-    /**
-     * Renders 'price item' using default product price.
-     *
-     * @return string
-     */
-    private function renderDefaultPriceItem() {
-        $item = Html::tag('strong',
-            Yii::$app->formatter->asCurrency($this->product->getDiscountPrice()),
-            $this->discountPriceOptions
-        );
-
-        if (!empty($this->product->price->discount_type_id)) {
-            $item .= Html::tag('strike',
-                Yii::$app->formatter->asCurrency($this->product->getOldPrice()),
-                $this->priceOptions
-            );
-        }
-
-        return $item;
-    }
 
     /**
      * Registers necessary JavaScript.
@@ -378,6 +396,7 @@ class AttributesWidget extends Widget
         $js = <<<JS
                 
 var addToCartForms = $('.$this->_formClass');
+var animDuration = 150;
 
 addToCartForms.change(function() {
     var productId = $(this).find('#cartform-productid').val();
@@ -385,6 +404,9 @@ addToCartForms.change(function() {
     var discountPrice = $(this).find('.$this->_discountPriceClass');
     var checkedValues = $(this).find('input:checked');
     var selectedValues = $(this).find('option:selected');
+    var countInput = $(this).find('input[name="CartForm[count]"]');
+    var submitBtn = $(this).find('button[type="submit"]');
+    var notAvailable = $(this).find('.$this->_notAvailableMessageClass');
     var sliderThumbs = $('#productImageSliderThumbs');
     var sku = $('.$this->skuCssClass');
 
@@ -407,27 +429,39 @@ addToCartForms.change(function() {
             currencyFormatting: true
         },
         success: function (data) {
-            data = JSON.parse(data);
+            if (data != 0) {
+                notAvailable.hide("fast");
+                countInput.show(animDuration);
+                discountPrice.show(animDuration);
+                submitBtn.show(animDuration);
             
-            discountPrice.html(data.newPrice);
+                data = JSON.parse(data);
+            
+                discountPrice.html(data.newPrice);
           
-            if (data.oldPrice == data.newPrice) {
-                price.hide(150);
+                if (data.oldPrice == data.newPrice) {
+                    price.hide(animDuration);
+                } else {
+                    price.html(data.oldPrice);
+                    price.show(300);
+                    price.css('display', 'block');
+                }
+                
+                sku.html(data.sku);
+                $(sliderThumbs).find("img[src='" + data.image + "']").click();
             } else {
-                price.html(data.oldPrice);
-                price.show(300);
-                price.css('display', 'block');
+                countInput.hide("fast");
+                discountPrice.hide("fast");
+                price.hide("fast");
+                submitBtn.hide("fast");
+                notAvailable.show("fast");
             }
-            
-            sku.html(data.sku);
-            $(sliderThumbs).find("img[src='" + data.image + "']").click();
         },
         error: function (data) {
             console.log(data);
         }
     });
 });
-
 JS;
         
         $this->view->registerJs($js, View::POS_END, __CLASS__);

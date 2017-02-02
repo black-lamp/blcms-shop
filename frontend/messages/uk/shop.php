@@ -96,6 +96,7 @@ return [
     'Surname' => 'Прізвище',
     'The list is empty' => 'Список порожній',
     'This category does not have any products' => 'У цій категорії немає товарів',
+    'This product is not available in this configuration' => 'Товар у цій конфігурації недоступний',
     'Title' => 'Назва',
     'To cart' => 'У кошик',
     'Vendor' => 'Виробник',
