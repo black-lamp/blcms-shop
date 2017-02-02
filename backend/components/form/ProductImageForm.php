@@ -28,7 +28,7 @@ class ProductImageForm extends Model
     public function rules()
     {
         return [
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize'=>'3000000'],
+            [['image'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize'=>'3000000'],
             [['link', 'alt1', 'alt2'], 'string', 'skipOnEmpty' => true]
         ];
     }
@@ -64,7 +64,7 @@ class ProductImageForm extends Model
         if (exif_imagetype($link) == IMAGETYPE_JPEG || exif_imagetype($link) == IMAGETYPE_PNG) {
 
             if (!empty($link)) {
-                
+
                 $baseName = Product::generateImageName($link);
 
                 if (!file_exists($dir)) mkdir($dir);
