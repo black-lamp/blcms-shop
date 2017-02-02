@@ -56,131 +56,132 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <?php endif; ?>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h1><?= Html::encode($this->title) ?></h1>
-    </div>
-
-    <div class="panel-body">
-
-        <div class="col-md-6">
-            <?php $form = ActiveForm::begin(); ?>
-
-            <?= $form->field($attributeTranslation, 'title')->textInput() ?>
-
-            <!--ATTRIBUTE TYPE-->
-            <?php if(!$attribute->isNewRecord) {
-                if ($attribute->type_id == ShopAttributeType::TYPE_DROP_DOWN_LIST ||
-                    $attribute->type_id == ShopAttributeType::TYPE_RADIO_BUTTON) {
-                    $options = ['options' => [
-                        ShopAttributeType::TYPE_COLOR => ['disabled' => true],
-                        ShopAttributeType::TYPE_TEXTURE => ['disabled' => true],
-                    ]];
-                }
-                else {
-                    $options = ["disabled" => "disabled"];
-                }
-            }
-            ?>
-
-            <?= $form->field($attribute, 'type_id')
-                ->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
-
-            <div class="form-group">
-                <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1><?= Html::encode($this->title) ?></h1>
         </div>
 
-        <?php if (!empty($dataProvider)) : ?>
-        <div class="col-md-6">
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
-                'options' => [
-                    'class' => 'table table-hover table-striped table-bordered'
-                ],
-                'tableOptions' => [
-                    'id' => 'my-grid',
-                    'class' => 'table table-hover'
-                ],
-                'summary' => "",
-                'columns' => [
-                    'id',
-                    [
-                        'attribute' => 'value',
-                        'value' => function ($model) {
+        <div class="panel-body">
 
-                            $attribute = ShopAttribute::findOne($model->attribute_id);
-                            if ($attribute->type_id == ShopAttribute::TYPE_COLOR) {
+            <div class="col-md-6">
+                <?php $form = ActiveForm::begin(); ?>
 
-                                $color = ShopAttributeValueColorTexture::findOne($model->translation->value)->color;
-                                return Html::tag('div', '', array('style' => 'width: 50px; height: 50px; background-color:' . $color));
-                            }
-                            if (ShopAttribute::findOne($model->attribute_id)->type_id == ShopAttribute::TYPE_TEXTURE) {
-                                return ShopAttributeValueColorTexture::findOne($model->translation->value)->getAttributeTexture();
-                            }
-                            return $model->translation->value ?? '';
-                        },
-                        'format' => 'raw'
-                    ],
-                    /*ACTIONS*/
-                    [
-                        'headerOptions' => ['class' => 'text-center col-md-4'],
-                        'attribute' => \Yii::t('shop', 'Control'),
+                <?= $form->field($attributeTranslation, 'title')->textInput() ?>
 
-                        'value' => function ($model) {
+                <!--ATTRIBUTE TYPE-->
+                <?php $options = []; ?>
+                <?php if(!$attribute->isNewRecord) {
+                    if ($attribute->type_id == ShopAttributeType::TYPE_DROP_DOWN_LIST ||
+                        $attribute->type_id == ShopAttributeType::TYPE_RADIO_BUTTON) {
+                        $options = ['options' => [
+                            ShopAttributeType::TYPE_COLOR => ['disabled' => true],
+                            ShopAttributeType::TYPE_TEXTURE => ['disabled' => true],
+                        ]];
+                    }
+                    else {
+                        $options = ["disabled" => "disabled"];
+                    }
+                }
+                ?>
 
-                            return \bl\cms\shop\widgets\ManageButtons::widget([
-                                'model' => $model,
-                                'action' => 'save-value',
-                                'deleteUrl' => Url::to(['remove-attribute-value', 'attributeValueId' => $model->id])
-                            ]);
-                        },
-                        'format' => 'raw',
-                        'contentOptions' => ['class' => 'col-md-2 text-center'],
-                    ],
-                ]
-            ]);
-            ?>
-
-            <div class="col-md-12">
-                <?php $valueForm = ActiveForm::begin([
-                    'method' => 'post',
-                    'options' => ['data-pjax' => false, 'enctype' => 'multipart/form-data'],
-                    'action' => [
-                        'attribute/add-value',
-                        'attrId' => $attribute->id,
-                        'languageId' => $selectedLanguage->id
-                    ],
-                ]); ?>
-
-                <?php if ($attribute->type_id == 3) : ?>
-                    <?= $valueForm->field($attributeTextureModel, 'color')->widget(ColorInput::classname(), [
-                        'options' => ['placeholder' => \Yii::t('shop', 'Select color'), 'value' => '#00ff00'],
-                    ]); ?>
-
-                <?php elseif ($attribute->type_id == 4) : ?>
-                    <?= $valueForm->field($attributeTextureModel, 'imageFile')->widget(FileInput::classname(), [
-                        'options' => ['accept' => 'image/*'],
-                    ]); ?>
-                <?php else : ?>
-                    <?= $valueForm->field($valueModelTranslation, 'value')
-                        ->textInput(['maxlength' => true, 'class' => "form-control"])->label(false) ?>
-                <?php endif; ?>
+                <?= $form->field($attribute, 'type_id')
+                    ->dropDownList(ArrayHelper::map($attributeType, 'id', 'title'), $options); ?>
 
                 <div class="form-group">
-                    <?= Html::submitButton($valueModel->isNewRecord ?
-                        Yii::t('shop', 'Add') : Yii::t('shop', 'Update'), ['class' => 'col-md-12 pjax btn btn-primary']) ?>
+                    <?= Html::submitButton($attribute->isNewRecord ? Yii::t('shop', 'Create') : Yii::t('shop', 'Update'), ['class' => $attribute->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
                 </div>
 
                 <?php ActiveForm::end(); ?>
             </div>
+
+            <?php if (!empty($dataProvider)) : ?>
+                <div class="col-md-6">
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],
+                        'options' => [
+                            'class' => 'table table-hover table-striped table-bordered'
+                        ],
+                        'tableOptions' => [
+                            'id' => 'my-grid',
+                            'class' => 'table table-hover'
+                        ],
+                        'summary' => "",
+                        'columns' => [
+                            'id',
+                            [
+                                'attribute' => 'value',
+                                'value' => function ($model) {
+
+                                    $attribute = ShopAttribute::findOne($model->attribute_id);
+                                    if ($attribute->type_id == ShopAttribute::TYPE_COLOR) {
+
+                                        $color = ShopAttributeValueColorTexture::findOne($model->translation->value)->color;
+                                        return Html::tag('div', '', array('style' => 'width: 50px; height: 50px; background-color:' . $color));
+                                    }
+                                    if (ShopAttribute::findOne($model->attribute_id)->type_id == ShopAttribute::TYPE_TEXTURE) {
+                                        return ShopAttributeValueColorTexture::findOne($model->translation->value)->getAttributeTexture();
+                                    }
+                                    return $model->translation->value ?? '';
+                                },
+                                'format' => 'raw'
+                            ],
+                            /*ACTIONS*/
+                            [
+                                'headerOptions' => ['class' => 'text-center col-md-4'],
+                                'attribute' => \Yii::t('shop', 'Control'),
+
+                                'value' => function ($model) {
+
+                                    return \bl\cms\shop\widgets\ManageButtons::widget([
+                                        'model' => $model,
+                                        'action' => 'save-value',
+                                        'deleteUrl' => Url::to(['remove-attribute-value', 'attributeValueId' => $model->id])
+                                    ]);
+                                },
+                                'format' => 'raw',
+                                'contentOptions' => ['class' => 'col-md-2 text-center'],
+                            ],
+                        ]
+                    ]);
+                    ?>
+
+                    <div class="col-md-12">
+                        <?php $valueForm = ActiveForm::begin([
+                            'method' => 'post',
+                            'options' => ['data-pjax' => false, 'enctype' => 'multipart/form-data'],
+                            'action' => [
+                                'attribute/add-value',
+                                'attrId' => $attribute->id,
+                                'languageId' => $selectedLanguage->id
+                            ],
+                        ]); ?>
+
+                        <?php if ($attribute->type_id == 3) : ?>
+                            <?= $valueForm->field($attributeTextureModel, 'color')->widget(ColorInput::classname(), [
+                                'options' => ['placeholder' => \Yii::t('shop', 'Select color'), 'value' => '#00ff00'],
+                            ]); ?>
+
+                        <?php elseif ($attribute->type_id == 4) : ?>
+                            <?= $valueForm->field($attributeTextureModel, 'imageFile')->widget(FileInput::classname(), [
+                                'options' => ['accept' => 'image/*'],
+                            ]); ?>
+                        <?php else : ?>
+                            <?= $valueForm->field($valueModelTranslation, 'value')
+                                ->textInput(['maxlength' => true, 'class' => "form-control"])->label(false) ?>
+                        <?php endif; ?>
+
+                        <div class="form-group">
+                            <?= Html::submitButton($valueModel->isNewRecord ?
+                                Yii::t('shop', 'Add') : Yii::t('shop', 'Update'), ['class' => 'col-md-12 pjax btn btn-primary']) ?>
+                        </div>
+
+                        <?php ActiveForm::end(); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
     </div>
-</div>
 
 <?= $this->registerCss('
 img.texture {
