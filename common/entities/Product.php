@@ -35,6 +35,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $views
  * @property integer $popular
  * @property integer $price_id
+ * @property integer $number
  *
  * @property Category $category
  * @property Param[] $params
@@ -94,7 +95,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['position', 'category_id', 'vendor_id', 'country_id', 'status', 'availability', 'owner', 'views', 'price_id'], 'integer'],
+            [['position', 'category_id', 'vendor_id', 'country_id', 'status', 'availability', 'owner', 'views', 'price_id', 'number'], 'integer'],
             [['sale', 'popular'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
             [['sku'], 'string', 'max' => 255],
@@ -154,6 +155,7 @@ class Product extends ActiveRecord
             'views' => Yii::t('shop', 'Views'),
             'popular' => Yii::t('shop', 'Popular'),
             'price_id' => Yii::t('shop', 'Price'),
+            'number' => Yii::t('shop', 'Number'),
         ];
     }
 

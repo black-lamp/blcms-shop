@@ -18,8 +18,11 @@ use yii\db\Expression;
  * @property integer $default
  * @property string $creation_time
  * @property string $update_time
+ * @property integer $availability
+ * @property integer $number
  *
  * @property Product $product
+ * @property ProductAvailability $combinationAvailability
  * @property CombinationAttribute[] $combinationAttributes
  * @property CombinationImage[] $images
  * @property CombinationPrice $price
@@ -64,10 +67,11 @@ class Combination extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'default'], 'integer'],
+            [['product_id', 'default', 'availability', 'number'], 'integer'],
             [['sku'], 'string', 'max' => 255],
             [['creation_time', 'update_time'], 'safe'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['availability'], 'exist', 'skipOnError' => true, 'targetClass' => ProductAvailability::className(), 'targetAttribute' => ['availability' => 'id']],
         ];
     }
 
@@ -81,6 +85,8 @@ class Combination extends ActiveRecord
             'product_id' => Yii::t('shop', 'Product'),
             'sku' => Yii::t('shop', 'SKU'),
             'default' => Yii::t('shop', 'Default'),
+            'availability' => Yii::t('shop', 'Availability'),
+            'number' => Yii::t('shop', 'Number'),
         ];
     }
 
@@ -90,6 +96,14 @@ class Combination extends ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationAvailability()
+    {
+        return $this->hasOne(ProductAvailability::className(), ['id' => 'availability']);
     }
 
     /**
@@ -189,12 +203,24 @@ class Combination extends ActiveRecord
      * Finds default combination for one product and makes it not default.
      */
     public function findDefaultCombinationAndUndefault() {
-        $defaultProductCombination = Combination::find()
-            ->where(['product_id' => $this->product_id, 'default' => true])
-            ->andWhere(['!=', 'id', $this->id])->one();
-        if (!empty($defaultProductCombination)) {
-            $defaultProductCombination->default = 0;
-            if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+        if (!empty($this->id)) {
+            $defaultProductCombinations = Combination::find()
+                ->where(['product_id' => $this->product_id, 'default' => true])
+                ->andWhere(['!=', 'id', $this->id])
+                ->all();
+        }
+        else {
+            $defaultProductCombinations = Combination::find()
+                ->where(['product_id' => $this->product_id, 'default' => true])
+                ->all();
+        }
+
+        if (!empty($defaultProductCombinations)) {
+            foreach ($defaultProductCombinations as $defaultProductCombination) {
+                $defaultProductCombination->default = 0;
+                if ($defaultProductCombination->validate()) $defaultProductCombination->save();
+            }
+
         }
     }
 
@@ -202,6 +228,7 @@ class Combination extends ActiveRecord
      * If there are not combinations in product, sets this combination as default.
      */
     public function setDefaultOrNotDefault() {
+
         if ($this->default) $this->findDefaultCombinationAndUndefault();
         else {
             $productCombinations = Combination::find()
