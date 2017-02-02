@@ -157,12 +157,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ]); ?>
 
-                        <?php if ($attribute->type_id == 3) : ?>
+                        <?php if ($attribute->type_id == ShopAttributeType::TYPE_COLOR ||
+                            $attribute->type_id == ShopAttributeType::TYPE_TEXTURE): ?>
+                            <?= $valueForm->field($attributeTextureModel, 'title')->textInput(); ?>
+                        <?php endif; ?>
+
+                        <?php if ($attribute->type_id == ShopAttributeType::TYPE_COLOR) : ?>
                             <?= $valueForm->field($attributeTextureModel, 'color')->widget(ColorInput::classname(), [
                                 'options' => ['placeholder' => \Yii::t('shop', 'Select color'), 'value' => '#00ff00'],
                             ]); ?>
 
-                        <?php elseif ($attribute->type_id == 4) : ?>
+                        <?php elseif ($attribute->type_id == ShopAttributeType::TYPE_TEXTURE) : ?>
                             <?= $valueForm->field($attributeTextureModel, 'imageFile')->widget(FileInput::classname(), [
                                 'options' => ['accept' => 'image/*'],
                             ]); ?>

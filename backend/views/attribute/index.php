@@ -27,7 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
     <div class="panel-body">
-        <?php Pjax::begin(); ?>    <?= GridView::widget([
+        <?php Pjax::begin(); ?>
+        <?= GridView::widget([
             'dataProvider' => $dataProvider,
 //            'filterModel' => $searchModel,
             'filterRowOptions' => ['class' => 'm-b-sm m-t-sm'],

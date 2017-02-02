@@ -220,6 +220,7 @@ class AttributeController extends Controller
                             $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
                             $colorTexture->texture = $attributeTextureModel->upload();
                         }
+                        $colorTexture->title = $attributeTextureModel->title;
                         if ($colorTexture->validate()) {
                             $colorTexture->save();
                             $attributeValueTranslation->value = (string)$colorTexture->id;
@@ -284,12 +285,15 @@ class AttributeController extends Controller
 
                 if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR || $attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                     $colorTexture = new ShopAttributeValueColorTexture();
+
                     if ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
                         $colorTexture->color = $attributeTextureModel->color;
                     } elseif ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                         $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
                         $colorTexture->texture = $attributeTextureModel->upload();
                     }
+                    $colorTexture->title = $attributeTextureModel->title;
+
                     if ($colorTexture->validate()) {
                         $colorTexture->save();
                         $attributeValueTranslation->value = (string)$colorTexture->id;

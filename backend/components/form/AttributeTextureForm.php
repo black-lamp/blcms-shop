@@ -16,11 +16,12 @@ class AttributeTextureForm extends Model
      */
     public $imageFile;
     public $color;
+    public $title;
 
     public function rules()
     {
         return [
-            [['color'], 'string'],
+            [['color', 'title'], 'string'],
             [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
         ];
     }

@@ -5,6 +5,7 @@
  * @var $attributeValueTranslation \bl\cms\shop\common\entities\ShopAttributeValueTranslation
  * @var $languageId integer
  */
+use bl\cms\shop\common\entities\ShopAttributeType;
 use kartik\file\FileInput;
 use kartik\widgets\ColorInput;
 use yii\helpers\Html;
@@ -25,6 +26,15 @@ use yii\widgets\ActiveForm;
         'id' => $attributeValueTranslation->shopAttributeValue->id
     ],
 ]); ?>
+
+<?php if ($attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == ShopAttributeType::TYPE_COLOR ||
+    $attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == ShopAttributeType::TYPE_TEXTURE): ?>
+
+    <?= $valueForm->field($attributeTextureModel, 'title')->textInput([
+        'value' => (!empty($attributeValueTranslation->shopAttributeValue->getTranslation($languageId))) ?
+            $attributeValueTranslation->shopAttributeValue->getTranslation($languageId)->colorTexture->title : ''
+    ]); ?>
+<?php endif; ?>
 
 <?php if ($attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == 3) : ?>
     <?= $valueForm->field($attributeTextureModel, 'color')->widget(ColorInput::classname(), [

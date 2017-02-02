@@ -12,7 +12,8 @@ use yii\helpers\Html;
  * @property integer $id
  * @property string $color
  * @property string $texture
- * 
+ * @property string $title
+ *
  * @property ShopAttributeValueTranslation $translation
  */
 class ShopAttributeValueColorTexture extends ActiveRecord
@@ -31,7 +32,7 @@ class ShopAttributeValueColorTexture extends ActiveRecord
     public function rules()
     {
         return [
-            [['color', 'texture'], 'string', 'max' => 255],
+            [['color', 'texture', 'title'], 'string', 'max' => 255],
         ];
     }
 
@@ -44,6 +45,7 @@ class ShopAttributeValueColorTexture extends ActiveRecord
             'id' => Yii::t('shop', 'ID'),
             'color' => Yii::t('shop', 'Color'),
             'texture' => Yii::t('shop', 'Texture'),
+            'title' => Yii::t('shop', 'Title')
         ];
     }
 
