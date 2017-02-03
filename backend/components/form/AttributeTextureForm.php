@@ -22,7 +22,7 @@ class AttributeTextureForm extends Model
     {
         return [
             [['color', 'title'], 'string'],
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
+            [['imageFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
         ];
     }
 
@@ -36,19 +36,24 @@ class AttributeTextureForm extends Model
         ];
     }
 
+    /**
+     * @return bool|string
+     */
     public function upload()
     {
-        $dir = Yii::getAlias('@frontend/web/images/shop/attribute-texture/');
-        if ($this->validate()) {
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
+        if (!empty($this->imageFile)) {
+
+            $dir = Yii::getAlias('@frontend/web/images/shop/attribute-texture/');
+            if ($this->validate()) {
+                if (!file_exists($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                $fileName = self::generateTextureName();
+                $this->imageFile->saveAs($dir . $fileName . '.' . $this->imageFile->extension);
+                return $fileName . '.' . $this->imageFile->extension;
             }
-            $fileName = self::generateTextureName();
-            $this->imageFile->saveAs($dir . $fileName . '.' . $this->imageFile->extension);
-            return $fileName . '.' . $this->imageFile->extension;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public static function generateTextureName() {

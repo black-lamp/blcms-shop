@@ -116,11 +116,17 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $attribute = ShopAttribute::findOne($model->attribute_id);
                                     if ($attribute->type_id == ShopAttribute::TYPE_COLOR) {
 
-                                        $color = ShopAttributeValueColorTexture::findOne($model->translation->value)->color;
-                                        return Html::tag('div', '', array('style' => 'width: 50px; height: 50px; background-color:' . $color));
+                                        $colorModel = ShopAttributeValueColorTexture::findOne($model->translation->value);
+                                        $color = $colorModel->color;
+                                        $title = $colorModel->title;
+                                        return Html::tag('div', '', array('style' => 'width: 50px; height: 50px; background-color:' . $color)) .
+                                        "<p><i>$title</i></p>";
                                     }
                                     if (ShopAttribute::findOne($model->attribute_id)->type_id == ShopAttribute::TYPE_TEXTURE) {
-                                        return ShopAttributeValueColorTexture::findOne($model->translation->value)->getAttributeTexture();
+                                        $textureModel = ShopAttributeValueColorTexture::findOne($model->translation->value);
+                                        $texture = $textureModel->getAttributeTexture();
+                                        $title = $textureModel->title;
+                                        return $texture . "<p><i>$title</i></p>";
                                     }
                                     return $model->translation->value ?? '';
                                 },

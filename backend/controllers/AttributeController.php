@@ -271,7 +271,6 @@ class AttributeController extends Controller
         $attributeTextureModel = new AttributeTextureForm();
 
 
-
         if (\Yii::$app->request->isPost) {
             $post = Yii::$app->request->post();
             if ($attributeValueTranslation->load($post)) {
@@ -290,7 +289,14 @@ class AttributeController extends Controller
                         $colorTexture->color = $attributeTextureModel->color;
                     } elseif ($attributeValue->shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
                         $attributeTextureModel->imageFile = UploadedFile::getInstance($attributeTextureModel, 'imageFile');
-                        $colorTexture->texture = $attributeTextureModel->upload();
+                        $texture = $attributeTextureModel->upload();
+                        if ($texture) {
+                            $colorTexture->texture = $texture;
+                        } else {
+                            $colorTexture->texture = (!empty($attributeValueTranslation->colorTexture)) ?
+                                $attributeValueTranslation->colorTexture->texture :
+                                $attributeValueTranslation->shopAttributeValue->translation->colorTexture->texture;
+                        }
                     }
                     $colorTexture->title = $attributeTextureModel->title;
 

@@ -44,7 +44,9 @@ use yii\widgets\ActiveForm;
 
 <?php elseif ($attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == 4) : ?>
     <div>
-        <?= $attributeValueTranslation->colorTexture->attributeTexture; ?>
+        <?= (!empty($attributeValueTranslation->colorTexture)) ?
+            $attributeValueTranslation->colorTexture->attributeTexture :
+            $attributeValueTranslation->shopAttributeValue->translation->colorTexture->attributeTexture; ?>
     </div>
     <?= $valueForm->field($attributeTextureModel, 'imageFile')->widget(FileInput::classname(), [
         'options' => ['accept' => 'image/*'],
