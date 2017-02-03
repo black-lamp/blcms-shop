@@ -341,7 +341,9 @@ class AttributesWidget extends Widget
 
                             $options = $this->textureInputOptions;
                             $labelOptions = $this->labelOptions;
+                            $title = $combinationsAttributes[$index]->productAttributeValue->translation->colorTexture->title ?? '';
 
+                            $options['title'] = $title;
                             Html::addCssStyle($options, ['background-color' => $label]);
                             Html::addCssClass($labelOptions, 'color');
 
@@ -371,7 +373,9 @@ class AttributesWidget extends Widget
 
                             $options = $this->textureInputOptions;
                             $labelOptions = $this->labelOptions;
+                            $title = $combinationsAttributes[$index]->productAttributeValue->translation->colorTexture->title ?? '';
 
+                            $options['title'] = $title;
                             Html::addCssStyle($options, ['background-image' => "url($label)"]);
                             Html::addCssClass($labelOptions, 'texture');
 
