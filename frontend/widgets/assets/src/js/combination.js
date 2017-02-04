@@ -1,13 +1,9 @@
 $(document).ready(function () {
 
-    var widget = $('.product-prices-widget');
-    var notAvailableText = $(widget).data('not-available-text');
-    var countInput = $('#cartform-count');
-
     $('.quantity').change(function () {
-        var widget = $(this).closest('.product-prices-widget');
-        var thisCombinationBlock = $(widget).find('.combinations-values');
-        var newPriceTag = $(thisCombinationBlock).find('#newPrice');
+        var widget = this.closest('.product-prices-widget');
+        var newPriceTag = $(widget).find('#newPrice');
+        var countInput = $(widget).find('#cartform-count');
         var currencyCode = $(newPriceTag).data('currency-code');
 
         countInput.change(function () {
@@ -23,6 +19,8 @@ $(document).ready(function () {
     $('.combinations-values').change(function () {
         var productId = $(this).data('product-id');
         var thisWidget = $(this).closest('.product-prices-widget');
+        var countInput = $(thisWidget).find('#cartform-count');
+        var notAvailableText = $(thisWidget).data('not-available-text');
         var addToCartButton = $(thisWidget).find('#add-to-cart-button');
         var oldPriceTag = $(this).find('#oldPrice');
         var productImage = $('#main-image');
