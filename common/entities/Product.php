@@ -172,7 +172,7 @@ class Product extends ActiveRecord
      */
     public function getParams()
     {
-        return $this->hasMany(Param::className(), ['product_id' => 'id']);
+        return $this->hasMany(Param::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
     /**
