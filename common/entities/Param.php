@@ -2,11 +2,14 @@
 namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use yii\db\ActiveRecord;
+use yii2tech\ar\position\PositionBehavior;
+
 /**
  * @author Albert Gainutdinov
  *
  * @property integer $id
  * @property integer $product_id
+ * @property integer $position
  *
  * @property Product $product
  * @property ParamTranslation $translation
@@ -27,13 +30,20 @@ class Param extends ActiveRecord
                 'translationClass' => ParamTranslation::className(),
                 'relationColumn' => 'param_id'
             ],
+            'positionBehavior' => [
+                'class' => PositionBehavior::className(),
+                'positionAttribute' => 'position',
+                'groupAttributes' => [
+                    'product_id'
+                ],
+            ],
         ];
     }
 
     public function rules()
     {
         return [
-            ['product_id', 'number']
+            [['product_id', 'position'], 'number']
         ];
     }
 
