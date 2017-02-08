@@ -99,6 +99,7 @@ class Product extends ActiveRecord
             [['sale', 'popular'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
             [['sku'], 'string', 'max' => 255],
+            [['sku'], 'trim'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
