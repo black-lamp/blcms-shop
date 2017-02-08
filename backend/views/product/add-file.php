@@ -91,14 +91,16 @@ use yii\widgets\Pjax;
                 <!--TYPE-->
                 <td>
                     <?php if (!empty($file->translation)): ?>
-                        <?= $file->getTranslation($language->id)->type ?>
+                        <?= (!empty($file->getTranslation($language->id))) ?
+                            $file->getTranslation($language->id)->type : '' ?>
                     <?php endif; ?>
                 </td>
 
                 <!--DESCRIPTION-->
                 <td>
                     <?php if (!empty($file->translation)): ?>
-                        <?= $file->getTranslation($language->id)->description ?>
+                        <?= (!empty($file->getTranslation($language->id))) ?
+                            $file->getTranslation($language->id)->description : '' ?>
                     <?php endif; ?>
                 </td>
 
