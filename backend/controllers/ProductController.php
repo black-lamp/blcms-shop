@@ -19,7 +19,7 @@ use bl\cms\shop\backend\components\form\{
     CombinationAttributeForm, CombinationImageForm, ProductFileForm, ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, CombinationPrice, CombinationTranslation, Param, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
+    Category, CategoryTranslation, CombinationPrice, CombinationTranslation, ParamTranslation, Product, ProductAdditionalProduct, Combination, CombinationAttribute, CombinationImage, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
 };
 
 /**
@@ -856,6 +856,86 @@ class ProductController extends Controller
 
                 'params' => [
                     'fileList' => $product->files,
+                    'fileModel' => $fileForm,
+                    'fileTranslationModel' => $fileTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]
+            ]);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Users which have 'updateOwnProduct' permission can add file only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can add file for all Product models.
+     *
+     * @param integer $productId
+     * @param integer $fileId
+     * @param integer $languageId
+     * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws Exception
+     */
+    public function actionUpdateFile($productId, $fileId, $languageId)
+    {
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($productId)->owner])) {
+
+            $file = ProductFile::findOne(['id' => $fileId]);
+            if (!empty($file)) {
+                $product = $file->product;
+
+                if (empty($file->getTranslation($languageId))) {
+                    $fileTranslation = new ProductFileTranslation();
+                    $fileTranslation->language_id = $languageId;
+                    $fileTranslation->product_file_id = $fileId;
+                }
+                else {
+                    $fileTranslation = $file->getTranslation($languageId);
+                }
+            }
+            else throw new NotFoundHttpException();
+
+            $fileForm = new ProductFileForm();
+
+            $selectedLanguage = Language::findOne($languageId);
+
+            if (\Yii::$app->request->isPost) {
+                $post = \Yii::$app->request->post();
+
+                if ($fileTranslation->load($post)) {
+
+                    if ($file->save()) {
+                        $fileTranslation->product_file_id = $file->id;
+                        $fileTranslation->language_id = $selectedLanguage->id;
+
+                        if (!$fileTranslation->save())
+                            throw new Exception(var_dump($fileTranslation->errors));
+                        $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
+                            'id' => $file->product_id
+                        ]));
+
+                        return $this->redirect(['/shop/product/add-file', 'id' => $productId, 'languageId' => $languageId]);
+                    }
+                }
+            }
+            if (Yii::$app->request->isPjax) {
+                return $this->renderPartial('update-file', [
+                    'fileList' => $product->files,
+                    'fileModel' => $fileForm,
+                    'fileTranslationModel' => $fileTranslation,
+                    'product' => $product,
+                    'languages' => Language::findAll(['active' => true]),
+                    'language' => $selectedLanguage
+                ]);
+            }
+            return $this->render('save', [
+                'viewName' => 'update-file',
+                'selectedLanguage' => Language::findOne($languageId),
+                'product' => $product,
+                'languages' => Language::find()->all(),
+
+                'params' => [
                     'fileModel' => $fileForm,
                     'fileTranslationModel' => $fileTranslation,
                     'product' => $product,
