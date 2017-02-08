@@ -1,21 +1,23 @@
 <?php
+use bl\cms\seo\common\entities\StaticPage;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /**
  * @var \yii\web\View $this
- * @var \bl\cms\shop\common\components\user\models\User $model
- * @var \bl\cms\cart\common\components\user\models\Profile $profile
  *
+ * @author Vladimir Kuprienko <vldmr.kuprienko@gmail.com>
  */
+
+\frontend\assets\AnimateCssAsset::register($this);
 
 ?>
 
-<div class="col-md-12">
+<div class="col-md-12 animated fadeInRight">
     <h1 class="title"><?= Yii::t('frontend', 'Sign up') ?></h1>
 </div>
 
-<div class="col-md-12">
+<div class="col-sm-6 col-md-6 col-lg-4 animated fadeInRight">
     <section class="login-form ">
         <div class="panel-body">
             <?php $form = ActiveForm::begin([
@@ -40,7 +42,7 @@ use yii\widgets\ActiveForm;
                     ]
                 ])
                     ->passwordInput()
-                    ->label(Yii::t('cart', 'Password')) ?>
+                    ->label(Yii::t('cart.register', 'Password (for site)')) ?>
             </div>
 
             <br>
@@ -103,4 +105,15 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </section>
+</div>
+
+<div class="col-sm-6 col-md-6 col-lg-8 animated fadeInRight">
+    <div class="panel">
+        <div class="panel-body">
+            <?= (!empty($this->context->staticPage->translation->text))
+                ? $this->context->staticPage->translation->text
+                : '';
+            ?>
+        </div>
+    </div>
 </div>

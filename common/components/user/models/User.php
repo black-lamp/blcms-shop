@@ -25,7 +25,7 @@ class User extends BaseModel
     public function attributeLabels()
     {
         return [
-            'username'          => \Yii::t('user', 'Username'),
+//            'username'          => \Yii::t('user', 'Username'),
             'email'             => \Yii::t('user', 'Email'),
             'registration_ip'   => \Yii::t('user', 'Registration ip'),
             'unconfirmed_email' => \Yii::t('user', 'New email'),
@@ -40,15 +40,15 @@ class User extends BaseModel
     {
         return [
             // username rules
-            'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
-            'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
-            'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
-            'usernameUnique'   => [
-                'username',
-                'unique',
-                'message' => \Yii::t('user', 'This username has already been taken')
-            ],
-            'usernameTrim'     => ['username', 'trim'],
+//            'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
+//            'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
+//            'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
+//            'usernameUnique'   => [
+//                'username',
+//                'unique',
+//                'message' => \Yii::t('user', 'This username has already been taken')
+//            ],
+//            'usernameTrim'     => ['username', 'trim'],
 
             // email rules
             [['email'], 'required'],
@@ -91,6 +91,7 @@ class User extends BaseModel
             $this->trigger(self::BEFORE_REGISTER);
 
             if (!$this->save()) {
+                die(var_dump(454));
                 $transaction->rollBack();
                 return false;
             }
