@@ -29,7 +29,7 @@ $this->title = $model->company_name;
         'attributes' => [
             [
                 'label' => Yii::t('shop', 'User'),
-                'value' => $model->sender->username
+                'value' => $model->sender->email
             ],
             [
                 'label' => 'Owner',

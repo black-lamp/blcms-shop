@@ -118,7 +118,7 @@ $this->params['breadcrumbs'] = [
                                 Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
                             );
                             $content .= '<br><small>' . Yii::t('shop', 'Created') . ' ' . $model->creation_time . '</small><br>';
-                            $content .= '<small>' . \Yii::t('shop', 'Created by') . ' ' . $owner->username . '</small>';
+                            $content .= '<small>' . \Yii::t('shop', 'Created by') . ' ' . $owner->email . '</small>';
                         }
                         return $content;
                     },

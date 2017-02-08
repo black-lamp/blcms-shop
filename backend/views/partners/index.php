@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             /*Sender*/
             [
                 'headerOptions' => ['class' => 'text-center'],
-                'value' => 'sender.username',
+                'value' => 'sender.email',
                 'label' => Yii::t('shop', 'User'),
                 'format' => 'text',
                 'contentOptions' => ['class' => 'project-title'],

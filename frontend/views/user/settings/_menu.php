@@ -17,7 +17,7 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
-                <?= ($user->profile->name . ' ' . $user->profile->surname) ? $user->profile->name . ' ' . $user->profile->surname : $user->username ?>
+                <?= ($user->profile->name . ' ' . $user->profile->surname) ? $user->profile->name . ' ' . $user->profile->surname : $user->email ?>
             </h3>
         </div>
         <div class="panel-body">
