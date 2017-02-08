@@ -91,19 +91,31 @@ use yii\widgets\Pjax;
                 <!--TYPE-->
                 <td>
                     <?php if (!empty($file->translation)): ?>
-                        <?= $file->translation->type ?>
+                        <?= (!empty($file->getTranslation($language->id))) ?
+                            $file->getTranslation($language->id)->type : '' ?>
                     <?php endif; ?>
                 </td>
 
                 <!--DESCRIPTION-->
                 <td>
                     <?php if (!empty($file->translation)): ?>
-                        <?= $file->translation->description ?>
+                        <?= (!empty($file->getTranslation($language->id))) ?
+                            $file->getTranslation($language->id)->description : '' ?>
                     <?php endif; ?>
                 </td>
 
 
                 <td class="text-center">
+                    <?= Html::a('', [
+                        'update-file',
+                        'productId' => $product->id,
+                        'fileId' => $file->id,
+                        'languageId' => $language->id
+                    ],
+                        [
+                            'class' => 'glyphicon glyphicon-edit text-warning btn btn-default btn-sm'
+                        ]
+                    ) ?>
                     <?= Html::a('', [
                         'remove-file',
                         'fileId' => $file->id,
