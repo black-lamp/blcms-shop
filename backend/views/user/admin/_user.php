@@ -16,7 +16,6 @@
 ?>
 
 <?= $form->field($user, 'email')->textInput(['maxlength' => 255]) ?>
-<?= $form->field($user, 'username')->textInput(['maxlength' => 255]) ?>
 <?= $form->field($user, 'password')->passwordInput() ?>
 <?= $form->field($user, 'user_group_id')->dropDownList(
     \yii\helpers\ArrayHelper::map(\bl\cms\shop\common\components\user\models\UserGroup::find()->all(),
