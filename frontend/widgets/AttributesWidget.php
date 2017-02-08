@@ -402,69 +402,77 @@ class AttributesWidget extends Widget
 var addToCartForms = $('.$this->_formClass');
 var animDuration = 150;
 
-addToCartForms.change(function() {
-    var productId = $(this).find('#cartform-productid').val();
-    var price = $(this).find('.$this->_priceClass');
-    var discountPrice = $(this).find('.$this->_discountPriceClass');
-    var checkedValues = $(this).find('input:checked');
-    var selectedValues = $(this).find('option:selected');
-    var countInput = $(this).find('input[name="CartForm[count]"]');
-    var submitBtn = $(this).find('button[type="submit"]');
-    var notAvailable = $(this).find('.$this->_notAvailableMessageClass');
-    var sliderThumbs = $('#productImageSliderThumbs');
-    var sku = $('.$this->skuCssClass');
-
-    var values = [];
-    for (var i = 0; i < checkedValues.length; i++) {
-        values[i] = checkedValues[i].value;
-    }
-    for (var j = 0; j < selectedValues.length; j++) {
-        values[checkedValues.length + j] = $(selectedValues[j]).val();
-    }
+addToCartForms.change(function(e) {
+    var form = $(this);
+    var targetName = $(e.target).attr('name');
     
-    values = JSON.stringify(values);
-  
-    $.ajax({
-        type: "GET",
-        url: '/shop/product/get-product-combination',
-        data: {
-            values: values,
-            productId: productId,
-            currencyFormatting: true
-        },
-        success: function (data) {
-            if (data != 0) {
-                notAvailable.hide("fast");
-                countInput.show(animDuration);
-                discountPrice.show(animDuration);
-                submitBtn.show(animDuration);
-            
-                data = JSON.parse(data);
-            
-                discountPrice.html(data.newPrice);
-          
-                if (data.oldPrice == data.newPrice) {
-                    price.hide(animDuration);
-                } else {
-                    price.html(data.oldPrice);
-                    price.show(300);
-                    price.css('display', 'block');
-                }
-                
-                sku.html(data.sku);
-                $(sliderThumbs).find("img[src='" + data.image + "']").click();
-            } else {
-                countInput.hide("fast");
-                discountPrice.hide("fast");
-                price.hide("fast");
-                submitBtn.hide("fast");
-                notAvailable.show("fast");
-            }
-        },
-        error: function (data) {
-            console.log(data);
+    var sendAjax = ((targetName != 'CartForm[count]') && (targetName.search('CartForm') != -1));
+    if(sendAjax) {
+        var productId = form.find('#cartform-productid').val();
+        var price = form.find('.$this->_priceClass');
+        var discountPrice = form.find('.$this->_discountPriceClass');
+        var checkedValues = form.find('.field-cartform-attribute_value_id input:checked');
+        var selectedValues = form.find('.field-cartform-attribute_value_id option:selected');
+        var countInput = form.find('input[name="CartForm[count]"]');
+        var submitBtn = form.find('button[type="submit"]');
+        var notAvailable = form.find('.$this->_notAvailableMessageClass');
+        var sliderThumbs = $('#productImageSliderThumbs');
+        var sku = $('.$this->skuCssClass');
+    
+        var values = [];
+        for (var i = 0; i < checkedValues.length; i++) {
+            values[i] = checkedValues[i].value;
         }
-    });
+        for (var j = 0; j < selectedValues.length; j++) {
+            values[checkedValues.length + j] = $(selectedValues[j]).val();
+        }
+        
+        values = JSON.stringify(values);
+        
+        $.ajax({
+            type: "GET",
+            url: '/shop/product/get-product-combination',
+            data: {
+                values: values,
+                productId: productId,
+                currencyFormatting: true
+            },
+            success: function (data) {
+                console.log(data);
+                
+                if (data != 0) {
+                    notAvailable.hide("fast");
+                    countInput.show(animDuration);
+                    discountPrice.show(animDuration);
+                    submitBtn.show(animDuration);
+                
+                    data = JSON.parse(data);
+                
+                    discountPrice.html(data.newPrice);
+              
+                    if (data.oldPrice == data.newPrice) {
+                        price.hide(animDuration);
+                    } else {
+                        price.html(data.oldPrice);
+                        price.show(300);
+                        price.css('display', 'block');
+                    }
+                    
+                    sku.html(data.sku);
+                    $(sliderThumbs).find("img[src='" + data.image + "']").click();
+                } else {
+                    countInput.hide("fast");
+                    discountPrice.hide("fast");
+                    price.hide("fast");
+                    submitBtn.hide("fast");
+                    notAvailable.show("fast");
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 });
 JS;
         
