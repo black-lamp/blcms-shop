@@ -99,6 +99,7 @@ class AttributesWidget extends Widget
      * @var string the default CSS classes.
      */
     public $skuCssClass = 'product-sku';
+    public $statusCssClass = 'product-status';
     private $_formClass = 'product-price-form';
     private $_attributesContainerClass = 'product-attributes';
     private $_priceClass = 'product-price';
@@ -418,6 +419,7 @@ addToCartForms.change(function(e) {
         var notAvailable = form.find('.$this->_notAvailableMessageClass');
         var sliderThumbs = $('#productImageSliderThumbs');
         var sku = $('.$this->skuCssClass');
+        var status = $('.$this->statusCssClass');
     
         var values = [];
         for (var i = 0; i < checkedValues.length; i++) {
@@ -449,7 +451,6 @@ addToCartForms.change(function(e) {
                     data = JSON.parse(data);
                 
                     discountPrice.html(data.newPrice);
-              
                     if (data.oldPrice == data.newPrice) {
                         price.hide(animDuration);
                     } else {
@@ -457,8 +458,8 @@ addToCartForms.change(function(e) {
                         price.show(300);
                         price.css('display', 'block');
                     }
-                    
                     sku.html(data.sku);
+                    status.html(data.availability);
                     $(sliderThumbs).find("img[src='" + data.image + "']").click();
                 } else {
                     countInput.hide("fast");
