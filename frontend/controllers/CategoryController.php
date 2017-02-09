@@ -10,7 +10,6 @@ use bl\cms\shop\frontend\components\ProductSearch;
 use bl\cms\shop\common\entities\{
     Category, Filter
 };
-use yii\web\NotFoundHttpException;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -33,21 +32,19 @@ class CategoryController extends Controller
     }
 
     /**
-     * @param null $id
+     * @param null|integer $id
      * @return string
-     * @throws NotFoundHttpException
+     *
      * Shows parent categories and products of this category if category has not children categories.
      */
     public function actionShow($id = null)
     {
 
         if (is_null($id)) {
-            $childCategories = Category::find()->where(['parent_id' => null, 'show' => true, 'additional_products' => false])->all();
+            $childCategories = Category::find()->where(['parent_id' => null, 'show' => true])->all();
             $this->registerStaticSeoData();
         } else {
-            $category = Category::find()->where(['id' => $id, 'additional_products' => false])->one();
-            if (empty($category)) throw new NotFoundHttpException();
-
+            $category = Category::findOne($id);
             $category->registerMetaData();
 
             $childCategories = $category->getChildren();
