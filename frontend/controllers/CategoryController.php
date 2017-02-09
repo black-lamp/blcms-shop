@@ -42,10 +42,10 @@ class CategoryController extends Controller
     {
 
         if (is_null($id)) {
-            $childCategories = Category::find()->where(['parent_id' => null, 'show' => true, 'additional_products' => NULL])->all();
+            $childCategories = Category::find()->where(['parent_id' => null, 'show' => true, 'additional_products' => false])->all();
             $this->registerStaticSeoData();
         } else {
-            $category = Category::find()->where(['id' => $id, 'additional_products' => NULL])->one();
+            $category = Category::find()->where(['id' => $id, 'additional_products' => false])->one();
             if (empty($category)) throw new NotFoundHttpException();
 
             $category->registerMetaData();
