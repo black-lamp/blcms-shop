@@ -1317,6 +1317,7 @@ class ProductController extends Controller
     public function actionRemoveCombination(int $combinationId)
     {
         $combination = Combination::findOne($combinationId);
+        if (empty($combination)) throw new NotFoundHttpException('Such combination does not exists');
         $productId = $combination->product_id;
 
         if (!empty($combination)) {
