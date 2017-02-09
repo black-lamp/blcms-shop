@@ -37,7 +37,8 @@ trait ProductPricesTrait
                 'images' => $combination->getImagesArray() ?? '',
                 'oldPrice' => $oldPrice,
                 'newPrice' => $newPrice,
-                'sku' => $combination->sku ?? ''
+                'sku' => $combination->sku ?? '',
+                'availability' => $combination->combinationAvailability->translation->title ?? ''
             ];
         }
         else return 0;
