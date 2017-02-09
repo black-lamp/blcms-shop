@@ -91,7 +91,6 @@ class User extends BaseModel
             $this->trigger(self::BEFORE_REGISTER);
 
             if (!$this->save()) {
-                die(var_dump(454));
                 $transaction->rollBack();
                 return false;
             }
