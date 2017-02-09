@@ -32,13 +32,16 @@ trait ProductPricesTrait
                 $newPrice = Yii::$app->formatter->asCurrency($newPrice);
             }
 
+            $availability = $combination->combinationAvailability->translation->title
+                ?? $combination->product->productAvailability->translation->title ?? '';
+
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
                 'images' => $combination->getImagesArray() ?? '',
                 'oldPrice' => $oldPrice,
                 'newPrice' => $newPrice,
                 'sku' => $combination->sku ?? '',
-                'availability' => $combination->combinationAvailability->translation->title ?? ''
+                'availability' => $availability
             ];
         }
         else return 0;
