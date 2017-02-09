@@ -71,6 +71,8 @@ class SearchPartnerRequest extends PartnerRequest
             ->andFilterWhere(['like', 'website', $this->website])
             ->andFilterWhere(['like', 'message', $this->message]);
 
+        $query->orderBy(['id' => SORT_DESC]);
+
         return $dataProvider;
     }
 }
