@@ -143,4 +143,9 @@ class User extends BaseModel
         return \Yii::$container->get(UserMailer::className());
     }
 
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
 }
