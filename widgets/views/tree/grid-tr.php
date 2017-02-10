@@ -41,7 +41,7 @@ use yii\helpers\Url;
                             </span>
                                 <?php else : ?>
                                     <span>
-                                <?= $category->getTranslation($languageId)->title; ?>
+                                <?= (!empty($category->getTranslation($languageId))) ? $category->getTranslation($languageId)->title : ''; ?>
                             </span>
                                 <?php endif; ?>
                             </a>
