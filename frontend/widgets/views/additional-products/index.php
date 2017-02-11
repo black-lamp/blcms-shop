@@ -27,11 +27,10 @@ use yii\helpers\Html;
                 }),
             [
                 'class' => 'checkbox',
-                'template'=>'<div class="item">{input}{label}</div>',
                 'item' => function($index, $label, $name, $checked, $value) {
                     return "<div class='checkbox checkbox-warning'>
                             <input type='checkbox' id='" . $index . "' name='$name' value='$value' >
-                            <label for='" . $index . "'>My Label</label></div>";
+                            <label for='" . $index . "'>$label</label></div>";
                 },
             ]
         ); ?>
