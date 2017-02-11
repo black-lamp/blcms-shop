@@ -18,7 +18,8 @@ use yii\helpers\ArrayHelper;
         ->checkboxList(ArrayHelper::map($productAdditionalProducts, function ($model) {
             return $model->additionalProduct->id;
         }, function ($model) {
-            return $model->additionalProduct->translation->title;
+            $price = \Yii::$app->formatter->asCurrency($model->additionalProduct->price->getDiscountPrice());
+            return $model->additionalProduct->translation->title . " - $price";
         })); ?>
 
 <?php endif; ?>

@@ -11,6 +11,7 @@
  *  'defaultCombination' => $defaultCombination
  * ]);
  */
+use bl\cms\shop\frontend\widgets\AdditionalProducts;
 use yii\helpers\Html;
 
 ?>
@@ -53,6 +54,13 @@ use yii\helpers\Html;
     <?php else: ?>
         <?= $params['form']->field($params['cart'], 'count')->hiddenInput(['value' => 1])->label(false); ?>
     <?php endif ?>
+
+    <?= AdditionalProducts::widget([
+        'productId' => $params['product']->id,
+        'form' => $params['form'],
+        'model' => $params['cart'],
+        'attribute' => 'additional_products'
+    ]); ?>
 
     <?php $icon = Html::tag('i', '', ['class' => 'si-shopping-cart']); ?>
     <?= Html::submitButton($icon . Yii::t('shop', 'To cart'), ['class' => 'btn btn-primary cart-btn', 'id' => 'add-to-cart-button']) ?>
