@@ -9,17 +9,31 @@
  */
 
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 ?>
 
 <?php if (!empty($productAdditionalProducts)) : ?>
 
     <?= $form->field($model, $modelAttribute)
-        ->checkboxList(ArrayHelper::map($productAdditionalProducts, function ($model) {
-            return $model->additionalProduct->id;
-        }, function ($model) {
-            $price = \Yii::$app->formatter->asCurrency($model->additionalProduct->price->getDiscountPrice());
-            return $model->additionalProduct->translation->title . " - $price";
-        })); ?>
+        ->checkboxList(
+            ArrayHelper::map(
+                $productAdditionalProducts, function ($model) {
+                    return $model->additionalProduct->id;
+                },
+                function ($model) {
+                    $price = \Yii::$app->formatter->asCurrency($model->additionalProduct->price->getDiscountPrice());
+                    return $model->additionalProduct->translation->title . " - $price";
+                }),
+            [
+                'class' => 'checkbox',
+                'template'=>'<div class="item">{input}{label}</div>',
+                'item' => function($index, $label, $name, $checked, $value) {
+                    return "<div class='checkbox checkbox-warning'>
+                            <input type='checkbox' id='" . $index . "' name='$name' value='$value' >
+                            <label for='" . $index . "'>My Label</label></div>";
+                },
+            ]
+        ); ?>
 
 <?php endif; ?>
