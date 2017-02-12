@@ -33,6 +33,8 @@ $this->registerJs("$(\"[data-toggle='tooltip']\").tooltip();");
                 ->label(\Yii::t('cart', 'Surname')) ?>
             <?= $form->field($model, 'patronymic')
                 ->label(\Yii::t('cart', 'Patronymic')) ?>
+            <?= $form->field($model, 'info')
+                ->label(\Yii::t('cart', 'Info')) ?>
             <?= $form->field($model, 'phone')
                 ->widget(MaskedInput::className(), [
                     'mask' => '+38-(999)-999-99-99'])
