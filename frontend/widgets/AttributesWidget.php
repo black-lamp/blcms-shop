@@ -78,9 +78,15 @@ class AttributesWidget extends Widget
     public $submitButtonOptions = ['class' => 'btn btn-success'];
 
     /**
-     * @var array
+     * @var array the HTML attributes for 'texture input'.
      */
     public $textureInputOptions = ['class' => 'texture'];
+
+    /**
+     * @var array the additional configurations for the field object. These are properties of [[ActiveField]]
+     * or a subclass, depending on the value of [[fieldClass]].
+     */
+    public $listInputOptions = ['inputOptions' => ['class' => 'form-control']];
 
     /**
      * @var array
@@ -303,7 +309,7 @@ class AttributesWidget extends Widget
 
         switch ($attributeType) {
             case ShopAttributeType::TYPE_DROP_DOWN_LIST:
-                $item .= $this->form->field($this->cartForm, 'attribute_value_id')
+                $item .= $this->form->field($this->cartForm, 'attribute_value_id', $this->listInputOptions)
                     ->dropDownList($attributesItems, [
                         'name' => "CartForm[attribute_value_id][$productId-$attribute->id]"
                     ])
