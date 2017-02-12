@@ -18,15 +18,15 @@ use yii\helpers\Url;
 
 <table class="table table-hover table-striped table-bordered">
     <thead>
-        <tr>
-            <th class="col-md-1 text-center"><?= Yii::t('shop', 'Photo'); ?></th>
-            <th><?= Yii::t('shop', 'Title'); ?></th>
-            <?php if ($showOwners): ?>
-                <th><?= Yii::t('shop', 'Owner'); ?></th>
-            <?php endif ?>
-            <th><?= Yii::t('shop', 'Category'); ?></th>
-            <th class="col-md-2"><?= Yii::t('shop', 'Created'); ?></th>
-        </tr>
+    <tr>
+        <th class="col-md-1 text-center"><?= Yii::t('shop', 'Photo'); ?></th>
+        <th><?= Yii::t('shop', 'Title'); ?></th>
+        <?php if ($showOwners): ?>
+            <th><?= Yii::t('shop', 'Owner'); ?></th>
+        <?php endif ?>
+        <th><?= Yii::t('shop', 'Category'); ?></th>
+        <th class="col-md-2"><?= Yii::t('shop', 'Created'); ?></th>
+    </tr>
     </thead>
     <tbody>
 
@@ -37,47 +37,51 @@ use yii\helpers\Url;
             ]) ?>
         </td>
     </tr>
-    <?php foreach ($products as $product) : ?>
-        <?php $productImage = !empty($product->image->small) ? $product->image->small : ''; ?>
 
-        <tr>
-            <td class="text-center" style="padding: 5px;">
-                <a href="<?= Url::to(['/shop/product/add-image', 'id' => $product->id, 'languageId' => Language::getCurrent()->id]); ?>">
-                    <?php if (!empty($product->image->small)): ?>
-                        <div style="background-image: url(<?= $productImage ?>); background-size: cover; background-position: center;
-                            width: 64px;
-                            height: 64px; ">
-                        </div>
-                    <?php else: ?>
-                        <i class="fa fa-picture-o text-muted m-t-xs"></i>
-                    <?php endif; ?>
-                </a>
-            </td>
-            <td style="vertical-align: middle;">
-                <?= Html::a(
-                    $product->translation->title ?? '',
-                    Url::toRoute(['/shop/product/save', 'id' => $product->id, 'languageId' => Language::getCurrent()->id])
-                ); ?>
-            </td>
-            <?php if ($showOwners): ?>
-                <td>
-                    <?= (!empty($product->ownerProfile->name)) ? $product->ownerProfile->name : ''; ?>
-                    <?= (!empty($product->ownerProfile->surname)) ? $product->ownerProfile->surname : ''; ?>
+    <?php if (!empty($products)): ?>
+        <?php foreach ($products as $product) : ?>
+            <?php $productImage = !empty($product->image->small) ? $product->image->small : ''; ?>
+
+            <tr>
+                <td class="text-center" style="padding: 5px;">
+                    <a href="<?= Url::to(['/shop/product/add-image', 'id' => $product->id, 'languageId' => Language::getCurrent()->id]); ?>">
+                        <?php if (!empty($product->image->small)): ?>
+                            <div
+                                style="background-image: url(<?= $productImage ?>); background-size: cover; background-position: center;
+                                    width: 64px;
+                                    height: 64px; ">
+                            </div>
+                        <?php else: ?>
+                            <i class="fa fa-picture-o text-muted m-t-xs"></i>
+                        <?php endif; ?>
+                    </a>
                 </td>
-            <?php endif ?>
-            <td style="vertical-align: middle;">
-                <?php if(!empty($product->category->translation->title)): ?>
-                    <?= Html::a($product->category->translation->title, [
-                        '/shop/category/save', 'id' => $product->category_id, 'languageId' => Language::getCurrent()->id
-                    ]); ?>
-                <?php else: ?>
-                    <span><?= Yii::t('shop', 'Without parent') ?></span>
-                <?php endif; ?>
-            </td>
-            <td style="vertical-align: middle;">
-                <?= Yii::$app->formatter->asRelativeTime($product->creation_time); ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
+                <td style="vertical-align: middle;">
+                    <?= Html::a(
+                        $product->translation->title ?? '',
+                        Url::toRoute(['/shop/product/save', 'id' => $product->id, 'languageId' => Language::getCurrent()->id])
+                    ); ?>
+                </td>
+                <?php if ($showOwners): ?>
+                    <td>
+                        <?= (!empty($product->ownerProfile->name)) ? $product->ownerProfile->name : ''; ?>
+                        <?= (!empty($product->ownerProfile->surname)) ? $product->ownerProfile->surname : ''; ?>
+                    </td>
+                <?php endif ?>
+                <td style="vertical-align: middle;">
+                    <?php if (!empty($product->category->translation->title)): ?>
+                        <?= Html::a($product->category->translation->title, [
+                            '/shop/category/save', 'id' => $product->category_id, 'languageId' => Language::getCurrent()->id
+                        ]); ?>
+                    <?php else: ?>
+                        <span><?= Yii::t('shop', 'Without parent') ?></span>
+                    <?php endif; ?>
+                </td>
+                <td style="vertical-align: middle;">
+                    <?= Yii::$app->formatter->asRelativeTime($product->creation_time); ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
     </tbody>
 </table>
