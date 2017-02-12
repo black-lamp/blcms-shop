@@ -1,10 +1,10 @@
 <?php
 namespace bl\cms\shop\common\components\user\models;
 
+use bl\cms\cart\common\components\user\models\Token;
 use bl\cms\cart\frontend\components\user\UserMailer;
 use bl\cms\shop\common\entities\PartnerRequest;
 use dektrium\user\helpers\Password;
-use dektrium\user\models\Token;
 use dektrium\user\models\User as BaseModel;
 
 /**
@@ -75,8 +75,9 @@ class User extends BaseModel
      * will generate new confirmation token and use mailer to send it to the user.
      *
      * @return integer | bool If true - returns user id
+     * @param null|string $return
      */
-    public function register()
+    public function register($return = null)
     {
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
@@ -98,6 +99,7 @@ class User extends BaseModel
             if ($this->module->enableConfirmation) {
                 /** @var Token $token */
                 $token = \Yii::createObject(['class' => Token::className(), 'type' => Token::TYPE_CONFIRMATION]);
+                if (!empty($return)) $token->returnUrl = $return;
                 $token->link('user', $this);
             }
 
