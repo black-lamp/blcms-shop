@@ -9,8 +9,6 @@
  */
 
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-
 ?>
 
 <?php if (!empty($productAdditionalProducts)) : ?>
@@ -29,7 +27,7 @@ use yii\helpers\Html;
                 'class' => 'checkbox',
                 'item' => function($index, $label, $name, $checked, $value) {
                     return "<div class='checkbox checkbox-warning'>
-                            <input type='checkbox' id='" . $index . "' name='$name' value='$value' >
+                            <input type='checkbox' id='" . $index . "' name='$name' value='$value'>
                             <label for='" . $index . "'>$label</label></div>";
                 },
             ]

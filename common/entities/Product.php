@@ -62,6 +62,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Combination[] $combinations
  * @property ShopAttribute[] $productAttributes
  * @property boolean $isFavorite
+ * @property ProductAdditionalProduct[] $productAdditionalProducts
  *
  * @method ProductTranslation getTranslation($languageId = null)
  */
@@ -446,5 +447,13 @@ class Product extends ActiveRecord
     {
         $url = '/' . Yii::$app->controller->module->id . '/product/show';
         return Url::to([$url, 'id' => $this->id]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductAdditionalProducts() {
+        return $this->hasMany(ProductAdditionalProduct::className(), ['product_id' => 'id']);
+
     }
 }
