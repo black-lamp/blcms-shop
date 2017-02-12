@@ -38,6 +38,9 @@
         <b><?= Yii::t('shop', 'Surname'); ?></b>: <?= $profile['surname']; ?>
     </p>
     <p>
+        <b><?= Yii::t('shop', 'Info'); ?></b>: <?= $profile['info']; ?>
+    </p>
+    <p>
         <b><?= Yii::t('shop', 'Phone number'); ?></b>: <?= $profile['phone']; ?>
     </p>
 <?php else : ?>
@@ -49,6 +52,9 @@
     </p>
     <p>
         <b><?= Yii::t('shop', 'Patronymic'); ?></b>: <?= $profile->patronymic; ?>
+    </p>
+    <p>
+        <b><?= Yii::t('shop', 'Info'); ?></b>: <?= $profile->info; ?>
     </p>
     <p>
         <b><?= Yii::t('shop', 'Phone number'); ?></b>: <?= $profile->phone; ?>

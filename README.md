@@ -427,3 +427,11 @@ In backend and frontend configuration of your module add
 
 **Vendor list**
 - /shop/vendor
+
+**Partner requests email**
+Create new templates 'partner-request-manager' and 'partner-request-partner': 
+/admin/email-templates/default/list
+
+You can use next variables: 
+'{contact_person}', '{company_name}', '{website}', '{message}',
+'{name}', '{surname}', '{patronymic}', '{info}'
