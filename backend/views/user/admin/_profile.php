@@ -37,6 +37,7 @@ use yii\helpers\Html;
 <?= $form->field($profile, 'surname') ?>
 <?= $form->field($profile, 'patronymic') ?>
 <?= $form->field($profile, 'phone') ?>
+<?= $form->field($profile, 'info') ?>
 
 
 <div class="form-group">
