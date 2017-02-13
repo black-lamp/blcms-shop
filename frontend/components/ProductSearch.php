@@ -87,32 +87,31 @@ class ProductSearch extends Product
             $query->andFilterWhere([$tableName . '.' . 'id' => $this->$column]);
         }
 
-        if (isset($params['sort'])) {
-            switch ($params['sort']) {
-                case self::SORT_CHEAP:
-                    $query->joinWith('combinations.combinationPrices.price p');
-                    $query->joinWith('productPrices.price u');
+        switch (ArrayHelper::getValue($params, 'sort')) {
+            case self::SORT_CHEAP:
+                $query->joinWith('combinations.combinationPrices.price p');
+                $query->joinWith('productPrices.price u');
 
-                    $query->orderBy(['u.price' => SORT_ASC, 'p.price' => SORT_ASC]);
-                    break;
+                $query->orderBy(['u.price' => SORT_ASC, 'p.price' => SORT_ASC]);
+                break;
 
-                case self::SORT_EXPENSIVE:
-                    $query->joinWith('combinations.combinationPrices.price p');
-                    $query->joinWith('productPrices.price u');
+            case self::SORT_EXPENSIVE:
+                $query->joinWith('combinations.combinationPrices.price p');
+                $query->joinWith('productPrices.price u');
 
-                    $query->orderBy(['u.price' => SORT_DESC, 'p.price' => SORT_DESC]);
-                    break;
+                $query->orderBy(['u.price' => SORT_DESC, 'p.price' => SORT_DESC]);
+                break;
 
-                case self::SORT_OLD:
-                    $query->orderBy(['creation_time' => SORT_ASC]);
-                    break;
+            case self::SORT_OLD:
+                $query->orderBy(['creation_time' => SORT_ASC]);
+                break;
 
-                case self::SORT_NEW:
-                    $query->orderBy(['creation_time' => SORT_DESC]);
-                    break;
-            }
-        } else {
-            $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
+            case self::SORT_NEW:
+                $query->orderBy(['creation_time' => SORT_DESC]);
+                break;
+
+            default:
+                $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
         }
 
         $dataProvider = new ActiveDataProvider([

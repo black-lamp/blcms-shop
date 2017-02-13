@@ -31,6 +31,7 @@ class ProductSort extends Widget
     {
        if (empty($this->sortMethods)) {
            $this->sortMethods = [
+               'default' => \Yii::t('shop', 'By default'),
                'cheap' => \Yii::t('shop', 'From cheap to expensive'),
                'expensive' => \Yii::t('shop', 'From expensive to cheap'),
                'new' => \Yii::t('shop', 'From new to old'),
@@ -44,8 +45,11 @@ class ProductSort extends Widget
      */
     public function run()
     {
-        if (isset(\Yii::$app->request->queryParams['sort']))
+        if (isset(\Yii::$app->request->queryParams['sort'])) {
             $this->currentSort = \Yii::$app->request->queryParams['sort'];
+        } else {
+            $this->currentSort = 'default';
+        }
 
         return $this->render('product-sort', [
             'sortMethods' => $this->sortMethods,
