@@ -336,7 +336,7 @@ class AttributesWidget extends Widget
                     ->radioList(ArrayHelper::map($combinationsAttributes,
                         function ($model) {
                             /** @var CombinationAttribute $model */
-                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
+                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
                         function ($model) { return $model; }),
                         [
@@ -345,7 +345,18 @@ class AttributesWidget extends Widget
                                 /** @var CombinationAttribute $model */
                                 $model = $label;
 
-                                $checked = $model->combination->default;
+                                if (!empty($this->product->defaultCombination)) {
+                                    // TODO: optimize this
+                                    foreach ($this->product->defaultCombination->combinationAttributes as $attr) {
+                                        $serialized = json_encode([
+                                            'attributeId' => $attr->attribute_id,
+                                            'valueId' => $attr->attribute_value_id
+                                        ]);
+                                        if ($serialized == $value) {
+                                            $checked = true;
+                                        };
+                                    }
+                                }
 
                                 $options = $this->textureInputOptions;
                                 $labelOptions = $this->labelOptions;
@@ -370,16 +381,38 @@ class AttributesWidget extends Widget
                     ->radioList(ArrayHelper::map($combinationsAttributes,
                         function ($model) {
                             /** @var CombinationAttribute $model */
-                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
+                            return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
                         function ($model) { return $model; }),
                         [
                             'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
-                            'item' => function ($index, $label, $name, $checked, $value) {
+                            'item' => function ($index, $label, $name, $checked, $value) use ($attribute) {
                                 /** @var CombinationAttribute $model */
                                 $model = $label;
 
-                                $checked = $model->combination->default;
+                                if (!empty($this->product->defaultCombination)) {
+                                    // TODO: optimize this
+                                    foreach ($this->product->defaultCombination->combinationAttributes as $attr) {
+                                        $serialized = json_encode([
+                                            'attributeId' => $attr->attribute_id,
+                                            'valueId' => $attr->attribute_value_id
+                                        ]);
+                                        if ($serialized == $value) {
+                                            $checked = true;
+                                        };
+                                    }
+                                }
+
+                                $serialized = json_encode([
+                                    'attributeId' => $model->id,
+                                    'valueId' => $model->attribute_value_id
+                                ]);
+                                if ($serialized == $value)  {
+                                    $checked = true;
+                                }
+
+
+                                echo "$checked <br>";
 
                                 $options = $this->textureInputOptions;
                                 $labelOptions = $this->labelOptions;
