@@ -97,7 +97,7 @@ class AttributesWidget extends Widget
      */
     public $notAvailableMessage = '';
     /**
-     * @var string the HTML attributes for 'notAvailableMessage' block.
+     * @var array the HTML attributes for 'notAvailableMessage' block.
      */
     public $notAvailableMessageOptions = ['style' => ['display' => 'none']];
 
@@ -413,7 +413,10 @@ addToCartForms.change(function(e) {
     var form = $(this);
     var targetName = $(e.target).attr('name');
     
-    var sendAjax = ((targetName != 'CartForm[count]') && (targetName.search('CartForm') != -1));
+    var sendAjax = ((targetName != 'CartForm[count]') 
+        && !(targetName.search('additional_products') != -1) 
+        && (targetName.search('CartForm') != -1)
+    );
     if(sendAjax) {
         var productId = form.find('#cartform-productid').val();
         var price = form.find('.$this->_priceClass');
@@ -445,9 +448,7 @@ addToCartForms.change(function(e) {
                 productId: productId,
                 currencyFormatting: true
             },
-            success: function (data) {
-                console.log(data);
-                
+            success: function (data) { 
                 if (data != 0) {
                     notAvailable.hide("fast");
                     countInput.show(animDuration);
