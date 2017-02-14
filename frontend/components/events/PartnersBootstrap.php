@@ -67,7 +67,7 @@ class PartnersBootstrap implements BootstrapInterface
         try {
 
             \Yii::$app->shopMailer->compose('mail-body', $bodyParams)
-                ->setFrom([$event->sender->module->senderEmail => \Yii::$app->name ?? Url::to(['/'], true)])
+                ->setFrom([$event->sender->module->senderEmail ?? \Yii::$app->shopMailer->transport->getUsername() => \Yii::$app->name ?? Url::to(['/'], true)])
                 ->setTo($event->sender->module->partnerManagerEmail)
                 ->setSubject($subject)
                 ->send();
@@ -87,7 +87,7 @@ class PartnersBootstrap implements BootstrapInterface
         try {
 
             \Yii::$app->shopMailer->compose('mail-body', $bodyParams)
-                ->setFrom([$event->sender->module->senderEmail => \Yii::$app->name ?? Url::to(['/'], true)])
+                ->setFrom([$event->sender->module->senderEmail ?? \Yii::$app->shopMailer->transport->getUsername() => \Yii::$app->name ?? Url::to(['/'], true)])
                 ->setTo($partnerEmail)
                 ->setSubject($subject)
                 ->send();
