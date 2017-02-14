@@ -338,29 +338,31 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
                         },
-                        function ($model) {
-                            /** @var CombinationAttribute $model */
-                            return $model->productAttributeValue->translation->colorTexture->color;
-                        }), [
-                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
-                        'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
-                            $checked = $combinationsAttributes[$index]->combination->default;
+                        function ($model) { return $model; }),
+                        [
+                            'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
+                            'item' => function ($index, $label, $name, $checked, $value) {
+                                /** @var CombinationAttribute $model */
+                                $model = $label;
 
-                            $options = $this->textureInputOptions;
-                            $labelOptions = $this->labelOptions;
-                            $title = $combinationsAttributes[$index]->productAttributeValue->translation->colorTexture->title ?? '';
+                                $checked = $model->combination->default;
 
-                            $options['title'] = $title;
-                            Html::addCssStyle($options, ['background-color' => $label]);
-                            Html::addCssClass($labelOptions, 'color');
+                                $options = $this->textureInputOptions;
+                                $labelOptions = $this->labelOptions;
+                                $title = $model->productAttributeValue->translation->colorTexture->title ?? '';
+                                $color = $model->productAttributeValue->translation->colorTexture->color;
 
-                            return Html::label(
-                                Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
-                                null, $labelOptions
-                            );
-                        }
-                    ])
-                    ->label(false);
+                                $options['title'] = $title;
+                                Html::addCssStyle($options, ['background-color' => $color]);
+                                Html::addCssClass($labelOptions, 'color');
+
+                                return Html::label(
+                                    Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
+                                    null, $labelOptions
+                                );
+                            }
+                        ]
+                    )->label(false);
                 break;
 
             case ShopAttributeType::TYPE_TEXTURE:
@@ -370,29 +372,31 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
                         },
-                        function ($model) {
-                            /** @var CombinationAttribute $model */
-                            return $model->productAttributeValue->translation->colorTexture->getTextureFile();
-                        }), [
-                        'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
-                        'item' => function ($index, $label, $name, $checked, $value) use ($combinationsAttributes) {
-                            $checked = $combinationsAttributes[$index]->combination->default;
+                        function ($model) { return $model; }),
+                        [
+                            'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
+                            'item' => function ($index, $label, $name, $checked, $value) {
+                                /** @var CombinationAttribute $model */
+                                $model = $label;
 
-                            $options = $this->textureInputOptions;
-                            $labelOptions = $this->labelOptions;
-                            $title = $combinationsAttributes[$index]->productAttributeValue->translation->colorTexture->title ?? '';
+                                $checked = $model->combination->default;
 
-                            $options['title'] = $title;
-                            Html::addCssStyle($options, ['background-image' => "url($label)"]);
-                            Html::addCssClass($labelOptions, 'texture');
+                                $options = $this->textureInputOptions;
+                                $labelOptions = $this->labelOptions;
+                                $title = $model->productAttributeValue->translation->colorTexture->title;
+                                $texture = $model->productAttributeValue->translation->colorTexture->getTextureFile();
 
-                            return Html::label(
-                                Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
-                                null, $labelOptions
-                            );
-                        }
-                    ])
-                    ->label(false);
+                                $options['title'] = $title;
+                                Html::addCssStyle($options, ['background-image' => "url($texture)"]);
+                                Html::addCssClass($labelOptions, 'texture');
+
+                                return Html::label(
+                                    Html::radio($name, $checked, ['value' => $value]) . Html::tag('span', '', $options),
+                                    null, $labelOptions
+                                );
+                            }
+                        ]
+                    )->label(false);
                 break;
         }
 
