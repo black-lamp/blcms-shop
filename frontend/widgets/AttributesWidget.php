@@ -411,9 +411,6 @@ class AttributesWidget extends Widget
                                     $checked = true;
                                 }
 
-
-                                echo "$checked <br>";
-
                                 $options = $this->textureInputOptions;
                                 $labelOptions = $this->labelOptions;
                                 $title = $model->productAttributeValue->translation->colorTexture->title;
