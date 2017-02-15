@@ -34,6 +34,9 @@ trait ProductPricesTrait
 
             $availability = $combination->combinationAvailability->translation->title
                 ?? $combination->product->productAvailability->translation->title ?? '';
+            $description = (!empty($combination->translation->description))
+                ? $combination->translation->description
+                : $combination->product->translation->full_text ?? '';
 
             $array = [
                 'image' => $combination->images[0]->productImage->thumb ?? '',
@@ -41,7 +44,8 @@ trait ProductPricesTrait
                 'oldPrice' => $oldPrice,
                 'newPrice' => $newPrice,
                 'sku' => $combination->sku ?? '',
-                'availability' => $availability
+                'availability' => $availability,
+                'description' => $description
             ];
         }
         else return 0;
