@@ -28,6 +28,7 @@ use yii\db\Expression;
  * @property CombinationPrice $price
  * @property CombinationPrice[] $prices
  * @property CombinationTranslation[] $translations
+ * @property CombinationTranslation $translation
  */
 class Combination extends ActiveRecord
 {
