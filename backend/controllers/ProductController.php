@@ -58,6 +58,11 @@ class ProductController extends Controller
      * Triggered with bl\cms\shop\backend\events\ProductEvent.
      */
     const EVENT_AFTER_DELETE_PRODUCT = 'afterDeleteProduct';
+    /**
+     * Event is triggered after moderator accepting partner's product.
+     * Triggered with bl\cms\shop\backend\events\ProductEvent.
+     */
+    const EVENT_AFTER_ACCEPT_PRODUCT = 'afterAcceptProduct';
 
     /**
      * @inheritdoc
@@ -986,6 +991,11 @@ class ProductController extends Controller
                     case Product::STATUS_SUCCESS:
                         $product->status = Product::STATUS_SUCCESS;
                         $product->save();
+
+                        $this->trigger(self::EVENT_AFTER_ACCEPT_PRODUCT, new ProductEvent([
+                            'id' => $id
+                        ]));
+
                         break;
                     case Product::STATUS_DECLINED:
                         $product->status = Product::STATUS_DECLINED;

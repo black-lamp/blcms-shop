@@ -147,4 +147,33 @@ class Mailer extends Component
         }
     }
 
+    public function sendAcceptProductToOwner(Product $product)
+    {
+
+        $productOwner = $product->productOwner;
+        $ownerEmail = $productOwner->email;
+
+        $mailVars = [
+            '{title}' => $product->translation->title,
+            '{ownerEmail}' => $ownerEmail,
+            '{owner}' => !(empty($productOwner->profile->name . ' ' . $productOwner->profile->surname)) ?
+                $productOwner->profile->name . ' ' . $productOwner->profile->surname : $productOwner->profile->info,
+            '{link}' => Html::a(
+                $product->translation->title,
+                Url::toRoute('/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
+
+        ];
+        $mailTemplate = $this->createMailTemplate('accept-product-to-owner', $mailVars);
+
+
+        if (!empty($mailTemplate)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+
+            $sendFrom = [\Yii::$app->get('shopMailer')->transport->getUsername() => \Yii::$app->name ?? parse_url(Url::base(true), PHP_URL_HOST)];
+
+            $this->sendMessage($sendFrom, $ownerEmail, $subject, $bodyParams);
+        }
+    }
+
 }
