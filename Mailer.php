@@ -5,6 +5,7 @@ use bl\emailTemplates\data\Template;
 use bl\multilang\entities\Language;
 use Exception;
 use yii\base\Component;
+use yii\helpers\Url;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -17,15 +18,17 @@ class Mailer extends Component
      * @param array $mailVars
      * @return mixed
      */
-    private function createMailTemplate(string $mailKey, array $mailVars) {
+    private function createMailTemplate(string $mailKey, array $mailVars = []) {
 
         /**
          * @var $mailTemplate Template
          */
         $mailTemplate = \Yii::$app->get('emailTemplates')
             ->getTemplate($mailKey, Language::getCurrent()->id);
-        $mailTemplate->parseSubject($mailVars);
-        $mailTemplate->parseBody($mailVars);
+        if (!empty($mailVars)) {
+            $mailTemplate->parseSubject($mailVars);
+            $mailTemplate->parseBody($mailVars);
+        }
 
         return $mailTemplate;
     }
@@ -64,10 +67,13 @@ class Mailer extends Component
 
         $mailTemplate = $this->createMailTemplate('partner-request-manager', $mailVars);
 
-        $subject = $mailTemplate->getSubject();
-        $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+        if (!empty($mailTemplate)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
 
-        $this->sendMessage($sendFrom, $sendTo, $subject, $bodyParams);
+            $this->sendMessage($sendFrom, $sendTo, $subject, $bodyParams);
+        }
+
 
     }
 
@@ -81,10 +87,32 @@ class Mailer extends Component
 
         $mailTemplate = $this->createMailTemplate('partner-request-partner', $mailVars);
 
-        $subject = $mailTemplate->getSubject();
-        $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+        if (!empty($mailTemplate)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
 
-        $this->sendMessage($sendFrom, $sendTo, $subject, $bodyParams);
+            $this->sendMessage($sendFrom, $sendTo, $subject, $bodyParams);
+        }
+
 
     }
+
+    /**
+     * Sends mail to partner if his request was approved
+     * @param string $partnerEmail
+     */
+    public function sendPartnerAcceptance(string $partnerEmail) {
+        $mailTemplate = $this->createMailTemplate('partner-request-accept');
+
+        if (!empty($mailTemplate)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+
+            $sendFrom = [\Yii::$app->get('shopMailer')->transport->getUsername() => \Yii::$app->name ?? parse_url(Url::base(true), PHP_URL_HOST)];
+
+            $this->sendMessage($sendFrom, $partnerEmail, $subject, $bodyParams);
+        }
+
+    }
+
 }

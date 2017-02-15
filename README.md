@@ -435,3 +435,5 @@ Create new templates 'partner-request-manager' and 'partner-request-partner':
 You can use next variables: 
 '{contact_person}', '{company_name}', '{website}', '{message}',
 '{name}', '{surname}', '{patronymic}', '{info}'
+
+Also create template 'partner-request-accept' without variables.
