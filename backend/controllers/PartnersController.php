@@ -107,15 +107,19 @@ class PartnersController extends Controller
                         $partner->moderation_status = PartnerRequest::STATUS_SUCCESS;
                         $partner->save();
                         $role = \Yii::$app->authManager->getRole('productPartner');
-                        $userId = $partner->sender_id;
-                        \Yii::$app->authManager->assign($role, $userId);
+                        \Yii::$app->authManager->assign($role, $partner->sender_id);
 
-                        $this->trigger(self::EVENT_APPLY, (new PartnersEvents()));
+                        $this->trigger(self::EVENT_APPLY, new PartnersEvents([
+                            'partnerUserId' => $partner->sender_id
+                        ]));
+
                         break;
                     case PartnerRequest::STATUS_DECLINED:
                         $partner->moderation_status = PartnerRequest::STATUS_DECLINED;
                         $partner->save();
-                        $this->trigger(self::EVENT_DECLINE, (new PartnersEvents()));
+                        $this->trigger(self::EVENT_DECLINE, new PartnersEvents([
+                            'partnerUserId' => $partner->sender_id
+                        ]));
                         break;
                 }
             }
