@@ -16,6 +16,7 @@ use bl\cms\shop\common\entities\SearchAttribute;
 use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -373,9 +374,9 @@ class AttributeController extends Controller
 
                     $texture = ShopAttributeValueColorTexture::findOne($attributeValuesItem['translation']['value']);
                     if ($shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
-                        $texture = $texture->attributeTexture;
+                        $texture = $texture->attributeTexture . Html::tag('p', $texture->title);
                     } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR) {
-                        $texture = $texture->attributeColor;
+                        $texture = $texture->attributeColor . Html::tag('p', $texture->title);
                     }
 
                     $attributeValuesItem['translation'] =
