@@ -34,6 +34,12 @@ class Module extends \yii\base\Module
      */
     public $enablePriceRounding = true;
 
+    /**
+     * @var string|array
+     * Partner manager e-mail, on which information about new partner products will be sent.
+     */
+    public $partnerManagerEmail;
+
     public function init()
     {
         parent::init();
