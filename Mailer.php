@@ -120,16 +120,17 @@ class Mailer extends Component
     public function sendNewProductToManager(Product $product)
     {
 
-        $owner = $product->getOwnerProfile();
+        $productOwner = $product->productOwner;
         $mailVars = [
             '{productId}' => $product->id,
             '{title}' => $product->translation->title,
-            '{ownerId}' => $product->getProductOwner()->id,
-            '{ownerEmail}' => $product->getProductOwner()->email,
-            '{owner}' => !(empty($owner->name . ' ' . $owner->surname)) ? $owner->name . ' ' . $owner->surname : $owner->info,
+            '{ownerId}' => $productOwner->id,
+            '{ownerEmail}' => $productOwner->email,
+            '{owner}' => !(empty($productOwner->profile->name . ' ' . $productOwner->profile->surname)) ?
+                $productOwner->profile->name . ' ' . $productOwner->profile->surname : $productOwner->profile->info,
             '{link}' => Html::a(
                 $product->translation->title,
-                Url::toRoute('/admin/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
+                Url::toRoute('/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
 
         ];
         $mailTemplate = $this->createMailTemplate('new-product-to-manager', $mailVars);
