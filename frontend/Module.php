@@ -16,7 +16,7 @@ class Module extends \yii\base\Module
     public $enableCombinations = false;
 
     /**
-     * @var string
+     * @var string|array
      * Partner manager e-mail, on which partner request will be sent.
      */
     public $partnerManagerEmail;

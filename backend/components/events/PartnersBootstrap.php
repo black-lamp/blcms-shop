@@ -1,6 +1,8 @@
 <?php
 namespace bl\cms\shop\backend\components\events;
 
+use bl\cms\shop\backend\controllers\ProductController;
+use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\Mailer;
 use yii\base\{
     BootstrapInterface, Event
@@ -15,11 +17,12 @@ class PartnersBootstrap implements BootstrapInterface
 {
     public function bootstrap($app)
     {
-        Event::on(PartnersController::className(), PartnersController::EVENT_APPLY, [$this, 'apply']);
-        Event::on(PartnersController::className(), PartnersController::EVENT_DECLINE, [$this, 'decline']);
+        Event::on(PartnersController::className(), PartnersController::EVENT_APPLY, [$this, 'applyPartnerRequest']);
+        Event::on(PartnersController::className(), PartnersController::EVENT_DECLINE, [$this, 'declinePartnerRequest']);
+        Event::on(ProductController::className(), ProductController::EVENT_AFTER_CREATE_PRODUCT, [$this, 'createNewProduct']);
     }
 
-    public function apply($event)
+    public function applyPartnerRequest($event)
     {
 
         $userId = $event->partnerUserId;
@@ -32,8 +35,21 @@ class PartnersBootstrap implements BootstrapInterface
 
     }
 
-    public function decline($event)
+    public function declinePartnerRequest($event)
     {
+
+    }
+
+    public function createNewProduct($event)
+    {
+        $productId = $event->id;
+
+        if (!\Yii::$app->user->can('createProductWithoutModeration')) {
+            $product = Product::findOne($productId);
+            $mailer = \Yii::createObject(Mailer::className());
+            $mailer->sendNewProductToManager($product);
+
+        }
 
     }
 

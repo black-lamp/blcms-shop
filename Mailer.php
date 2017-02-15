@@ -1,10 +1,12 @@
 <?php
 namespace bl\cms\shop;
 
+use bl\cms\shop\common\entities\Product;
 use bl\emailTemplates\data\Template;
 use bl\multilang\entities\Language;
 use Exception;
 use yii\base\Component;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /**
@@ -113,6 +115,35 @@ class Mailer extends Component
             $this->sendMessage($sendFrom, $partnerEmail, $subject, $bodyParams);
         }
 
+    }
+
+    public function sendNewProductToManager(Product $product)
+    {
+
+        $owner = $product->getOwnerProfile();
+        $mailVars = [
+            '{productId}' => $product->id,
+            '{title}' => $product->translation->title,
+            '{ownerId}' => $product->getProductOwner()->id,
+            '{ownerEmail}' => $product->getProductOwner()->email,
+            '{owner}' => !(empty($owner->name . ' ' . $owner->surname)) ? $owner->name . ' ' . $owner->surname : $owner->info,
+            '{link}' => Html::a(
+                $product->translation->title,
+                Url::toRoute('/admin/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
+
+        ];
+        $mailTemplate = $this->createMailTemplate('new-product-to-manager', $mailVars);
+
+        $partnerEmail = \Yii::$app->getModule('shop')->partnerManagerEmail;
+
+        if (!empty($mailTemplate)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+
+            $sendFrom = [\Yii::$app->get('shopMailer')->transport->getUsername() => \Yii::$app->name ?? parse_url(Url::base(true), PHP_URL_HOST)];
+
+            $this->sendMessage($sendFrom, $partnerEmail, $subject, $bodyParams);
+        }
     }
 
 }

@@ -437,3 +437,6 @@ You can use next variables:
 '{name}', '{surname}', '{patronymic}', '{info}'
 
 Also create template 'partner-request-accept' without variables.
+
+Information about new product by product partner to manager - template 'new-product-to-manager'.
+You can use next variables: {productId}, {title}, {ownerId}, {ownerEmail}, {owner}, {link}
