@@ -184,8 +184,7 @@ class AttributesWidget extends Widget
 
         if (!empty($this->product->defaultCombination)) {
             $items .= $this->renderCombinationPriceItem();
-        }
-        else {
+        } else {
             $items .= $this->renderDefaultPriceItem();
         }
 
@@ -201,13 +200,16 @@ class AttributesWidget extends Widget
      *
      * @return string
      */
-    private function renderCombinationPriceItem() {
+    private function renderCombinationPriceItem()
+    {
         $item = Html::tag('strong',
             Yii::$app->formatter->asCurrency($this->product->defaultCombination->price->discountPrice),
             $this->discountPriceOptions
         );
 
-        if (empty($this->product->defaultCombination->price->discount_type_id)) {
+        if (empty($this->product->defaultCombination->price->discount_type_id) ||
+            empty($this->product->defaultCombination->price->discount)
+        ) {
             Html::addCssStyle($this->priceOptions, ['display' => 'none']);
         }
 
@@ -224,7 +226,8 @@ class AttributesWidget extends Widget
      *
      * @return string
      */
-    private function renderDefaultPriceItem() {
+    private function renderDefaultPriceItem()
+    {
         $item = Html::tag('strong',
             Yii::$app->formatter->asCurrency($this->product->getDiscountPrice()),
             $this->discountPriceOptions
@@ -340,7 +343,9 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
-                        function ($model) { return $model; }),
+                        function ($model) {
+                            return $model;
+                        }),
                         [
                             'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
                             'item' => function ($index, $label, $name, $checked, $value) {
@@ -385,7 +390,9 @@ class AttributesWidget extends Widget
                             /** @var CombinationAttribute $model */
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
-                        function ($model) { return $model; }),
+                        function ($model) {
+                            return $model;
+                        }),
                         [
                             'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
                             'item' => function ($index, $label, $name, $checked, $value) use ($attribute) {
@@ -409,7 +416,7 @@ class AttributesWidget extends Widget
                                     'attributeId' => $model->id,
                                     'valueId' => $model->attribute_value_id
                                 ]);
-                                if ($serialized == $value)  {
+                                if ($serialized == $value) {
                                     $checked = true;
                                 }
 
@@ -439,7 +446,8 @@ class AttributesWidget extends Widget
     /**
      * Registers necessary JavaScript.
      */
-    private function registerGetCombinationScript() {
+    private function registerGetCombinationScript()
+    {
         $js = <<<JS
                 
 var addToCartForms = $('.$this->_formClass');
@@ -521,7 +529,7 @@ addToCartForms.change(function(e) {
     }
 });
 JS;
-        
+
         $this->view->registerJs($js, View::POS_END, __CLASS__);
     }
 }
