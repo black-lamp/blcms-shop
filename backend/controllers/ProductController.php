@@ -269,11 +269,7 @@ class ProductController extends Controller
     public function actionAddBasic($id = null, $languageId = null)
     {
 
-        if (!empty($languageId)) {
-            $selectedLanguage = Language::findOne($languageId);
-        } else {
-            $selectedLanguage = Language::getCurrent();
-        }
+        $selectedLanguage = (!empty($languageId)) ? Language::findOne($languageId) :  Language::getCurrent();
 
         if (!empty($id)) {
             $product = Product::findOne($id);
@@ -282,10 +278,7 @@ class ProductController extends Controller
                 $products_translation = ProductTranslation::find()->where([
                     'product_id' => $id,
                     'language_id' => $languageId
-                ])->one();
-                if (empty($products_translation)) {
-                    $products_translation = new ProductTranslation();
-                }
+                ])->one() ?? new ProductTranslation();
             } else throw new ForbiddenHttpException();
 
         } else {
