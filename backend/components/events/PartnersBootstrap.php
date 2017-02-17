@@ -48,8 +48,7 @@ class PartnersBootstrap implements BootstrapInterface
         if (!\Yii::$app->user->can('createProductWithoutModeration')) {
             $product = Product::findOne($productId);
             $mailer = \Yii::createObject(Mailer::className());
-            $mailer->sendNewProductToManager($product);
-
+            $mailer->sendNewProductToManagerAndOwner($product);
         }
 
     }

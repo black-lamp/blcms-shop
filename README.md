@@ -440,6 +440,8 @@ Also create template 'partner-request-accept' without variables.
 
 Information about new product by product partner to manager - template 'new-product-to-manager'.
 You can use next variables: {productId}, {title}, {ownerId}, {ownerEmail}, {owner}, {link}
+For sending information abount new product to partner which created this product, add template 
+'new-product-to-partner' with variables {productId}, {title}, {ownerId}, {ownerEmail}, {owner}, {link}.
 
 If product is moderated and status is 'accept' the mail 'accept-product-to-owner' will be sent.
 You may use variables: {title}, {ownerEmail}, {owner}, {link}

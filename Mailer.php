@@ -27,7 +27,7 @@ class Mailer extends Component
          */
         $mailTemplate = \Yii::$app->get('emailTemplates')
             ->getTemplate($mailKey, Language::getCurrent()->id);
-        if (!empty($mailVars)) {
+        if (!empty($mailVars) && !empty($mailTemplate)) {
             $mailTemplate->parseSubject($mailVars);
             $mailTemplate->parseBody($mailVars);
         }
@@ -117,7 +117,7 @@ class Mailer extends Component
 
     }
 
-    public function sendNewProductToManager(Product $product)
+    public function sendNewProductToManagerAndOwner(Product $product)
     {
 
         $productOwner = $product->productOwner;
@@ -133,17 +133,29 @@ class Mailer extends Component
                 Url::toRoute('/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
 
         ];
+
+        //Send mail to manager
         $mailTemplate = $this->createMailTemplate('new-product-to-manager', $mailVars);
+        $partnerManagerEmail = \Yii::$app->getModule('shop')->partnerManagerEmail;
 
-        $partnerEmail = \Yii::$app->getModule('shop')->partnerManagerEmail;
-
-        if (!empty($mailTemplate)) {
+        if (!empty($mailTemplate) && !empty($partnerManagerEmail)) {
             $subject = $mailTemplate->getSubject();
             $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
 
             $sendFrom = [\Yii::$app->get('shopMailer')->transport->getUsername() => \Yii::$app->name ?? parse_url(Url::base(true), PHP_URL_HOST)];
 
-            $this->sendMessage($sendFrom, $partnerEmail, $subject, $bodyParams);
+            $this->sendMessage($sendFrom, $partnerManagerEmail, $subject, $bodyParams);
+        }
+
+        //Send mail to partner
+        $mailTemplate = $this->createMailTemplate('new-product-to-partner', $mailVars);
+        if (!empty($mailTemplate) && !empty($productOwner->email)) {
+            $subject = $mailTemplate->getSubject();
+            $bodyParams = ['bodyContent' => $mailTemplate->getBody()];
+
+            $sendFrom = [\Yii::$app->get('shopMailer')->transport->getUsername() => \Yii::$app->name ?? parse_url(Url::base(true), PHP_URL_HOST)];
+
+            $this->sendMessage($sendFrom, $productOwner->email, $subject, $bodyParams);
         }
     }
 
