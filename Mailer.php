@@ -1,13 +1,14 @@
 <?php
 namespace bl\cms\shop;
 
-use bl\cms\shop\common\entities\Product;
-use bl\emailTemplates\data\Template;
-use bl\multilang\entities\Language;
 use Exception;
 use yii\base\Component;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use yii\helpers\{
+    Html, Url
+};
+use bl\multilang\entities\Language;
+use bl\emailTemplates\data\Template;
+use bl\cms\shop\common\entities\Product;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
