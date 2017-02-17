@@ -16,11 +16,14 @@ class Mailer extends Component
 {
 
     /**
+     * Uses emailTemplates component which parses variables
+     * and inserts values to email subject and body
      * @param string $mailKey
      * @param array $mailVars
      * @return mixed
      */
-    private function createMailTemplate(string $mailKey, array $mailVars = []) {
+    private function createMailTemplate(string $mailKey, array $mailVars = [])
+    {
 
         /**
          * @var $mailTemplate Template
@@ -46,7 +49,6 @@ class Mailer extends Component
     {
         if (!empty($sendTo)) {
             try {
-
                 \Yii::$app->get('shopMailer')->compose('mail-body', $bodyParams)
                     ->setFrom($sendFrom)
                     ->setTo($sendTo)
@@ -65,7 +67,8 @@ class Mailer extends Component
      * @param $sendFrom
      * @param $sendTo
      */
-    public function sendPartnerRequestToManager(array $mailVars, $sendFrom, $sendTo) {
+    public function sendPartnerRequestToManager(array $mailVars, $sendFrom, $sendTo)
+    {
 
         $mailTemplate = $this->createMailTemplate('partner-request-manager', $mailVars);
 
@@ -85,7 +88,8 @@ class Mailer extends Component
      * @param array $sendFrom
      * @param array $sendTo
      */
-    public function sendPartnerRequestToPartner(array $mailVars, $sendFrom, $sendTo) {
+    public function sendPartnerRequestToPartner(array $mailVars, $sendFrom, $sendTo)
+    {
 
         $mailTemplate = $this->createMailTemplate('partner-request-partner', $mailVars);
 
@@ -103,7 +107,8 @@ class Mailer extends Component
      * Sends mail to partner if his request was approved
      * @param string $partnerEmail
      */
-    public function sendPartnerAcceptance(string $partnerEmail) {
+    public function sendPartnerAcceptance(string $partnerEmail)
+    {
         $mailTemplate = $this->createMailTemplate('partner-request-accept');
 
         if (!empty($mailTemplate)) {
@@ -117,9 +122,13 @@ class Mailer extends Component
 
     }
 
+    /**
+     * If user which has not 'createProductWithoutModeration' permission
+     * email to manager and this user will be sent
+     * @param Product $product
+     */
     public function sendNewProductToManagerAndOwner(Product $product)
     {
-
         $productOwner = $product->productOwner;
         $mailVars = [
             '{productId}' => $product->id,
@@ -130,7 +139,7 @@ class Mailer extends Component
                 $productOwner->profile->name . ' ' . $productOwner->profile->surname : $productOwner->profile->info,
             '{link}' => Html::a(
                 $product->translation->title,
-                Url::toRoute('/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
+                Url::toRoute('/shop/product/save?id=' . $product->id . '&languageId=' . Language::getCurrent()->id, true)),
 
         ];
 
@@ -159,6 +168,11 @@ class Mailer extends Component
         }
     }
 
+    /**
+     * If a product has successfully passed moderation
+     * this email to product owner will be sent
+     * @param Product $product
+     */
     public function sendAcceptProductToOwner(Product $product)
     {
 
@@ -172,11 +186,10 @@ class Mailer extends Component
                 $productOwner->profile->name . ' ' . $productOwner->profile->surname : $productOwner->profile->info,
             '{link}' => Html::a(
                 $product->translation->title,
-                Url::toRoute('/shop/product/save?id=' . $product->id. '&languageId=' . Language::getCurrent()->id, true)),
+                Url::toRoute('/shop/product/save?id=' . $product->id . '&languageId=' . Language::getCurrent()->id, true)),
 
         ];
         $mailTemplate = $this->createMailTemplate('accept-product-to-owner', $mailVars);
-
 
         if (!empty($mailTemplate)) {
             $subject = $mailTemplate->getSubject();
