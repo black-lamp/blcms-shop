@@ -34,7 +34,7 @@ class CombinationTranslation extends ActiveRecord
     {
         return [
             [['combination_id', 'language_id'], 'integer'],
-            [['description'], 'string', 'max' => 255],
+            [['description'], 'string'],
             [['creation_time', 'update_time'], 'safe'],
 
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
