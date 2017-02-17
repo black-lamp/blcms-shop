@@ -38,6 +38,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $number
  *
  * @property Category $category
+ * @property RelatedProduct $relatedProducts
  * @property Param[] $params
  * @property ProductCountry $productCountry
  * @property Vendor $vendor
@@ -227,6 +228,14 @@ class Product extends ActiveRecord
     public function getProductOwner()
     {
         return $this->hasOne(User::className(), ['id' => 'owner']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelatedProducts()
+    {
+        return $this->hasMany(RelatedProduct::className(), ['product_id' => 'id']);
     }
 
     /**
