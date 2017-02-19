@@ -10,6 +10,7 @@
  * @var \bl\cms\shop\common\entities\ProductImage[] $productImages
  */
 
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\common\entities\PriceDiscountType;
 use bl\cms\shop\common\entities\ProductAvailability;
 use bl\cms\shop\common\entities\ShopAttribute;
@@ -99,7 +100,7 @@ use yii\helpers\ArrayHelper;
                         <td class="text-center">
                             <p>
                                 <b>
-                                    <?= \bl\cms\shop\common\components\user\models\UserGroup::findOne($key)->translation->title; ?>
+                                    <?= UserGroup::findOne($key)->translation->title; ?>
                                 </b>
                             </p>
                         </td>

@@ -16,11 +16,13 @@ use yii\web\{
     Controller, ForbiddenHttpException, NotFoundHttpException, UploadedFile
 };
 use bl\cms\shop\backend\components\form\{
-    ProductFileForm, ProductImageForm, ProductVideoForm
+    ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    Category, CategoryTranslation, ParamTranslation, Product, ProductAdditionalProduct, ProductFile, ProductFileTranslation, ProductImage, ProductImageTranslation, Price, ProductPrice, SearchProduct, ProductTranslation, ProductVideo
+    CategoryTranslation, ParamTranslation, Product, ProductImage, ProductImageTranslation, Price,
+    ProductPrice, SearchProduct, ProductTranslation, ProductVideo
 };
+use yii2tech\ar\position\PositionBehavior;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -81,7 +83,7 @@ class ProductController extends Controller
                     ],
                     [
                         'actions' => [
-                            'save', 'add-basic',
+                            'save',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
                             'up', 'down', 'generate-seo-url',
@@ -106,7 +108,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Lists Product models.
+     * Displays products list.
      *
      * DataProvider sends created by user product models for users which have 'viewProductList' permission
      * and for users which have 'viewCompleteProductList' permission it sends all product models.
@@ -119,7 +121,7 @@ class ProductController extends Controller
         $searchModel = new SearchProduct();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $notModeratedProductsCount = count(Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->all());
+        $notModeratedProductsCount = Product::find()->where(['status' => Product::STATUS_ON_MODERATION])->count();
 
         return $this->render('index', [
             'notModeratedProductsCount' => $notModeratedProductsCount,
@@ -131,20 +133,7 @@ class ProductController extends Controller
     }
 
     /**
-     * @return mixed
-     */
-    public function actionAdditionalProduct()
-    {
-        $additionalProductsCategories = Category::find()->with('products')
-            ->where(['additional_products' => true])->all();
-
-        return $this->render('additional-product', [
-            'additionalProductsCategories' => $additionalProductsCategories
-        ]);
-    }
-
-    /**
-     * Creates or edits product model.
+     * Creates or edits product model, adds basic info.
      *
      * Users which have 'updateOwnProduct' permission can edit only Product models that have been created by their.
      * Users which have 'updateProduct' permission can create and editing all Product models.
@@ -158,122 +147,14 @@ class ProductController extends Controller
      */
     public function actionSave($id = null, $languageId = null)
     {
-        if (!empty($languageId)) {
-            $selectedLanguage = Language::findOne($languageId);
-        } else {
-            $selectedLanguage = Language::getCurrent();
-        }
-
-        if (!empty($id)) {
-
-            $product = Product::findOne($id);
-
-            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-                $products_translation = ProductTranslation::find()->where([
-                    'product_id' => $id,
-                    'language_id' => $languageId
-                ])->one();
-                if (empty($products_translation)) {
-                    $products_translation = new ProductTranslation();
-                }
-            } else {
-                throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to update this product.'));
-            }
-        } else {
-
-            if (\Yii::$app->user->can('createProduct')) {
-
-                $product = new Product();
-                $products_translation = new ProductTranslation();
-            } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to create new product.'));
-        }
-
-        $prices = [];
-        $userGroups = UserGroup::find()->all();
-        foreach ($userGroups as $userGroup) {
-            $price = Price::find()->joinWith('productPrice')
-                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
-            if (empty($price)) {
-                $price = new Price();
-                $price->save();
-                $productPrice = new ProductPrice();
-                $productPrice->user_group_id = $userGroup->id;
-                $productPrice->product_id = $product->id;
-                $productPrice->price_id = $price->id;
-                if ($productPrice->validate()) $productPrice->save();
-
-            }
-            $prices[$price->id] = $price;
-        }
-
-        return $this->render('save', [
-            'viewName' => 'add-basic',
-            'selectedLanguage' => $selectedLanguage,
-            'product' => $product,
-            'languages' => Language::find()->all(),
-
-            'params' => [
-                'prices' => $prices,
-                'selectedLanguage' => $selectedLanguage,
-                'product' => $product,
-                'products_translation' => $products_translation,
-                'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                'params_translation' => new ParamTranslation(),
-            ]
-        ]);
-    }
-
-    /**
-     * Deletes product model.
-     *
-     * Users which have 'deleteProduct' permission can delete all Product models.
-     * Users which have 'deleteOwnProduct' permission can delete only Product models that have been created by their.
-     *
-     * @param integer $id
-     * @return mixed
-     * @throws ForbiddenHttpException
-     * @throws NotFoundHttpException
-     */
-    public function actionDelete($id)
-    {
-        $product = Product::findOne($id);
-        if (empty($product)) {
-            throw new NotFoundHttpException();
-        }
-
-        if (\Yii::$app->user->can('deleteProduct', ['productOwner' => Product::findOne($id)->owner])) {
-            $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT);
-
-            $product->delete();
-
-            $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent([
-                'id' => $id
-            ]));
-            return $this->redirect('index');
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
-    }
-
-    /**
-     * Adds basic info for product model.
-     *
-     * Users which have 'updateOwnProduct' permission can add or edit basic info only for Product models that have been created by their.
-     * Users which have 'updateProduct' permission can can add or edit basic info for all Product models.
-     *
-     * @param integer $id
-     * @param integer $languageId
-     * @return mixed
-     * @throws ForbiddenHttpException
-     */
-    public function actionAddBasic($id = null, $languageId = null)
-    {
-
         $selectedLanguage = (!empty($languageId)) ? Language::findOne($languageId) :  Language::getCurrent();
 
+        //Getting or creating Product and ProductTranslation models
         if (!empty($id)) {
             $product = Product::findOne($id);
 
             if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-                $products_translation = ProductTranslation::find()->where([
+                $productTranslation = ProductTranslation::find()->where([
                     'product_id' => $id,
                     'language_id' => $languageId
                 ])->one() ?? new ProductTranslation();
@@ -285,73 +166,74 @@ class ProductController extends Controller
                 $this->trigger(self::EVENT_BEFORE_CREATE_PRODUCT);
 
                 $product = new Product();
-                $products_translation = new ProductTranslation();
+                $productTranslation = new ProductTranslation();
             } else throw new ForbiddenHttpException();
         }
 
+        //Creates array of base prices
         $prices = [];
         $userGroups = UserGroup::find()->all();
         foreach ($userGroups as $userGroup) {
             $price = Price::find()->joinWith('productPrice')
-                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one();
-            if (empty($price)) {
-                $price = new Price();
-                if ($price->validate()) $price->save();
-                $productPrice = new ProductPrice();
-                $productPrice->user_group_id = $userGroup->id;
-                $productPrice->product_id = $product->id;
-                $productPrice->price_id = $price->id;
-                if ($productPrice->validate()) $productPrice->save();
-
-            }
-            $prices[$price->id] = $price;
+                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
+            $prices[$userGroup->id] = $price;
         }
 
         if (Yii::$app->request->isPost) {
 
-            $product->load(Yii::$app->request->post());
-            $product->category_id = (!empty($product->category_id)) ? $product->category_id : null;
-            if ($product->isNewRecord) {
+            $this->trigger(($product->isNewRecord) ? self::EVENT_BEFORE_CREATE_PRODUCT : self::EVENT_BEFORE_EDIT_PRODUCT);
+            $post = \Yii::$app->request->post();
 
-                $eventName = self::EVENT_AFTER_CREATE_PRODUCT;
+            if ($product->load($post)) {
+                $product->category_id = (!empty($product->category_id)) ? $product->category_id : NULL;
 
-                $product->owner = Yii::$app->user->id;
-                if (\Yii::$app->user->can('createProductWithoutModeration')) {
-                    $product->status = Product::STATUS_SUCCESS;
+                if ($product->isNewRecord) {
+                    $product->owner = Yii::$app->user->id;
+                    $product->status = (\Yii::$app->user->can('createProductWithoutModeration')) ?
+                        Product::STATUS_SUCCESS : Product::STATUS_ON_MODERATION;
+                    if ($product->validate()) {
+                        $product->save();
+                    }
+                    else throw new Exception(\Yii::t('shop', 'An error occurred during the creation of the product'));
                 }
-                if ($product->validate()) {
+
+                else {
+                    if (!$product->validate()) throw new Exception(
+                        \Yii::t('shop', 'An error occurred during the creation of the product'));
                     $product->save();
                 }
-            } else {
-                $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
-            }
 
-            $this->trigger(self::EVENT_BEFORE_EDIT_PRODUCT);
+                if ($productTranslation->load($post) && $productTranslation->validate()) {
 
-            $old_productTitle = $products_translation->title;
-            $products_translation->load(Yii::$app->request->post());
-
-            if ($product->validate() && $products_translation->validate()) {
-
-                if (empty($products_translation->seoUrl) || ($products_translation->title != $old_productTitle)) {
-                    $products_translation->seoUrl = Inflector::slug($products_translation->title);
-                }
-
-                $products_translation->product_id = $product->id;
-                $products_translation->language_id = $selectedLanguage->id;
-                $products_translation->save();
-                $product->save();
-
-                if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
-                    foreach ($prices as $price) {
-                        $price->save(false);
+                    //Sets SEO-Url
+                    if (empty($productTranslation->seoUrl)) {
+                        $productTranslation->seoUrl = Inflector::slug($productTranslation->title);
                     }
-                }
-                $this->trigger($eventName, new ProductEvent([
-                    'id' => $product->id
-                ]));
 
-                return $this->redirect(Url::to(['add-basic', 'id' => $product->id, 'languageId' => $selectedLanguage->id]));
+                    $productTranslation->product_id = $product->id;
+                    $productTranslation->language_id = $selectedLanguage->id;
+                    $productTranslation->save();
+
+                    //Loads prices
+                    if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
+                        foreach ($prices as $key => $price) {
+                            $price->save(false);
+                            $productPrice = new ProductPrice();
+                            $productPrice->product_id = $product->id;
+                            $productPrice->price_id = $price->id;
+                            $productPrice->user_group_id = $key;
+                            if ($productPrice->validate()) $productPrice->save();
+                        }
+                    }
+
+                    $eventName = $productTranslation->isNewRecord ? self::EVENT_AFTER_CREATE_PRODUCT :
+                        self::EVENT_AFTER_EDIT_PRODUCT;
+                    $this->trigger($eventName, new ProductEvent([
+                        'id' => $product->id
+                    ]));
+
+                    return $this->redirect(Url::to(['save', 'id' => $product->id, 'languageId' => $selectedLanguage->id]));
+                }
             }
         }
 
@@ -361,76 +243,23 @@ class ProductController extends Controller
                 'languages' => Language::find()->all(),
                 'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
-                'products_translation' => $products_translation,
+                'productTranslation' => $productTranslation,
                 'params_translation' => new ParamTranslation(),
             ]);
         } else {
             return $this->render('save', [
-                'viewName' => 'add-basic',
-                'selectedLanguage' => $selectedLanguage,
                 'product' => $product,
-                'languages' => Language::find()->all(),
+                'selectedLanguage' => $selectedLanguage,
+                'viewName' => 'add-basic',
 
                 'params' => [
                     'prices' => $prices,
-                    'languages' => Language::find()->all(),
-                    'selectedLanguage' => $selectedLanguage,
+                    'selectedLanguageId' => $selectedLanguage->id,
                     'product' => $product,
-                    'products_translation' => $products_translation,
-                    'categories' => CategoryTranslation::find()->where(['language_id' => $selectedLanguage->id])->all(),
-                    'params_translation' => new ParamTranslation(),
+                    'productTranslation' => $productTranslation,
                 ]
             ]);
         }
-    }
-
-    /**
-     * Changes product position to up
-     *
-     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
-     * Users which have 'updateProduct' permission can change position for all Product models.
-     *
-     * @param integer $id
-     * @return mixed
-     * @throws ForbiddenHttpException
-     */
-    public function actionUp($id)
-    {
-        $product = Product::findOne($id);
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-            if (!empty($product)) {
-                $product->movePrev();
-                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
-                    'id' => $id
-                ]));
-            }
-            return $this->redirect(\Yii::$app->request->referrer);
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
-    }
-
-    /**
-     * Changes product position to down
-     *
-     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
-     * Users which have 'updateProduct' permission can change position for all Product models.
-     *
-     * @param integer $id
-     * @return mixed
-     * @throws ForbiddenHttpException
-     */
-    public function actionDown($id)
-    {
-        $product = Product::findOne($id);
-        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
-
-            if ($product) {
-                $product->moveNext();
-                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent([
-                    'id' => $id
-                ]));
-            }
-            return $this->redirect(\Yii::$app->request->referrer);
-        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
     /**
@@ -498,11 +327,9 @@ class ProductController extends Controller
                 ]);
             }
             return $this->render('save', [
-                'languages' => Language::find()->all(),
-                'viewName' => 'add-image',
-                'selectedLanguage' => Language::findOne($languageId),
-                'productId' => $id,
                 'product' => Product::findOne($id),
+                'selectedLanguage' => Language::findOne($languageId),
+                'viewName' => 'add-image',
 
                 'params' => [
                     'selectedLanguage' => Language::findOne($languageId),
@@ -514,6 +341,11 @@ class ProductController extends Controller
         } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
     }
 
+    /**
+     * @param $id
+     * @param $languageId
+     * @return string|\yii\web\Response
+     */
     public function actionEditImage($id, $languageId)
     {
         $image = ProductImage::findOne($id);
@@ -551,11 +383,9 @@ class ProductController extends Controller
         }
 
         return $this->render('save', [
-            'languages' => Language::find()->all(),
-            'viewName' => 'edit-image',
-            'selectedLanguage' => Language::findOne($languageId),
-            'productId' => $image->product_id,
             'product' => Product::findOne($image->product_id),
+            'selectedLanguage' => Language::findOne($languageId),
+            'viewName' => 'edit-image',
 
             'params' => [
                 'selectedLanguage' => Language::findOne($languageId),
@@ -733,10 +563,9 @@ class ProductController extends Controller
             }
 
             return $this->render('save', [
-                'viewName' => 'add-video',
-                'selectedLanguage' => Language::findOne($languageId),
                 'product' => $product,
-                'languages' => Language::find()->all(),
+                'selectedLanguage' => Language::findOne($languageId),
+                'viewName' => 'add-video',
 
                 'params' => [
                     'product' => $product,
@@ -827,6 +656,83 @@ class ProductController extends Controller
             }
         }
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * Changes product position to up
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all Product models.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionUp($id)
+    {
+        $product = Product::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+            if (!empty($product)) {
+                /**
+                 * @var $product PositionBehavior
+                 */
+                $product->movePrev();
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent(['id' => $id]));
+            }
+            return $this->redirect(\Yii::$app->request->referrer);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Changes product position to down
+     *
+     * Users which have 'updateOwnProduct' permission can change position only for Product models that have been created by their.
+     * Users which have 'updateProduct' permission can change position for all Product models.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     */
+    public function actionDown($id)
+    {
+        $product = Product::findOne($id);
+        if (\Yii::$app->user->can('updateProduct', ['productOwner' => Product::findOne($id)->owner])) {
+
+            if ($product) {
+                /**
+                 * @var $product PositionBehavior
+                 */
+                $product->moveNext();
+                $this->trigger(self::EVENT_AFTER_EDIT_PRODUCT, new ProductEvent(['id' => $id]));
+            }
+            return $this->redirect(\Yii::$app->request->referrer);
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to do this action.'));
+    }
+
+    /**
+     * Deletes product.
+     *
+     * Users which have 'deleteProduct' permission can delete all Product models.
+     * Users which have 'deleteOwnProduct' permission can delete only Product models that have been created by their.
+     *
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionDelete($id)
+    {
+        $product = Product::findOne($id);
+        if (empty($product)) throw new NotFoundHttpException();
+
+        if (\Yii::$app->user->can('deleteProduct', ['productOwner' => $product->owner])) {
+            $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT);
+
+            $product->delete();
+
+            $this->trigger(self::EVENT_AFTER_DELETE_PRODUCT, new ProductEvent(['id' => $id]));
+            return $this->redirect('index');
+        } else throw new ForbiddenHttpException(\Yii::t('shop', 'You have not permission to delete this product.'));
     }
 
     /**

@@ -146,20 +146,35 @@ For cart module:
 
 ### Add module to your backend config
 ```php
-    'modules' => [
-    	...
-        'shop' => [
-            'class' => 'bl\cms\shop\backend\Module',
-            'enableCurrencyConversion' => true
-        ],
-        ...
-    ],
-    
     'bootstrap' => [
         //'bl\cms\shop\backend\components\events\PartnersBootstrap',
         'bl\cms\shop\backend\components\events\ShopLogBootstrap',
         'bl\cms\cart\backend\components\events\CartBootstrap',
     ],
+    'modules' => [
+        'shop' => [
+            'class' => 'bl\cms\shop\backend\Module',
+            'enableCurrencyConversion' => true
+        ]
+    ],
+    'components' => [
+        'urlManagerFrontend' => [
+            'class' => bl\multilang\MultiLangUrlManager::className(),
+            'baseUrl' => '/',
+            'showScriptName' => false,
+            'enablePrettyUrl' => true,
+            'enableDefaultLanguageUrlCode' => false,
+            'rules' => [
+                [
+                    'class' => bl\articles\UrlRule::className()
+                ],
+                [
+                    'class' => bl\cms\shop\UrlRule::className(),
+                    'prefix' => 'shop'
+                ],
+            ]
+        ]
+    ]
 ```
 
 ### Add module to your frontend config
