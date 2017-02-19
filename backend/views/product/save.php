@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
     <ul class="nav nav-tabs">
         <li class="<?= Yii::$app->controller->action->id == 'add-basic' || Yii::$app->controller->action->id == 'save' ? 'tab active' : 'tab'; ?>">
             <?= Html::a(\Yii::t('shop', 'Basic'), Url::to([
-                'add-basic', 'id' => $product->id, 'languageId' => $selectedLanguage->id
+                '/shop/product/add-basic', 'id' => $product->id, 'languageId' => $selectedLanguage->id
             ]),
                 [
                     'aria-expanded' => 'true',
@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Photo'), Url::to(['add-image', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Photo'), Url::to(['/shop/product/add-image', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true',
                     ]); ?>
@@ -76,19 +76,7 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Video'), Url::to(['add-video', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
-                    [
-                        'aria-expanded' => 'true'
-                    ]); ?>
-        </li>
-        <li class="<?= (empty($product->translation)) ? 'disabled' : '';?> <?= Yii::$app->controller->action->id == 'add-price' ? 'tab active' : 'tab'; ?>">
-            <?=
-            ($product->isNewRecord) ?
-                Html::a(\Yii::t('shop', 'Prices'), null, [
-                    'data-toggle' => 'tooltip',
-                    'title' => $newProductMessage
-                ]) :
-                Html::a(\Yii::t('shop', 'Prices'), Url::to(['add-price', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Video'), Url::to(['/shop/product/add-video', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true'
                     ]); ?>
@@ -100,7 +88,7 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Params'), Url::to(['add-param', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Params'), Url::to(['/shop/product-param/add-param', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true'
                     ]); ?>
@@ -112,11 +100,13 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Files'), Url::to(['add-file', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Files'), Url::to(['/shop/product-file/add-file', 'id' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true'
                     ]); ?>
         </li>
+
+        <?php if (\Yii::$app->getModule('shop')->enableCombinations): ?>
         <li class="<?= (empty($product->translation)) ? 'disabled' : '';?> <?= Yii::$app->controller->action->id == 'add-combination' ? 'tab active' : 'tab'; ?>">
             <?=
             ($product->isNewRecord) ?
@@ -124,11 +114,13 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Combinations'), Url::to(['add-combination', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Combinations'), Url::to(['/shop/combination/add-combination', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true'
                     ]); ?>
         </li>
+        <?php endif; ?>
+
         <li class="<?= (empty($product->translation)) ? 'disabled' : '';?> <?= Yii::$app->controller->action->id == 'add-additional' ? 'tab active' : 'tab'; ?>">
             <?=
             ($product->isNewRecord) ?
@@ -136,20 +128,25 @@ $this->params['breadcrumbs'][] = (!empty($product->translation)) ? $product->tra
                     'data-toggle' => 'tooltip',
                     'title' => $newProductMessage
                 ]) :
-                Html::a(\Yii::t('shop', 'Additional products'), Url::to(['add-additional', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                Html::a(\Yii::t('shop', 'Additional products'), Url::to(['/shop/additional-product/add-additional', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
+                    [
+                        'aria-expanded' => 'true'
+                    ]); ?>
+        </li>
+
+        <li class="<?= (empty($product->translation)) ? 'disabled' : '';?> <?= Yii::$app->controller->action->id == 'list' ? 'tab active' : 'tab'; ?>">
+            <?=
+            ($product->isNewRecord) ?
+                Html::a(\Yii::t('shop', 'Related products'), null, [
+                    'data-toggle' => 'tooltip',
+                    'title' => $newProductMessage
+                ]) :
+                Html::a(\Yii::t('shop', 'Related products'), Url::to(['/shop/related-product/list', 'productId' => $product->id, 'languageId' => $selectedLanguage->id]),
                     [
                         'aria-expanded' => 'true'
                     ]); ?>
         </li>
     </ul>
-
-    <!--MODERATION-->
-    <?php if (Yii::$app->user->can('moderateProductCreation') && $product->status == Product::STATUS_ON_MODERATION) : ?>
-        <h2><?= \Yii::t('shop', 'Moderation'); ?></h2>
-        <p><?= \Yii::t('shop', 'This product status is "on moderation". You may accept or decline it.'); ?></p>
-        <?= Html::a(\Yii::t('shop', 'Accept'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_SUCCESS]), ['class' => 'btn btn-primary btn-xs']); ?>
-        <?= Html::a(\Yii::t('shop', 'Decline'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_DECLINED]), ['class' => 'btn btn-danger btn-xs']); ?>
-    <?php endif; ?>
 
     <div class="ibox-content ">
 

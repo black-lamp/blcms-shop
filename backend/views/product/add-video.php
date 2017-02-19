@@ -21,12 +21,6 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::begin();?>
-<!--ALERT WIDGET-->
-<?= Alert::widget([
-    'options' => [
-        'class' => 'alert-fade',
-    ]]);
-?>
 
 <?php $addVideoForm = ActiveForm::begin([
     'action' => [
@@ -50,7 +44,7 @@ use yii\widgets\Pjax;
             </strong>
         </td>
         <td class="col-md-4">
-            <?= $addVideoForm->field($video_form, 'resource')->dropDownList(
+            <?= $addVideoForm->field($video, 'resource')->dropDownList(
                 [
                     'youtube' => 'YouTube',
                     'vimeo' => 'Vimeo'
@@ -58,7 +52,7 @@ use yii\widgets\Pjax;
             )->label(false); ?>
         </td>
         <td class="col-md-4">
-            <?= $addVideoForm->field($video_form, 'file_name')->textInput(['placeholder' => \Yii::t('shop', 'Link to video')])->label(false); ?>
+            <?= $addVideoForm->field($video, 'file_name')->textInput(['placeholder' => \Yii::t('shop', 'Link to video')])->label(false); ?>
         </td>
         <td class="col-md-2">
             <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'btn btn-primary']) ?>
@@ -69,7 +63,7 @@ use yii\widgets\Pjax;
 
 <?php $uploadVideoForm = ActiveForm::begin([
     'action' => [
-        'product/upload-video',
+        'product/add-video',
         'id' => $product->id,
         'languageId' => $selectedLanguage->id
     ],
@@ -98,6 +92,12 @@ use yii\widgets\Pjax;
     </tr>
 </table>
 <?php $uploadVideoForm->end(); ?>
+<p>
+    <i>
+        <?= '*' . \Yii::t('shop', 'The maximum file size limit for uploads is') . ' ' .
+        (int)(ini_get('upload_max_filesize')) . 'Mb'; ?>
+    </i>
+</p>
 
 <table class="table table-bordered">
     <thead class="thead-inverse">

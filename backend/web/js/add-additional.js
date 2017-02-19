@@ -7,17 +7,19 @@ $(document).ready(
             if (additionalProductSelector.val()) {
                 $.ajax({
                     type: "GET",
-                    url: "/admin/shop/product/add-to-additional-products",
+                    url: "/admin/shop/additional-product/add-to-additional-products",
                     data: {
                         'productId': productId,
                         'additionalProductId': additionalProductSelector.val()
                     },
                     success: function (data) {
+
                         var additionalProductsTable = $('#additional-products-table');
 
                         var tr = '<tr><td>' +
                             $('#additional-product-selector option:selected').text() +
-                            '</td><td><a href="/admin/shop/product/remove-additional-product?id=' + additionalProductSelector.val() + '"' +
+                            '</td><td><a href="/admin/shop/additional-product/remove-additional-product?id=' +
+                            data + '"' +
                             'class="btn btn-danger btn-xs">' +
                             '<span class="glyphicon glyphicon-remove remove-additional-product"></span></a>' +
                             '</td></tr>';
@@ -41,7 +43,6 @@ $(document).ready(
                 type: "GET",
                 url: url,
                 success: function (data) {
-                    console.log($(button));
                     $(button).closest('tr').remove();
                 },
                 error: function() {

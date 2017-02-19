@@ -72,7 +72,15 @@ use yii\widgets\Pjax;
         </td>
     </tr>
     <tr>
-        <td colspan="5"></td>
+        <td colspan="5">
+            <p>
+                <i>
+                    <?= '*' . \Yii::t('shop', 'The maximum file size limit for uploads is') . ' ' .
+                    (int)(ini_get('upload_max_filesize')) . 'Mb.'; ?>
+                    <?= \Yii::t('shop', 'Upload only optimized and lightweight images. This will speed up the website.'); ?>
+                </i>
+            </p>
+        </td>
     </tr>
     <tr>
         <td class="col-md-1"></td>

@@ -5,10 +5,15 @@
  * @var $product \bl\cms\shop\common\entities\Product
  * @var $products_translation \bl\cms\shop\common\entities\Product
  * @var $selectedLanguage \bl\multilang\entities\Language
+ * @var $userGroups \bl\cms\shop\common\components\user\models\UserGroup
  */
-use bl\cms\shop\common\entities\{ProductAvailability, ProductCountryTranslation, Vendor};
+use bl\cms\shop\common\entities\{
+    PriceDiscountType, Product, ProductAvailability, ProductCountryTranslation, Vendor
+};
 use marqu3s\summernote\Summernote;
-use yii\helpers\{ArrayHelper, Html, Url};
+use yii\helpers\{
+    ArrayHelper, Html, Url
+};
 use yii\widgets\ActiveForm;
 
 ?>
@@ -22,15 +27,25 @@ use yii\widgets\ActiveForm;
     ]]);
 ?>
 
-
-
 <!--SAVE BUTTON-->
 <?= Html::submitInput(\Yii::t('shop', 'Save'), ['class' => 'btn btn-xs btn-primary m-r-xs pull-right']); ?>
 
 <!--BASIC-->
 <div id="basic">
 
+    <!--MODERATION-->
+    <?php if (Yii::$app->user->can('moderateProductCreation') && $product->status == Product::STATUS_ON_MODERATION) : ?>
+        <h2><?= \Yii::t('shop', 'Moderation'); ?></h2>
+        <p><?= \Yii::t('shop', 'This product status is "on moderation". You may accept or decline it.'); ?></p>
+        <?= Html::a(\Yii::t('shop', 'Accept'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_SUCCESS]), ['class' => 'btn btn-primary btn-xs']); ?>
+        <?= Html::a(\Yii::t('shop', 'Decline'), Url::toRoute(['change-product-status', 'id' => $product->id, 'status' => Product::STATUS_DECLINED]), ['class' => 'btn btn-danger btn-xs']); ?>
+    <?php endif; ?>
+
     <h2><?= \Yii::t('shop', 'Basic options'); ?></h2>
+
+    <?php if (!\Yii::$app->user->can('createProductWithoutModeration') && $product->status == Product::STATUS_ON_MODERATION): ?>
+        <p class="text-danger"><?= \Yii::t('shop', 'The product has not passed moderation yet'); ?></p>
+    <?php endif; ?>
 
     <!--NAME-->
     <?= $form->field($products_translation, 'title', [
@@ -41,19 +56,6 @@ use yii\widgets\ActiveForm;
     ?>
 
     <div class="row">
-        <!--CATEGORY-->
-        <div class="col-md-6">
-            <b><?= \Yii::t('shop', 'Category'); ?></b>
-            <?=
-            \bl\cms\shop\widgets\InputTree::widget([
-                'className' => \bl\cms\shop\common\entities\Category::className(),
-                'form' => $form,
-                'model' => $product,
-                'attribute' => 'category_id',
-                'languageId' => $selectedLanguage->id
-            ]);
-            ?>
-        </div>
         <div class="col-md-6">
             <div>
                 <!--SKU-->
@@ -62,15 +64,6 @@ use yii\widgets\ActiveForm;
                         'class' => 'form-control'
                     ]
                 ])->label(\Yii::t('shop', 'SKU'))
-                ?>
-            </div>
-            <div>
-                <!--STANDART PRICE-->
-                <?= $form->field($product, 'price', [
-                    'inputOptions' => [
-                        'class' => 'form-control'
-                    ]
-                ])->textInput(['type' => 'number', 'step' => '0.01'])->label(\Yii::t('shop', 'Price'))
                 ?>
             </div>
             <div>
@@ -105,14 +98,35 @@ use yii\widgets\ActiveForm;
                     ]
                 ])->dropDownList(
                     ArrayHelper::map(ProductAvailability::find()->all(), 'id', 'translation.title')
-                )->label(\Yii::t('shop', 'Availability'))
+                ); ?>
+            </div>
+            <div>
+                <!--NUMBER-->
+                <?= $form->field($product, 'number', [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->textInput()
                 ?>
             </div>
         </div>
+
+        <div class="col-md-6">
+            <!--CATEGORY-->
+            <b><?= \Yii::t('shop', 'Category'); ?></b>
+            <?=
+            \bl\cms\shop\widgets\InputTree::widget([
+                'className' => \bl\cms\shop\common\entities\Category::className(),
+                'form' => $form,
+                'model' => $product,
+                'attribute' => 'category_id',
+                'languageId' => $selectedLanguage->id
+            ]);
+            ?>
+        </div>
     </div>
 
-
-    <div class="row">
+    <div class="">
         <!--SALE-->
         <div style="display: inline-block;">
             <?= $form->field($product, 'sale', [
@@ -130,6 +144,36 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
+    <!--STANDART PRICE-->
+    <?php foreach ($prices as $price): ?>
+        <?= $price->productPrice->userGroup->translation->title; ?>
+        <div class="row">
+            <div class="col-md-4">
+                <?= $form->field($price, "[$price->id]price", [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->textInput(['type' => 'number', 'step' => '0.01'])
+                ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($price, "[$price->id]discount_type_id")
+                    ->dropDownList(
+                        ['' => '--none--'] +
+                        ArrayHelper::map(PriceDiscountType::find()->asArray()->all(), 'id', 'title')
+                    );
+                ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($price, "[$price->id]discount", [
+                    'inputOptions' => [
+                        'class' => 'form-control'
+                    ]
+                ])->textInput(['type' => 'number', 'step' => '0.01'])
+                ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
 
     <!--SHORT DESCRIPTION-->
     <?= $form->field($products_translation, 'description', [
@@ -156,7 +200,11 @@ use yii\widgets\ActiveForm;
             ]
         ])->label('SEO URL')
         ?>
-        <?= Html::button(\Yii::t('shop', 'Generate'), ['class' => 'btn btn-primary btn-generate', 'id' => 'generate-seo-url']); ?>
+        <?= Html::button(\Yii::t('shop', 'Generate'), [
+            'id' => 'generate-seo-url',
+            'class' => 'btn btn-primary btn-generate',
+            'url' => Url::to('generate-seo-url')
+        ]); ?>
     </div>
 
     <?= $form->field($products_translation, 'seoTitle', [

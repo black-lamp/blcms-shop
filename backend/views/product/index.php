@@ -86,14 +86,14 @@ $this->params['breadcrumbs'] = [
                             '',
                             Url::toRoute(['up', 'id' => $model->id]),
                             [
-                                'class' => 'pjax fa fa-chevron-up'
+                                'class' => 'fa fa-chevron-up'
                             ]
                         );
                         $buttonDown = Html::a(
                             '',
                             Url::toRoute(['down', 'id' => $model->id]),
                             [
-                                'class' => 'pjax fa fa-chevron-down'
+                                'class' => 'fa fa-chevron-down'
                             ]
                         );
                         return $buttonUp . '<div>' . $model->position . '</div>' . $buttonDown;
@@ -118,7 +118,9 @@ $this->params['breadcrumbs'] = [
                                 Url::toRoute(['save', 'id' => $model->id, 'languageId' => Language::getCurrent()->id])
                             );
                             $content .= '<br><small>' . Yii::t('shop', 'Created') . ' ' . $model->creation_time . '</small><br>';
-                            $content .= '<small>' . \Yii::t('shop', 'Created by') . ' ' . $owner->email . '</small>';
+                            $content .= '<small>' . \Yii::t('shop', 'Created by') . ' ' . $owner->email . '</small><br>';
+                            $content .= (!empty($model->number)) ?
+                                '<small>' . \Yii::t('shop', 'Number') . ': ' . $model->number . '</small>' : '';
                         }
                         return $content;
                     },
