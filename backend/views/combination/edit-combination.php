@@ -8,6 +8,7 @@
  * @var $product \bl\cms\shop\common\entities\Product
  * @var $languageId integer
  * @var $image_form \bl\cms\shop\backend\components\form\CombinationImageForm
+ * @var $prices array
  *
  */
 
@@ -109,7 +110,7 @@ $GLOBALS['combinationImages'] = $combinationImagesIds;
             <td class="text-center">
                 <p>
                     <b>
-                        <!--                        --><?//= $price['userGroup']; ?>
+                        <?= $price->combinationPrice->userGroup->translation->title; ?>
                     </b>
                 </p>
             </td>
@@ -198,16 +199,18 @@ $GLOBALS['combinationImages'] = $combinationImagesIds;
     ?>
 </div>
 
+<div class="ibox-content">
+    <?= Html::a(
+        \Yii::t('shop', 'Cancel'),
+        Url::to(['/shop/product/add-combination', 'productId' => $combination->product_id, 'languageId' => $combinationTranslation->language_id]),
+        ['class' => 'btn btn-danger pull-right']); ?>
+
+    <?= Html::submitButton(\Yii::t('shop', 'Save'), ['class' => 'btn btn-primary pull-right m-r-xs']) ?>
+</div>
+
 <p>
-    *<?= \Yii::t('shop', 'Do not duplicate combinations of attributes, it may cause a malfunction of the script. All combinations must be distinguished from each other.');?>
+    *<?= \Yii::t('shop', 'Do not duplicate combinations of attributes, it may cause a malfunction of the script. All combinations must be distinguished from each other.'); ?>
 </p>
-
-<?= Html::a(
-    \Yii::t('shop', 'Cancel'),
-    Url::to(['/shop/product/add-combination', 'productId' => $combination->product_id, 'languageId' => $combinationTranslation->language_id]),
-    ['class' => 'btn btn-danger pull-right']); ?>
-
-<?= Html::submitButton(\Yii::t('shop', 'Save'), ['class' => 'btn btn-primary pull-right m-r-xs']) ?>
 <?php $form->end() ?>
 
 

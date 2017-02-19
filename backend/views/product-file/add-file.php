@@ -14,11 +14,11 @@ use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ProductFile;
 use bl\cms\shop\common\entities\ProductFileTranslation;
 use bl\multilang\entities\Language;
+use kartik\file\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-
 ?>
 
 <?php Pjax::begin([
@@ -55,8 +55,7 @@ use yii\widgets\Pjax;
     <tr>
         <!--FILE-->
         <td>
-            <?= $form->field($fileModel, 'file')->fileInput()->label(false)
-            ?>
+            <?= $form->field($fileModel, 'file')->widget(FileInput::class)->label(false); ?>
         </td>
         <!--TYPE-->
         <td>
@@ -66,10 +65,7 @@ use yii\widgets\Pjax;
         <td>
             <?= $form->field($fileTranslationModel, 'description')->label(false) ?>
         </td>
-
-        <td>
-            <?= Html::submitButton(\Yii::t('shop', 'Add'), ['class' => 'pjax btn btn-primary', 'style' => 'width: 100%;']) ?>
-        </td>
+        <td></td>
     </tr>
     <?php if (!empty($fileList)): ?>
         <?php foreach ($fileList as $file): ?>

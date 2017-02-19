@@ -140,12 +140,13 @@ class ProductController extends Controller
      * Users which have 'createProduct' permission can create Product models with status column equal to constant STATUS_ON_MODERATION.
      * Users which have 'createProductWithoutModeration' permission can create Product models with status column equal to constant STATUS_SUCCESS.
      *
-     * @param integer $id
-     * @param integer $languageId
-     * @return mixed
+     * @param integer|NULL $id
+     * @param integer|NULL $languageId
+     * @return string|\yii\web\Response
+     * @throws Exception
      * @throws ForbiddenHttpException
      */
-    public function actionSave($id = null, $languageId = null)
+    public function actionSave(int $id = null, int $languageId = null)
     {
         $selectedLanguage = (!empty($languageId)) ? Language::findOne($languageId) :  Language::getCurrent();
 
@@ -240,11 +241,9 @@ class ProductController extends Controller
         if (Yii::$app->request->isPjax) {
             return $this->renderPartial('add-basic', [
                 'prices' => $prices,
-                'languages' => Language::find()->all(),
-                'selectedLanguage' => $selectedLanguage,
+                'selectedLanguageId' => $selectedLanguage->id,
                 'product' => $product,
                 'productTranslation' => $productTranslation,
-                'params_translation' => new ParamTranslation(),
             ]);
         } else {
             return $this->render('save', [

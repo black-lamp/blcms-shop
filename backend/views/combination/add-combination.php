@@ -123,31 +123,34 @@ EditCombinationAsset::register($this);
 
 <hr>
 
-<!-- Button trigger modal -->
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-    <?= \Yii::t('shop', 'Add new combination'); ?>
-</button>
+<div class="row">
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width: 800px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel"><?= \Yii::t('shop', 'New combination'); ?></h4>
+    <!-- Button trigger modal -->
+    <button class="btn btn-xs btn-primary pull-right" data-toggle="modal" data-target="#myModal">
+        <?= \Yii::t('shop', 'Add new combination'); ?>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><?= \Yii::t('shop', 'New combination'); ?></h4>
+                </div>
+
+                <?= $this->render('new-combination-form', [
+                    'product' => $product,
+                    'languageId' => $languageId,
+                    'combination' => $combination,
+                    'combinationTranslation' => $combinationTranslation,
+                    'image_form' => $image_form,
+                    'prices' => $prices,
+                    'combinationAttributeForm' => $combinationAttributeForm,
+                    'productImages' => $productImages
+                ]); ?>
+
             </div>
-
-            <?= $this->render('new-combination-form', [
-                'product' => $product,
-                'languageId' => $languageId,
-                'combination' => $combination,
-                'combinationTranslation' => $combinationTranslation,
-                'image_form' => $image_form,
-                'prices' => $prices,
-                'combinationAttributeForm' => $combinationAttributeForm,
-                'productImages' => $productImages
-            ]); ?>
-
         </div>
     </div>
 </div>
