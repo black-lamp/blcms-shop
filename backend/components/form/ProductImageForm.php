@@ -41,7 +41,7 @@ class ProductImageForm extends Model
 
             if (!empty($this->image)) {
                 if (!file_exists($dir)) BaseFileHelper::createDirectory($dir);
-                $newFile = $dir . $this->image->name;
+                $newFile = $dir . mt_rand() . $this->image->name;
 
                 if ($this->image->saveAs($newFile)) {
                     $image_name = $imagable->create('shop-product', $newFile);
