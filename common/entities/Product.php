@@ -98,6 +98,15 @@ class Product extends ActiveRecord
     {
         return [
             [['position', 'category_id', 'vendor_id', 'country_id', 'status', 'availability', 'owner', 'views', 'price_id', 'number'], 'integer'],
+            [['category_id', 'vendor_id', 'country_id', 'availability', 'number'], 'filter', 'filter' => function($value) {
+               $value = (!empty($value)) ? (int)$value : NULL;
+                return $value;
+            }],
+            [['sale', 'popular'], 'filter', 'filter' => function($value) {
+               $value = (int)$value;
+                return $value;
+            }],
+
             [['sale', 'popular'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
             [['sku'], 'string', 'max' => 255],
@@ -462,7 +471,9 @@ class Product extends ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getProductAdditionalProducts() {
-        return $this->hasMany(ProductAdditionalProduct::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductAdditionalProduct::className(), ['product_id' => 'id'])
+            ->joinWith('additionalProduct')
+            ->orderBy('position');
 
     }
 }

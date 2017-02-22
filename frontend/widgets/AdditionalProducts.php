@@ -43,7 +43,11 @@ class AdditionalProducts extends Widget
     {
         parent::run();
 
-        $productAdditionalProducts = ProductAdditionalProduct::find()->where(['product_id' => $this->productId])->all();
+        $productAdditionalProducts = ProductAdditionalProduct::find()
+            ->joinWith('additionalProduct')
+            ->where(['product_id' => $this->productId])
+            ->orderBy('position')
+            ->all();
 
         return $this->render('additional-products/index',
             [
