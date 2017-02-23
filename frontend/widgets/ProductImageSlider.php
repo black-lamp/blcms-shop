@@ -81,7 +81,7 @@ class ProductImageSlider extends Slick
     /**
      * @return array
      */
-    private function renderItems()
+    protected function renderItems()
     {
         $items = [];
         foreach ($this->product->images as $productImage) {
@@ -94,7 +94,7 @@ class ProductImageSlider extends Slick
      * @param $item ProductImage
      * @return string
      */
-    private function renderItem($item)
+    protected function renderItem($item)
     {
         $img = (!empty($item->getImage('big'))) ? $item->getImage($this->imagesSize) : '';
         $alt = (!empty($item->translation->alt)) ? $item->translation->alt : '';
