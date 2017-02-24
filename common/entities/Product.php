@@ -99,11 +99,11 @@ class Product extends ActiveRecord
         return [
             [['position', 'category_id', 'vendor_id', 'country_id', 'status', 'availability', 'owner', 'views', 'price_id', 'number'], 'integer'],
             [['category_id', 'vendor_id', 'country_id', 'availability', 'number'], 'filter', 'filter' => function($value) {
-               $value = (!empty($value)) ? (int)$value : NULL;
+                $value = (!empty($value)) ? (int)$value : NULL;
                 return $value;
             }],
             [['sale', 'popular'], 'filter', 'filter' => function($value) {
-               $value = (int)$value;
+                $value = (int)$value;
                 return $value;
             }],
 
@@ -245,6 +245,14 @@ class Product extends ActiveRecord
     public function getRelatedProducts()
     {
         return $this->hasMany(RelatedProduct::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelatedProductsWhereItRelated()
+    {
+        return $this->hasMany(RelatedProduct::className(), ['related_product_id' => 'id']);
     }
 
     /**
