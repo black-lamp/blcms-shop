@@ -5,6 +5,7 @@
  *
  * @var $categories bl\cms\shop\common\entities\Category
  * @var $currentCategoryId integer
+ * @var $currentCategoryParentId integer
  * @var $level integer
  * @var $upIconClass string
  * @var $downIconClass string
@@ -16,6 +17,7 @@
 $params = [
     'categories' => $categories,
     'currentCategoryId' => $currentCategoryId,
+    'currentCategoryParentId' => $currentCategoryParentId,
     'level' => $level,
     'upIconClass' => $upIconClass,
     'downIconClass' => $downIconClass,

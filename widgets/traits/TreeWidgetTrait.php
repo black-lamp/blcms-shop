@@ -32,12 +32,14 @@ trait TreeWidgetTrait
 
         if (\Yii::$app->request->isAjax) {
             if (!empty($level)) {
+                $currentCategory = (!empty($this->currentCategoryId)) ? Category::findOne($this->currentCategoryId) : NULL;
                 $categories = Category::find()->where(['parent_id' => $parentId])->orderBy('position')->all();
 
                 $params = [
                     'categories' => $categories,
                     'level' => $level,
                     'currentCategoryId' => $currentCategoryId,
+                    'currentCategoryParentId' => (!empty($currentCategory)) ? $currentCategory->parent_id : '',
                     'languageId' => $languageId ?? Language::getCurrent()->id,
                     'downIconClass' => $downIconClass,
                     'upIconClass' => $upIconClass

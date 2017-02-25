@@ -81,6 +81,7 @@ class TreeWidget extends Widget
 
         if (!empty($this->className)) {
             $class = \Yii::createObject($this->className);
+            $currentCategory = (!empty($this->currentCategoryId)) ? Category::findOne($this->currentCategoryId) : NULL;
 
             $categories = (!empty($this->appName)) ?
                 $class::find()->where(['parent_id' => null])->orderBy('position')->all() :
@@ -100,6 +101,7 @@ class TreeWidget extends Widget
             $params = [
                 'categories' => $categories,
                 'currentCategoryId' => $currentCategoryId,
+                'currentCategoryParentId' => (!empty($currentCategory)) ? $currentCategory->parent_id : NULL,
                 'level' => 0,
                 'context' => $this,
                 'upIconClass' => $this->upIconClass,

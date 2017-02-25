@@ -5,6 +5,7 @@
  *
  * @var $categories bl\cms\shop\common\entities\Category
  * @var $currentCategoryId integer
+ * @var $currentCategoryParentId integer
  * @var $level integer
  * @var $upIconClass string
  * @var $downIconClass string
@@ -29,7 +30,8 @@ use yii\helpers\Url;
                     <?php endif; ?>
                 </a>
                 <?php if (!empty($category->children)) : ?>
-                    <span class="<?=$downIconClass;?> pull-right category-toggle"
+
+                    <span class="<?= ($category->id == $currentCategoryParentId) ? $upIconClass : $downIconClass;?> pull-right category-toggle"
                        id="<?= $category->id; ?>" data-opened="<?= (!empty($category->id)) ?
                         TreeWidget::isOpened($category->id, $currentCategoryId) :
                         '';?>">
