@@ -19,6 +19,8 @@ div#widget-menu ul li a {
 div#widget-menu ul[data-level="1"] li > a {
     height: 40px;
     line-height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 div#widget-menu ul li a:hover, div#widget-menu ul li.current a {
     background-color: #e1f5fe;
