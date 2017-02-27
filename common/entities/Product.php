@@ -164,6 +164,7 @@ class Product extends ActiveRecord
             'availability' => Yii::t('shop', 'Availability'),
             'owner' => Yii::t('shop', 'Owner'),
             'sale' => Yii::t('shop', 'Sale'),
+            'new' => Yii::t('shop', 'New'),
             'views' => Yii::t('shop', 'Views'),
             'popular' => Yii::t('shop', 'Popular'),
             'price_id' => Yii::t('shop', 'Price'),
