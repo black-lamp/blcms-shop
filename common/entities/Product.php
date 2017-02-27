@@ -107,7 +107,7 @@ class Product extends ActiveRecord
                 return $value;
             }],
 
-            [['sale', 'popular'], 'boolean'],
+            [['sale', 'popular', 'new'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
             [['sku'], 'string', 'max' => 255],
             [['sku'], 'trim'],
