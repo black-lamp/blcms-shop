@@ -1,16 +1,15 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
+use bl\cms\shop\backend\components\form\CountryImageForm;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductCountryTranslation;
-
-use bl\cms\shop\common\entities\Product;
-use bl\cms\shop\common\entities\ProductPrice;
-use bl\cms\shop\common\entities\ProductPriceTranslation;
 use bl\multilang\entities\Language;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -33,7 +32,7 @@ class CountryController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['save'],
+                        'actions' => ['save', 'remove-image'],
                         'roles' => ['saveCountry'],
                         'allow' => true,
                     ],
@@ -53,17 +52,25 @@ class CountryController extends Controller
         ];
     }
 
+    /**
+     * List of countries
+     * @return mixed
+     */
     public function actionIndex() {
         return $this->render('index', [
-            'countries' => ProductCountry::find()->all(),
-            'countryTranslations' => ProductCountryTranslation::find()->all(),
-            'languages' => Language::findAll(['active' => true])
+            'countries' => ProductCountry::find()->all()
         ]);
     }
-    
+
+    /**
+     * @param null $id
+     * @param null $languageId
+     * @return string|\yii\web\Response
+     */
     public function actionSave($id = null, $languageId = null) {
 
         $selectedLanguage = Language::findOne($languageId);
+        $countryImageModel = new CountryImageForm();
 
         if (!empty($id)) {
             $country = ProductCountry::find()->where([
@@ -83,11 +90,20 @@ class CountryController extends Controller
         }
 
         if(\Yii::$app->request->isPost) {
-            $country->load(\Yii::$app->request->post());
-            $countryTranslation->load(\Yii::$app->request->post());
+            $post = \Yii::$app->request->post();
+            $country->load($post);
+            $countryTranslation->load($post);
+
+            if ($countryImageModel->load(\Yii::$app->request->post())) {
+                $countryImageModel->image = UploadedFile::getInstance($countryImageModel, 'image');
+
+                $fileName = $countryImageModel->upload();
+                $country->image = $fileName ?? $country->image;
+            }
 
             if ($countryTranslation->validate()) {
-                $country->save();
+                if ($country->validate()) $country->save();
+
                 $countryTranslation->country_id = $country->id;
                 $countryTranslation->language_id = $selectedLanguage->id;
                 $countryTranslation->save();
@@ -98,6 +114,7 @@ class CountryController extends Controller
         return $this->render('save', [
             'country' => $country,
             'countryTranslation' => $countryTranslation,
+            'countryImageModel' => $countryImageModel,
             'languages' => Language::findAll(['active' => true]),
             'selectedLanguage' => $selectedLanguage
         ]);
@@ -107,5 +124,22 @@ class CountryController extends Controller
     public function actionDelete($id) {
         ProductCountry::deleteAll(['id' => $id]);
         return $this->redirect(Url::to(['/shop/country']));
+    }
+
+    /**
+     * @param int $countryId
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionRemoveImage(int $countryId)
+    {
+        $country = ProductCountry::findOne($countryId);
+        if (!empty($country)) {
+            unlink(\Yii::getAlias('@frontend/web/images/shop-product-country/') . $country->image);
+            $country->image = '';
+            $country->save();
+            return $this->redirect(\Yii::$app->request->referrer);
+        }
+        throw new NotFoundHttpException();
     }
 }

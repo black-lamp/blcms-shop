@@ -7,6 +7,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "shop_product_price".
  *
  * @property integer $id
+ * @property string $image
  * @property ProductCountryTranslation $translation
  *
  * @method ProductCountryTranslation getTranslation($languageId = null)
@@ -38,7 +39,18 @@ class ProductCountry extends ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'integer']
+            [['id'], 'integer'],
+            [['image'], 'string']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'image' => \Yii::t('shop', 'Image')
         ];
     }
 
