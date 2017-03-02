@@ -175,6 +175,7 @@ class ProductController extends Controller
         $prices = [];
         $userGroups = UserGroup::find()->all();
         foreach ($userGroups as $userGroup) {
+
             $price = Price::find()->joinWith('productPrice')
                 ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
             $prices[$userGroup->id] = $price;
@@ -219,11 +220,16 @@ class ProductController extends Controller
                     if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
                         foreach ($prices as $key => $price) {
                             $price->save(false);
-                            $productPrice = new ProductPrice();
-                            $productPrice->product_id = $product->id;
-                            $productPrice->price_id = $price->id;
-                            $productPrice->user_group_id = $key;
-                            if ($productPrice->validate()) $productPrice->save();
+                            $productPrice = ProductPrice::find()
+                                ->where(['product_id' => $product->id, 'user_group_id' => $key])
+                                ->one();
+                            if (empty($productPrice)) {
+                                $productPrice = new ProductPrice();
+                                $productPrice->product_id = $product->id;
+                                $productPrice->price_id = $price->id;
+                                $productPrice->user_group_id = $key;
+                                if ($productPrice->validate()) $productPrice->save();
+                            }
                         }
                     }
 
