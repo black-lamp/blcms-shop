@@ -53,7 +53,7 @@ class ProductSearch extends Product
     {
 
         $this->load($params, '');
-        $query = Product::find();
+        $query = Product::find()->joinWith('category');
 
         if (\Yii::$app->controller->module->showChildCategoriesProducts) {
 
@@ -68,8 +68,7 @@ class ProductSearch extends Product
             }
         }
 
-        $query->andWhere(['status' => Product::STATUS_SUCCESS]);
-
+        $query->andWhere(['status' => Product::STATUS_SUCCESS, 'additional_products' => false]);
 
         $filterTypes = FilterType::find()->all();
         foreach ($filterTypes as $filterType) {
