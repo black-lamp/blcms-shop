@@ -25,15 +25,6 @@ class ProductCountry extends ActiveRecord
         ];
     }
 
-    public function fields()
-    {
-        return [
-            'id',
-            'image',
-            'translations'
-        ];
-    }
-
     /**
      * @inheritdoc
      */

@@ -4,12 +4,6 @@ namespace bl\cms\shop\common\entities;
 
 use Yii;
 
-
-
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\db\Expression;
-
 /**
  * This is the model class for table "shop_currency".
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -18,6 +12,12 @@ use yii\db\Expression;
  * @property integer $value
  * @property string $date
  */
+
+
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+
 class Currency extends ActiveRecord
 {
 
@@ -67,23 +67,13 @@ class Currency extends ActiveRecord
     }
 
     /**
-     * This method return last currency instance
-     *
-     * @return Currency
-     */
-    public static function findCurrent() {
-        return self::find()->orderBy('id DESC')->one();
-    }
-
-    /**
      * This method return last currency value
      *
      * @return integer
      */
     public static function currentCurrency() {
-        $currency = self::findCurrent();
-        if (!empty($currency))
-            return $currency->value;
+        $currency = self::find()->orderBy('id DESC')->one();
+        if (!empty($currency)) return $currency->value;
         else return 0;
     }
 }

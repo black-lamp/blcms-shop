@@ -47,6 +47,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $orderedNumber Gets number of units that have already bought.
  * @property User $productOwner
  * @property ProductPrice $productPrice
+ * @property ProductPrice[] $productPrices
  * @property Profile $ownerProfile
  * @property Price $price Gets price for current user group.
  * @property Price[] $prices Gets all product prices

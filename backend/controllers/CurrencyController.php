@@ -17,12 +17,6 @@ use yii\filters\VerbFilter;
 class CurrencyController extends Controller
 {
     /**
-     * Event is triggered before creating new product.
-     * Triggered with bl\cms\shop\backend\events\ProductEvent.
-     */
-    const EVENT_AFTER_CHANGE = 'afterChangeCurrency';
-
-    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -66,7 +60,6 @@ class CurrencyController extends Controller
 
                 if ($model->validate()) {
                     $model->save();
-                    $this->trigger(self::EVENT_AFTER_CHANGE);
                 }
                 return $this->redirect(\Yii::$app->request->referrer);
             }

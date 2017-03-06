@@ -1,7 +1,5 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
-
-use bl\cms\shop\backend\components\events\CountryEvent;
 use bl\cms\shop\backend\components\form\CountryImageForm;
 use bl\cms\shop\common\entities\ProductCountry;
 use bl\cms\shop\common\entities\ProductCountryTranslation;
@@ -18,7 +16,6 @@ use yii\web\UploadedFile;
  */
 class CountryController extends Controller
 {
-    const EVENT_AFTER_CREATE_OR_UPDATE_COUNTRY = 'afterCrateOrUpdateCountry';
 
     /**
      * @inheritdoc
@@ -105,14 +102,11 @@ class CountryController extends Controller
             }
 
             if ($countryTranslation->validate()) {
-                if ($country->validate())
-                    $country->save();
+                if ($country->validate()) $country->save();
 
                 $countryTranslation->country_id = $country->id;
                 $countryTranslation->language_id = $selectedLanguage->id;
                 $countryTranslation->save();
-
-                $this->trigger(self::EVENT_AFTER_CREATE_OR_UPDATE_COUNTRY, new CountryEvent(['country' => $country]));
                 return $this->redirect(Url::toRoute('/shop/country'));
             }
         }
