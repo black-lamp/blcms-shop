@@ -40,7 +40,8 @@ class ProductCountry extends ActiveRecord
     {
         return [
             [['id'], 'integer'],
-            [['image'], 'string']
+            [['image'], 'string'],
+            [['image'], 'default', 'value' => NULL]
         ];
     }
 

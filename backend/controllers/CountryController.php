@@ -98,16 +98,19 @@ class CountryController extends Controller
                 $countryImageModel->image = UploadedFile::getInstance($countryImageModel, 'image');
 
                 $fileName = $countryImageModel->upload();
-                $country->image = $fileName ?? $country->image;
+                $country->image = (!empty($fileName)) ? $fileName : $country->image;
+
             }
 
             if ($countryTranslation->validate()) {
-                if ($country->validate()) $country->save();
+                if ($country->validate()) {
+                    $country->save();
 
-                $countryTranslation->country_id = $country->id;
-                $countryTranslation->language_id = $selectedLanguage->id;
-                $countryTranslation->save();
-                return $this->redirect(Url::toRoute('/shop/country'));
+                    $countryTranslation->country_id = $country->id;
+                    $countryTranslation->language_id = $selectedLanguage->id;
+                    $countryTranslation->save();
+                    return $this->redirect(Url::toRoute('/shop/country'));
+                }
             }
         }
 
