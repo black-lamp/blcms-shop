@@ -74,6 +74,21 @@ class Category extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'parent_id',
+            'position',
+//            'show',
+            'cover',
+            'thumbnail',
+            'menu_item',
+            'additional_products',
+            'categoryTranslations'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
