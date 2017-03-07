@@ -73,7 +73,14 @@ class ProductTranslation extends ActiveRecord
      */
     public function uniqueForEntity($attribute, $params)
     {
-        $seoUrl = SeoData::find()->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $this->seoUrl])->one();
+        $translationsIds = ProductTranslation::find()
+            ->asArray()->where(['product_id' => $this->product_id])->select('id')->all();
+
+        $seoUrl = SeoData::find()
+            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $this->seoUrl])
+            ->andWhere(['not in', 'entity_id', $translationsIds])
+            ->one();
+
         if (!empty($seoUrl)) $this->addError($attribute, \Yii::t('seo', 'Such url already exists'));
     }
 
