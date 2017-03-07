@@ -47,7 +47,6 @@ class Vendor extends ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'integer'],
             [['title'], 'required'],
             [['title', 'image_name'], 'string', 'max' => 255],
             [['description'], 'string']
