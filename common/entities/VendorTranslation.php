@@ -56,6 +56,20 @@ class VendorTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'vendor_id',
+            'language_id',
+            'description',
+            'seoUrl',
+            'seoTitle',
+            'seoDescription',
+            'seoKeywords'
+        ];
+    }
+
+
     /**
      * @inheritdoc
      */

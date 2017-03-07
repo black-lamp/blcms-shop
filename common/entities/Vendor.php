@@ -47,9 +47,24 @@ class Vendor extends ActiveRecord
     public function rules()
     {
         return [
+            [['id'], 'integer'],
             [['title'], 'required'],
             [['title', 'image_name'], 'string', 'max' => 255],
             [['description'], 'string']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fields()
+    {
+        return [
+            'id',
+            'title',
+            'description',
+            'image_name',
+            'translations'
         ];
     }
 
