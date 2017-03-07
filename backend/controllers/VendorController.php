@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\events\VendorEvent;
 use bl\cms\shop\common\entities\VendorTranslation;
 use bl\multilang\entities\Language;
 use Yii;
@@ -18,7 +19,7 @@ use yii\helpers\Url;
  */
 class VendorController extends Controller
 {
-
+    const EVENT_AFTER_CREATE_OR_UPDATE_VENDOR = 'afterCrateOrUpdateVendor';
     /**
      * @inheritdoc
      */
@@ -97,7 +98,10 @@ class VendorController extends Controller
                     $vendorTranslation->vendor_id = $vendor->id;
                     $vendorTranslation->language_id = $languageId;
                 }
-                if ($vendorTranslation->validate()) $vendorTranslation->save();
+                if ($vendorTranslation->validate()) {
+                    $vendorTranslation->save();
+                    $this->trigger(self::EVENT_AFTER_CREATE_OR_UPDATE_VENDOR, new VendorEvent(['vendor' => $vendor]));
+                }
 
                 Yii::$app->getSession()->setFlash('success', Yii::t('shop', 'All changes have been saved'));
                 return $this->redirect(Url::toRoute('/shop/vendor'));
