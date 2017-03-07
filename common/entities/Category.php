@@ -124,7 +124,7 @@ class Category extends ActiveRecord
         $parent_id = $parent_id ?? $this->id;
         $children = $this::find()
             ->where(['parent_id' => $parent_id, 'show' => true])
-            ->orderBy('position')
+            ->orderBy(['position' => SORT_ASC])
             ->all();
         return $children;
     }
