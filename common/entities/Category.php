@@ -122,7 +122,10 @@ class Category extends ActiveRecord
     public function getChildren($parent_id = null)
     {
         $parent_id = $parent_id ?? $this->id;
-        $children = $this::find()->where(['parent_id' => $parent_id, 'show' => true])->all();
+        $children = $this::find()
+            ->where(['parent_id' => $parent_id, 'show' => true])
+            ->orderBy('position')
+            ->all();
         return $children;
     }
 
