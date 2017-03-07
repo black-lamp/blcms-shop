@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  * @property string $description
  *
  * @property Product[] $products
+ * @property VendorTranslation[] $translations
  */
 class Vendor extends ActiveRecord
 {
@@ -91,6 +92,10 @@ class Vendor extends ActiveRecord
         return $image;
     }
 
+    public function getTranslations()
+    {
+        return $this->hasMany(VendorTranslation::className(), ['vendor_id' => 'id']);
+    }
 
     /**
      * Adds title, meta-description and meta-keywords to category page using bl\cms\seo\StaticPageBehavior.
