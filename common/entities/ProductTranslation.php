@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
+use bl\seo\entities\SeoData;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -59,8 +60,21 @@ class ProductTranslation extends ActiveRecord
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
 
             /*SEO params*/
-            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string']
+            [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
+
+            [['seoUrl'], 'uniqueForEntity'],
         ];
+    }
+
+    /**
+     * Validation rule which checks if such seo url is already exist in current entity
+     * @param $attribute
+     * @param $params
+     */
+    public function uniqueForEntity($attribute, $params)
+    {
+        $seoUrl = SeoData::find()->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $this->seoUrl])->one();
+        if (!empty($seoUrl)) $this->addError($attribute, \Yii::t('seo', 'Such url already exists'));
     }
 
     /**
