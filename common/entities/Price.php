@@ -41,6 +41,14 @@ class Price extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'price',
+            'discount',
+            'discount_type_id'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
