@@ -76,6 +76,25 @@ class Combination extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'product_id', // !
+            'sku',
+            'default',
+            'creation_time',
+            'update_time',
+            'availability', // !
+            'number',
+
+            'shopCombinationTranslations',
+            'combinationPrices',
+            'images',
+            'combinationAttributes'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

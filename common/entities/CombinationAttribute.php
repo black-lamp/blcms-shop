@@ -46,6 +46,18 @@ class CombinationAttribute extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'combination_id',
+            'attribute_id',
+            'attribute_value_id',
+            'creation_time',
+            'update_time'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
