@@ -56,6 +56,20 @@ class Vendor extends ActiveRecord
     /**
      * @inheritdoc
      */
+    public function fields()
+    {
+        return [
+            'id',
+            'title',
+            'description',
+            'image_name',
+            'translations'
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [

@@ -20,7 +20,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $menu_item
  * @property boolean $additional_products
  *
- * @property CategoryTranslation[] $categoryTranslations
+ * @property CategoryTranslation[] $translations
  * @property Filter[] $filters
  * @property Product[] $products
  * @property CategoryTranslation $translation
@@ -71,6 +71,21 @@ class Category extends ActiveRecord
             [['parent_id', 'position'], 'integer'],
             [['show', 'additional_products'], 'boolean'],
             [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
+        ];
+    }
+
+    public function fields()
+    {
+        return [
+            'id',
+            'parent_id',
+            'position',
+//            'show',
+            'cover',
+            'thumbnail',
+            'menu_item',
+            'additional_products',
+            'translations'
         ];
     }
 

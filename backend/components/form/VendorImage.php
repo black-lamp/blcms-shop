@@ -54,16 +54,20 @@ class VendorImage extends Model
         // create small, thumb & big
         $this->_image_name = $image->create($this->_category, $image->imagesPath . $this->_orig_image_name);
         // delete original
-        unlink($image->imagesPath . $this->_orig_image_name);
+        if(file_exists($image->imagesPath . $this->_orig_image_name))
+            unlink($image->imagesPath . $this->_orig_image_name);
     }
 
     public function Remove($image_name)
     {
         if(!empty($image_name)) {
             $dir = Yii::getAlias('@frontend/web');
-            unlink($dir . $this->getBig($image_name));
-            unlink($dir . $this->getThumb($image_name));
-            unlink($dir . $this->getSmall($image_name));
+            if(file_exists($dir . $this->getBig($image_name)))
+                unlink($dir . $this->getBig($image_name));
+            if(file_exists($dir . $this->getThumb($image_name)))
+                unlink($dir . $this->getThumb($image_name));
+            if(file_exists($dir . $this->getSmall($image_name)))
+                unlink($dir . $this->getSmall($image_name));
         }
     }
 

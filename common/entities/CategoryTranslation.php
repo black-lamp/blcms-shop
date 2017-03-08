@@ -60,6 +60,21 @@ class CategoryTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'category_id',
+            'language_id',
+            'title',
+            'description',
+            'seoUrl',
+            'seoTitle',
+            'seoDescription',
+            'seoKeywords'
+        ];
+    }
+
+
     /**
      * @inheritdoc
      */
