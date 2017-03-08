@@ -1,5 +1,5 @@
 <?php
-use bl\cms\itpl\shop\backend\assets\VendorAsset;
+//use bl\cms\itpl\shop\backend\assets\VendorAsset;
 use marqu3s\summernote\Summernote;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -18,7 +18,7 @@ use bl\cms\shop\backend\components\form\VendorImage;
 
 $this->title = Yii::t('shop', 'Save vendor');
 
-VendorAsset::register($this);
+//VendorAsset::register($this);
 ?>
 
 <div class="row">
