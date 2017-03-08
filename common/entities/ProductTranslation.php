@@ -66,6 +66,26 @@ class ProductTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            // 'id',
+            // 'product_id',
+            'language_id',
+            'title',
+            'description',
+            'full_text',
+            'creation_time',
+            // 'update_time',
+
+            'seoUrl',
+            'seoTitle',
+            'seoDescription',
+            'seoKeywords'
+        ];
+    }
+
+
     /**
      * Validation rule which checks if such seo url is already exist in current entity
      * @param $attribute

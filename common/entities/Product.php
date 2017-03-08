@@ -120,6 +120,37 @@ class Product extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'position',
+            'category_id',
+            'vendor_id',
+            'country_id',
+            'sku',
+            'creation_time',
+            // 'update_time',
+            'status',
+            // 'availability',
+            // 'owner',
+            'sale',
+            'views',
+            'popular',
+            //'price_id',
+            'number',
+
+            'translations',
+            'params',
+            'productAvailability',
+            'productPrices',
+            'images',
+            'combinations',
+            'productAdditionalProducts'
+        ];
+    }
+
+
     public function behaviors()
     {
         return [
