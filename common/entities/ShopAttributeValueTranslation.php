@@ -42,6 +42,14 @@ class ShopAttributeValueTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'language_id',
+            'value'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
