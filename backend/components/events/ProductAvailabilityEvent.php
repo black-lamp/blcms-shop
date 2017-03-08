@@ -2,6 +2,7 @@
 namespace bl\cms\shop\backend\components\events;
 
 use bl\cms\shop\common\entities\ProductAvailability;
+use yii\base\Event;
 
 /**
  * Class ProductAvailabilityEvent
@@ -10,7 +11,7 @@ use bl\cms\shop\common\entities\ProductAvailability;
  *
  * @package bl\cms\shop\backend\components\events
  */
-class ProductAvailabilityEvent
+class ProductAvailabilityEvent extends Event
 {
     /**
      * @var ProductAvailability
