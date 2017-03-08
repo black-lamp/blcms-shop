@@ -46,7 +46,8 @@ class ShopAttributeValueTranslation extends ActiveRecord
     {
         return [
             'language_id',
-            'value'
+            'value',
+            'shopAttributeValueColorTexture'
         ];
     }
 
@@ -89,4 +90,11 @@ class ShopAttributeValueTranslation extends ActiveRecord
         else return false;
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShopAttributeValueColorTexture()
+    {
+        return $this->hasOne(ShopAttributeValueColorTexture::className(), ['id' => 'value']);
+    }
 }

@@ -57,8 +57,8 @@ class ShopAttributeValue extends ActiveRecord
     public function fields()
     {
         return [
+            'id',
             'shopAttributeValueTranslations',
-            'shopAttributeValueColorTexture'
         ];
     }
 
@@ -85,14 +85,6 @@ class ShopAttributeValue extends ActiveRecord
     public function getShopAttributeValueTranslations()
     {
         return $this->hasMany(ShopAttributeValueTranslation::className(), ['value_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShopAttributeValueColorTexture()
-    {
-        return $this->hasOne(ShopAttributeValueColorTexture::className(), ['value_id' => 'id']);
     }
 
 }

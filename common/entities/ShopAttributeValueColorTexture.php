@@ -36,6 +36,16 @@ class ShopAttributeValueColorTexture extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'color',
+            'texture',
+            'title'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
