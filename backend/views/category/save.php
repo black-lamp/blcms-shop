@@ -11,9 +11,9 @@ use yii\widgets\Pjax;
 use yii\helpers\{
     Html, Url
 };
-use bl\cms\itpl\shop\backend\assets\EditProductAsset;
+//use bl\cms\itpl\shop\backend\assets\EditProductAsset;
 
-EditProductAsset::register($this);
+//EditProductAsset::register($this);
 
 $this->title = ($params['category']->isNewRecord) ? \Yii::t('shop', 'Add new category') : \Yii::t('shop', 'Edit category');
 $this->params['breadcrumbs'] = [

@@ -47,6 +47,15 @@ class Param extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'id',
+            'position',
+            'product_id',
+            'translations'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

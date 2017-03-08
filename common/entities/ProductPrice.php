@@ -40,6 +40,13 @@ class ProductPrice extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'user_group_id',
+            'price'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

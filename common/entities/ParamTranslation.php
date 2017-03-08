@@ -1,7 +1,9 @@
 <?php
 namespace bl\cms\shop\common\entities;
+
 use bl\seo\behaviors\SeoDataBehavior;
 use yii\db\ActiveRecord;
+
 /**
  * @author Albert Gainutdinov
  *
@@ -9,9 +11,6 @@ use yii\db\ActiveRecord;
  * @property string $name
  * @property string $value
  */
-
-
-
 class ParamTranslation extends ActiveRecord
 {
     public function behaviors()
@@ -30,6 +29,15 @@ class ParamTranslation extends ActiveRecord
             [['name', 'value'], 'string'],
         ];
     }
+
+    public function fields() {
+        return [
+            'name',
+            'value',
+            'language_id'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

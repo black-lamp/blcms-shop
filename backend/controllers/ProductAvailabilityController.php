@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\events\ProductAvailabilityEvent;
 use bl\cms\shop\common\entities\ProductAvailability;
 use bl\cms\shop\common\entities\ProductAvailabilityTranslation;
 use bl\multilang\entities\Language;
@@ -16,6 +17,7 @@ use yii\web\NotFoundHttpException;
  */
 class ProductAvailabilityController extends Controller
 {
+    const EVENT_AFTER_CREATE_OR_UPDATE_PRODUCT_AVAILABILITY = 'afterCrateOrUpdateProductAvailability';
 
     /**
      * @inheritdoc
@@ -100,6 +102,9 @@ class ProductAvailabilityController extends Controller
             if ($modelTranslation->validate()) {
 
                 $modelTranslation->save();
+                $this->trigger(self::EVENT_AFTER_CREATE_OR_UPDATE_PRODUCT_AVAILABILITY,
+                    new ProductAvailabilityEvent(['availability' => $model]));
+
                 return $this->redirect(['save', 'id' => $model->id, 'languageId' => $languageId]);
             }
         }
