@@ -73,7 +73,6 @@ class ProductController extends Controller
     {
         return [
             'access' => [
-                'only' => ['save'],
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
