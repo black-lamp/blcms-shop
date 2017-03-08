@@ -35,6 +35,15 @@ class ProductAvailabilityTranslation extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            // 'availability_id',
+            'language_id',
+            'title',
+            'description',
+        ];
+    }
+
     /**
      * @inheritdoc
      */
