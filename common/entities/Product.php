@@ -132,7 +132,7 @@ class Product extends ActiveRecord
             'creation_time',
             // 'update_time',
             'status',
-            // 'availability',
+            'availability',
             // 'owner',
             'sale',
             'views',
@@ -142,7 +142,7 @@ class Product extends ActiveRecord
 
             'translations',
             'params',
-            'productAvailability',
+            // 'productAvailability',
             'productPrices',
             'images',
             'combinations',
