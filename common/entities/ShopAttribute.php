@@ -55,6 +55,19 @@ class ShopAttribute extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'type_id',
+            'created_at',
+            'updated_at',
+
+            'translations',
+            'attributeValues'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

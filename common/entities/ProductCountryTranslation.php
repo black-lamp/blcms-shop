@@ -26,6 +26,14 @@ class ProductCountryTranslation extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'country_id',
+            'language_id',
+            'title'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

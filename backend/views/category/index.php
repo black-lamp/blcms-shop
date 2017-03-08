@@ -7,7 +7,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
-use bl\cms\itpl\shop\backend\assets\CategoriesIndexAsset;
+//use bl\cms\itpl\shop\backend\assets\CategoriesIndexAsset;
 use bl\cms\shop\common\entities\Category;
 use bl\multilang\entities\Language;
 use yii\helpers\Html;
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'] = [
     Yii::t('shop', 'Shop'),
     $this->title
 ];
-CategoriesIndexAsset::register($this);
+//CategoriesIndexAsset::register($this);
 ?>
 
 <div class="ibox">

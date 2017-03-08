@@ -2,6 +2,7 @@
 
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\backend\components\events\AttributeEvent;
 use bl\cms\shop\backend\components\form\AttributeTextureForm;
 use bl\cms\shop\common\entities\SearchAttributeValue;
 use bl\cms\shop\common\entities\ShopAttributeTranslation;
@@ -21,7 +22,6 @@ use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 /**
@@ -29,6 +29,8 @@ use yii\web\UploadedFile;
  */
 class AttributeController extends Controller
 {
+    const EVENT_AFTER_CREATE_OR_UPDATE_ATTRIBUTE = 'afterCrateOrUpdateAttribute';
+
     /**
      * @inheritdoc
      */
@@ -135,13 +137,16 @@ class AttributeController extends Controller
                 $model->save();
                 $modelTranslation->attr_id = $model->id;
                 $modelTranslation->language_id = $languageId;
+
+                if ($modelTranslation->validate()) {
+                    $modelTranslation->save();
+
+                    $this->trigger(self::EVENT_AFTER_CREATE_OR_UPDATE_ATTRIBUTE, new AttributeEvent(['attribute' => $model]));
+                    Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
+                    return $this->redirect(['save', 'attrId' => $model->id, 'languageId' => $languageId]);
+                }
             }
 
-            if ($modelTranslation->validate()) {
-                $modelTranslation->save();
-                Yii::$app->getSession()->setFlash('success', 'Data were successfully modified.');
-                return $this->redirect(['save', 'attrId' => $model->id, 'languageId' => $languageId]);
-            }
         }
 
         return $this->render('save', [
@@ -236,6 +241,8 @@ class AttributeController extends Controller
 
                         if ($attributeValueTranslation->validate()) {
                             $attributeValueTranslation->save();
+                            $this->trigger(self::EVENT_AFTER_CREATE_OR_UPDATE_ATTRIBUTE, new AttributeEvent(['attribute' => $shopAttribute]));
+
                             if (\Yii::$app->request->isPjax) {
                                 return $this->renderPartial('add-value', [
                                     'dataProvider' => $dataProviderAttributeValue,

@@ -5,7 +5,7 @@ use yii\helpers\{
 use bl\multilang\entities\Language;
 use bl\multilang\MultiLangUrlManager;
 use bl\cms\shop\common\entities\Product;
-use bl\cms\itpl\shop\backend\assets\EditProductAsset;
+//use bl\cms\itpl\shop\backend\assets\EditProductAsset;
 
 /**
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
@@ -18,7 +18,7 @@ use bl\cms\itpl\shop\backend\assets\EditProductAsset;
  * @var array $params
  */
 
-EditProductAsset::register($this);
+//EditProductAsset::register($this);
 
 $this->title = \Yii::t('shop', ($product->isNewRecord) ? 'Creating a new product' : 'Changing the product');
 $urlManagerFrontend = Yii::$app->get('urlManagerFrontend');

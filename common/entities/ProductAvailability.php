@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
  * @author Albert Gainutdinov <xalbert.einsteinx@gmail.com>
  *
  * @property integer $id
+ * @property ProductAvailabilityTranslation[] $translations
  * @property ProductAvailabilityTranslation $translation
  * @property Product[] $products
  *
@@ -45,6 +46,13 @@ class ProductAvailability extends ActiveRecord
     public function rules()
     {
         return [
+        ];
+    }
+
+    public function fields() {
+        return [
+            'id',
+            'translations'
         ];
     }
 

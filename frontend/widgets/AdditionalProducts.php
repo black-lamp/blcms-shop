@@ -3,6 +3,7 @@ namespace bl\cms\shop\frontend\widgets;
 
 use bl\cms\shop\common\entities\ProductAdditionalProduct;
 use bl\cms\shop\frontend\widgets\assets\AdditionalProductsAsset;
+use bl\cms\shop\frontend\widgets\models\AdditionalProductForm;
 use yii\base\Model;
 use yii\base\Widget;
 use yii\widgets\ActiveForm;
@@ -49,11 +50,13 @@ class AdditionalProducts extends Widget
             ->orderBy('position')
             ->all();
 
+        $form = new AdditionalProductForm();
+
         return $this->render('additional-products/index',
             [
                 'productAdditionalProducts' => $productAdditionalProducts,
                 'form' => $this->form,
-                'model' => $this->model,
+                'model' => $form,
                 'modelAttribute' => $this->attribute
             ]);
 

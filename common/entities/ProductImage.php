@@ -70,6 +70,16 @@ class ProductImage extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'id',
+            'product_id',
+            'position',
+            'file_name',
+            'translations'
+        ];
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
