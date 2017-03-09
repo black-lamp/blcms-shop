@@ -107,6 +107,7 @@ class AttributesWidget extends Widget
     public $skuCssClass = 'product-sku';
     public $statusCssClass = 'product-status';
     public $productFullTextSelector = '#product-full-text';
+    public $notAvailableWrapSelector = '#js-not-available-wrap';
 
     private $_formClass = 'product-price-form';
     private $_attributesContainerClass = 'product-attributes';
@@ -445,6 +446,8 @@ class AttributesWidget extends Widget
 
     /**
      * Registers necessary JavaScript.
+     *
+     * TODO: move this to .js file
      */
     private function registerGetCombinationScript()
     {
@@ -467,8 +470,7 @@ addToCartForms.change(function(e) {
         var discountPrice = form.find('.$this->_discountPriceClass');
         var checkedValues = form.find('.field-cartform-attribute_value_id input:checked');
         var selectedValues = form.find('.field-cartform-attribute_value_id option:selected');
-        var countInput = form.find('input[name="CartForm[count]"]');
-        var submitBtn = form.find('button[type="submit"]');
+        var notAvailableWrap = form.find('$this->notAvailableWrapSelector');
         var notAvailable = form.find('.$this->_notAvailableMessageClass');
         var sliderThumbs = $('#productImageSliderThumbs');
         var sku = $('.$this->skuCssClass');
@@ -496,9 +498,7 @@ addToCartForms.change(function(e) {
             success: function (data) { 
                 if (data != 0) {
                     notAvailable.hide("fast");
-                    countInput.show(animDuration);
-                    discountPrice.show(animDuration);
-                    submitBtn.show(animDuration);
+                    notAvailableWrap.show("fast");
                 
                     data = JSON.parse(data);
                 
@@ -515,10 +515,7 @@ addToCartForms.change(function(e) {
                     fullText.html(data.description);
                     $(sliderThumbs).find("img[src='" + data.image + "']").click();
                 } else {
-                    countInput.hide("fast");
-                    discountPrice.hide("fast");
-                    price.hide("fast");
-                    submitBtn.hide("fast");
+                    notAvailableWrap.hide("fast");
                     notAvailable.show("fast");
                 }
             },

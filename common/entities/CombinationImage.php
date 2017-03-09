@@ -43,6 +43,17 @@ class CombinationImage extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'combination_id',
+            'product_image_id',
+            'creation_time',
+            'update_time'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

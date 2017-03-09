@@ -54,6 +54,13 @@ class ShopAttributeValue extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'shopAttributeValueTranslations',
+        ];
+    }
 
     /**
      * @inheritdoc

@@ -42,6 +42,18 @@ class CombinationTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'combination_id',
+            'language_id',
+            'description',
+            'creation_time',
+            'update_time'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

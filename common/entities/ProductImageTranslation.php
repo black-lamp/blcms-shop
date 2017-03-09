@@ -41,6 +41,13 @@ class ProductImageTranslation extends ActiveRecord
         ];
     }
 
+    public function fields() {
+        return [
+            'alt',
+            'language_id'
+        ];
+    }
+
     /**
      * @inheritdoc
      */

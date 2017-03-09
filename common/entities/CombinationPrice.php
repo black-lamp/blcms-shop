@@ -47,6 +47,19 @@ class CombinationPrice extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'combination_id',
+            'price_id',
+            'user_group_id',
+            'creation_time',
+            'update_time',
+            'price'
+        ];
+    }
+
     /**
      * @inheritdoc
      */
