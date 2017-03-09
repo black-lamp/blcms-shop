@@ -25,6 +25,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Product[] $products
  * @property CategoryTranslation $translation
  * @property Category $parent
+ * @property Category[] $categories
  *
  * @method CategoryTranslation getTranslation($languageId = null)
  * @method PositionBehavior moveNext
@@ -127,6 +128,14 @@ class Category extends ActiveRecord
     public function getParent()
     {
         return $this->hasOne(Category::className(), ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
+    {
+        return $this->hasMany(Category::className(), ['parent_id' => 'id']);
     }
 
     /**
