@@ -19,7 +19,7 @@ use bl\cms\shop\backend\components\form\{
     ProductImageForm, ProductVideoForm
 };
 use bl\cms\shop\common\entities\{
-    CategoryTranslation, ParamTranslation, Product, ProductImage, ProductImageTranslation, Price,
+    Product, ProductImage, ProductImageTranslation, Price,
     ProductPrice, SearchProduct, ProductTranslation, ProductVideo
 };
 use yii2tech\ar\position\PositionBehavior;
@@ -85,6 +85,7 @@ class ProductController extends Controller
                             'save',
                             'add-image', 'delete-image',
                             'add-video', 'delete-video',
+                            'image-up', 'image-down',
                             'up', 'down', 'generate-seo-url',
                         ],
                         'roles' => ['createProduct', 'createProductWithoutModeration',
