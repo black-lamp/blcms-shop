@@ -145,6 +145,7 @@ class ProductController extends Controller
      * @return string|\yii\web\Response
      * @throws Exception
      * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionSave(int $id = null, int $languageId = null)
     {
@@ -162,6 +163,7 @@ class ProductController extends Controller
                         ])->one() ?? new ProductTranslation();
                 } else throw new ForbiddenHttpException();
             }
+            else throw new NotFoundHttpException();
 
         } else {
             if (\Yii::$app->user->can('createProduct')) {
