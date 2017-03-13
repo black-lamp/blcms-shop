@@ -83,7 +83,7 @@ class ProductController extends Controller
                     [
                         'actions' => [
                             'save',
-                            'add-image', 'delete-image',
+                            'add-image', 'delete-image', 'edit-image',
                             'add-video', 'delete-video',
                             'image-up', 'image-down',
                             'up', 'down', 'generate-seo-url',
