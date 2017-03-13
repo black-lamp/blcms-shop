@@ -154,12 +154,14 @@ class ProductController extends Controller
         if (!empty($id)) {
             $product = Product::findOne($id);
 
-            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-                $productTranslation = ProductTranslation::find()->where([
-                    'product_id' => $id,
-                    'language_id' => $languageId
-                ])->one() ?? new ProductTranslation();
-            } else throw new ForbiddenHttpException();
+            if (!empty($product)) {
+                if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+                    $productTranslation = ProductTranslation::find()->where([
+                            'product_id' => $id,
+                            'language_id' => $languageId
+                        ])->one() ?? new ProductTranslation();
+                } else throw new ForbiddenHttpException();
+            }
 
         } else {
             if (\Yii::$app->user->can('createProduct')) {
@@ -177,7 +179,7 @@ class ProductController extends Controller
         foreach ($userGroups as $userGroup) {
 
             $price = Price::find()->joinWith('productPrice')
-                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
+                    ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
             $prices[$userGroup->id] = $price;
         }
 
