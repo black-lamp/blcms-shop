@@ -83,7 +83,7 @@ class ProductController extends Controller
                     [
                         'actions' => [
                             'save',
-                            'add-image', 'delete-image',
+                            'add-image', 'delete-image', 'edit-image',
                             'add-video', 'delete-video',
                             'image-up', 'image-down',
                             'up', 'down', 'generate-seo-url',
@@ -145,6 +145,7 @@ class ProductController extends Controller
      * @return string|\yii\web\Response
      * @throws Exception
      * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionSave(int $id = null, int $languageId = null)
     {
@@ -154,12 +155,15 @@ class ProductController extends Controller
         if (!empty($id)) {
             $product = Product::findOne($id);
 
-            if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
-                $productTranslation = ProductTranslation::find()->where([
-                    'product_id' => $id,
-                    'language_id' => $languageId
-                ])->one() ?? new ProductTranslation();
-            } else throw new ForbiddenHttpException();
+            if (!empty($product)) {
+                if (\Yii::$app->user->can('updateProduct', ['productOwner' => $product->owner])) {
+                    $productTranslation = ProductTranslation::find()->where([
+                            'product_id' => $id,
+                            'language_id' => $languageId
+                        ])->one() ?? new ProductTranslation();
+                } else throw new ForbiddenHttpException();
+            }
+            else throw new NotFoundHttpException();
 
         } else {
             if (\Yii::$app->user->can('createProduct')) {
@@ -177,7 +181,7 @@ class ProductController extends Controller
         foreach ($userGroups as $userGroup) {
 
             $price = Price::find()->joinWith('productPrice')
-                ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
+                    ->where(['product_id' => $product->id, 'user_group_id' => $userGroup->id])->one() ?? new Price();
             $prices[$userGroup->id] = $price;
         }
 
