@@ -81,7 +81,7 @@ class Category extends ActiveRecord
             'id',
             'parent_id',
             'position',
-//            'show',
+            'show',
             'cover',
             'thumbnail',
             'menu_item',
