@@ -31,11 +31,13 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $status
  * @property integer $availability
  * @property integer $owner
- * @property integer $sale
+ * @property boolean $sale
  * @property integer $views
- * @property integer $popular
+ * @property boolean $popular
+ * @property boolean $new
  * @property integer $price_id
  * @property integer $number
+ * @property boolean $show
  *
  * @property Category $category
  * @property RelatedProduct $relatedProducts
@@ -107,7 +109,7 @@ class Product extends ActiveRecord
                 return $value;
             }],
 
-            [['sale', 'popular', 'new'], 'boolean'],
+            [['sale', 'popular', 'new', 'show'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
             [['sku'], 'string', 'max' => 255],
             [['sku'], 'trim'],

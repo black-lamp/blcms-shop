@@ -67,7 +67,8 @@ class FavoriteProductController extends Controller
     {
         if (!empty($productId)) {
             if (!Yii::$app->user->isGuest) {
-                $model = FavoriteProduct::find()->where(['product_id' => $productId, 'user_id' => Yii::$app->user->id])->one();
+                $model = FavoriteProduct::find()
+                    ->where(['show'=> true, 'product_id' => $productId, 'user_id' => Yii::$app->user->id])->one();
                 if (!empty($model)) {
                     $model->delete();
                     if (Yii::$app->request->isAjax) {

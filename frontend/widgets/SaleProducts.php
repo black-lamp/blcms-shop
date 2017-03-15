@@ -24,7 +24,7 @@ class SaleProducts extends Widget
     {
         parent::run();
         $saleProducts = Product::find()
-            ->where(['sale' => true, 'status' => Product::STATUS_SUCCESS])
+            ->where(['show' => true, 'sale' => true, 'status' => Product::STATUS_SUCCESS])
             ->orderBy(['update_time' => SORT_DESC])
             ->all();
 

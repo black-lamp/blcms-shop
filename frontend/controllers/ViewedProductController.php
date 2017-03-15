@@ -44,7 +44,7 @@ class ViewedProductController extends Controller
         if (!Yii::$app->user->isGuest) {
             if (!empty($id)) {
                 $viewedProduct = ViewedProduct::find()
-                    ->where(['product_id' => $id, 'user_id' => Yii::$app->user->id])->one();
+                    ->where(['show' => true, 'product_id' => $id, 'user_id' => Yii::$app->user->id])->one();
                 if ($viewedProduct->user_id == Yii::$app->user->id) {
                     $viewedProduct->delete();
                     return $this->redirect(['list']);

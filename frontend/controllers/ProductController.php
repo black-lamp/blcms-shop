@@ -47,7 +47,7 @@ class ProductController extends Controller
 
         $this->trigger(self::EVENT_BEFORE_SHOW, $this->getViewedProductEvent($id));
 
-        $product = Product::find()->where(['id' => $id, 'status' => Product::STATUS_SUCCESS])->one();
+        $product = Product::find()->where(['show' => true, 'id' => $id, 'status' => Product::STATUS_SUCCESS])->one();
 
         if (!empty($product)) {
 
@@ -77,7 +77,7 @@ class ProductController extends Controller
 
         return $this->renderPartial('xml', [
             'categories' => Category::find()->all(),
-            'products' => Product::findAll(['export' => true]),
+            'products' => Product::findAll(['export' => true, 'show' => true]),
             'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
         ]);
     }
@@ -93,7 +93,7 @@ class ProductController extends Controller
 
         return $this->renderPartial('hlxml', [
             'categories' => Category::find()->all(),
-            'products' => Product::findAll(['export' => true]),
+            'products' => Product::findAll(['show' => true, 'export' => true]),
             'date' => ProductTranslation::find()->orderBy(['update_time' => SORT_DESC])->one()->update_time
         ]);
     }

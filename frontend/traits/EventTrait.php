@@ -20,16 +20,16 @@ trait EventTrait
             if (!\Yii::$app->user->isGuest) {
 
                 $viewedProduct = ViewedProduct::find()
-                    ->where(['product_id' => $productId, 'user_id' => \Yii::$app->user->id])->one();
+                    ->where(['show' => true, 'product_id' => $productId, 'user_id' => \Yii::$app->user->id])->one();
                 $ViewedProductsCount = ViewedProduct::find()
-                    ->where(['user_id' => \Yii::$app->user->id])->count();
+                    ->where(['show' => true, 'user_id' => \Yii::$app->user->id])->count();
 
 
                 if (empty($viewedProduct)) {
                     if ($this->module->log['maxProducts'] != 'all') {
                         if ($ViewedProductsCount > $this->module->log['maxProducts']) {
                             $oldViewedProduct = ViewedProduct::find()
-                                ->where(['user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
+                                ->where(['show' => true, 'user_id' => \Yii::$app->user->id])->orderBy('id ASC')->one();
                             $oldViewedProduct->delete();
                         }
                         $this->recordProductView($productId);

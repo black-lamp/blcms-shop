@@ -30,9 +30,9 @@ class RelatedProducts extends Widget
 
         $relatedProducts = (is_array($this->productId)) ?
             Product::find()->joinWith('relatedProductsWhereItRelated')
-                ->where(['in', 'shop_related_product.product_id', $this->productId])->all() :
+                ->where(['in', 'shop_related_product.product_id', $this->productId])->andWhere(['show' => true])->all() :
             Product::find()->joinWith('relatedProductsWhereItRelated')
-                ->where(['shop_related_product.product_id' => $this->productId])->all();
+                ->where(['shop_related_product.product_id' => $this->productId])->andWhere(['show' => true])->all();
 
 
         return $this->render('_products',
