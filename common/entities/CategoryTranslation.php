@@ -16,6 +16,11 @@ use yii\db\ActiveRecord;
  * @property string $title
  * @property string $description
  *
+ * @property string $seoUrl
+ * @property string $seoTitle
+ * @property string $seoDescription
+ * @property string $seoKeywords
+ *
  * @property Category $category
  * @property Language $language
  */
