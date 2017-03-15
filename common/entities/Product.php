@@ -202,6 +202,7 @@ class Product extends ActiveRecord
             'popular' => Yii::t('shop', 'Popular'),
             'price_id' => Yii::t('shop', 'Price'),
             'number' => Yii::t('shop', 'Number'),
+            'show' => Yii::t('shop', 'Show'),
         ];
     }
 
