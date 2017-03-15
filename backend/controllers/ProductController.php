@@ -2,6 +2,7 @@
 namespace bl\cms\shop\backend\controllers;
 
 use bl\cms\shop\common\components\user\models\UserGroup;
+use bl\seo\entities\SeoData;
 use Yii;
 use yii\base\{
     Exception, Model
@@ -206,44 +207,47 @@ class ProductController extends Controller
                 else {
                     if (!$product->validate()) throw new Exception(
                         \Yii::t('shop', 'An error occurred during the creation of the product'));
-                    $product->save();
                 }
 
-                if ($productTranslation->load($post) && $productTranslation->validate()) {
+                if ($productTranslation->load($post)) {
 
                     //Sets SEO-Url
                     if (empty($productTranslation->seoUrl)) {
                         $productTranslation->seoUrl = Inflector::slug($productTranslation->title);
                     }
+                    if ($productTranslation->validate()) {
+                        $product->save();
+                        $productTranslation->product_id = $product->id;
+                        $productTranslation->language_id = $selectedLanguage->id;
+                        $productTranslation->save();
 
-                    $productTranslation->product_id = $product->id;
-                    $productTranslation->language_id = $selectedLanguage->id;
-                    $productTranslation->save();
-
-                    //Loads prices
-                    if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
-                        foreach ($prices as $key => $price) {
-                            $price->save(false);
-                            $productPrice = ProductPrice::find()
-                                ->where(['product_id' => $product->id, 'user_group_id' => $key])
-                                ->one();
-                            if (empty($productPrice)) {
-                                $productPrice = new ProductPrice();
-                                $productPrice->product_id = $product->id;
-                                $productPrice->price_id = $price->id;
-                                $productPrice->user_group_id = $key;
-                                if ($productPrice->validate()) $productPrice->save();
+                        //Loads prices
+                        if (Model::loadMultiple($prices, Yii::$app->request->post()) && Model::validateMultiple($prices)) {
+                            foreach ($prices as $key => $price) {
+                                $price->save(false);
+                                $productPrice = ProductPrice::find()
+                                    ->where(['product_id' => $product->id, 'user_group_id' => $key])
+                                    ->one();
+                                if (empty($productPrice)) {
+                                    $productPrice = new ProductPrice();
+                                    $productPrice->product_id = $product->id;
+                                    $productPrice->price_id = $price->id;
+                                    $productPrice->user_group_id = $key;
+                                    if ($productPrice->validate()) $productPrice->save();
+                                }
                             }
                         }
+
+                        $eventName = $productTranslation->isNewRecord ? self::EVENT_AFTER_CREATE_PRODUCT :
+                            self::EVENT_AFTER_EDIT_PRODUCT;
+                        $this->trigger($eventName, new ProductEvent([
+                            'id' => $product->id
+                        ]));
+
+                        return $this->redirect(Url::to(['save', 'id' => $product->id, 'languageId' => $selectedLanguage->id]));
+
                     }
 
-                    $eventName = $productTranslation->isNewRecord ? self::EVENT_AFTER_CREATE_PRODUCT :
-                        self::EVENT_AFTER_EDIT_PRODUCT;
-                    $this->trigger($eventName, new ProductEvent([
-                        'id' => $product->id
-                    ]));
-
-                    return $this->redirect(Url::to(['save', 'id' => $product->id, 'languageId' => $selectedLanguage->id]));
                 }
             }
         }
@@ -752,6 +756,12 @@ class ProductController extends Controller
      */
     public function actionGenerateSeoUrl($title)
     {
-        return Inflector::slug($title);
+        $newSeoUrl = Inflector::slug($title);
+        $seoUrl = SeoData::find()
+            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $newSeoUrl])
+            ->one();
+        if (!empty($seoUrl)) $newSeoUrl = $newSeoUrl . '-' . date("d-m-y-H-i-s");
+
+        return $newSeoUrl;
     }
 }

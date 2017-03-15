@@ -3,10 +3,10 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\entities\Language;
 use bl\seo\behaviors\SeoDataBehavior;
 use bl\seo\entities\SeoData;
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 /**
  * @author Albert Gainutdinov
@@ -19,11 +19,6 @@ use yii\db\Expression;
  * @property string $full_text
  * @property string $creation_time
  * @property string $update_time
- *
- * @property string $seoUrl
- * @property string $seoTitle
- * @property string $seoDescription
- * @property string $seoKeywords
  *
  * @property Language $language
  * @property Product $product
@@ -66,7 +61,6 @@ class ProductTranslation extends ActiveRecord
 
             /*SEO params*/
             [['seoUrl', 'seoTitle', 'seoDescription', 'seoKeywords'], 'string'],
-
             [['seoUrl'], 'uniqueForEntity'],
         ];
     }
@@ -102,11 +96,13 @@ class ProductTranslation extends ActiveRecord
             ->asArray()->where(['product_id' => $this->product_id])->select('id')->all();
 
         $seoUrl = SeoData::find()
-            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $this->seoUrl])
-            ->andWhere(['not in', 'entity_id', $translationsIds])
+            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => \Yii::$app->request->post()['ProductTranslation']['seoUrl']])
+            ->andWhere(['not in', 'entity_id', ArrayHelper::getColumn($translationsIds, 'id')])
             ->one();
 
-        if (!empty($seoUrl)) $this->addError($attribute, \Yii::t('seo', 'Such url already exists'));
+        if (!empty($seoUrl)) {
+            $this->addError($attribute, \Yii::t('shop', 'Such url already exists'));
+        }
     }
 
     /**
