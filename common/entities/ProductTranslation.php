@@ -20,6 +20,11 @@ use yii\db\Expression;
  * @property string $creation_time
  * @property string $update_time
  *
+ * @property string $seoUrl
+ * @property string $seoTitle
+ * @property string $seoDescription
+ * @property string $seoKeywords
+ *
  * @property Language $language
  * @property Product $product
  */
