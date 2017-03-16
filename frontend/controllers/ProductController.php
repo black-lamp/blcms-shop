@@ -47,7 +47,9 @@ class ProductController extends Controller
 
         $this->trigger(self::EVENT_BEFORE_SHOW, $this->getViewedProductEvent($id));
 
-        $product = Product::find()->where(['show' => true, 'id' => $id, 'status' => Product::STATUS_SUCCESS])->one();
+        $product = Product::find()
+            ->where(['show' => true, 'id' => $id, 'status' => Product::STATUS_SUCCESS])
+            ->one();
 
         if (!empty($product)) {
 

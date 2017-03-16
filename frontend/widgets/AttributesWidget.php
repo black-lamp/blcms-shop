@@ -1,7 +1,9 @@
 <?php
 namespace bl\cms\shop\frontend\widgets;
 
+use bl\cms\cart\CartComponent;
 use bl\cms\cart\models\CartForm;
+use bl\cms\shop\common\entities\Combination;
 use bl\cms\shop\common\entities\CombinationAttribute;
 use bl\cms\shop\common\entities\Product;
 use bl\cms\shop\common\entities\ShopAttribute;
@@ -102,6 +104,16 @@ class AttributesWidget extends Widget
     public $notAvailableMessageOptions = ['style' => ['display' => 'none']];
 
     /**
+     * @var CartComponent
+     */
+    private $_cartComponent;
+
+    /**
+     * @var null|Combination
+     */
+    private $_selectedCombination = null;
+
+    /**
      * @var string the default CSS classes.
      */
     public $skuCssClass = 'product-sku';
@@ -125,6 +137,7 @@ class AttributesWidget extends Widget
         }
 
         $this->cartForm = new CartForm();
+        $this->_cartComponent = Yii::$app->cart;
 
         if (empty($this->notAvailableMessage)) {
             $this->notAvailableMessage = Yii::t('shop', 'This product is not available in this configuration');
@@ -256,6 +269,8 @@ class AttributesWidget extends Widget
             return false;
         }
 
+        $this->_selectedCombination = $this->_cartComponent->getSelectedCombinationFromSession($this->product->id);
+
         $items = '';
         if (!empty($this->attributeContainerOptions)) {
             $items .= Html::beginTag('div', $this->attributeContainerOptions);
@@ -303,12 +318,10 @@ class AttributesWidget extends Widget
         $attributeType = $attribute->type_id;
 
         $attributesItems = ArrayHelper::map($combinationsAttributes,
-            function ($model) {
-                /** @var CombinationAttribute $model */
+            function (CombinationAttribute $model) {
                 return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->productAttributeValue->id]);
             },
-            function ($model) {
-                /** @var CombinationAttribute $model */
+            function (CombinationAttribute $model) {
                 return $model->productAttributeValue->translation->value;
             }
         );
@@ -340,8 +353,7 @@ class AttributesWidget extends Widget
             case ShopAttributeType::TYPE_COLOR:
                 $item .= $this->form->field($this->cartForm, "attribute_value_id")
                     ->radioList(ArrayHelper::map($combinationsAttributes,
-                        function ($model) {
-                            /** @var CombinationAttribute $model */
+                        function (CombinationAttribute $model) {
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
                         function ($model) {
@@ -349,12 +361,21 @@ class AttributesWidget extends Widget
                         }),
                         [
                             'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
-                            'item' => function ($index, $label, $name, $checked, $value) {
-                                /** @var CombinationAttribute $model */
+                            'item' => function ($index, CombinationAttribute $label, $name, $checked, $value) {
                                 $model = $label;
 
-                                if (!empty($this->product->defaultCombination)) {
-                                    // TODO: optimize this
+                                // TODO: optimize this
+                                if (!empty($this->_selectedCombination)) {
+                                    foreach ($this->_selectedCombination->combinationAttributes as $attr) {
+                                        $serialized = json_encode([
+                                            'attributeId' => $attr->attribute_id,
+                                            'valueId' => $attr->attribute_value_id
+                                        ]);
+                                        if ($serialized == $value) {
+                                            $checked = true;
+                                        };
+                                    }
+                                } else if (!empty($this->product->defaultCombination)) {
                                     foreach ($this->product->defaultCombination->combinationAttributes as $attr) {
                                         $serialized = json_encode([
                                             'attributeId' => $attr->attribute_id,
@@ -387,8 +408,7 @@ class AttributesWidget extends Widget
             case ShopAttributeType::TYPE_TEXTURE:
                 $item .= $this->form->field($this->cartForm, "attribute_value_id")
                     ->radioList(ArrayHelper::map($combinationsAttributes,
-                        function ($model) {
-                            /** @var CombinationAttribute $model */
+                        function (CombinationAttribute $model) {
                             return json_encode(['attributeId' => $model->attribute_id, 'valueId' => $model->attribute_value_id]);
                         },
                         function ($model) {
@@ -396,12 +416,21 @@ class AttributesWidget extends Widget
                         }),
                         [
                             'name' => "CartForm[attribute_value_id][$productId-$attribute->id]",
-                            'item' => function ($index, $label, $name, $checked, $value) use ($attribute) {
-                                /** @var CombinationAttribute $model */
+                            'item' => function ($index, CombinationAttribute $label, $name, $checked, $value) {
                                 $model = $label;
 
-                                if (!empty($this->product->defaultCombination)) {
-                                    // TODO: optimize this
+                                // TODO: optimize this
+                                if (!empty($this->_selectedCombination)) {
+                                    foreach ($this->_selectedCombination->combinationAttributes as $attr) {
+                                        $serialized = json_encode([
+                                            'attributeId' => $attr->attribute_id,
+                                            'valueId' => $attr->attribute_value_id
+                                        ]);
+                                        if ($serialized == $value) {
+                                            $checked = true;
+                                        };
+                                    }
+                                } else if (!empty($this->product->defaultCombination)) {
                                     foreach ($this->product->defaultCombination->combinationAttributes as $attr) {
                                         $serialized = json_encode([
                                             'attributeId' => $attr->attribute_id,
