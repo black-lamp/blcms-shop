@@ -141,6 +141,7 @@ class Product extends ActiveRecord
             'popular',
             //'price_id',
             'number',
+            'show',
 
             'translations',
             'params',
