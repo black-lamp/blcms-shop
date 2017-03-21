@@ -13,14 +13,6 @@ use yii\db\ActiveRecord;
  */
 class ParamTranslation extends ActiveRecord
 {
-    public function behaviors()
-    {
-        return [
-            'seoData' => [
-                'class' => SeoDataBehavior::className()
-            ]
-        ];
-    }
 
     public function rules()
     {
