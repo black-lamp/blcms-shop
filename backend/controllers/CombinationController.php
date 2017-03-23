@@ -73,7 +73,19 @@ class CombinationController extends Controller
     {
         $combination = new Combination();
         $combinationTranslation = new CombinationTranslation();
-        $combinationsList = Combination::find()->where(['product_id' => $productId])->all();
+        $combinationsList = Combination::find()
+            ->with([
+                'images',
+                'prices',
+                'combinationAttributes.productAttribute',
+                'combinationAttributes.productAttribute.translation',
+                'combinationAttributes.productAttributeValue',
+                'combinationAttributes.productAttributeValue.translation',
+                'combinationAvailability',
+                'combinationAvailability.translation',
+            ])
+            ->where(['product_id' => $productId])
+            ->all();
 
         $imageForm = new CombinationImageForm();
         $productImages = ProductImage::find()->where(['product_id' => $productId])->all();
