@@ -26,6 +26,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Product[] $products
  * @property CategoryTranslation $translation
  * @property Category $parent
+ * @property Category[] $childrens
  * @property Category[] $categories
  *
  * @method PositionBehavior moveNext
@@ -151,6 +152,16 @@ class Category extends ActiveRecord
             ->orderBy(['position' => SORT_ASC])
             ->all();
         return $children;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChildrens()
+    {
+        return $this->hasMany(Category::className(), ['parent_id' => 'id'])
+            ->andOnCondition(['show' => true])
+            ->orderBy('position');
     }
 
     /**
