@@ -154,16 +154,20 @@ class UrlRule extends Object implements UrlRuleInterface
         else if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
             $id = $params['id'];
             $parentId = null;
-            $language = Language::findOne([
-                'lang_id' => $manager->language
-            ]);
+
             if($route == $this->productRoute) {
-                $product = Product::findOne($id);
+                /** @var Product $product */
+                $product = Product::find()
+                    ->with('translation')
+                    ->where(['id' => $id])
+                    ->one();
+
                 if(empty($product)) {
                     return false;
                 }
-                if($product->getTranslation($language->id) && $product->getTranslation($language->id)->seoUrl) {
-                    $pathInfo = $product->getTranslation($language->id)->seoUrl;
+
+                if(!empty($product->translation->seoUrl)) {
+                    $pathInfo = $product->translation->seoUrl;
                     $parentId = $product->category_id;
                 }
                 else {
@@ -171,12 +175,18 @@ class UrlRule extends Object implements UrlRuleInterface
                 }
             }
             else if($route == $this->categoryRoute) {
-                $category = Category::findOne($id);
+                /** @var Category $category */
+                $category = Category::find()
+                    ->with('translation')
+                    ->where(['id' => $id])
+                    ->one();
+
                 if(empty($category)) {
                     return false;
                 }
-                if($category->getTranslation($language->id) && $category->getTranslation($language->id)->seoUrl) {
-                    $pathInfo = $category->getTranslation($language->id)->seoUrl;
+
+                if(!empty($category->translation->seoUrl)) {
+                    $pathInfo = $category->translation->seoUrl;
                     $parentId = $category->parent_id;
                 }
                 else {
@@ -184,12 +194,18 @@ class UrlRule extends Object implements UrlRuleInterface
                 }
             }
             while($parentId != null) {
-                $category = Category::findOne($parentId);
+                /** @var Category $category */
+                $category = Category::find()
+                    ->with('translation')
+                    ->where(['id' => $parentId])
+                    ->one();
+
                 if(empty($category)) {
                     return false;
                 }
-                if($category->getTranslation($language->id) && $category->getTranslation($language->id)->seoUrl) {
-                    $pathInfo = $category->getTranslation($language->id)->seoUrl . '/' . $pathInfo;
+
+                if(!empty($category->translation->seoUrl)) {
+                    $pathInfo = $category->translation->seoUrl . '/' . $pathInfo;
                     $parentId = $category->parent_id;
                 }
                 else {
