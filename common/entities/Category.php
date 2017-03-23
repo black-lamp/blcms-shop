@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
@@ -27,7 +28,6 @@ use yii2tech\ar\position\PositionBehavior;
  * @property Category $parent
  * @property Category[] $categories
  *
- * @method CategoryTranslation getTranslation($languageId = null)
  * @method PositionBehavior moveNext
  * @method PositionBehavior movePrev
  */
@@ -186,6 +186,16 @@ class Category extends ActiveRecord
             }
         }
         return $children;
+    }
+
+    /**
+     * @param int|null $languageId
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslation($languageId = null)
+    {
+        return $this->hasOne(CategoryTranslation::className(), ['category_id' => 'id'])
+            ->andOnCondition(['language_id' => $languageId ?? Language::getCurrent()->id]);
     }
 
     /**

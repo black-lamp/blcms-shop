@@ -26,6 +26,8 @@ use yii\db\Expression;
  * @property CombinationAttribute[] $combinationAttributes
  * @property CombinationImage[] $images
  * @property CombinationPrice $price
+ * @property Price $shopPrice
+ * @property Price[] $shopPrices
  * @property CombinationPrice[] $prices
  * @property CombinationTranslation[] $translations
  * @property CombinationTranslation $translation
@@ -128,12 +130,30 @@ class Combination extends ActiveRecord
 
     /**
      * Gets prices for all user groups
-     * @return \yii\db\ActiveQuery[]|Price[]
+     * @return \yii\db\ActiveQuery|Price[]
      */
     public function getPrices()
     {
-        $prices = Price::find()->joinWith('combinationPrice')->where(['combination_id' => $this->id])->all();
-        return $prices;
+        return $this->hasMany(Price::className(), ['id' => 'price_id'])
+            ->via('combinationPrices');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShopPrices()
+    {
+        return $this->hasMany(Price::className(), ['id' => 'price_id'])
+            ->via('combinationPrices');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShopPrice()
+    {
+        return $this->hasOne(Price::className(), ['id' => 'price_id'])
+            ->via('combinationPrice');
     }
 
     /**
@@ -172,6 +192,13 @@ class Combination extends ActiveRecord
             else return false;
         }
         else throw new Exception('User group id is empty');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationPrice() {
+        return $this->hasOne(CombinationPrice::className(), ['combination_id' => 'id']);
     }
 
     /**

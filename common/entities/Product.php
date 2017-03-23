@@ -6,6 +6,7 @@ use bl\cms\cart\models\Order;
 use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\helpers\ShopArrayHelper;
 use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use dektrium\user\models\User;
 use Exception;
 use Yii;
@@ -67,7 +68,6 @@ use yii2tech\ar\position\PositionBehavior;
  * @property boolean $isFavorite
  * @property ProductAdditionalProduct[] $productAdditionalProducts
  *
- * @method ProductTranslation getTranslation($languageId = null)
  */
 class Product extends ActiveRecord
 {
@@ -408,6 +408,16 @@ class Product extends ActiveRecord
     public function getVideos()
     {
         return $this->hasMany(ProductVideo::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * @param int|null $languageId
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslation($languageId = null)
+    {
+        return $this->hasOne(ProductTranslation::className(), ['product_id' => 'id'])
+            ->andOnCondition(['language_id' => $languageId ?? Language::getCurrent()->id]);
     }
 
     /**

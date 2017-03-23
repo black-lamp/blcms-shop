@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -13,8 +14,6 @@ use yii\db\ActiveRecord;
  * @property ProductAvailabilityTranslation[] $translations
  * @property ProductAvailabilityTranslation $translation
  * @property Product[] $products
- *
- * @method ProductAvailabilityTranslation getTranslation($languageId = null)
  */
 class ProductAvailability extends ActiveRecord
 {
@@ -72,6 +71,16 @@ class ProductAvailability extends ActiveRecord
     public function getProducts()
     {
         return $this->hasMany(Product::className(), ['status' => 'id']);
+    }
+
+    /**
+     * @param int|null $language_id
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslation($language_id = null)
+    {
+        return $this->hasOne(ProductAvailabilityTranslation::className(), ['availability_id' => 'id'])
+            ->andOnCondition(['language_id' => $language_id ?? Language::getCurrent()->id]);
     }
 
     /**

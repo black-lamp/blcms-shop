@@ -16,8 +16,6 @@ use yii\db\ActiveRecord;
  * @property ShopAttribute $attribute
  * @property ShopAttributeValueTranslation[] $shopAttributeValueTranslations
  * @property ShopAttributeValueTranslation $translation
- *
- * @method ShopAttributeValueTranslation getTranslation($languageId = null)
  */
 class ShopAttributeValue extends ActiveRecord
 {
@@ -77,6 +75,16 @@ class ShopAttributeValue extends ActiveRecord
      */
     public function getShopAttribute() {
         return $this->hasOne(ShopAttribute::className(), ['id' => 'attribute_id']);
+    }
+
+    /**
+     * @param int|null $language_id
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslation($language_id = null)
+    {
+        return $this->hasOne(ShopAttributeValueTranslation::className(), ['value_id' => 'id'])
+            ->andOnCondition(['language_id' => $language_id ?? Language::getCurrent()->id]);
     }
 
     /**

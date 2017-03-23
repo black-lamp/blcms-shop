@@ -3,6 +3,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\multilang\behaviors\TranslationBehavior;
+use bl\multilang\entities\Language;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -18,9 +19,10 @@ use yii\db\Expression;
  *
  * @property ShopAttributeType $type
  * @property ShopAttributeValue[] $shopAttributeValues
+ * @property ShopAttributeValue $attributeValue
+ * @property CombinationAttribute $combinationAttribute
+ * @property CombinationAttribute[] $combinationAttributes
  * @property ShopAttributeTranslation $translation
- *
- * @method ShopAttributeTranslation getTranslation($languageId = null)
  */
 class ShopAttribute extends ActiveRecord
 {
@@ -118,13 +120,48 @@ class ShopAttribute extends ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAttributeValue()
+    {
+        return $this->hasOne(ShopAttributeValue::className(), ['attribute_id' => 'id']);
+    }
+
+    /**
      * @param $combinationsIds
      * @return CombinationAttribute[]
      */
     public function getProductCombinationAttributes($combinationsIds) {
-        $productCombinationAttributes = CombinationAttribute::find()->where(['attribute_id' => $this->id])
-            ->andWhere(['combination_id' => $combinationsIds])->all();
+        $productCombinationAttributes = CombinationAttribute::find()
+            ->where(['attribute_id' => $this->id])
+            ->andWhere(['combination_id' => $combinationsIds])
+            ->all();
+
         return $productCombinationAttributes;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationAttribute() {
+        return $this->hasOne(CombinationAttribute::className(), ['attribute_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationAttributes() {
+        return $this->hasMany(CombinationAttribute::className(), ['attribute_id' => 'id']);
+    }
+
+    /**
+     * @param int|null $language_id
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTranslation($language_id = null)
+    {
+        return $this->hasOne(ShopAttributeTranslation::className(), ['attr_id' => 'id'])
+            ->andOnCondition(['language_id' => $language_id ?? Language::getCurrent()->id]);
     }
 
     /**
