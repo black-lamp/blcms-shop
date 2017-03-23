@@ -8,7 +8,7 @@ use yii\base\{
     Exception, Model
 };
 use yii\helpers\{
-    Inflector, Url
+    ArrayHelper, Inflector, Url
 };
 use yii\filters\AccessControl;
 use bl\multilang\entities\Language;
@@ -215,10 +215,12 @@ class ProductController extends Controller
                     if (empty($productTranslation->seoUrl)) {
                         $productTranslation->seoUrl = Inflector::slug($productTranslation->title);
                     }
+
+                    $product->save();
+                    $productTranslation->product_id = $product->id;
+                    $productTranslation->language_id = $selectedLanguage->id;
                     if ($productTranslation->validate()) {
-                        $product->save();
-                        $productTranslation->product_id = $product->id;
-                        $productTranslation->language_id = $selectedLanguage->id;
+
                         $productTranslation->save();
 
                         //Loads prices
@@ -740,6 +742,11 @@ class ProductController extends Controller
 
         if (\Yii::$app->user->can('deleteProduct', ['productOwner' => $product->owner])) {
             $this->trigger(self::EVENT_BEFORE_DELETE_PRODUCT);
+
+            SeoData::deleteAll(
+                ['AND',
+                    ['entity_name' => ProductTranslation::className()],
+                    ['in', 'entity_id', ArrayHelper::getColumn($product->translations, 'id')]]);
 
             $product->delete();
 
