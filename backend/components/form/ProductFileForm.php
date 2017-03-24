@@ -17,7 +17,7 @@ class ProductFileForm extends Model
     {
         return [
             [['file'], 'file', 'skipOnEmpty' => true,
-                'extensions' => 'png, jpg, jpeg, jpe, gif, bmp, tif, tiff, txt, csv, html, mp3, wav, pdf, doc, docx, tar, zip, gzip', 'maxSize'=>'3000000'],
+                'extensions' => 'png, jpg, jpeg, jpe, gif, bmp, tif, tiff, txt, csv, html, mp3, wav, pdf, doc, docx, tar, zip, gzip'],
         ];
     }
 
