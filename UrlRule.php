@@ -26,6 +26,12 @@ class UrlRule extends Object implements UrlRuleInterface
     private $currentLanguage;
     private $productRoute = 'shop/product/show';
     private $categoryRoute = 'shop/category/show';
+
+    /**
+     * @var Language
+     */
+    private $_currentManagerLanguage;
+
     /**
      * Parses the given request and returns the corresponding route and parameters.
      * @param UrlManager $manager the URL manager
@@ -154,11 +160,16 @@ class UrlRule extends Object implements UrlRuleInterface
         else if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
             $id = $params['id'];
             $parentId = null;
+            $this->_currentManagerLanguage = Language::findOne(['lang_id' => $manager->language]);
 
             if($route == $this->productRoute) {
                 /** @var Product $product */
                 $product = Product::find()
-                    ->with('translation')
+                    ->with([
+                        'translation' => function (\yii\db\ActiveQuery $query) {
+                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
+                        },
+                    ])
                     ->where(['id' => $id])
                     ->one();
 
@@ -177,7 +188,11 @@ class UrlRule extends Object implements UrlRuleInterface
             else if($route == $this->categoryRoute) {
                 /** @var Category $category */
                 $category = Category::find()
-                    ->with('translation')
+                    ->with([
+                        'translation' => function (\yii\db\ActiveQuery $query) {
+                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
+                        },
+                    ])
                     ->where(['id' => $id])
                     ->one();
 
@@ -196,7 +211,11 @@ class UrlRule extends Object implements UrlRuleInterface
             while($parentId != null) {
                 /** @var Category $category */
                 $category = Category::find()
-                    ->with('translation')
+                    ->with([
+                        'translation' => function (\yii\db\ActiveQuery $query) {
+                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
+                        },
+                    ])
                     ->where(['id' => $parentId])
                     ->one();
 
