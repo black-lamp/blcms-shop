@@ -217,6 +217,16 @@ class Combination extends ActiveRecord
     }
 
     /**
+     * @param $attributeId
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCombinationAttribute($attributeId)
+    {
+        return $this->hasOne(CombinationAttribute::className(), ['combination_id' => 'id'])
+            ->where(['attribute_id' => $attributeId]);
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getImages()
