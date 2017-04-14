@@ -82,6 +82,8 @@ $(document).ready(function () {
                                 $(thisWidget).find('button[type="submit"]').prop('disabled', false);
                             }
 
+                            $('.product-status b').html(data.availability);
+
                             oldPriceTag.text(oldPrice);
                             newPriceTag.fadeOut(125).text(newPrice).fadeIn(125);
                             newPriceTag.attr('data-sum', dataSum);
@@ -91,7 +93,7 @@ $(document).ready(function () {
 
                             var skuText = (data.sku) ? data.sku : notAvailableText;
                             $('#sku').text(skuText);
-                        }, 1500
+                        }, 500
                     );
                 },
                 error: function (data) {
