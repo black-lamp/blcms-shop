@@ -400,7 +400,7 @@ class Product extends ActiveRecord
      */
     public function getImage()
     {
-        return $this->hasOne(ProductImage::className(), ['product_id' => 'id']);
+        return $this->hasOne(ProductImage::className(), ['product_id' => 'id'])->orderBy('position');
     }
 
     /**
