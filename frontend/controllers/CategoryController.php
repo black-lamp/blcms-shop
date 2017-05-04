@@ -67,6 +67,12 @@ class CategoryController extends Controller
             $searchModel = new ProductSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategories ?? null);
         }
+        if(Yii::$app->request->get('page') > 1) {
+            $this->view->registerMetaTag([
+                'name' => 'robots',
+                'content' => 'noindex, follow'
+            ]);
+        }
 
         return $this->render('show', [
             'category' => $category ?? null,
