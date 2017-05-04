@@ -124,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }
                                     if (ShopAttribute::findOne($model->attribute_id)->type_id == ShopAttribute::TYPE_TEXTURE) {
                                         $textureModel = ShopAttributeValueColorTexture::findOne($model->translation->value);
-                                        $texture = $textureModel->getAttributeTexture();
+                                        $texture = $textureModel ? $textureModel->getAttributeTexture() : "";
                                         $title = $textureModel->title;
                                         return $texture . "<p><i>$title</i></p>";
                                     }

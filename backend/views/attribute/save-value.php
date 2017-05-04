@@ -29,10 +29,9 @@ use yii\widgets\ActiveForm;
 
 <?php if ($attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == ShopAttributeType::TYPE_COLOR ||
     $attributeValueTranslation->shopAttributeValue->shopAttribute->type_id == ShopAttributeType::TYPE_TEXTURE): ?>
-
     <?= $valueForm->field($attributeTextureModel, 'title')->textInput([
-        'value' => (!empty($attributeValueTranslation->shopAttributeValue->getTranslation($languageId))) ?
-            $attributeValueTranslation->shopAttributeValue->getTranslation($languageId)->colorTexture->title : ''
+        'value' => (!empty($attributeValueTranslation->colorTexture)) ?
+            $attributeValueTranslation->colorTexture->title : ''
     ]); ?>
 <?php endif; ?>
 
