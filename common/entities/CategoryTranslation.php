@@ -108,4 +108,12 @@ class CategoryTranslation extends ActiveRecord
     {
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
+
+    public function getMenuItemTitleOrTitle() {
+        return $this->menu_item_title ? $this->menu_item_title : $this->title;
+    }
+
+    public function getTitleOrMenuItemTitle() {
+        return $this->title ? $this->title : $this->menu_item_title;
+    }
 }
