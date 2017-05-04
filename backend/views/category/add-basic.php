@@ -41,6 +41,14 @@ use yii\widgets\ActiveForm;
         ])->label(\Yii::t('shop', 'Name'))
         ?>
 
+        <!-- MENU ITEM TITLE -->
+        <?= $addForm->field($categoryTranslation, 'menu_item_title', [
+            'inputOptions' => [
+                'class' => 'form-control'
+            ]
+        ])->label(\Yii::t('shop', 'Menu item title'))
+        ?>
+
         <div class="row">
             <!-- PARENT CATEGORY -->
             <div class="col-md-6">

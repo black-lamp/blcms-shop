@@ -58,7 +58,7 @@ class CategoryTranslation extends ActiveRecord
             [['category_id', 'language_id', 'title'], 'required'],
             [['category_id', 'language_id'], 'integer'],
             [['description'], 'string'],
-            [['title'], 'string', 'max' => 255],
+            [['title', 'menu_item_title'], 'string', 'max' => 255],
             [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::className(), 'targetAttribute' => ['language_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
 
