@@ -3,6 +3,7 @@ namespace bl\cms\shop\frontend\controllers;
 
 use bl\cms\shop\widgets\traits\TreeWidgetTrait;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use bl\cms\cart\models\CartForm;
 use bl\cms\seo\StaticPageBehavior;
@@ -73,6 +74,14 @@ class CategoryController extends Controller
                 'content' => 'noindex, follow'
             ]);
         }
+
+        $this->view->registerLinkTag([
+            'rel' => 'canonical',
+            'href' => Url::to([
+                '/shop/category/show',
+                'id' => $id
+            ])
+        ]);
 
         return $this->render('show', [
             'category' => $category ?? null,
