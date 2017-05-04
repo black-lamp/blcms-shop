@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer $category_id
  * @property integer $language_id
  * @property string $title
+ * @property string $menu_item_title
  * @property string $description
  *
  * @property string $seoUrl
