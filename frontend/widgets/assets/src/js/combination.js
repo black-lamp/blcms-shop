@@ -16,7 +16,7 @@ $(document).ready(function () {
         });
     });
 
-    $('.combinations-values').change(function () {
+    $('body').on('change', '.combinations-values', function () {
         var productId = $(this).data('product-id');
         var thisWidget = $(this).closest('.product-prices-widget');
         var countInput = $(thisWidget).find('#cartform-count');
