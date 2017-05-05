@@ -115,6 +115,11 @@ class Category extends ActiveRecord
         return $this->hasMany(Product::className(), ['category_id' => 'id']);
     }
 
+    public function getProductsCount()
+    {
+        return $this->getProducts()->where(['show' => true])->count();
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
