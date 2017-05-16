@@ -27,11 +27,10 @@ use yii\helpers\Url;
                             '/' . Yii::$app->controller->module->id : ''
                         ?>
 
-                        <a href="
-                            <?= Url::to([
-                            $module . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id,
-                            'id' => Yii::$app->request->get('id'),
-                            'languageId' => $language->id]); ?>
+                        <a href="<?= Url::to(array_merge(
+                            ['/' . Yii::$app->controller->getRoute()],
+                            Yii::$app->request->getQueryParams(),
+                            ['languageId' => $language->id])); ?>
                         ">
                             <?= $language->name ?>
                         </a>
