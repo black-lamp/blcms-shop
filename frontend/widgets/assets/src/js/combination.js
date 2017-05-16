@@ -20,7 +20,9 @@ $(document).ready(function () {
         var productId = $(this).data('product-id');
         var thisWidget = $(this).closest('.product-prices-widget');
         var countInput = $(thisWidget).find('#cartform-count');
+        var availabilityTag = $(thisWidget).find('.product-status');
         var notAvailableText = $(thisWidget).data('not-available-text');
+        var url = $(thisWidget).data('url');
         var addToCartButton = $(thisWidget).find('#add-to-cart-button');
         var oldPriceTag = $(this).find('#oldPrice');
         var productImage = $('#main-image');
@@ -48,7 +50,7 @@ $(document).ready(function () {
             values = JSON.stringify(values);
             $.ajax({
                 type: "GET",
-                url: '/shop/product/get-product-combination',
+                url: url ? url : '/shop/product/get-product-combination',
                 data: {
                     values: values,
                     productId: productId
@@ -82,7 +84,7 @@ $(document).ready(function () {
                                 $(thisWidget).find('button[type="submit"]').prop('disabled', false);
                             }
 
-                            $('.product-status b').html(data.availability);
+                            availabilityTag.find('b').html(data.availability);
 
                             oldPriceTag.text(oldPrice);
                             newPriceTag.fadeOut(125).text(newPrice).fadeIn(125);
