@@ -396,6 +396,14 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return int|string
+     */
+    public function getImagesCount()
+    {
+        return ProductImage::find()->where(['product_id' => $this->id])->count();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getImage()
