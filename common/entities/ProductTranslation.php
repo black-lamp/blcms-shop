@@ -101,7 +101,7 @@ class ProductTranslation extends ActiveRecord
             ->asArray()->where(['product_id' => $this->product_id])->select('id')->all();
 
         $seoUrl = SeoData::find()
-            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => \Yii::$app->request->post()['ProductTranslation']['seoUrl']])
+            ->where(['entity_name' => ProductTranslation::className(), 'seo_url' => $this->seoUrl])
             ->andWhere(['not in', 'entity_id', ArrayHelper::getColumn($translationsIds, 'id')])
             ->one();
 
