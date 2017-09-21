@@ -4,7 +4,9 @@ namespace bl\cms\shop\common\entities;
 use bl\multilang\behaviors\TranslationBehavior;
 use bl\multilang\entities\Language;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\helpers\Url;
 use yii2tech\ar\position\PositionBehavior;
 
@@ -53,6 +55,12 @@ class Category extends ActiveRecord
                     'parent_id'
                 ],
             ],
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => new Expression('NOW()')
+            ]
         ];
     }
 
