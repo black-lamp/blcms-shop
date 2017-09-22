@@ -380,6 +380,33 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @param integer $groupId
+     * @return Price
+     */
+    public function getOrCreatePrice($groupId) {
+        if(!empty(UserGroup::findOne($groupId))) {
+            $price = $this->getPriceByUserGroup($groupId);
+            if(!empty($price)) {
+                return $price;
+            }
+            else {
+                $price = new Price();
+                if($price->save()) {
+                    $productPrice = new ProductPrice([
+                        'product_id' => $this->id,
+                        'user_group_id' => $groupId,
+                        'price_id' => $price->id
+                    ]);
+                    if($productPrice->save()) {
+                        return $price;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getFiles()
