@@ -420,16 +420,6 @@ class Product extends ActiveRecord
     }
 
     /**
-     * @param int|null $languageId
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTranslation($languageId = null)
-    {
-        return $this->hasOne(ProductTranslation::className(), ['product_id' => 'id'])
-            ->andOnCondition(['language_id' => $languageId ?? Language::getCurrent()->id]);
-    }
-
-    /**
      * @return \yii\db\ActiveQuery
      */
     public function getTranslations()

@@ -54,10 +54,8 @@ class CategoryController extends Controller
             $category->registerMetaData();
 
             $childCategories = $category->getChildren();
-            $descendantCategories = $category->getDescendants($category);
+            $descendantCategories = $category->getDescendants();
             array_push($descendantCategories, $category);
-
-
         }
         if ($this->module->showChildCategoriesProducts || empty($childCategories)) {
 

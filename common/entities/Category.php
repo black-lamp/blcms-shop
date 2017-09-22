@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii2tech\ar\position\PositionBehavior;
 
@@ -174,6 +175,7 @@ class Category extends ActiveRecord
     {
         return $this->hasMany(Category::className(), ['parent_id' => 'id'])
             ->andOnCondition(['show' => true])
+            ->with('translation')
             ->orderBy('position');
     }
 
@@ -195,32 +197,32 @@ class Category extends ActiveRecord
      *
      * Gets children of category and its children.
      */
-    public function getDescendants($category)
+    public function getDescendants($parentCategories = null)
     {
-        $children = $category->getChildren($category->id);
-
-        if (!empty($children)) {
-            foreach ($children as $child) {
-
-                $grandChildren = $this->getDescendants($child);
-                if (!empty($grandChildren)) {
-
-                    $children = array_merge($children, $grandChildren);
-                }
-            }
+        if(empty($parentCategories)) {
+            $childCategories = $this->getChildren();
         }
-        return $children;
+        else {
+            $childCategories = Category::find()
+                ->where(['in', 'parent_id', ArrayHelper::map($parentCategories, 'id', 'id')])
+                ->with('translation')
+                ->all();
+        }
+        if(!empty($childCategories)) {
+            return array_merge($childCategories, $this->getDescendants($childCategories));
+        }
+        return $childCategories;
     }
 
     /**
      * @param int|null $languageId
      * @return \yii\db\ActiveQuery
      */
-    public function getTranslation($languageId = null)
+    /*public function getTranslation($languageId = null)
     {
         return $this->hasOne(CategoryTranslation::className(), ['category_id' => 'id'])
             ->andOnCondition(['language_id' => $languageId ?? Language::getCurrent()->id]);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery

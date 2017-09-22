@@ -98,10 +98,12 @@ class UrlRule extends Object implements UrlRuleInterface
         }
         return false;
     }
+
     private function initRoutes($pathInfo) {
         $this->routes = explode('/', $pathInfo);
         $this->routesCount = count($this->routes);
     }
+
     private function findProductBySeoUrl($seoUrl, $categoryId, $options = []) {
         $productsSeoData = SeoData::find()
             ->where([
@@ -123,6 +125,7 @@ class UrlRule extends Object implements UrlRuleInterface
         }
         return null;
     }
+
     private function findCategoryBySeoUrl($seoUrl, $parentId, $options = []) {
         $categoriesSeoData = SeoData::find()
             ->where([
@@ -160,16 +163,12 @@ class UrlRule extends Object implements UrlRuleInterface
         else if(($route == $this->productRoute || $route == $this->categoryRoute) && !empty($params['id'])) {
             $id = $params['id'];
             $parentId = null;
-            $this->_currentManagerLanguage = Language::findOne(['lang_id' => $manager->language]);
+            $this->_currentManagerLanguage = Language::getCurrent();
 
             if($route == $this->productRoute) {
                 /** @var Product $product */
                 $product = Product::find()
-                    ->with([
-                        'translation' => function (\yii\db\ActiveQuery $query) {
-                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
-                        },
-                    ])
+                    ->with('translation')
                     ->where(['id' => $id])
                     ->one();
 
@@ -188,11 +187,7 @@ class UrlRule extends Object implements UrlRuleInterface
             else if($route == $this->categoryRoute) {
                 /** @var Category $category */
                 $category = Category::find()
-                    ->with([
-                        'translation' => function (\yii\db\ActiveQuery $query) {
-                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
-                        },
-                    ])
+                    ->with('translation')
                     ->where(['id' => $id])
                     ->one();
 
@@ -211,11 +206,7 @@ class UrlRule extends Object implements UrlRuleInterface
             while($parentId != null) {
                 /** @var Category $category */
                 $category = Category::find()
-                    ->with([
-                        'translation' => function (\yii\db\ActiveQuery $query) {
-                            $query->onCondition(['language_id' => $this->_currentManagerLanguage->id]);
-                        },
-                    ])
+                    ->with('translation')
                     ->where(['id' => $parentId])
                     ->one();
 
