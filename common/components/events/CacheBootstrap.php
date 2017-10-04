@@ -121,7 +121,6 @@ class CacheBootstrap implements BootstrapInterface
     }
 
     public function invalidateCache($event) {
-        die();
         TagDependency::invalidate(Yii::$app->cache, 'blcms-shop-catalogue');
     }
 }
