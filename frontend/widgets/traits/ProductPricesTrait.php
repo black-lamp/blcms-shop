@@ -16,6 +16,10 @@ trait ProductPricesTrait
      * @param $values
      * @param $productId
      * @param bool $currencyFormatting
+     *
+     * @deprecated
+     * @see PriceController
+     *
      * @return int|string
      */
     public function actionGetProductCombination($values, $productId, $currencyFormatting = false) {
@@ -45,7 +49,8 @@ trait ProductPricesTrait
                 'newPrice' => $newPrice,
                 'sku' => $combination->sku ?? '',
                 'availability' => $availability,
-                'description' => $description
+                'description' => $description,
+                'prices' => $combination->combinationPrices
             ];
         }
         else return 0;

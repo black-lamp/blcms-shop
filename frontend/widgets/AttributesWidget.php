@@ -121,11 +121,11 @@ class AttributesWidget extends Widget
     public $productFullTextSelector = '#product-full-text';
     public $notAvailableWrapSelector = '#js-not-available-wrap';
 
-    private $_formClass = 'product-price-form';
-    private $_attributesContainerClass = 'product-attributes';
-    private $_priceClass = 'product-price';
-    private $_discountPriceClass = 'product-discount-price';
-    private $_notAvailableMessageClass = 'not-available-message';
+    public $_formClass = 'product-price-form';
+    public $_attributesContainerClass = 'product-attributes';
+    public $_priceClass = 'product-price';
+    public $_discountPriceClass = 'product-discount-price';
+    public $_notAvailableMessageClass = 'not-available-message';
 
     /**
      * @inheritDoc
@@ -478,7 +478,7 @@ class AttributesWidget extends Widget
      *
      * TODO: move this to .js file
      */
-    private function registerGetCombinationScript()
+    public function registerGetCombinationScript()
     {
         $js = <<<JS
                 
