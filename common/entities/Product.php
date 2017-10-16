@@ -309,6 +309,14 @@ class Product extends ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentProductPrice() {
+        return $this->hasOne(ProductPrice::className(), ['product_id' => 'id'])
+            ->andOnCondition(['`shop_product_price`.`user_group_id`' => Yii::$app->user->isGuest ? 1 : Yii::$app->user->identity->user_group_id]);
+    }
+
+    /**
      * Gets prices for current user group
      * @return mixed
      */

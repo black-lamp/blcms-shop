@@ -93,15 +93,18 @@ class ProductSearch extends Product
                     'IF(COALESCE(p.discount_type_id, u.discount_type_id) IS NULL, COALESCE(p.price, u.price), IF( COALESCE(p.discount_type_id, u.discount_type_id) = 2, COALESCE(p.price, u.price) - (COALESCE(p.price, u.price) / 100 * COALESCE(p.discount, u.discount)) , COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount))) AS discount_price'
                 ]);
                 $query->joinWith('defaultCombination.combinationPrices.price p');
-                $query->joinWith('productPrices.price u');
+                $query->joinWith('currentProductPrice.price u');
 
                 $query->orderBy(['discount_price' => SORT_ASC]);
                 break;
 
             case self::SORT_EXPENSIVE:
-                $query->select(['`shop_product`.*', '(COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount)) as discount_price']);
+                $query->select([
+                    '`shop_product`.*',
+                    'IF(COALESCE(p.discount_type_id, u.discount_type_id) IS NULL, COALESCE(p.price, u.price), IF( COALESCE(p.discount_type_id, u.discount_type_id) = 2, COALESCE(p.price, u.price) - (COALESCE(p.price, u.price) / 100 * COALESCE(p.discount, u.discount)) , COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount))) AS discount_price'
+                ]);
                 $query->joinWith('defaultCombination.combinationPrices.price p');
-                $query->joinWith('productPrices.price u');
+                $query->joinWith('currentProductPrice.price u');
 
                 $query->orderBy(['discount_price' => SORT_DESC]);
                 break;
