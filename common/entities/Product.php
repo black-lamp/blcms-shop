@@ -495,7 +495,7 @@ class Product extends ActiveRecord
     public function getDefaultCombination()
     {
         return $this->hasOne(Combination::className(), ['product_id' => 'id'])
-            ->where(['default' => true]);
+            ->andOnCondition(['default' => true]);
     }
 
     /**

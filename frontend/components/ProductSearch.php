@@ -88,17 +88,19 @@ class ProductSearch extends Product
 
         switch (ArrayHelper::getValue($params, 'sort')) {
             case self::SORT_CHEAP:
+                $query->select(['`shop_product`.*', '(COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount)) as discount_price']);
                 $query->joinWith('defaultCombination.combinationPrices.price p');
                 $query->joinWith('productPrices.price u');
 
-                $query->orderBy(['(p.price - p.discount)' => SORT_ASC, '(u.price - u.discount)' => SORT_ASC]);
+                $query->orderBy(['discount_price' => SORT_ASC]);
                 break;
 
             case self::SORT_EXPENSIVE:
+                $query->select(['`shop_product`.*', '(COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount)) as discount_price']);
                 $query->joinWith('defaultCombination.combinationPrices.price p');
                 $query->joinWith('productPrices.price u');
 
-                $query->orderBy(['(p.price - p.discount)' => SORT_DESC, '(u.price - u.discount)' => SORT_DESC]);
+                $query->orderBy(['discount_price' => SORT_DESC]);
                 break;
 
             case self::SORT_OLD:
