@@ -50,6 +50,14 @@ class UserGroup extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'translation'
+        ];
+    }
+
+
     /**
      * @inheritdoc
      */

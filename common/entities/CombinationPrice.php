@@ -54,6 +54,7 @@ class CombinationPrice extends ActiveRecord
             'combination_id',
             'price_id',
             'user_group_id',
+            'user_group' => 'userGroup',
             'creation_time',
             'update_time',
             'price'

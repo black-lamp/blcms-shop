@@ -41,6 +41,14 @@ class UserGroupTranslation extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'title'
+        ];
+    }
+
+
     /**
      * @inheritdoc
      */

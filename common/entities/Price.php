@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\common\entities;
 
+use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 
@@ -45,7 +46,13 @@ class Price extends ActiveRecord
         return [
             'price',
             'discount',
-            'discount_type_id'
+            'discount_type_id',
+            'old_price' => function() {
+                return Yii::$app->formatter->asCurrency($this->oldPrice);
+            },
+            'discount_price' => function() {
+                return Yii::$app->formatter->asCurrency($this->discountPrice);
+            },
         ];
     }
 
