@@ -489,13 +489,11 @@ class Product extends ActiveRecord
     {
         if (!empty($id)) {
             $combination = Combination::findOne($id);
-            if (!empty($combination))
+            if (!empty($combination)) {
                 return $combination;
-            else
-                throw new \yii\base\Exception('Combination does not exists');
+            }
         }
-        else
-            throw new \yii\base\Exception('Combination id can not be empty');
+        return null;
     }
 
     /**
