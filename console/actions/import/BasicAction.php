@@ -1,6 +1,7 @@
 <?php
 namespace bl\cms\shop\console\actions\import;
 
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Combination;
 use bl\cms\shop\common\entities\CombinationAttribute;
@@ -171,14 +172,14 @@ class BasicAction extends Action
                 }
             }
 
-            $groupId = 1;
+            $groupId = UserGroup::find()->count();
             foreach ($productImportModel->prices as $priceImportModel) {
                 $price = $product->getOrCreatePrice($groupId);
                 $price->price = floatval(str_replace(',', '.', $priceImportModel));
                 if(!$price->save()) {
                     throw new Exception("ProductPrice::save() error");
                 }
-                $groupId++;
+                $groupId--;
             }
 
             // COMBINATIONS
@@ -267,14 +268,14 @@ class BasicAction extends Action
                     }
                 }
 
-                $groupId = 1;
+                $groupId = UserGroup::find()->count();;
                 foreach ($combinationImportModel->prices as $priceImportModel) {
                     $price = $combination->getOrCreatePrice($groupId);
                     $price->price = floatval(str_replace(',', '.', $priceImportModel));
                     if(!$price->save()) {
                         throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
                     }
-                    $groupId++;
+                    $groupId--;
                 }
 
                 $isDefault = false;

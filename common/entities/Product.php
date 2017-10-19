@@ -305,7 +305,8 @@ class Product extends ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getProductPrices() {
-        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id']);
+        return $this->hasMany(ProductPrice::className(), ['product_id' => 'id'])
+            ->orderBy('user_group_id');
     }
 
     /**
