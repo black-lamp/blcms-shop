@@ -27,6 +27,7 @@ class XlsProductImportReader extends ProductImportReader
         'properties' => 6,
         'combinations' => 7,
         'images' => 8,
+        'additionalProducts' => 9
     ];
 
     /**
@@ -63,6 +64,7 @@ class XlsProductImportReader extends ProductImportReader
             'properties' => $this->parseProperties($rowData[$this->columns['properties']]),
             'combinations' => $this->parseCombinations($rowData[$this->columns['combinations']]),
             'images' => $this->parseImages($rowData[$this->columns['images']]),
+            'additionalProducts' => $this->parseAdditionalProducts($rowData[$this->columns['additionalProducts']]),
         ]);
 
         return $productImportModel;
@@ -78,6 +80,18 @@ class XlsProductImportReader extends ProductImportReader
             }
         }
         return $images;
+    }
+
+    private function parseAdditionalProducts($additionalProductsRowData)
+    {
+        $additionalProducts = [];
+        foreach (explode(";", $additionalProductsRowData) as $additionalProduct) {
+            $additionalProduct = trim($additionalProduct);
+            if (!empty($additionalProduct)) {
+                $additionalProducts[] = $additionalProduct;
+            }
+        }
+        return $additionalProducts;
     }
 
     private function parsePrices($pricesRowData) {

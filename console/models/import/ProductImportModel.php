@@ -45,4 +45,8 @@ class ProductImportModel extends Model
      * @var CombinationImportModel[]
      */
     public $combinations;
+    /**
+     * @var string[]
+     */
+    public $additionalProducts;
 }

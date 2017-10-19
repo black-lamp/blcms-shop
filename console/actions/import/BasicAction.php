@@ -8,6 +8,7 @@ use bl\cms\shop\common\entities\CombinationAttribute;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
+use bl\cms\shop\common\entities\ProductAdditionalProduct;
 use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ShopAttribute;
@@ -180,6 +181,25 @@ class BasicAction extends Action
                     throw new Exception("ProductPrice::save() error");
                 }
                 $groupId--;
+            }
+
+            // ADDITIONAL PRODUCTS
+            if(!empty($product->productAdditionalProducts)) {
+                foreach ($product->productAdditionalProducts as $productAdditionalProduct) {
+                    $productAdditionalProduct->delete();
+                }
+            }
+            if(!empty($productImportModel->additionalProducts)) {
+                foreach ($productImportModel->additionalProducts as $additionalProductId) {
+                    $additionalProduct = new ProductAdditionalProduct([
+                        'product_id' => $product->id,
+                        'additional_product_id' => $additionalProductId
+                    ]);
+
+                    if(!$additionalProduct->save()) {
+                        throw new Exception("ProductAdditionalProduct::save() error");
+                    }
+                }
             }
 
             // COMBINATIONS

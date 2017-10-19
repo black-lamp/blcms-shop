@@ -46,7 +46,7 @@ class AdditionalProducts extends Widget
 
         $productAdditionalProducts = ProductAdditionalProduct::find()
             ->joinWith('additionalProduct')
-            ->where(['show' => true, 'product_id' => $this->productId])
+            ->where(['product_id' => $this->productId])
             ->orderBy('position')
             ->all();
 
