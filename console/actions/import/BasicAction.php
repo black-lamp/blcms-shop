@@ -96,6 +96,7 @@ class BasicAction extends Action
                 ]);
             }
 
+
             $productTranslation->title = $productImportModel->title;
 
             if(empty($productTranslation->seoUrl)) {
@@ -113,6 +114,7 @@ class BasicAction extends Action
                 $productTranslation->seoUrl = $seoUrl;
             }
 
+
             if(empty($productTranslation->seoTitle)) {
                 $productTranslation->seoTitle = $productTranslation->title;
             }
@@ -120,6 +122,7 @@ class BasicAction extends Action
             if(!$productTranslation->save()) {
                 throw new Exception("ProductTranslation::save() error $productTranslation->title " . json_encode($productTranslation->errors));
             }
+
 
             // PARAMS
             if(!empty($product->params)) {
@@ -173,14 +176,15 @@ class BasicAction extends Action
                 }
             }
 
-            $groupId = UserGroup::find()->count();
-            foreach ($productImportModel->prices as $priceImportModel) {
+            $groupId = 1;
+            for ($i = count($productImportModel->prices)-1; $i >= 0; $i--) {
+                $priceImportModel = $productImportModel->prices[$i];
                 $price = $product->getOrCreatePrice($groupId);
                 $price->price = floatval(str_replace(',', '.', $priceImportModel));
                 if(!$price->save()) {
                     throw new Exception("ProductPrice::save() error");
                 }
-                $groupId--;
+                $groupId++;
             }
 
             // ADDITIONAL PRODUCTS
@@ -287,15 +291,15 @@ class BasicAction extends Action
                         throw new Exception("CombinationAttribute::save() error");
                     }
                 }
-
-                $groupId = UserGroup::find()->count();;
-                foreach ($combinationImportModel->prices as $priceImportModel) {
+                $groupId = 1;
+                for ($i = count($combinationImportModel->prices)-1; $i >= 0; $i--) {
+                    $priceImportModel = $combinationImportModel->prices[$i];
                     $price = $combination->getOrCreatePrice($groupId);
                     $price->price = floatval(str_replace(',', '.', $priceImportModel));
                     if(!$price->save()) {
                         throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
                     }
-                    $groupId--;
+                    $groupId++;
                 }
 
                 $isDefault = false;

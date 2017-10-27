@@ -232,8 +232,8 @@ class Combination extends ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getCombinationPrices() {
-        return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id'])
-            ->orderBy('user_group_id');
+        return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id']);
+            // ->orderBy('user_group_id');
     }
 
     /**
