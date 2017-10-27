@@ -230,6 +230,20 @@ For cart module:
 ```
 
 
+**If you need some console import scripts:**
+```php
+    'modules' => [
+        'shop' => [
+            'class' => \bl\cms\shop\console\Module::className(),
+            'importActions' => [
+                'basic' => [
+                    'class' => bl\cms\shop\console\actions\import\BasicAction::className()
+                ]
+            ]
+        ]
+    ],
+```
+
 **REQUIRES**
 
 - PHP-version: 7.0 or later
