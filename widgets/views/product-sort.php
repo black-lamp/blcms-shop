@@ -28,6 +28,7 @@ use yii\helpers\Html;
                         <?= Html::a($sortName, array_merge(
                             ['/' . Yii::$app->controller->getRoute()],
                             Yii::$app->request->getQueryParams(),
+                            ['page' => 1],
                             ['sort' => $sort])
                         ) ?>
                     </li>
