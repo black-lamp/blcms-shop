@@ -175,6 +175,11 @@ class BasicAction extends Action
                     $productPrice->delete();
                 }
             }
+            if(!empty($product->productPrices)) {
+                foreach ($product->productPrices as $productPrice) {
+                    $productPrice->delete();
+                }
+            }
 
             $groupId = 1;
             for ($i = count($productImportModel->prices)-1; $i >= 0; $i--) {
