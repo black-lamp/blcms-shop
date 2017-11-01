@@ -13,6 +13,8 @@ use bl\cms\shop\common\entities\ProductImage;
 use bl\cms\shop\common\entities\ProductTranslation;
 use bl\cms\shop\common\entities\ShopAttribute;
 use bl\cms\shop\common\entities\ShopAttributeValue;
+use bl\cms\shop\common\entities\ShopAttributeValueColorTexture;
+use bl\cms\shop\common\entities\ShopAttributeValueTranslation;
 use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\console\util\XlsProductImportReader;
 use bl\multilang\entities\Language;
@@ -59,7 +61,7 @@ class BasicAction extends Action
         $this->controller->stdout("Importing from $filename \n", Console::BG_GREEN);
         $reader = new XlsProductImportReader($filename);
         foreach ($reader as $productImportModel) {
-            if(empty($productImportModel->sku)) {
+            if(empty($productImportModel->sku) || empty($productImportModel->title)) {
                 continue;
             }
 
@@ -200,13 +202,16 @@ class BasicAction extends Action
             }
             if(!empty($productImportModel->additionalProducts)) {
                 foreach ($productImportModel->additionalProducts as $additionalProductId) {
-                    $additionalProduct = new ProductAdditionalProduct([
-                        'product_id' => $product->id,
-                        'additional_product_id' => $additionalProductId
-                    ]);
+                    $additionalProductId = intval(trim($additionalProductId));
+                    if(!empty($additionalProductId) && $additionalProductId < 1) {
+                        $additionalProduct = new ProductAdditionalProduct([
+                            'product_id' => $product->id,
+                            'additional_product_id' => $additionalProductId
+                        ]);
 
-                    if(!$additionalProduct->save()) {
-                        throw new Exception("ProductAdditionalProduct::save() error");
+                        if(!$additionalProduct->save()) {
+                            throw new Exception("ProductAdditionalProduct::save() error " . json_encode($additionalProduct->errors));
+                        }
                     }
                 }
             }
@@ -265,12 +270,55 @@ class BasicAction extends Action
                     }
 
                     if(empty($shopAttributeValue)) {
-                        throw new Exception("Attribute value is not existing: $attributeValuesImportModel->value");
+                        $shopAttributeValue = new ShopAttributeValue([
+                            'attribute_id' => $shopAttribute->id
+                        ]);
+
+                        if(!$shopAttributeValue->save()) {
+                            throw new Exception("ShopAttributeValue::save() error");
+                        }
+
+                        if($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
+                            || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON) {
+
+                            $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
+                                'value_id' => $shopAttributeValue->id,
+                                'language_id' => $this->language->id,
+                                'value' => $attributeValuesImportModel->value
+                            ]);
+
+                            if(!$shopAttributeValueTranslation->save()) {
+                                throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
+                            }
+
+                        }
+                        else if($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
+                            || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+
+                            $shopAttributeValueColorTexture = new ShopAttributeValueColorTexture([
+                                'title' => $attributeValuesImportModel->value
+                            ]);
+
+                            if(!$shopAttributeValueColorTexture->save()) {
+                                throw new Exception("ShopAttributeValueColorTexture::save() error");
+                            }
+
+                            $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
+                                'value_id' => $shopAttributeValue->id,
+                                'language_id' => $this->language->id,
+                                'value' => strval($shopAttributeValueColorTexture->id)
+                            ]);
+
+                            if(!$shopAttributeValueTranslation->save()) {
+                                throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
+                            }
+                            // throw new Exception("Attribute value is not existing: $attributeValuesImportModel->value");
+                        }
+
                     }
-                    else {
-                        $combinationSku .= '_' . $shopAttributeValue->id;
-                        $attributeValues[] = $shopAttributeValue;
-                    }
+
+                    $combinationSku .= '_' . $shopAttributeValue->id;
+                    $attributeValues[] = $shopAttributeValue;
 
                 }
 

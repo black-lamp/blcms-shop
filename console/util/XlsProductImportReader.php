@@ -11,10 +11,9 @@ use PHPExcel_IOFactory;
  */
 class XlsProductImportReader extends ProductImportReader
 {
-    private $sheet;
+    private $sheets;
+    private $currentSheet;
     private $currentRow;
-    private $highestRow;
-    private $highestColumn;
     private $startRow;
 
     private $columns = [
@@ -39,9 +38,31 @@ class XlsProductImportReader extends ProductImportReader
     {
         $this->startRow = $startRow;
         $PHPExcel = PHPExcel_IOFactory::load($filename);
-        $this->sheet = $PHPExcel->getSheet(0);
-        $this->highestRow = $this->sheet->getHighestRow();
-        $this->highestColumn = $this->sheet->getHighestColumn();
+        $this->sheets = $PHPExcel->getAllSheets();
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCurrentSheet()
+    {
+        return $this->sheets[$this->currentSheet];
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getHighestColumn()
+    {
+        return $this->getCurrentSheet()->getHighestColumn();
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getHighestRow()
+    {
+        return $this->getCurrentSheet()->getHighestRow();
     }
 
     /**
@@ -52,7 +73,7 @@ class XlsProductImportReader extends ProductImportReader
      */
     public function current()
     {
-        $rowData = $this->sheet->rangeToArray('A' . $this->currentRow . ':' . $this->highestColumn . $this->currentRow, null, true, false)[0];
+        $rowData = $this->getCurrentSheet()->rangeToArray('A' . $this->currentRow . ':' . $this->getHighestColumn() . $this->getHighestRow(), null, true, false)[0];
 
         $productImportModel = new ProductImportModel([
             'baseSku' => $rowData[$this->columns['baseSku']],
@@ -177,6 +198,13 @@ class XlsProductImportReader extends ProductImportReader
      */
     public function next()
     {
+        if($this->currentRow == $this->getHighestRow()) {
+            $this->currentSheet++;
+            $this->currentRow = $this->startRow;
+        }
+        else {
+
+        }
         $this->currentRow++;
     }
 
@@ -200,7 +228,7 @@ class XlsProductImportReader extends ProductImportReader
      */
     public function valid()
     {
-        return $this->currentRow <= $this->highestRow;
+        return ($this->currentSheet < count($this->sheets) && $this->currentRow <= $this->getHighestRow());
     }
 
     /**
@@ -212,5 +240,6 @@ class XlsProductImportReader extends ProductImportReader
     public function rewind()
     {
         $this->currentRow = $this->startRow;
+        $this->currentSheet = 0;
     }
 }
