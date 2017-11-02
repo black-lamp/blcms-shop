@@ -71,6 +71,11 @@ class ProductPrices extends Widget
     public $showAdditionalProducts = true;
 
     /**
+     * @var bool
+     */
+    public $showAdditionalInfo = false;
+
+    /**
      * If cacheDuration is empty it will be used
      * @var array
      */
@@ -117,7 +122,8 @@ class ProductPrices extends Widget
                     'enableCache' => $this->enableCache,
                     'cacheDuration' => $this->cacheDuration,
                     'dependency' => $this->dependency,
-                    'showAdditionalProducts' => $this->showAdditionalProducts
+                    'showAdditionalProducts' => $this->showAdditionalProducts,
+                    'showAdditionalInfo' => $this->showAdditionalInfo
                 ]
             ]
         );
