@@ -94,7 +94,7 @@ class XlsProductImportReader extends ProductImportReader
     private function parseImages($imagesRowData)
     {
         $images = [];
-        foreach (explode("\n", $imagesRowData) as $image) {
+        foreach (explode(";", $imagesRowData) as $image) {
             $image = trim($image);
             if (!empty($image)) {
                 $images[] = $image;
