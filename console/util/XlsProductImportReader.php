@@ -77,8 +77,8 @@ class XlsProductImportReader extends ProductImportReader
 
         $productImportModel = new ProductImportModel([
             'baseSku' => $rowData[$this->columns['baseSku']],
-            'sku' => $rowData[$this->columns['sku']],
-            'title' => $rowData[$this->columns['title']],
+            'sku' => trim($rowData[$this->columns['sku']]),
+            'title' => trim($rowData[$this->columns['title']]),
             'categoryId' => $rowData[$this->columns['categoryId']],
             'vendorId' => $rowData[$this->columns['vendorId']],
             'prices' => $this->parsePrices($rowData[$this->columns['prices']]),
