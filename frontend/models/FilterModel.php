@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\frontend\models;
+use bl\cms\shop\common\entities\Category;
 use yii\base\Model;
 
 /**
@@ -15,6 +16,8 @@ class FilterModel extends Model
 
     public $vendors = [];
     public $availabilities = [];
+
+    public $params = [];
 
     public function rules()
     {
@@ -32,5 +35,22 @@ class FilterModel extends Model
             'availabilities' => $this->availabilities,
         ];
     }
+
+    /**
+     * @param Category $category
+     * @param null|string $data
+     * @param null $formName
+     * @return bool
+     */
+    public function loadFromCategory($category, $data, $formName = null)
+    {
+        if(!empty($category->filter)) {
+            foreach ($category->filter->params as $filterParam) {
+                $this->params[$filterParam->key] = $data[$filterParam->key];
+            }
+        }
+        return parent::load($data, $formName);
+    }
+
 
 }

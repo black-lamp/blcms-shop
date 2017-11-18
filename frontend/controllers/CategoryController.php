@@ -72,9 +72,10 @@ class CategoryController extends Controller
 
         $shopFilterModel = new FilterModel();
         $searchModel = new ProductSearch($requestParams, $descendantCategories, $shopFilterModel);
+        $filterParams = [];
 
         if(!empty($id)) {
-            if($shopFilterModel->load(Yii::$app->request->get(), '')) {
+            if($shopFilterModel->loadFromCategory($category, Yii::$app->request->get(), '')) {
                 $shopFilterModel->maxPrice = $this->convertPrice($searchModel->getMaxProductPrice());
                 $shopFilterModel->minPrice = $this->convertPrice($searchModel->getMinProductPrice());
 
@@ -85,11 +86,20 @@ class CategoryController extends Controller
                     $shopFilterModel->pfrom = $shopFilterModel->minPrice;
                 }
             }
+
+            $productFilter = $category->filter;
+            $filterParams = $productFilter->params;
+
+            foreach ($filterParams as $filterParam) {
+                if($filterParam->all_values) {
+                    $filterParam->params = $searchModel->getFilterParamValues($filterParam->translation->param_name);
+//                    die(var_dump($filterParam->params));
+                }
+            }
         }
         else {
             $shopFilterModel = null;
         }
-
 
         if ($this->module->showChildCategoriesProducts || empty($childCategories)) {
             $cart = new CartForm();
@@ -119,6 +129,7 @@ class CategoryController extends Controller
             'shopFilterModel' => $shopFilterModel,
             'vendors' => $searchModel->getVendors(),
             'availabilities' => ProductAvailability::find()->all(),
+            'categoryFilterParams' => $filterParams
         ]);
 
     }

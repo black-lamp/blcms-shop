@@ -3,8 +3,12 @@
 namespace bl\cms\shop\frontend\components;
 
 use bl\cms\shop\common\entities\Currency;
+use bl\cms\shop\common\entities\FilterParamValue;
+use bl\cms\shop\common\entities\Param;
+use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\frontend\models\FilterModel;
+use bl\multilang\entities\Language;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -21,6 +25,7 @@ class ProductSearch extends Product
     private $discountPriceQuery = 'IF(COALESCE(p.discount_type_id, u.discount_type_id) IS NULL, COALESCE(p.price, u.price), IF( COALESCE(p.discount_type_id, u.discount_type_id) = 2, COALESCE(p.price, u.price) - (COALESCE(p.price, u.price) / 100 * COALESCE(p.discount, u.discount)) , COALESCE(p.price, u.price) - COALESCE(p.discount, u.discount)))';
 
     private $params;
+    private $categoryId;
     private $descendantCategories;
     /**
      * @var FilterModel
@@ -46,6 +51,9 @@ class ProductSearch extends Product
         $this->params = $params;
         $this->descendantCategories = $descendantCategories;
         $this->filterModel = $filterModel;
+        if(!empty($this->params['id'])) {
+            $this->categoryId = $this->params['id'];
+        }
     }
 
     /**
@@ -76,21 +84,7 @@ class ProductSearch extends Product
     {
         $this->load($this->params, '');
         $query = $this->getBasicQuery();
-
-        /*$filterTypes = FilterType::find()->all();
-        foreach ($filterTypes as $filterType) {
-            $className = $filterType->class_name;
-
-            $getMethodName = explode("\\", $className);
-            $getMethodName = lcfirst(end($getMethodName));
-
-            $query->joinWith($getMethodName);
-
-            $tableName = $className::tableName();
-            $column = $filterType->column;
-
-            $query->andFilterWhere([$tableName . '.' . 'id' => $this->$column]);
-        }*/
+        $languageId = Language::getCurrent()->id;
 
         if(!empty($this->filterModel) && $this->filterModel instanceof FilterModel) {
             if(!empty($this->filterModel->pfrom) && $this->filterModel->pfrom != $this->filterModel->minPrice) {
@@ -104,6 +98,14 @@ class ProductSearch extends Product
             }
             if(!empty($this->filterModel->availabilities)) {
                 $query->andWhere(['in', 'shop_product.availability', $this->filterModel->availabilities]);
+            }
+
+            // TODO: rework query
+            if(!empty($this->filterModel->params)) {
+                $query->leftJoin('shop_param', 'shop_product.id = shop_param.product_id');
+                foreach ($this->filterModel->params as $key => $param) {
+                    $query->leftJoin('shop_param_translation param_' . $key, "`shop_param`.`id` = `param_$key`.`param_id` AND `param_$key`.`language_id` = $languageId AND `param1`.`name` = ''");
+                }
             }
         }
 
@@ -166,6 +168,24 @@ class ProductSearch extends Product
             ->joinWith('products p')
             ->where(['in', 'p.category_id', ArrayHelper::map($this->descendantCategories, 'id', 'id')])
             ->groupBy(['id'])
+            ->all();
+    }
+
+    /**
+     * @param $param_name
+     * @return Param[]
+     */
+    public function getFilterParamValues($param_name)
+    {
+        return Param::find()
+            ->select('t.value')
+            ->with('translation')
+            ->joinWith('translation t')
+            ->joinWith('product p')
+            ->where(['in', 'p.category_id', ArrayHelper::map($this->descendantCategories, 'id', 'id')])
+            ->andWhere(['t.name' => $param_name])
+            ->groupBy(['t.value'])
+            ->asArray()
             ->all();
     }
 

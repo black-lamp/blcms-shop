@@ -15,12 +15,15 @@ use Yii;
  * @property integer $all_values
  * @property integer $position
  *
- * @property FilterParamValue[] $shopFilterParamValues
+ * @property FilterParamValue[] $values
  * @property ProductFilter $filter
  * @property FilterParamTranslation $translation
  */
 class FilterParam extends \yii\db\ActiveRecord
 {
+
+    public $params = [];
+
     /**
      * @inheritdoc
      */
@@ -74,7 +77,7 @@ class FilterParam extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getShopFilterParamValues()
+    public function getValues()
     {
         return $this->hasMany(FilterParamValue::className(), ['filter_param_id' => 'id'])->inverseOf('filterParam');
     }

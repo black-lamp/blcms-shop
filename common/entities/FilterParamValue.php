@@ -68,6 +68,6 @@ class FilterParamValue extends \yii\db\ActiveRecord
      */
     public function getFilterParam()
     {
-        return $this->hasOne(FilterParam::className(), ['id' => 'filter_param_id'])->inverseOf('filterParamValues');
+        return $this->hasOne(FilterParam::className(), ['id' => 'filter_param_id'])->inverseOf('values');
     }
 }
