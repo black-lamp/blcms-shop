@@ -233,7 +233,14 @@ class Combination extends ActiveRecord
      */
     public function getCombinationPrices() {
         return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id']);
-            // ->orderBy('user_group_id');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentCombinationPrice() {
+        return $this->hasOne(CombinationPrice::className(), ['combination_id' => 'id'])
+            ->andOnCondition(['`shop_combination_price`.`user_group_id`' => Yii::$app->user->isGuest ? 1 : Yii::$app->user->identity->user_group_id]);
     }
 
     /**

@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  *
  * @property Product[] $products
  * @property VendorTranslation[] $translations
+ * @property VendorTranslation $translation
  */
 class Vendor extends ActiveRecord
 {

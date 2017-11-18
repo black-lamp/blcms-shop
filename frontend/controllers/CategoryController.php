@@ -1,6 +1,9 @@
 <?php
 namespace bl\cms\shop\frontend\controllers;
 
+use bl\cms\shop\common\entities\Currency;
+use bl\cms\shop\common\entities\Vendor;
+use bl\cms\shop\frontend\models\FilterModel;
 use bl\cms\shop\widgets\traits\TreeWidgetTrait;
 use Yii;
 use yii\helpers\Url;
@@ -41,7 +44,9 @@ class CategoryController extends Controller
      */
     public function actionShow($id = null)
     {
-
+        /* @var Category $category */
+        $requestParams = Yii::$app->request->queryParams;
+        $descendantCategories = null;
         if (is_null($id)) {
             $childCategories = Category::find()
                 ->where(['parent_id' => null, 'show' => true, 'additional_products' => false])
@@ -57,14 +62,30 @@ class CategoryController extends Controller
             $descendantCategories = $category->getDescendants();
             array_push($descendantCategories, $category);
         }
+
+        $shopFilterModel = new FilterModel();
+        $searchModel = new ProductSearch($requestParams, $descendantCategories, $shopFilterModel);
+
+        if($shopFilterModel->load(Yii::$app->request->get(), '')) {
+//            die(var_dump($shopFilterModel->vendors));
+            $shopFilterModel->maxPrice = $this->convertPrice($searchModel->getMaxProductPrice());
+            $shopFilterModel->minPrice = $this->convertPrice($searchModel->getMinProductPrice());
+
+            if(empty($shopFilterModel->pto)) {
+                $shopFilterModel->pto = $shopFilterModel->maxPrice;
+            }
+            if(empty($shopFilterModel->pfrom)) {
+                $shopFilterModel->pfrom = $shopFilterModel->minPrice;
+            }
+        }
+
         if ($this->module->showChildCategoriesProducts || empty($childCategories)) {
 
             $filters = (!empty($category)) ?
                 Filter::find()->where(['category_id' => $category->id])->all() : null;
 
             $cart = new CartForm();
-            $searchModel = new ProductSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $descendantCategories ?? null);
+            $dataProvider = $searchModel->search();
         }
         if(Yii::$app->request->get('page') > 1) {
             $this->view->registerMetaTag([
@@ -87,7 +108,17 @@ class CategoryController extends Controller
             'filters' => $filters ?? null,
             'cart' => $cart ?? null,
             'dataProvider' => $dataProvider ?? null,
+            'shopFilterModel' => $shopFilterModel,
+            'vendors' => $searchModel->getVendors()
         ]);
 
+    }
+
+    private function convertPrice($price) {
+        if($this->module->enableCurrencyConversion) {
+            $price = floor($price * Currency::currentCurrency() * 100) / 100;
+        }
+
+        return $price;
     }
 }
