@@ -14,11 +14,12 @@ class FilterModel extends Model
     public $pto;
 
     public $vendors = [];
+    public $availabilities = [];
 
     public function rules()
     {
         return [
-            [['pfrom', 'pto', 'vendors'], 'safe'],
+            [['pfrom', 'pto', 'vendors', 'availabilities'], 'safe'],
             [['pfrom', 'pto'], 'number'],
         ];
     }
@@ -28,6 +29,7 @@ class FilterModel extends Model
             'pfrom' => $this->pfrom,
             'pto' => $this->pto,
             'vendors' => $this->vendors,
+            'availabilities' => $this->availabilities,
         ];
     }
 

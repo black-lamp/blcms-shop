@@ -2,6 +2,7 @@
 namespace bl\cms\shop\frontend\controllers;
 
 use bl\cms\shop\common\entities\Currency;
+use bl\cms\shop\common\entities\ProductAvailability;
 use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\frontend\models\FilterModel;
 use bl\cms\shop\widgets\traits\TreeWidgetTrait;
@@ -51,6 +52,10 @@ class CategoryController extends Controller
             $childCategories = Category::find()
                 ->where(['parent_id' => null, 'show' => true, 'additional_products' => false])
                 ->orderBy(['position' => SORT_ASC])->all();
+            $descendantCategories = [];
+            foreach ($childCategories as $childCategory) {
+                $descendantCategories = array_merge($descendantCategories, $childCategory->getDescendants());
+            }
             $this->registerStaticSeoData();
         } else {
             $category = Category::find()->where(['id' => $id, 'additional_products' => false])->one();
@@ -61,29 +66,32 @@ class CategoryController extends Controller
             $childCategories = $category->getChildren();
             $descendantCategories = $category->getDescendants();
             array_push($descendantCategories, $category);
+
+            // filtering
         }
 
         $shopFilterModel = new FilterModel();
         $searchModel = new ProductSearch($requestParams, $descendantCategories, $shopFilterModel);
 
-        if($shopFilterModel->load(Yii::$app->request->get(), '')) {
-//            die(var_dump($shopFilterModel->vendors));
-            $shopFilterModel->maxPrice = $this->convertPrice($searchModel->getMaxProductPrice());
-            $shopFilterModel->minPrice = $this->convertPrice($searchModel->getMinProductPrice());
+        if(!empty($id)) {
+            if($shopFilterModel->load(Yii::$app->request->get(), '')) {
+                $shopFilterModel->maxPrice = $this->convertPrice($searchModel->getMaxProductPrice());
+                $shopFilterModel->minPrice = $this->convertPrice($searchModel->getMinProductPrice());
 
-            if(empty($shopFilterModel->pto)) {
-                $shopFilterModel->pto = $shopFilterModel->maxPrice;
-            }
-            if(empty($shopFilterModel->pfrom)) {
-                $shopFilterModel->pfrom = $shopFilterModel->minPrice;
+                if(empty($shopFilterModel->pto)) {
+                    $shopFilterModel->pto = $shopFilterModel->maxPrice;
+                }
+                if(empty($shopFilterModel->pfrom)) {
+                    $shopFilterModel->pfrom = $shopFilterModel->minPrice;
+                }
             }
         }
+        else {
+            $shopFilterModel = null;
+        }
+
 
         if ($this->module->showChildCategoriesProducts || empty($childCategories)) {
-
-            $filters = (!empty($category)) ?
-                Filter::find()->where(['category_id' => $category->id])->all() : null;
-
             $cart = new CartForm();
             $dataProvider = $searchModel->search();
         }
@@ -109,7 +117,8 @@ class CategoryController extends Controller
             'cart' => $cart ?? null,
             'dataProvider' => $dataProvider ?? null,
             'shopFilterModel' => $shopFilterModel,
-            'vendors' => $searchModel->getVendors()
+            'vendors' => $searchModel->getVendors(),
+            'availabilities' => ProductAvailability::find()->all(),
         ]);
 
     }

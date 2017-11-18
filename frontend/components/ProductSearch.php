@@ -3,7 +3,6 @@
 namespace bl\cms\shop\frontend\components;
 
 use bl\cms\shop\common\entities\Currency;
-use bl\cms\shop\common\entities\FilterType;
 use bl\cms\shop\common\entities\Vendor;
 use bl\cms\shop\frontend\models\FilterModel;
 use yii\base\Exception;
@@ -23,6 +22,9 @@ class ProductSearch extends Product
 
     private $params;
     private $descendantCategories;
+    /**
+     * @var FilterModel
+     */
     private $filterModel = null;
     /**
      * Sorting methods.
@@ -90,14 +92,21 @@ class ProductSearch extends Product
             $query->andFilterWhere([$tableName . '.' . 'id' => $this->$column]);
         }*/
 
-        if(!empty($filterModel) && $filterModel instanceof FilterModel) {
-            if(!empty($filterModel->pfrom) && $filterModel->pfrom != $filterModel->minPrice) {
-                $query->andWhere(['>=', $this->discountPriceQuery, $this->convertPrice($filterModel->pfrom)]);
+        if(!empty($this->filterModel) && $this->filterModel instanceof FilterModel) {
+            if(!empty($this->filterModel->pfrom) && $this->filterModel->pfrom != $this->filterModel->minPrice) {
+                $query->andWhere(['>=', $this->discountPriceQuery, $this->convertPrice($this->filterModel->pfrom)]);
             }
-            if(!empty($filterModel->pto) && $filterModel->pto != $filterModel->maxPrice) {
-                $query->andWhere(['<=', $this->discountPriceQuery, $this->convertPrice($filterModel->pto)]);
+            if(!empty($this->filterModel->pto) && $this->filterModel->pto != $this->filterModel->maxPrice) {
+                $query->andWhere(['<=', $this->discountPriceQuery, $this->convertPrice($this->filterModel->pto)]);
+            }
+            if(!empty($this->filterModel->vendors)) {
+                $query->andWhere(['in', 'shop_product.vendor_id', $this->filterModel->vendors]);
+            }
+            if(!empty($this->filterModel->availabilities)) {
+                $query->andWhere(['in', 'shop_product.availability', $this->filterModel->availabilities]);
             }
         }
+
 
         switch (ArrayHelper::getValue($this->params, 'sort')) {
             case self::SORT_CHEAP:
