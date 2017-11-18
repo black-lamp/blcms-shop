@@ -10,6 +10,7 @@ use Yii;
  *
  * @property integer $id
  * @property integer $filter_id
+ * @property string $key
  * @property integer $is_divided
  * @property integer $all_values
  * @property integer $position
@@ -48,7 +49,8 @@ class FilterParam extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['filter_id'], 'required'],
+            [['filter_id', 'key'], 'required'],
+            [['key'], 'string'],
             [['filter_id', 'is_divided', 'all_values', 'position'], 'integer'],
             [['filter_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductFilter::className(), 'targetAttribute' => ['filter_id' => 'id']],
         ];
@@ -62,6 +64,7 @@ class FilterParam extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('backend.shop.filter.param', 'ID'),
             'filter_id' => Yii::t('backend.shop.filter.param', 'Filter ID'),
+            'key' => Yii::t('backend.shop.filter.param', 'Key'),
             'is_divided' => Yii::t('backend.shop.filter.param', 'Is Divided'),
             'all_values' => Yii::t('backend.shop.filter.param', 'All Values'),
             'position' => Yii::t('backend.shop.filter.param', 'Position'),

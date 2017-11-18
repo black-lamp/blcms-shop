@@ -17,6 +17,7 @@ class m171116_164547_create_tables_shop_product_filter extends Migration
         $this->createTable('shop_product_filter_params', [
             'id' => $this->primaryKey(),
             'filter_id' => $this->integer(),
+            'key' => $this->string(),
             'is_divided' => $this->boolean(),
             'all_values' => $this->boolean(),
             'position' => $this->integer(),
