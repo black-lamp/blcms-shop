@@ -25,6 +25,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property boolean $additional_products
  *
  * @property CategoryTranslation[] $translations
+ * @property ProductFilter $filter
  * @property Filter[] $filters
  * @property Product[] $products
  * @property CategoryTranslation $translation
@@ -143,6 +144,14 @@ class Category extends ActiveRecord
     public function getParent()
     {
         return $this->hasOne(Category::className(), ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFilter()
+    {
+        return $this->hasOne(ProductFilter::className(), ['category_id' => 'id']);
     }
 
     /**

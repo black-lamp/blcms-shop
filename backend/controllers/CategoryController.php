@@ -1,6 +1,9 @@
 <?php
 namespace bl\cms\shop\backend\controllers;
 
+use bl\cms\shop\common\entities\FilterParam;
+use bl\cms\shop\common\entities\FilterParamTranslation;
+use bl\cms\shop\common\entities\ProductFilter;
 use bl\cms\shop\widgets\traits\TreeWidgetTrait;
 use Yii;
 use yii\base\Exception;
@@ -73,7 +76,7 @@ class CategoryController extends Controller
                     [
                         'actions' => ['save', 'add-basic', 'add-images', 'add-seo', 'delete-image',
                             'select-filters', 'delete-filter', 'up', 'down', 'switch-show', 'get-seo-url',
-                            'get-categories'
+                            'get-categories', 'filters', 'add-filter-param', 'delete-filter-param'
                         ],
                         'roles' => ['saveShopCategory'],
                         'allow' => true,
@@ -96,6 +99,77 @@ class CategoryController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    public function actionFilters($id = null, $languageId = null) {
+        $filter = ProductFilter::findOne([
+            'category_id' => $id
+        ]);
+        if(empty($filter)) {
+            $filter = new ProductFilter();
+            $filter->category_id = $id;
+        }
+
+        if(Yii::$app->request->isPost) {
+            if($filter->load(Yii::$app->request->post())) {
+                if($filter->save()) {
+
+                }
+            }
+        }
+
+        return $this->loadCategory($id, $languageId, 'filters', [
+            'filter' => $filter
+        ]);
+    }
+
+    public function actionAddFilterParam() {
+        if(Yii::$app->request->isPost) {
+            $addParamModel = new FilterParam();
+            $addParamTranslationModel = new FilterParamTranslation();
+            if($addParamModel->load(Yii::$app->request->post())) {
+                if($addParamModel->save()) {
+                    $categoryId = $addParamModel->filter->category_id;
+                    if($addParamTranslationModel->load(Yii::$app->request->post())) {
+                        $addParamTranslationModel->filter_param_id = $addParamModel->id;
+                        if($addParamTranslationModel->save()) {
+                            $addParamModel = new FilterParam([
+                                'filter_id' => $addParamModel->filter_id,
+                                'all_values' => true
+                            ]);
+                            $addParamTranslationModel = new FilterParamTranslation([
+                                'language_id' => $addParamTranslationModel->language_id
+                            ]);
+                            Yii::$app->session->setFlash('success', Yii::t('backend.shop.filter.param', 'Param successfully saved'));
+                        }
+                    }
+                }
+            }
+
+            if(Yii::$app->request->isPjax) {
+                return $this->renderAjax('filter-params', [
+                    'addParamModel' => $addParamModel,
+                    'addParamTranslationModel' => $addParamTranslationModel,
+                    'params' => Filter::findOne($addParamModel->filter_id)->params
+                ]);
+            }
+            else {
+                return $this->redirect(['filters',
+                    'id' => $categoryId,
+                    'languageId' => $addParamTranslationModel->language_id,
+                ]);
+            }
+        }
+
+        return null;
+    }
+
+    public function actionDeleteFilterParam($paramId, $categoryId, $languageId) {
+        FilterParam::deleteAll(['id' => $paramId]);
+        return $this->redirect(['filters',
+            'id' => $categoryId,
+            'languageId' => $languageId,
+        ]);
     }
 
     /**
@@ -161,7 +235,7 @@ class CategoryController extends Controller
      *
      * Loads data from post.
      */
-    private function loadCategory($id = null, $languageId = null, $viewName)
+    private function loadCategory($id = null, $languageId = null, $viewName, $params = [])
     {
         $category = (!empty($id)) ? Category::findOne($id) : new Category();
         $categoryTranslation = (!empty($id)) ? CategoryTranslation::find()->where([
@@ -204,14 +278,14 @@ class CategoryController extends Controller
 
         return $this->render('save', [
             'viewName' => $viewName,
-            'params' => [
+            'params' => array_merge([
                 'languages' => Language::findAll(['active' => true]),
                 'maxPosition' => Category::find()->where(['parent_id' => $category->parent_id])->max('position') + 1 ?? 1,
                 'category' => $category,
                 'categoryTranslation' => $categoryTranslation,
                 'categories' => Category::find()->with('translations')->all(),
                 'selectedLanguage' => Language::findOne($languageId),
-            ]
+            ], $params)
         ]);
     }
 
