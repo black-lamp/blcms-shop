@@ -28,12 +28,12 @@ class FilterModel extends Model
     }
 
     public function valuesToArray() {
-        return [
+        return array_merge([
             'pfrom' => $this->pfrom,
             'pto' => $this->pto,
             'vendors' => $this->vendors,
             'availabilities' => $this->availabilities,
-        ];
+        ], $this->params);
     }
 
     /**

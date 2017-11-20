@@ -2,7 +2,9 @@
 
 namespace bl\cms\shop\frontend\components;
 
+use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Currency;
+use bl\cms\shop\common\entities\FilterParam;
 use bl\cms\shop\common\entities\FilterParamValue;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
@@ -14,6 +16,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use bl\cms\shop\common\entities\Product;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -85,6 +88,7 @@ class ProductSearch extends Product
         $this->load($this->params, '');
         $query = $this->getBasicQuery();
         $languageId = Language::getCurrent()->id;
+        $category = Category::findOne($this->categoryId);
 
         if(!empty($this->filterModel) && $this->filterModel instanceof FilterModel) {
             if(!empty($this->filterModel->pfrom) && $this->filterModel->pfrom != $this->filterModel->minPrice) {
@@ -100,11 +104,27 @@ class ProductSearch extends Product
                 $query->andWhere(['in', 'shop_product.availability', $this->filterModel->availabilities]);
             }
 
-            // TODO: rework query
             if(!empty($this->filterModel->params)) {
-                $query->leftJoin('shop_param', 'shop_product.id = shop_param.product_id');
-                foreach ($this->filterModel->params as $key => $param) {
-                    $query->leftJoin('shop_param_translation param_' . $key, "`shop_param`.`id` = `param_$key`.`param_id` AND `param_$key`.`language_id` = $languageId AND `param1`.`name` = ''");
+                foreach ($category->filter->params as $filterParam) {
+                    if(array_key_exists($filterParam->key, $this->filterModel->params)) {
+                        $paramValues = $this->filterModel->params[$filterParam->key];
+                        if(!empty($paramValues)) {
+                            $key = $filterParam->key;
+                            $paramName = $filterParam->translation->param_name;
+                            $query->leftJoin("shop_param param_$key", "shop_product.id = param_$key.product_id");
+                            $query->leftJoin("shop_param_translation paramt_$key", "param_$key.id = paramt_$key.param_id AND paramt_$key.language_id = $languageId AND paramt_$key.name = '$paramName'");
+                            $whereQuery = ['or'];
+                            for ($i = 0; $i < count($paramValues); $i++) {
+                                $paramValue = $paramValues[$i];
+                                $whereQuery[] = ['or',
+                                    ["paramt_$key.value" => $paramValue],
+                                    new Expression("FIND_IN_SET(:param$i" . "Value1_$key, paramt_$key.value)", [":param$i" . "Value1_$key" => $paramValue]),
+                                    new Expression("FIND_IN_SET(:param$i" . "Value2_$key, paramt_$key.value)", [":param$i" . "Value2_$key" => " " . $paramValue])
+                                ];
+                            }
+                            $query->andWhere($whereQuery);
+                        }
+                    }
                 }
             }
         }
@@ -140,6 +160,8 @@ class ProductSearch extends Product
             default:
                 $query->orderBy(['category_id' => SORT_ASC, 'position' => SORT_ASC]);
         }
+
+        $query->groupBy(['id']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query

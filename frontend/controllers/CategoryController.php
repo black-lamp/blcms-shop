@@ -89,11 +89,11 @@ class CategoryController extends Controller
 
             $productFilter = $category->filter;
             $filterParams = $productFilter->params;
-
-            foreach ($filterParams as $filterParam) {
-                if($filterParam->all_values) {
-                    $filterParam->params = $searchModel->getFilterParamValues($filterParam->translation->param_name);
-//                    die(var_dump($filterParam->params));
+            if(!empty($filterParams)) {
+                foreach ($filterParams as $filterParam) {
+                    if($filterParam->all_values) {
+                        $filterParam->params = $searchModel->getFilterParamValues($filterParam->translation->param_name);
+                    }
                 }
             }
         }
