@@ -11,8 +11,14 @@ class CombinationImportModel extends Model
      * @var AttributeValueImportModel[]
      */
     public $attributeValues;
+
     /**
      * @var string[]
      */
     public $prices;
+
+    /**
+     * @var string[]
+     */
+    public $images;
 }
