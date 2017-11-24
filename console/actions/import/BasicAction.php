@@ -5,6 +5,7 @@ use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\common\entities\Category;
 use bl\cms\shop\common\entities\Combination;
 use bl\cms\shop\common\entities\CombinationAttribute;
+use bl\cms\shop\common\entities\CombinationImage;
 use bl\cms\shop\common\entities\Param;
 use bl\cms\shop\common\entities\ParamTranslation;
 use bl\cms\shop\common\entities\Product;
@@ -353,6 +354,29 @@ class BasicAction extends Action
                         throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
                     }
                     $groupId++;
+                }
+
+                if(!empty($combination->images)) {
+                    foreach ($combination->images as $combinationImage) {
+                        $combinationImage->delete();
+                    }
+                }
+
+                // COMBINATION IMAGES
+                if(!empty($combinationImportModel->images)) {
+                    foreach ($combinationImportModel->images as $imageName) {
+                        $productImage = ProductImage::findOne(['file_name' => $imageName]);
+                        if(!empty($productImage)) {
+                            $combinationImage = new CombinationImage([
+                                'combination_id' => $combination->id,
+                                'product_image_id' => $productImage->id,
+                            ]);
+
+                            if(!$combinationImage->save()) {
+                                throw new Exception("CombinationImage::save() error: " . json_encode($combinationImage->errors));
+                            }
+                        }
+                    }
                 }
 
                 $isDefault = false;
