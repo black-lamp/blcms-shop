@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
     <div class="row">
         <div class="col-md-12">
-        <?= Html::submitButton(Yii::t('frontend.shop.filter', 'Filter') . ' >>', ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::submitButton(Yii::t('frontend.shop.filter', 'Filter') . ' >>', ['class' => 'btn btn-success pull-right btn-i']) ?>
         <div class="clearfix"></div>
 
         </div>
@@ -84,7 +84,7 @@ use yii\widgets\ActiveForm;
                 <a href="#" class="toggle-cover">
                     <span class="show">
                         <i class="fa fa-angle-down"></i>
-                        <?= Yii::t('frontend.shop.filter', 'Show all') ?>
+                            <?= Yii::t('frontend.shop.filter', 'Show all') ?>
                     </span>
                     <span class="hide">
                         <i class="fa fa-angle-up"></i>
@@ -149,7 +149,7 @@ use yii\widgets\ActiveForm;
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('frontend.shop.filter', 'Filter') . ' >>', ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::submitButton(Yii::t('frontend.shop.filter', 'Filter') . ' >>', ['class' => 'btn btn-success pull-right btn-i']) ?>
         <div class="clearfix"></div>
     </div>
 
