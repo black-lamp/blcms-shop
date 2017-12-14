@@ -154,6 +154,7 @@ class ProductController extends Controller
 
         //Getting or creating Product and ProductTranslation models
         if (!empty($id)) {
+            $eventName = self::EVENT_AFTER_EDIT_PRODUCT;
             $product = Product::findOne($id);
 
             if (!empty($product)) {
@@ -167,6 +168,7 @@ class ProductController extends Controller
             else throw new NotFoundHttpException();
 
         } else {
+            $eventName = self::EVENT_AFTER_CREATE_PRODUCT;
             if (\Yii::$app->user->can('createProduct')) {
 
                 $this->trigger(self::EVENT_BEFORE_CREATE_PRODUCT);
@@ -239,9 +241,6 @@ class ProductController extends Controller
                                 }
                             }
                         }
-
-                        $eventName = $productTranslation->isNewRecord ? self::EVENT_AFTER_CREATE_PRODUCT :
-                            self::EVENT_AFTER_EDIT_PRODUCT;
                         $this->trigger($eventName, new ProductEvent([
                             'id' => $product->id
                         ]));

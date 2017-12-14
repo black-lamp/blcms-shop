@@ -20,6 +20,7 @@ class PartnersBootstrap implements BootstrapInterface
         Event::on(PartnersController::className(), PartnersController::EVENT_APPLY, [$this, 'applyPartnerRequest']);
         Event::on(PartnersController::className(), PartnersController::EVENT_DECLINE, [$this, 'declinePartnerRequest']);
         Event::on(ProductController::className(), ProductController::EVENT_AFTER_CREATE_PRODUCT, [$this, 'createNewProduct']);
+        Event::on(ProductController::className(), ProductController::EVENT_AFTER_EDIT_PRODUCT, [$this, 'createNewProduct']);
         Event::on(ProductController::className(), ProductController::EVENT_AFTER_ACCEPT_PRODUCT, [$this, 'acceptProduct']);
     }
 
@@ -44,7 +45,6 @@ class PartnersBootstrap implements BootstrapInterface
     public function createNewProduct($event)
     {
         $productId = $event->id;
-
         if (!\Yii::$app->user->can('createProductWithoutModeration')) {
             $product = Product::findOne($productId);
             $mailer = \Yii::createObject(Mailer::className());
