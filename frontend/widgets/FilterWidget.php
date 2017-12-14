@@ -16,23 +16,6 @@ class FilterWidget extends Widget
     public function init()
     {
         parent::init();
-        $js = <<< JS
-            $(function() {
-                $('.shop-filter .toggle-cover .show').click(function(e) {
-                    e.preventDefault();
-                    var block = $(this).parent().parent().find('.covered');
-                    block.removeClass('covered');
-                    block.addClass('uncovered');
-                });            
-                $('.shop-filter .toggle-cover .hide').click(function(e) {
-                    e.preventDefault();
-                    var block = $(this).parent().parent().find('.uncovered');
-                    block.removeClass('uncovered');
-                    block.addClass('covered');
-                });            
-            });
-JS;
-        $this->getView()->registerJs($js, View::POS_END);
     }
 
     public function run()

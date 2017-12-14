@@ -1,5 +1,6 @@
 <?php
 namespace bl\cms\shop\console\util;
+use bl\cms\shop\common\components\user\models\UserGroup;
 use bl\cms\shop\console\models\import\AttributeValueImportModel;
 use bl\cms\shop\console\models\import\CombinationImportModel;
 use bl\cms\shop\console\models\import\ProductImportModel;
@@ -157,6 +158,7 @@ class XlsProductImportReader extends ProductImportReader
             if(count($combinationData) > 2) {
                 $attributeValues = [];
                 $prices = [];
+                $images = [];
 
                 foreach ($combinationData as $attrOrPrice) {
                     $attrOrPrice = trim($attrOrPrice);
@@ -173,7 +175,12 @@ class XlsProductImportReader extends ProductImportReader
                                 ]);
                             }
                         } else {
-                            $prices[] = $attrOrPrice;
+                            if(count($prices) < count(UserGroup::find()->all())) {
+                                $prices[] = $attrOrPrice;
+                            }
+                            else {
+                                $images[] = $attrOrPrice;
+                            }
                         }
                     }
                 }
@@ -181,7 +188,8 @@ class XlsProductImportReader extends ProductImportReader
                 if(!empty($attributeValues) && !empty($prices)) {
                     $combinations[] = new CombinationImportModel([
                         'attributeValues' => $attributeValues,
-                        'prices' => $prices
+                        'prices' => $prices,
+                        'images' => $images
                     ]);
                 }
             }
