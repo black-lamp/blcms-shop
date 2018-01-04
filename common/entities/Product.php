@@ -332,6 +332,58 @@ class Product extends ActiveRecord
     }
 
     /**
+     * Gets prices for current user group
+     *
+     * $combination = $product->findCombination([
+     *      [
+     *          'attributeId' => 10,
+     *          'valueId' => 20
+     *      ],
+     *      [
+     *          'attributeId' => 30,
+     *          'valueId' => 40
+     *      ]
+     * ]);
+     *
+     * @param array $attributeValues
+     * @return Combination
+     */
+    public function findCombination($attributeValues) {
+        if (empty($attributeValues) || !is_array($attributeValues)) {
+            return null;
+        }
+
+        $query = (new \yii\db\Query())
+            ->select(['c.id'])
+            ->from(['shop_combination c']);
+
+        for ($i = 0; $i < count($attributeValues); $i++) {
+            $query->leftJoin('shop_combination_attribute sca' . $i, 'c.id = sca' . $i . '.combination_id');
+        }
+
+        $query->where(['c.product_id' => $this->id]);
+
+        foreach ($attributeValues as $i => $attributeValue) {
+            $query->andWhere([
+                'sca' . $i . '.attribute_id' => $attributeValue['attributeId'],
+                'sca' . $i . '.attribute_value_id' => $attributeValue['valueId']
+            ]);
+        }
+
+        $result = $query->one();
+        if (!empty($result)) {
+            $combinationId = $result['id'];
+            $combination = Combination::findOne($combinationId);
+
+            if ($combination != null) {
+                return $combination;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param $userGroupId
      * @return mixed
      * @throws Exception

@@ -99,7 +99,7 @@ class Price extends ActiveRecord
      * @return float|int
      * @throws Exception
      */
-    public function getDiscountPrice()
+    public function getBaseDiscountPrice()
     {
         $price = $this->price;
 
@@ -110,6 +110,18 @@ class Price extends ActiveRecord
                 $price = $this->price - ($this->price / 100) * $this->discount;
             } else throw new Exception(\Yii::t('shop', 'Such discount type does not exist.'));
         }
+
+        return $price;
+    }
+
+    /**
+     * Gets price with discount
+     * @return float|int
+     * @throws Exception
+     */
+    public function getDiscountPrice()
+    {
+        $price = $this->getBaseDiscountPrice();
 
         if (\Yii::$app->getModule('shop')->enableCurrencyConversion) {
             $price = $price * Currency::currentCurrency();

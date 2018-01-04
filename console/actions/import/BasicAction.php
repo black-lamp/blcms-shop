@@ -50,19 +50,19 @@ class BasicAction extends Action
             try {
                 $this->import($filename);
                 $transaction->commit();
-            }
-            catch (Exception $exception) {
+            } catch (Exception $exception) {
                 $transaction->rollBack();
                 $this->controller->stdout($exception->getMessage(), Console::FG_RED);
             }
         }
     }
 
-    private function import($filename) {
+    private function import($filename)
+    {
         $this->controller->stdout("Importing from $filename \n", Console::BG_GREEN);
         $reader = new XlsProductImportReader($filename);
         foreach ($reader as $productImportModel) {
-            if(empty($productImportModel->sku) || empty($productImportModel->title)) {
+            if (empty($productImportModel->sku) || empty($productImportModel->title)) {
                 continue;
             }
 
@@ -71,7 +71,7 @@ class BasicAction extends Action
                 'sku' => $productImportModel->sku
             ]);
 
-            if(empty($product)) {
+            if (empty($product)) {
                 $product = new Product([
                     'sku' => $productImportModel->sku,
                     'availability' => 1,
@@ -82,7 +82,7 @@ class BasicAction extends Action
             $product->category_id = !empty(Category::findOne($productImportModel->categoryId)) ? $productImportModel->categoryId : null;
             $product->vendor_id = !empty(Vendor::findOne($productImportModel->vendorId)) ? $productImportModel->vendorId : null;
 
-            if(!$product->save()) {
+            if (!$product->save()) {
                 throw new Exception("Product::save() error");
             }
 
@@ -92,7 +92,7 @@ class BasicAction extends Action
                 'language_id' => $this->language->id
             ]);
 
-            if(empty($productTranslation)) {
+            if (empty($productTranslation)) {
                 $productTranslation = new ProductTranslation([
                     'product_id' => $product->id,
                     'language_id' => $this->language->id
@@ -102,7 +102,7 @@ class BasicAction extends Action
 
             $productTranslation->title = $productImportModel->title;
 
-            if(empty($productTranslation->seoUrl)) {
+            if (empty($productTranslation->seoUrl)) {
                 $seoUrl = Inflector::slug($productTranslation->title);
                 $count = SeoData::find()
                     ->where([
@@ -111,24 +111,24 @@ class BasicAction extends Action
                     ])
                     ->count();
 
-                if($count > 0) {
+                if ($count > 0) {
                     $seoUrl = $seoUrl . "_" . $product->id;
                 }
                 $productTranslation->seoUrl = $seoUrl;
             }
 
 
-            if(empty($productTranslation->seoTitle)) {
+            if (empty($productTranslation->seoTitle)) {
                 $productTranslation->seoTitle = $productTranslation->title;
             }
 
-            if(!$productTranslation->save()) {
+            if (!$productTranslation->save()) {
                 throw new Exception("ProductTranslation::save() error $productTranslation->title " . json_encode($productTranslation->errors));
             }
 
 
             // PARAMS
-            if(!empty($product->params)) {
+            if (!empty($product->params)) {
                 foreach ($product->params as $param) {
                     $param->delete();
                 }
@@ -139,7 +139,7 @@ class BasicAction extends Action
                     'product_id' => $product->id
                 ]);
 
-                if(!$param->save()) {
+                if (!$param->save()) {
                     throw new Exception("Param::save() error");
                 }
 
@@ -150,13 +150,13 @@ class BasicAction extends Action
                     'value' => $propertyImportModel->value
                 ]);
 
-                if(!$paramTranslation->save()) {
+                if (!$paramTranslation->save()) {
                     throw new Exception("ParamTranslation::save() error");
                 }
             }
 
             // IMAGES
-            if(!empty($product->images)) {
+            if (!empty($product->images)) {
                 foreach ($product->images as $image) {
                     $image->delete();
                 }
@@ -167,69 +167,58 @@ class BasicAction extends Action
                     'product_id' => $product->id
                 ]);
 
-                if(!$productImage->save()) {
+                if (!$productImage->save()) {
                     throw new Exception("ProductImage::save() error");
                 }
             }
 
             // PRICES
-            if(!empty($product->prices)) {
+            if (!empty($product->prices)) {
                 foreach ($product->prices as $productPrice) {
                     $productPrice->delete();
                 }
             }
-            if(!empty($product->productPrices)) {
+            if (!empty($product->productPrices)) {
                 foreach ($product->productPrices as $productPrice) {
                     $productPrice->delete();
                 }
             }
 
             $groupId = 1;
-            for ($i = count($productImportModel->prices)-1; $i >= 0; $i--) {
+            for ($i = count($productImportModel->prices) - 1; $i >= 0; $i--) {
                 $priceImportModel = $productImportModel->prices[$i];
                 $price = $product->getOrCreatePrice($groupId);
                 $price->price = floatval(str_replace(',', '.', $priceImportModel));
-                if(!$price->save()) {
+                if (!$price->save()) {
                     throw new Exception("ProductPrice::save() error");
                 }
                 $groupId++;
             }
 
             // ADDITIONAL PRODUCTS
-            if(!empty($product->productAdditionalProducts)) {
+            if (!empty($product->productAdditionalProducts)) {
                 foreach ($product->productAdditionalProducts as $productAdditionalProduct) {
                     $productAdditionalProduct->delete();
                 }
             }
-            if(!empty($productImportModel->additionalProducts)) {
+            if (!empty($productImportModel->additionalProducts)) {
                 foreach ($productImportModel->additionalProducts as $additionalProductId) {
                     $additionalProductId = intval(trim($additionalProductId));
-                    if(!empty($additionalProductId) && $additionalProductId < 1) {
+                    if (!empty($additionalProductId) && $additionalProductId < 1) {
                         $additionalProduct = new ProductAdditionalProduct([
                             'product_id' => $product->id,
                             'additional_product_id' => $additionalProductId
                         ]);
 
-                        if(!$additionalProduct->save()) {
+                        if (!$additionalProduct->save()) {
                             throw new Exception("ProductAdditionalProduct::save() error " . json_encode($additionalProduct->errors));
                         }
                     }
                 }
             }
 
-            // COMBINATIONS
-            if(!empty($product->combinations)) {
-                foreach ($product->combinations as $productCombination) {
-                    if(!empty($productCombination->prices)) {
-                        foreach ($productCombination->prices as $combinationPrice) {
-                            $combinationPrice->delete();
-                        }
-                    }
-                    $productCombination->delete();
-                }
-            }
-
             $isDefault = true;
+            $combinations = [];
             foreach ($productImportModel->combinations as $combinationImportModel) {
                 /* @var ShopAttributeValue[] $attributeValues */
                 $attributeValues = [];
@@ -243,12 +232,13 @@ class BasicAction extends Action
                             't.language_id' => $this->language->id
                         ])->one();
 
-                    if(empty($shopAttribute)) {
+                    if (empty($shopAttribute)) {
                         throw new Exception("Attribute is not existing: $attributeValuesImportModel->title");
                     }
 
-                    if($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
-                        || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON) {
+                    if ($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
+                        || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON
+                    ) {
 
                         $shopAttributeValue = ShopAttributeValue::find()
                             ->joinWith('shopAttributeValueTranslations t')
@@ -258,9 +248,9 @@ class BasicAction extends Action
                                 't.language_id' => $this->language->id
                             ])->one();
 
-                    }
-                    else if($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
-                        || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                    } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
+                        || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE
+                    ) {
 
                         $shopAttributeValue = ShopAttributeValue::find()
                             ->joinWith('shopAttributeValueTranslations.shopAttributeValueColorTexture t')
@@ -270,17 +260,18 @@ class BasicAction extends Action
                             ])->one();
                     }
 
-                    if(empty($shopAttributeValue)) {
+                    if (empty($shopAttributeValue)) {
                         $shopAttributeValue = new ShopAttributeValue([
                             'attribute_id' => $shopAttribute->id
                         ]);
 
-                        if(!$shopAttributeValue->save()) {
+                        if (!$shopAttributeValue->save()) {
                             throw new Exception("ShopAttributeValue::save() error");
                         }
 
-                        if($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
-                            || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON) {
+                        if ($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
+                            || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON
+                        ) {
 
                             $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
                                 'value_id' => $shopAttributeValue->id,
@@ -288,19 +279,19 @@ class BasicAction extends Action
                                 'value' => $attributeValuesImportModel->value
                             ]);
 
-                            if(!$shopAttributeValueTranslation->save()) {
+                            if (!$shopAttributeValueTranslation->save()) {
                                 throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
                             }
 
-                        }
-                        else if($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
-                            || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE) {
+                        } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
+                            || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE
+                        ) {
 
                             $shopAttributeValueColorTexture = new ShopAttributeValueColorTexture([
                                 'title' => $attributeValuesImportModel->value
                             ]);
 
-                            if(!$shopAttributeValueColorTexture->save()) {
+                            if (!$shopAttributeValueColorTexture->save()) {
                                 throw new Exception("ShopAttributeValueColorTexture::save() error");
                             }
 
@@ -310,7 +301,7 @@ class BasicAction extends Action
                                 'value' => strval($shopAttributeValueColorTexture->id)
                             ]);
 
-                            if(!$shopAttributeValueTranslation->save()) {
+                            if (!$shopAttributeValueTranslation->save()) {
                                 throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
                             }
                             // throw new Exception("Attribute value is not existing: $attributeValuesImportModel->value");
@@ -323,70 +314,124 @@ class BasicAction extends Action
 
                 }
 
-                $combination = new Combination([
-                    'product_id' => $product->id,
-                    'sku' => $combinationSku,
-                    'default' => intval($isDefault),
-                    'availability' => 1,
-                ]);
+                if (!empty($attributeValues)) {
 
-                if(!$combination->save()) {
-                    throw new Exception("ShopCombination::save() error" . json_encode($combination->errors));
-                }
-
-                foreach ($attributeValues as $attributeValue) {
-                    $combinationAttribute = new CombinationAttribute([
-                        'combination_id' => $combination->id,
-                        'attribute_id' => $attributeValue->attribute_id,
-                        'attribute_value_id' => $attributeValue->id
-                    ]);
-
-                    if(!$combinationAttribute->save()) {
-                        throw new Exception("CombinationAttribute::save() error");
+                    $attributeValuesIds = [];
+                    foreach ($attributeValues as $attributeValue) {
+                        $attributeValuesIds[] = [
+                            'attributeId' => $attributeValue->attribute_id,
+                            'valueId' => $attributeValue->id
+                        ];
                     }
-                }
-                $groupId = 1;
-                for ($i = count($combinationImportModel->prices)-1; $i >= 0; $i--) {
-                    $priceImportModel = $combinationImportModel->prices[$i];
-                    $price = $combination->getOrCreatePrice($groupId);
-                    $price->price = floatval(str_replace(',', '.', $priceImportModel));
-                    if(!$price->save()) {
-                        throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
+
+                    // issue: possibly script can find combination with bigger count of values
+                    $combination = $product->findCombination($attributeValuesIds);
+
+                    if(empty($combination)) {
+                        $combination = new Combination([
+                            'product_id' => $product->id,
+                        ]);
                     }
-                    $groupId++;
-                }
 
-                if(!empty($combination->images)) {
-                    foreach ($combination->images as $combinationImage) {
-                        $combinationImage->delete();
+                    $combination->availability = 1;
+                    $combination->default = intval($isDefault);
+                    $combination->sku = $combinationSku;
+
+                    if (!$combination->save()) {
+                        throw new Exception("ShopCombination::save() error" . json_encode($combination->errors));
                     }
-                }
 
-                // COMBINATION IMAGES
-                if(!empty($combinationImportModel->images)) {
-                    foreach ($combinationImportModel->images as $imageName) {
-                        $productImage = ProductImage::findOne(['file_name' => $imageName]);
-                        if(!empty($productImage)) {
-                            $combinationImage = new CombinationImage([
-                                'combination_id' => $combination->id,
-                                'product_image_id' => $productImage->id,
-                            ]);
+                    foreach ($attributeValues as $attributeValue) {
+                        $combinationAttribute = new CombinationAttribute([
+                            'combination_id' => $combination->id,
+                            'attribute_id' => $attributeValue->attribute_id,
+                            'attribute_value_id' => $attributeValue->id
+                        ]);
 
-                            if(!$combinationImage->save()) {
-                                throw new Exception("CombinationImage::save() error: " . json_encode($combinationImage->errors));
+                        if (!$combinationAttribute->save()) {
+                            throw new Exception("CombinationAttribute::save() error");
+                        }
+                    }
+                    $groupId = 1;
+                    for ($i = count($combinationImportModel->prices) - 1; $i >= 0; $i--) {
+                        $priceImportModel = $combinationImportModel->prices[$i];
+                        $price = $combination->getOrCreatePrice($groupId);
+                        $price->price = floatval(str_replace(',', '.', $priceImportModel));
+                        if (!$price->save()) {
+                            throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
+                        }
+                        $groupId++;
+                    }
+
+                    if (!empty($combination->images)) {
+                        foreach ($combination->images as $combinationImage) {
+                            $combinationImage->delete();
+                        }
+                    }
+
+                    // COMBINATION IMAGES
+                    if (!empty($combinationImportModel->images)) {
+                        foreach ($combinationImportModel->images as $imageName) {
+                            $productImage = ProductImage::findOne(['file_name' => $imageName]);
+                            if (!empty($productImage)) {
+                                $combinationImage = new CombinationImage([
+                                    'combination_id' => $combination->id,
+                                    'product_image_id' => $productImage->id,
+                                ]);
+
+                                if (!$combinationImage->save()) {
+                                    throw new Exception("CombinationImage::save() error: " . json_encode($combinationImage->errors));
+                                }
                             }
+                        }
+                    }
+
+                    $combinations[] = $combination;
+                }
+
+                $isDefault = false;
+            }
+
+            if(!empty($product->combinations)) {
+                /* @var Combination[] $combinationsToDelete */
+                $combinationsToDelete = [];
+
+                if(empty($combinations)) {
+                    $combinationsToDelete = $product->combinations;
+                }
+                else {
+                    foreach ($product->combinations as $productCombination) {
+                        $toDelete = true;
+                        foreach ($combinations as $combination) {
+                            if($productCombination->id == $combination->id) {
+                                $toDelete = false;
+                            }
+                        }
+
+                        if($toDelete) {
+                            $combinationsToDelete[] = $productCombination;
                         }
                     }
                 }
 
-                $isDefault = false;
+                if(!empty($combinationsToDelete)) {
+                    foreach ($combinationsToDelete as $productCombination) {
+                        if(!empty($productCombination->prices)) {
+                            foreach ($productCombination->prices as $combinationPrice) {
+                                $combinationPrice->delete();
+                            }
+                        }
+                        $productCombination->delete();
+                    }
+                }
             }
 
             $this->controller->stdout("Product saved $product->id $productTranslation->title \n", Console::FG_GREEN);
         }
     }
 
-    private function loadFilesFromDir() {
+    private function loadFilesFromDir()
+    {
         $filesDirFullPath = Yii::getAlias($this->filesDir);
         $files = array_diff(scandir($filesDirFullPath), array('..', '.'));
         foreach ($files as $fileName) {
