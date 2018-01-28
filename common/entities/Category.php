@@ -22,6 +22,8 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $cover
  * @property string $thumbnail
  * @property string $menu_item
+ * @property string $view
+ * @property string $key
  * @property boolean $additional_products
  *
  * @property CategoryTranslation[] $translations
@@ -38,6 +40,17 @@ use yii2tech\ar\position\PositionBehavior;
  */
 class Category extends ActiveRecord
 {
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['parent_id', 'position'], 'integer'],
+            [['show', 'additional_products'], 'boolean'],
+            [['cover', 'thumbnail', 'menu_item', 'view', 'key'], 'string', 'max' => 255],
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -72,18 +85,6 @@ class Category extends ActiveRecord
     public static function tableName()
     {
         return 'shop_category';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['parent_id', 'position'], 'integer'],
-            [['show', 'additional_products'], 'boolean'],
-            [['cover', 'thumbnail', 'menu_item'], 'string', 'max' => 255],
-        ];
     }
 
     public function fields()

@@ -120,7 +120,7 @@ class CategoryController extends Controller
             ])
         ]);
 
-        return $this->render('show', [
+        return $this->render(empty($category->view) ? 'show' : $category->view, [
             'category' => $category ?? null,
             'childCategories' => $childCategories,
             'filters' => $filters ?? null,
