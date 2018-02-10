@@ -2,6 +2,7 @@
 namespace bl\cms\shop\common\entities;
 
 use bl\cms\shop\common\components\user\models\User;
+use Yii;
 use yii\db\ActiveRecord;
 
 /**
@@ -63,6 +64,14 @@ class FavoriteProduct extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public static function isFavorite($productId) {
+        return FavoriteProduct::find()
+            ->where([
+                'user_id' => Yii::$app->user->id,
+                'product_id' => $productId
+            ])->exists();
     }
 
 }
