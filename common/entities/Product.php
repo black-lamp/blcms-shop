@@ -27,6 +27,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $vendor_id
  * @property integer $country_id
  * @property string $sku
+ * @property string $code
  * @property string $creation_time
  * @property string $update_time
  * @property integer $status
@@ -108,11 +109,10 @@ class Product extends ActiveRecord
                 $value = (int)$value;
                 return $value;
             }],
-
             [['sale', 'popular', 'new', 'show'], 'boolean'],
             [['creation_time', 'update_time'], 'safe'],
-            [['sku'], 'string', 'max' => 255],
-            [['sku'], 'trim'],
+            [['sku', 'code'], 'string', 'max' => 255],
+            [['sku', 'code'], 'trim'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCountry::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Vendor::className(), 'targetAttribute' => ['vendor_id' => 'id']],
