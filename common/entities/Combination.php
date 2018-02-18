@@ -21,11 +21,13 @@ use yii\db\Expression;
  * @property integer $availability
  * @property integer $number
  *
+ * @property string $title
+ *
  * @property Product $product
  * @property ProductAvailability $combinationAvailability
  * @property CombinationAttribute[] $combinationAttributes
  * @property CombinationImage[] $images
- * @property CombinationPrice $price
+ * @property Price $price
  * @property Price $shopPrice
  * @property Price[] $shopPrices
  * @property CombinationPrice[] $prices
@@ -112,25 +114,40 @@ class Combination extends ActiveRecord
         ];
     }
 
+    public function getTitle()
+    {
+        $result = '';
+        if (!empty($this->combinationAttributes)) {
+            foreach ($this->combinationAttributes as $i => $attribute) {
+                $result .= $attribute->productAttribute->translation->title . ": " . $attribute->productAttributeValue->translation->title;
+
+                if($i < count($this->combinationAttributes) - 1) {
+                    $result .= ", ";
+                }
+            }
+        }
+        return $result;
+    }
+
     /**
      * @param integer $groupId
      * @return Price
      */
-    public function getOrCreatePrice($groupId) {
-        if(!empty(UserGroup::findOne($groupId))) {
+    public function getOrCreatePrice($groupId)
+    {
+        if (!empty(UserGroup::findOne($groupId))) {
             $price = $this->getPriceByUserGroup($groupId);
-            if(!empty($price)) {
+            if (!empty($price)) {
                 return $price;
-            }
-            else {
+            } else {
                 $price = new Price();
-                if($price->save()) {
+                if ($price->save()) {
                     $combinationPrice = new CombinationPrice([
                         'combination_id' => $this->id,
                         'user_group_id' => $groupId,
                         'price_id' => $price->id
                     ]);
-                    if($combinationPrice->save()) {
+                    if ($combinationPrice->save()) {
                         return $price;
                     }
                 }
@@ -194,8 +211,7 @@ class Combination extends ActiveRecord
                 'combination_id' => $this->id,
                 'user_group_id' => UserGroup::USER_GROUP_ALL_USERS
             ];
-        }
-        else {
+        } else {
             $params = [
                 'combination_id' => $this->id,
                 'user_group_id' => \Yii::$app->user->identity->user_group_id
@@ -210,35 +226,38 @@ class Combination extends ActiveRecord
      * @return bool|mixed
      * @throws Exception
      */
-    public function getPriceByUserGroup(int $userGroupId) {
+    public function getPriceByUserGroup(int $userGroupId)
+    {
         if (!empty($userGroupId)) {
             $combinationPrice = CombinationPrice::find()
                 ->where(['combination_id' => $this->id, 'user_group_id' => $userGroupId])
                 ->one();
             if (!empty($combinationPrice)) return $combinationPrice->price;
             else return false;
-        }
-        else throw new Exception('User group id is empty');
+        } else throw new Exception('User group id is empty');
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCombinationPrice() {
+    public function getCombinationPrice()
+    {
         return $this->hasOne(CombinationPrice::className(), ['combination_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCombinationPrices() {
+    public function getCombinationPrices()
+    {
         return $this->hasMany(CombinationPrice::className(), ['combination_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCurrentCombinationPrice() {
+    public function getCurrentCombinationPrice()
+    {
         return $this->hasOne(CombinationPrice::className(), ['combination_id' => 'id'])
             ->andOnCondition(['`shop_combination_price`.`user_group_id`' => Yii::$app->user->isGuest ? 1 : Yii::$app->user->identity->user_group_id]);
     }
@@ -269,7 +288,8 @@ class Combination extends ActiveRecord
         return $this->hasMany(CombinationImage::className(), ['combination_id' => 'id']);
     }
 
-    public function getImagesArray() {
+    public function getImagesArray()
+    {
         $images = [];
 
         foreach ($this->images as $image) {
@@ -294,14 +314,14 @@ class Combination extends ActiveRecord
     /**
      * Finds default combination for one product and makes it not default.
      */
-    public function findDefaultCombinationAndUndefault() {
+    public function findDefaultCombinationAndUndefault()
+    {
         if (!empty($this->id)) {
             $defaultProductCombinations = Combination::find()
                 ->where(['product_id' => $this->product_id, 'default' => true])
                 ->andWhere(['!=', 'id', $this->id])
                 ->all();
-        }
-        else {
+        } else {
             $defaultProductCombinations = Combination::find()
                 ->where(['product_id' => $this->product_id, 'default' => true])
                 ->all();
@@ -319,7 +339,8 @@ class Combination extends ActiveRecord
     /**
      * If there are not combinations in product, sets this combination as default.
      */
-    public function setDefaultOrNotDefault() {
+    public function setDefaultOrNotDefault()
+    {
 
         if ($this->default) $this->findDefaultCombinationAndUndefault();
         else {

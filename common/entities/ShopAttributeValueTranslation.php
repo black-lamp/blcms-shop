@@ -14,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property string $value
  * @property integer $language_id
  *
+ * @property string $title
+ *
  * @property ShopAttributeValueColorTexture $colorTexture
  *
  * @property Language $language
@@ -60,6 +62,18 @@ class ShopAttributeValueTranslation extends ActiveRecord
             'id' => Yii::t('shop', 'Id'),
             'value' => Yii::t('shop', 'Value')
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        if (!empty($this->colorTexture)) {
+            return $this->colorTexture->title;
+        } else {
+            return $this->value;
+        }
     }
 
     /**

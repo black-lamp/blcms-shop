@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  * @property PriceDiscountType $discountType
  * @property float $oldPrice
  * @property float $discountPrice
+ * @property float $discountPriceFloor
  * @property ProductPrice $productPrice
  * @property CombinationPrice $combinationPrice
  */
@@ -131,6 +132,16 @@ class Price extends ActiveRecord
         }
 
         return $price;
+    }
+
+    /**
+     * Gets floored price with discount
+     * @return float|int
+     * @throws Exception
+     */
+    public function getDiscountPriceFloor()
+    {
+        return floor($this->discountPrice * 100) / 100;
     }
 
     /**
