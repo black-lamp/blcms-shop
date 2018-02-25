@@ -388,7 +388,7 @@ class Product extends ActiveRecord
 
     /**
      * @param $userGroupId
-     * @return mixed
+     * @return Price
      * @throws Exception
      */
     public function getPriceByUserGroup($userGroupId)
@@ -397,10 +397,12 @@ class Product extends ActiveRecord
             $productPrice = ProductPrice::find()
                 ->where(['product_id' => $this->id, 'user_group_id' => $userGroupId])
                 ->one();
-            if (!empty($productPrice)) return $productPrice->price;
-            else return false;
+            if (!empty($productPrice)) {
+                return $productPrice->price;
+            }
         }
-        else throw new Exception('User group id is empty');
+
+        return null;
     }
 
     /**

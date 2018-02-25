@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  *
  * @property PriceDiscountType $discountType
  * @property float $oldPrice
+ * @property float $baseDiscountPrice
  * @property float $discountPrice
  * @property float $discountPriceFloor
  * @property ProductPrice $productPrice
