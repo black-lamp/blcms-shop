@@ -28,6 +28,9 @@ use yii2tech\ar\position\PositionBehavior;
  * @property integer $country_id
  * @property string $sku
  * @property string $code
+ * @property integer $barcode
+ * @property integer $inpack
+ * @property float $liquidity
  * @property string $creation_time
  * @property string $update_time
  * @property integer $status
