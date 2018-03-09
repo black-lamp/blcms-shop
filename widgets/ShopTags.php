@@ -8,6 +8,7 @@ class ShopTags extends Widget {
 
     public $title;
     public $categories;
+    public $limit = 20;
 
     public function init()
     {
@@ -17,6 +18,7 @@ class ShopTags extends Widget {
         $this->categories = Category::find()
             ->where(['tag_cloud' => true, 'show' => true])
             ->orderBy(['position' => SORT_ASC])
+            ->limit($this->limit)
             ->all();
     }
 
