@@ -269,23 +269,4 @@ class Category extends ActiveRecord
         $url = '/' . Yii::$app->controller->module->id . '/category/show';
         return Url::to([$url, 'id' => $this->id]);
     }
-
-    /**
-     * Adds title, meta-description and meta-keywords to category page using bl\cms\seo\StaticPageBehavior.
-     */
-    public function registerMetaData()
-    {
-        $currentView = Yii::$app->controller->view;
-
-        $currentView->title = html_entity_decode($this->translation->seoTitle) ??
-            html_entity_decode($this->translation->title);
-        $currentView->registerMetaTag([
-            'name' => 'description',
-            'content' => html_entity_decode($this->translation->seoDescription)
-        ]);
-        $currentView->registerMetaTag([
-            'name' => 'keywords',
-            'content' => html_entity_decode($this->translation->seoKeywords)
-        ]);
-    }
 }

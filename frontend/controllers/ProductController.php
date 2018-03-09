@@ -102,19 +102,52 @@ class ProductController extends Controller
 
     /**
      * Sets page title, meta-description and meta-keywords.
-     * @param $model
+     * @param Product $product
      */
-    private function setSeoData($model)
+    private function setSeoData($product)
     {
-        $this->view->title = !empty(($model->translation->seoTitle)) ?
-            strip_tags($model->translation->seoTitle) : strip_tags($model->translation->title);
-        $this->view->registerMetaTag([
+        $view = $this->view;
+        $titleTemplateSetting = 'seo-title-template-' . Yii::$app->language;
+        $descriptionTemplateSetting = 'seo-description-template-' . Yii::$app->language;
+
+        if(!empty($product->translation->seoTitle)) {
+            $title = $product->translation->seoTitle;
+        }
+        else if (Yii::$app->has('settings')
+            && Yii::$app->settings->has('shop-product', $titleTemplateSetting)
+            && !empty(Yii::$app->settings->get('shop-product', $titleTemplateSetting))) {
+            $titleTemplate = Yii::$app->settings->get('shop-product', $titleTemplateSetting);
+            $title = strtr($titleTemplate, [
+                '{title}' => $product->translation->title
+            ]);
+        }
+        else {
+            $title = $product->translation->title;
+        }
+
+        if(!empty($product->translation->seoDescription)) {
+            $description = $product->translation->seoDescription;
+        }
+        else if (Yii::$app->has('settings')
+            && Yii::$app->settings->has('shop-product', $descriptionTemplateSetting)
+            && !empty(Yii::$app->settings->get('shop-product', $descriptionTemplateSetting))) {
+            $descriptionTemplate = Yii::$app->settings->get('shop-product', $descriptionTemplateSetting);
+            $description = strtr($descriptionTemplate, [
+                '{title}' => $product->translation->title
+            ]);
+        }
+        else {
+            $description = '';
+        }
+
+        $view->title = strip_tags(html_entity_decode($title));
+        $view->registerMetaTag([
             'name' => 'description',
-            'content' => strip_tags($model->translation->seoDescription) ?? ''
+            'content' => strip_tags(html_entity_decode($description)) ?? ''
         ]);
-        $this->view->registerMetaTag([
+        $view->registerMetaTag([
             'name' => 'keywords',
-            'content' => strip_tags($model->translation->seoKeywords) ?? ''
+            'content' => strip_tags(html_entity_decode($product->translation->seoKeywords)) ?? ''
         ]);
     }
 }
