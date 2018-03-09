@@ -26,3 +26,37 @@ div.row.products div.product-card div.text-muted {
     top: -10px;
     left: 50%;
 }
+
+div.tagcloud ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+div.tagcloud ul li {
+    display: inline-block;
+    margin: 0 .3em .3em 0;
+    padding: 0;
+}
+div.tagcloud ul li a {
+    display: inline-block;
+    max-width: 100px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 1em;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+div.tagcloud ul li a:hover {
+    background-color: #3498db;
+    border: 1px solid #3498db;
+    color: #fff;
+}

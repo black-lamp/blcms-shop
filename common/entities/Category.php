@@ -25,6 +25,7 @@ use yii2tech\ar\position\PositionBehavior;
  * @property string $view
  * @property string $key
  * @property boolean $additional_products
+ * @property boolean $tag_cloud
  *
  * @property CategoryTranslation[] $translations
  * @property ProductFilter $filter
@@ -47,7 +48,7 @@ class Category extends ActiveRecord
     {
         return [
             [['parent_id', 'position'], 'integer'],
-            [['show', 'additional_products'], 'boolean'],
+            [['show', 'additional_products', 'tag_cloud'], 'boolean'],
             [['cover', 'thumbnail', 'menu_item', 'view', 'key'], 'string', 'max' => 255],
         ];
     }
