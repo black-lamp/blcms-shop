@@ -104,7 +104,7 @@ class CategoryController extends Controller
             $cart = new CartForm();
             $dataProvider = $searchModel->search();
         }
-        if (Yii::$app->request->get('page') > 1 || !empty(Yii::$app->request->get('availabilities'))) {
+        if (Yii::$app->request->get('page') > 1 || !empty(Yii::$app->request->get('pfrom') || !empty(Yii::$app->request->get('sort')))) {
             $this->view->registerMetaTag([
                 'name' => 'robots',
                 'content' => 'noindex, follow'
