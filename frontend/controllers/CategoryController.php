@@ -46,8 +46,10 @@ class CategoryController extends Controller
     public function actionShow($id = null)
     {
         /* @var Category $category */
+        $page = Yii::$app->request->get('page') ?: 1;
         $requestParams = Yii::$app->request->queryParams;
         $descendantCategories = null;
+
         if (is_null($id)) {
             $childCategories = Category::find()
                 ->where(['parent_id' => null, 'show' => true, 'additional_products' => false])
@@ -104,7 +106,9 @@ class CategoryController extends Controller
             $cart = new CartForm();
             $dataProvider = $searchModel->search();
         }
-        if (Yii::$app->request->get('page') > 1 || !empty(Yii::$app->request->get('pfrom') || !empty(Yii::$app->request->get('sort')))) {
+
+
+        if ($page > 1 || !empty(Yii::$app->request->get('pfrom') || !empty(Yii::$app->request->get('sort')))) {
             $this->view->registerMetaTag([
                 'name' => 'robots',
                 'content' => 'noindex, follow'
@@ -128,7 +132,8 @@ class CategoryController extends Controller
             'shopFilterModel' => $shopFilterModel,
             'vendors' => $searchModel->getVendors(),
             'availabilities' => ProductAvailability::find()->all(),
-            'categoryFilterParams' => $filterParams
+            'categoryFilterParams' => $filterParams,
+            'currentPage' => $page,
         ]);
 
     }

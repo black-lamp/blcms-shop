@@ -28,7 +28,6 @@ use yii\helpers\ArrayHelper;
  * @property Language $language
  * @property Product $product
  */
-
 class ProductTranslation extends ActiveRecord
 {
     public static function tableName()
