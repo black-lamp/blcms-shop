@@ -27,7 +27,8 @@ class XlsProductImportReader extends ProductImportReader
         'properties' => 6,
         'combinations' => 7,
         'images' => 8,
-        'additionalProducts' => 9
+        'additionalProducts' => 9,
+        'langKey' => 10,
     ];
 
     /**
@@ -87,6 +88,7 @@ class XlsProductImportReader extends ProductImportReader
             'combinations' => $this->parseCombinations($rowData[$this->columns['combinations']]),
             'images' => $this->parseImages($rowData[$this->columns['images']]),
             'additionalProducts' => $this->parseAdditionalProducts($rowData[$this->columns['additionalProducts']]),
+            'langKey' => trim($rowData[$this->columns['langKey']]),
         ]);
 
         return $productImportModel;

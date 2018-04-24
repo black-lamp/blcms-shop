@@ -67,366 +67,435 @@ class BasicAction extends Action
             }
 
             // PRODUCT
-            $product = Product::findOne([
+            $product = Product::find()->where([
                 'sku' => $productImportModel->sku
-            ]);
+            ])->orWhere([
+                'code' => $productImportModel->sku
+            ])->one();
 
-            if (empty($product)) {
-                $product = new Product([
-                    'sku' => $productImportModel->sku,
-                    'availability' => 1,
-                    'status' => Product::STATUS_SUCCESS
-                ]);
-            }
+            if (!empty($productImportModel->langKey)) {
+                // TRANSLATION
+                $language = Language::findOne(['lang_id' => $productImportModel->langKey]);
+                if (!empty($language) && !empty($product)) {
+                    $productTranslation = ProductTranslation::findOne([
+                        'product_id' => $product->id,
+                        'language_id' => $language->id
+                    ]);
 
-            $product->category_id = !empty(Category::findOne($productImportModel->categoryId)) ? $productImportModel->categoryId : null;
-            $product->vendor_id = !empty(Vendor::findOne($productImportModel->vendorId)) ? $productImportModel->vendorId : null;
-
-            if (!$product->save()) {
-                throw new Exception("Product::save() error");
-            }
-
-            // TRANSLATION
-            $productTranslation = ProductTranslation::findOne([
-                'product_id' => $product->id,
-                'language_id' => $this->language->id
-            ]);
-
-            if (empty($productTranslation)) {
-                $productTranslation = new ProductTranslation([
-                    'product_id' => $product->id,
-                    'language_id' => $this->language->id
-                ]);
-            }
-
-
-            $productTranslation->title = $productImportModel->title;
-
-            if (empty($productTranslation->seoUrl)) {
-                $seoUrl = Inflector::slug($productTranslation->title);
-                $count = SeoData::find()
-                    ->where([
-                        'entity_name' => 'bl\\cms\\shop\\common\\entities\\ProductTranslation',
-                        'seo_url' => $seoUrl
-                    ])
-                    ->count();
-
-                if ($count > 0) {
-                    $seoUrl = $seoUrl . "_" . $product->id;
-                }
-                $productTranslation->seoUrl = $seoUrl;
-            }
-
-
-            if (empty($productTranslation->seoTitle)) {
-                $productTranslation->seoTitle = $productTranslation->title;
-            }
-
-            if (!$productTranslation->save()) {
-                throw new Exception("ProductTranslation::save() error $productTranslation->title " . json_encode($productTranslation->errors));
-            }
-
-
-            // PARAMS
-            if (!empty($product->params)) {
-                foreach ($product->params as $param) {
-                    $param->delete();
-                }
-            }
-
-            foreach ($productImportModel->properties as $propertyImportModel) {
-                $param = new Param([
-                    'product_id' => $product->id
-                ]);
-
-                if (!$param->save()) {
-                    throw new Exception("Param::save() error");
-                }
-
-                $paramTranslation = new ParamTranslation([
-                    'param_id' => $param->id,
-                    'language_id' => $this->language->id,
-                    'name' => $propertyImportModel->title,
-                    'value' => $propertyImportModel->value
-                ]);
-
-                if (!$paramTranslation->save()) {
-                    throw new Exception("ParamTranslation::save() error");
-                }
-            }
-
-            // IMAGES
-            if (!empty($product->images)) {
-                foreach ($product->images as $image) {
-                    $image->delete();
-                }
-            }
-            foreach ($productImportModel->images as $imageImportModel) {
-                $productImage = new ProductImage([
-                    'file_name' => $imageImportModel,
-                    'product_id' => $product->id
-                ]);
-
-                if (!$productImage->save()) {
-                    throw new Exception("ProductImage::save() error");
-                }
-            }
-
-            // PRICES
-            if (!empty($product->prices)) {
-                foreach ($product->prices as $productPrice) {
-                    $productPrice->delete();
-                }
-            }
-            if (!empty($product->productPrices)) {
-                foreach ($product->productPrices as $productPrice) {
-                    $productPrice->delete();
-                }
-            }
-
-            $groupId = 1;
-            for ($i = count($productImportModel->prices) - 1; $i >= 0; $i--) {
-                $priceImportModel = $productImportModel->prices[$i];
-                $price = $product->getOrCreatePrice($groupId);
-                $price->price = floatval(str_replace(',', '.', $priceImportModel));
-                if (!$price->save()) {
-                    throw new Exception("ProductPrice::save() error");
-                }
-                $groupId++;
-            }
-
-            // ADDITIONAL PRODUCTS
-            if (!empty($product->productAdditionalProducts)) {
-                foreach ($product->productAdditionalProducts as $productAdditionalProduct) {
-                    $productAdditionalProduct->delete();
-                }
-            }
-            if (!empty($productImportModel->additionalProducts)) {
-                foreach ($productImportModel->additionalProducts as $additionalProductId) {
-                    $additionalProductId = intval(trim($additionalProductId));
-                    if (!empty($additionalProductId) && $additionalProductId < 1) {
-                        $additionalProduct = new ProductAdditionalProduct([
+                    if (empty($productTranslation)) {
+                        $productTranslation = new ProductTranslation([
                             'product_id' => $product->id,
-                            'additional_product_id' => $additionalProductId
+                            'language_id' => $language->id
                         ]);
+                    }
 
-                        if (!$additionalProduct->save()) {
-                            throw new Exception("ProductAdditionalProduct::save() error " . json_encode($additionalProduct->errors));
+
+                    $productTranslation->title = $productImportModel->title;
+
+                    if (empty($productTranslation->seoUrl)) {
+                        $seoUrl = Inflector::slug($productTranslation->title);
+                        $count = SeoData::find()
+                            ->where([
+                                'entity_name' => 'bl\\cms\\shop\\common\\entities\\ProductTranslation',
+                                'seo_url' => $seoUrl
+                            ])
+                            ->count();
+
+                        if ($count > 0) {
+                            $seoUrl = $seoUrl . "_" . $product->id;
+                        }
+                        $productTranslation->seoUrl = $seoUrl;
+                    }
+
+
+                    if (empty($productTranslation->seoTitle)) {
+                        $productTranslation->seoTitle = $productTranslation->title;
+                    }
+
+                    if (!$productTranslation->save()) {
+                        throw new Exception("ProductTranslation::save() error $productTranslation->title " . json_encode($productTranslation->errors));
+                    }
+
+                    if (!empty($productImportModel->properties) && !empty($product->params)) {
+                        for ($i = 0; $i < count($product->params); $i++) {
+                            if (!empty($productImportModel->properties[$i])) {
+                                $param = $product->params[$i];
+                                $propertyImportModel = $productImportModel->properties[$i];
+
+                                $paramTranslation = new ParamTranslation([
+                                    'param_id' => $param->id,
+                                    'language_id' => $language->id,
+                                    'name' => $propertyImportModel->title,
+                                    'value' => $propertyImportModel->value
+                                ]);
+
+                                if (!$paramTranslation->save()) {
+                                    throw new Exception("ParamTranslation::save() error");
+                                }
+                            }
+                        }
+                    }
+                    $this->controller->stdout("Product translation saved $product->id $productTranslation->title \n", Console::FG_GREEN);
+                }
+            } else {
+                $language = $this->language;
+
+                if (empty($product)) {
+                    $product = new Product([
+                        'sku' => $productImportModel->sku,
+                        'availability' => 1,
+                        'status' => Product::STATUS_SUCCESS
+                    ]);
+                }
+
+                $product->category_id = !empty(Category::findOne($productImportModel->categoryId)) ? $productImportModel->categoryId : null;
+                $product->vendor_id = !empty(Vendor::findOne($productImportModel->vendorId)) ? $productImportModel->vendorId : null;
+
+                if (!$product->save()) {
+                    throw new Exception("Product::save() error");
+                }
+
+                // TRANSLATION
+                $productTranslation = ProductTranslation::findOne([
+                    'product_id' => $product->id,
+                    'language_id' => $language->id
+                ]);
+
+                if (empty($productTranslation)) {
+                    $productTranslation = new ProductTranslation([
+                        'product_id' => $product->id,
+                        'language_id' => $language->id
+                    ]);
+                }
+
+
+                $productTranslation->title = $productImportModel->title;
+
+                if (empty($productTranslation->seoUrl)) {
+                    $seoUrl = Inflector::slug($productTranslation->title);
+                    $count = SeoData::find()
+                        ->where([
+                            'entity_name' => 'bl\\cms\\shop\\common\\entities\\ProductTranslation',
+                            'seo_url' => $seoUrl
+                        ])
+                        ->count();
+
+                    if ($count > 0) {
+                        $seoUrl = $seoUrl . "_" . $product->id;
+                    }
+                    $productTranslation->seoUrl = $seoUrl;
+                }
+
+
+                if (empty($productTranslation->seoTitle)) {
+                    $productTranslation->seoTitle = $productTranslation->title;
+                }
+
+                if (!$productTranslation->save()) {
+                    throw new Exception("ProductTranslation::save() error $productTranslation->title " . json_encode($productTranslation->errors));
+                }
+
+
+                // PARAMS
+                if (!empty($product->params)) {
+                    foreach ($product->params as $param) {
+                        $param->delete();
+                    }
+                }
+
+                foreach ($productImportModel->properties as $propertyImportModel) {
+                    $param = new Param([
+                        'product_id' => $product->id
+                    ]);
+
+                    if (!$param->save()) {
+                        throw new Exception("Param::save() error");
+                    }
+
+                    $paramTranslation = new ParamTranslation([
+                        'param_id' => $param->id,
+                        'language_id' => $language->id,
+                        'name' => $propertyImportModel->title,
+                        'value' => $propertyImportModel->value
+                    ]);
+
+                    if (!$paramTranslation->save()) {
+                        throw new Exception("ParamTranslation::save() error");
+                    }
+                }
+
+                // IMAGES
+                if (!empty($product->images)) {
+                    foreach ($product->images as $image) {
+                        $image->delete();
+                    }
+                }
+                foreach ($productImportModel->images as $imageImportModel) {
+                    $productImage = new ProductImage([
+                        'file_name' => $imageImportModel,
+                        'product_id' => $product->id
+                    ]);
+
+                    if (!$productImage->save()) {
+                        throw new Exception("ProductImage::save() error");
+                    }
+                }
+
+                // PRICES
+                if (!empty($product->prices)) {
+                    foreach ($product->prices as $productPrice) {
+                        $productPrice->delete();
+                    }
+                }
+                if (!empty($product->productPrices)) {
+                    foreach ($product->productPrices as $productPrice) {
+                        $productPrice->delete();
+                    }
+                }
+
+                $groupId = 1;
+                for ($i = count($productImportModel->prices) - 1; $i >= 0; $i--) {
+                    $priceImportModel = $productImportModel->prices[$i];
+                    $price = $product->getOrCreatePrice($groupId);
+                    $price->price = floatval(str_replace(',', '.', $priceImportModel));
+                    if (!$price->save()) {
+                        throw new Exception("ProductPrice::save() error");
+                    }
+                    $groupId++;
+                }
+
+                // ADDITIONAL PRODUCTS
+                if (!empty($product->productAdditionalProducts)) {
+                    foreach ($product->productAdditionalProducts as $productAdditionalProduct) {
+                        $productAdditionalProduct->delete();
+                    }
+                }
+                if (!empty($productImportModel->additionalProducts)) {
+                    foreach ($productImportModel->additionalProducts as $additionalProductId) {
+                        $additionalProductId = intval(trim($additionalProductId));
+                        if (!empty($additionalProductId) && $additionalProductId < 1) {
+                            $additionalProduct = new ProductAdditionalProduct([
+                                'product_id' => $product->id,
+                                'additional_product_id' => $additionalProductId
+                            ]);
+
+                            if (!$additionalProduct->save()) {
+                                throw new Exception("ProductAdditionalProduct::save() error " . json_encode($additionalProduct->errors));
+                            }
                         }
                     }
                 }
-            }
 
-            $isDefault = true;
-            $combinations = [];
-            foreach ($productImportModel->combinations as $combinationImportModel) {
-                /* @var ShopAttributeValue[] $attributeValues */
-                $attributeValues = [];
-                $combinationSku = $product->sku;
+                $isDefault = true;
+                $combinations = [];
+                foreach ($productImportModel->combinations as $combinationImportModel) {
+                    /* @var ShopAttributeValue[] $attributeValues */
+                    $attributeValues = [];
+                    $combinationSku = $product->sku;
 
-                foreach ($combinationImportModel->attributeValues as $attributeValuesImportModel) {
-                    $shopAttribute = ShopAttribute::find()
-                        ->joinWith('translations t')
-                        ->where([
-                            't.title' => $attributeValuesImportModel->title,
-                            't.language_id' => $this->language->id
-                        ])->one();
-
-                    if (empty($shopAttribute)) {
-                        throw new Exception("Attribute is not existing: $attributeValuesImportModel->title");
-                    }
-
-                    if ($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
-                        || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON
-                    ) {
-
-                        $shopAttributeValue = ShopAttributeValue::find()
-                            ->joinWith('shopAttributeValueTranslations t')
+                    foreach ($combinationImportModel->attributeValues as $attributeValuesImportModel) {
+                        $shopAttribute = ShopAttribute::find()
+                            ->joinWith('translations t')
                             ->where([
-                                'attribute_id' => $shopAttribute->id,
-                                't.value' => $attributeValuesImportModel->value,
-                                't.language_id' => $this->language->id
+                                't.title' => $attributeValuesImportModel->title,
+                                't.language_id' => $language->id
                             ])->one();
 
-                    } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
-                        || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE
-                    ) {
-
-                        $shopAttributeValue = ShopAttributeValue::find()
-                            ->joinWith('shopAttributeValueTranslations.shopAttributeValueColorTexture t')
-                            ->where([
-                                'attribute_id' => $shopAttribute->id,
-                                't.title' => $attributeValuesImportModel->value,
-                            ])->one();
-                    }
-
-                    if (empty($shopAttributeValue)) {
-                        $shopAttributeValue = new ShopAttributeValue([
-                            'attribute_id' => $shopAttribute->id
-                        ]);
-
-                        if (!$shopAttributeValue->save()) {
-                            throw new Exception("ShopAttributeValue::save() error");
+                        if (empty($shopAttribute)) {
+                            throw new Exception("Attribute is not existing: $attributeValuesImportModel->title");
                         }
 
                         if ($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
                             || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON
                         ) {
 
-                            $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
-                                'value_id' => $shopAttributeValue->id,
-                                'language_id' => $this->language->id,
-                                'value' => $attributeValuesImportModel->value
-                            ]);
-
-                            if (!$shopAttributeValueTranslation->save()) {
-                                throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
-                            }
+                            $shopAttributeValue = ShopAttributeValue::find()
+                                ->joinWith('shopAttributeValueTranslations t')
+                                ->where([
+                                    'attribute_id' => $shopAttribute->id,
+                                    't.value' => $attributeValuesImportModel->value,
+                                    't.language_id' => $language->id
+                                ])->one();
 
                         } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
                             || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE
                         ) {
 
-                            $shopAttributeValueColorTexture = new ShopAttributeValueColorTexture([
-                                'title' => $attributeValuesImportModel->value
+                            $shopAttributeValue = ShopAttributeValue::find()
+                                ->joinWith('shopAttributeValueTranslations.shopAttributeValueColorTexture t')
+                                ->where([
+                                    'attribute_id' => $shopAttribute->id,
+                                    't.title' => $attributeValuesImportModel->value,
+                                ])->one();
+                        }
+
+                        if (empty($shopAttributeValue)) {
+                            $shopAttributeValue = new ShopAttributeValue([
+                                'attribute_id' => $shopAttribute->id
                             ]);
 
-                            if (!$shopAttributeValueColorTexture->save()) {
-                                throw new Exception("ShopAttributeValueColorTexture::save() error");
+                            if (!$shopAttributeValue->save()) {
+                                throw new Exception("ShopAttributeValue::save() error");
                             }
 
-                            $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
-                                'value_id' => $shopAttributeValue->id,
-                                'language_id' => $this->language->id,
-                                'value' => strval($shopAttributeValueColorTexture->id)
-                            ]);
+                            if ($shopAttribute->type_id == ShopAttribute::TYPE_DROP_DOWN_LIST
+                                || $shopAttribute->type_id == ShopAttribute::TYPE_RADIO_BUTTON
+                            ) {
 
-                            if (!$shopAttributeValueTranslation->save()) {
-                                throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
-                            }
-                            // throw new Exception("Attribute value is not existing: $attributeValuesImportModel->value");
-                        }
-
-                    }
-
-                    $combinationSku .= '_' . $shopAttributeValue->id;
-                    $attributeValues[] = $shopAttributeValue;
-
-                }
-
-                if (!empty($attributeValues)) {
-
-                    $attributeValuesIds = [];
-                    foreach ($attributeValues as $attributeValue) {
-                        $attributeValuesIds[] = [
-                            'attributeId' => $attributeValue->attribute_id,
-                            'valueId' => $attributeValue->id
-                        ];
-                    }
-
-                    // issue: possibly script can find combination with bigger count of values
-                    $combination = $product->findCombination($attributeValuesIds);
-
-                    if(empty($combination)) {
-                        $combination = new Combination([
-                            'product_id' => $product->id,
-                        ]);
-                    }
-
-                    $combination->availability = 1;
-                    $combination->default = intval($isDefault);
-                    $combination->sku = $combinationSku;
-
-                    if (!$combination->save()) {
-                        throw new Exception("ShopCombination::save() error" . json_encode($combination->errors));
-                    }
-
-                    foreach ($attributeValues as $attributeValue) {
-                        $combinationAttribute = new CombinationAttribute([
-                            'combination_id' => $combination->id,
-                            'attribute_id' => $attributeValue->attribute_id,
-                            'attribute_value_id' => $attributeValue->id
-                        ]);
-
-                        if (!$combinationAttribute->save()) {
-                            throw new Exception("CombinationAttribute::save() error");
-                        }
-                    }
-                    $groupId = 1;
-                    for ($i = count($combinationImportModel->prices) - 1; $i >= 0; $i--) {
-                        $priceImportModel = $combinationImportModel->prices[$i];
-                        $price = $combination->getOrCreatePrice($groupId);
-                        $price->price = floatval(str_replace(',', '.', $priceImportModel));
-                        if (!$price->save()) {
-                            throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
-                        }
-                        $groupId++;
-                    }
-
-                    if (!empty($combination->images)) {
-                        foreach ($combination->images as $combinationImage) {
-                            $combinationImage->delete();
-                        }
-                    }
-
-                    // COMBINATION IMAGES
-                    if (!empty($combinationImportModel->images)) {
-                        foreach ($combinationImportModel->images as $imageName) {
-                            $productImage = ProductImage::findOne(['file_name' => $imageName]);
-                            if (!empty($productImage)) {
-                                $combinationImage = new CombinationImage([
-                                    'combination_id' => $combination->id,
-                                    'product_image_id' => $productImage->id,
+                                $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
+                                    'value_id' => $shopAttributeValue->id,
+                                    'language_id' => $language->id,
+                                    'value' => $attributeValuesImportModel->value
                                 ]);
 
-                                if (!$combinationImage->save()) {
-                                    throw new Exception("CombinationImage::save() error: " . json_encode($combinationImage->errors));
+                                if (!$shopAttributeValueTranslation->save()) {
+                                    throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
+                                }
+
+                            } else if ($shopAttribute->type_id == ShopAttribute::TYPE_COLOR
+                                || $shopAttribute->type_id == ShopAttribute::TYPE_TEXTURE
+                            ) {
+
+                                $shopAttributeValueColorTexture = new ShopAttributeValueColorTexture([
+                                    'title' => $attributeValuesImportModel->value
+                                ]);
+
+                                if (!$shopAttributeValueColorTexture->save()) {
+                                    throw new Exception("ShopAttributeValueColorTexture::save() error");
+                                }
+
+                                $shopAttributeValueTranslation = new ShopAttributeValueTranslation([
+                                    'value_id' => $shopAttributeValue->id,
+                                    'language_id' => $language->id,
+                                    'value' => strval($shopAttributeValueColorTexture->id)
+                                ]);
+
+                                if (!$shopAttributeValueTranslation->save()) {
+                                    throw new Exception("ShopAttributeValueTranslation::save() error" . json_encode($shopAttributeValueTranslation->errors));
+                                }
+                                // throw new Exception("Attribute value is not existing: $attributeValuesImportModel->value");
+                            }
+
+                        }
+
+                        $combinationSku .= '_' . $shopAttributeValue->id;
+                        $attributeValues[] = $shopAttributeValue;
+
+                    }
+
+                    if (!empty($attributeValues)) {
+
+                        $attributeValuesIds = [];
+                        foreach ($attributeValues as $attributeValue) {
+                            $attributeValuesIds[] = [
+                                'attributeId' => $attributeValue->attribute_id,
+                                'valueId' => $attributeValue->id
+                            ];
+                        }
+
+                        // issue: possibly script can find combination with bigger count of values
+                        $combination = $product->findCombination($attributeValuesIds);
+
+                        if (empty($combination)) {
+                            $combination = new Combination([
+                                'product_id' => $product->id,
+                            ]);
+                        }
+
+                        $combination->availability = 1;
+                        $combination->default = intval($isDefault);
+                        $combination->sku = $combinationSku;
+
+                        if (!$combination->save()) {
+                            throw new Exception("ShopCombination::save() error" . json_encode($combination->errors));
+                        }
+
+                        foreach ($attributeValues as $attributeValue) {
+                            $combinationAttribute = new CombinationAttribute([
+                                'combination_id' => $combination->id,
+                                'attribute_id' => $attributeValue->attribute_id,
+                                'attribute_value_id' => $attributeValue->id
+                            ]);
+
+                            if (!$combinationAttribute->save()) {
+                                throw new Exception("CombinationAttribute::save() error");
+                            }
+                        }
+                        $groupId = 1;
+                        for ($i = count($combinationImportModel->prices) - 1; $i >= 0; $i--) {
+                            $priceImportModel = $combinationImportModel->prices[$i];
+                            $price = $combination->getOrCreatePrice($groupId);
+                            $price->price = floatval(str_replace(',', '.', $priceImportModel));
+                            if (!$price->save()) {
+                                throw new Exception("CombinationPrice::save() error: " . json_encode($price->errors));
+                            }
+                            $groupId++;
+                        }
+
+                        if (!empty($combination->images)) {
+                            foreach ($combination->images as $combinationImage) {
+                                $combinationImage->delete();
+                            }
+                        }
+
+                        // COMBINATION IMAGES
+                        if (!empty($combinationImportModel->images)) {
+                            foreach ($combinationImportModel->images as $imageName) {
+                                $productImage = ProductImage::findOne(['file_name' => $imageName]);
+                                if (!empty($productImage)) {
+                                    $combinationImage = new CombinationImage([
+                                        'combination_id' => $combination->id,
+                                        'product_image_id' => $productImage->id,
+                                    ]);
+
+                                    if (!$combinationImage->save()) {
+                                        throw new Exception("CombinationImage::save() error: " . json_encode($combinationImage->errors));
+                                    }
                                 }
                             }
                         }
+
+                        $combinations[] = $combination;
                     }
 
-                    $combinations[] = $combination;
+                    $isDefault = false;
                 }
 
-                $isDefault = false;
-            }
+                if (!empty($product->combinations)) {
+                    /* @var Combination[] $combinationsToDelete */
+                    $combinationsToDelete = [];
 
-            if(!empty($product->combinations)) {
-                /* @var Combination[] $combinationsToDelete */
-                $combinationsToDelete = [];
+                    if (empty($combinations)) {
+                        $combinationsToDelete = $product->combinations;
+                    } else {
+                        foreach ($product->combinations as $productCombination) {
+                            $toDelete = true;
+                            foreach ($combinations as $combination) {
+                                if ($productCombination->id == $combination->id) {
+                                    $toDelete = false;
+                                }
+                            }
 
-                if(empty($combinations)) {
-                    $combinationsToDelete = $product->combinations;
-                }
-                else {
-                    foreach ($product->combinations as $productCombination) {
-                        $toDelete = true;
-                        foreach ($combinations as $combination) {
-                            if($productCombination->id == $combination->id) {
-                                $toDelete = false;
+                            if ($toDelete) {
+                                $combinationsToDelete[] = $productCombination;
                             }
                         }
-
-                        if($toDelete) {
-                            $combinationsToDelete[] = $productCombination;
-                        }
                     }
-                }
 
-                if(!empty($combinationsToDelete)) {
-                    foreach ($combinationsToDelete as $productCombination) {
-                        if(!empty($productCombination->prices)) {
-                            foreach ($productCombination->prices as $combinationPrice) {
-                                $combinationPrice->delete();
+                    if (!empty($combinationsToDelete)) {
+                        foreach ($combinationsToDelete as $productCombination) {
+                            if (!empty($productCombination->prices)) {
+                                foreach ($productCombination->prices as $combinationPrice) {
+                                    $combinationPrice->delete();
+                                }
                             }
+                            $productCombination->delete();
                         }
-                        $productCombination->delete();
                     }
                 }
-            }
 
-            $this->controller->stdout("Product saved $product->id $productTranslation->title \n", Console::FG_GREEN);
+                $this->controller->stdout("Product saved $product->id $productTranslation->title \n", Console::FG_GREEN);
+            }
         }
     }
 

@@ -49,4 +49,8 @@ class ProductImportModel extends Model
      * @var string[]
      */
     public $additionalProducts;
+    /**
+     * @var string
+     */
+    public $langKey;
 }
